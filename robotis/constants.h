@@ -58,6 +58,7 @@
 #define RECENTERING_TWITCH          0   // (1) : servos are recentered at 512 after each twitching in the 2 directions.
 #define RECENTERING_DELAY           500 
 
+#define FILTER_SIZE                2 //number of values stored used for filtering during the learning.
 
 /* ===================================================================================================================================== */
 

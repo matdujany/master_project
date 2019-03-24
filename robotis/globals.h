@@ -162,11 +162,11 @@ float val_old_lc[MAX_NR_ARDUINO * 3];        // Old values of loadcell data, nee
 int timestamp_old[MAX_NR_ARDUINO * 3] = {0};           // old values of timestamps, used to compute s_dots
 
 // S_dot
-float s_dot_last[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS];           // Most recent values of s_dot
+float s_dot_last[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS];               // Most recent values of s_dot
 
 
-uint16_t last_motor_pos[MAX_NR_SERVOS];           // Most recent values of motor positions
-int16_t last_motor_load[MAX_NR_SERVOS];           // Most recent values of motor loads
+uint16_t last_motor_pos[MAX_NR_SERVOS];  // Most recent values of motor positions
+int16_t last_motor_load[MAX_NR_SERVOS];               // Most recent values of motor loads
 unsigned long last_motor_timestamp[MAX_NR_SERVOS];
 float m_dot_pos[MAX_NR_SERVOS];           // Most recent values of s_dot
 
