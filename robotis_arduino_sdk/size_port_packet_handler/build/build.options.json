@@ -1,0 +1,11 @@
+{
+  "additionalFiles": "\\build\\preproc\\ctags_target_for_gcc_minus_e.cpp,\\build\\sketch\\functions_sdk.ino.cpp",
+  "builtInLibrariesFolders": "C:\\Program Files (x86)\\Arduino\\libraries",
+  "customBuildProperties": "build.path=\\\\files2\\data\\dujany\\My Documents\\master_project\\code\\robotis_arduino_sdk\\size_port_packet_handler\\build,build.warn_data_percentage=75,runtime.tools.opencm_tools.path=C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\tools\\opencm_tools\\0.0.2,runtime.tools.opencm_tools-0.0.2.path=C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\tools\\opencm_tools\\0.0.2,runtime.tools.opencm_gcc.path=C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\tools\\opencm_gcc\\5.4.0-2016q2,runtime.tools.opencm_gcc-5.4.0-2016q2.path=C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\tools\\opencm_gcc\\5.4.0-2016q2",
+  "fqbn": "OpenCM904:OpenCM904:OpenCM904:upload_method=UploadMethod",
+  "hardwareFolders": "C:\\Program Files (x86)\\Arduino\\hardware,C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages",
+  "otherLibrariesFolders": "\\\\files2\\data\\dujany\\My Documents\\master_project\\code\\libraries",
+  "runtime.ide.version": "10808",
+  "sketchLocation": "\\\\files2\\data\\dujany\\My Documents\\master_project\\code\\robotis_arduino_sdk\\size_port_packet_handler\\size_port_packet_handler.ino",
+  "toolsFolders": "C:\\Program Files (x86)\\Arduino\\tools-builder,C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr,C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages"
+}

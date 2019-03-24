@@ -1,0 +1,7 @@
+{
+    "board": "OpenCM904:OpenCM904:OpenCM904",
+    "configuration": "upload_method=UploadMethod",
+    "port": "COM7",
+    "sketch": "print_loadcell_values.ino",
+    "programmer": "AVRISP mkII"
+}

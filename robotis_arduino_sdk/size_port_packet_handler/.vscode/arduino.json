@@ -1,0 +1,8 @@
+{
+    "board": "OpenCM904:OpenCM904:OpenCM904",
+    "configuration": "upload_method=UploadMethod",
+    "port": "COM5",
+    "sketch": "size_port_packet_handler.ino",
+    "programmer": "AVRISP mkII",
+    "output": "build"
+}

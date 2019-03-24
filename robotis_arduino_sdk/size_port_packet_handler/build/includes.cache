@@ -1,0 +1,82 @@
+[
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\cores\\arduino"
+  },
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\variants\\OpenCM904"
+  },
+  {
+    "Sourcefile": "\\\\files2\\data\\dujany\\My Documents\\master_project\\code\\robotis_arduino_sdk\\size_port_packet_handler\\build\\sketch\\size_port_packet_handler.ino.cpp",
+    "Include": "DynamixelSDK.h",
+    "Includepath": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src"
+  },
+  {
+    "Sourcefile": "\\\\files2\\data\\dujany\\My Documents\\master_project\\code\\robotis_arduino_sdk\\size_port_packet_handler\\build\\sketch\\size_port_packet_handler.ino.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\group_bulk_read.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\group_bulk_write.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\group_sync_read.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\group_sync_write.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\packet_handler.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\port_handler.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\port_handler_arduino.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\port_handler_linux.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\port_handler_mac.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\port_handler_windows.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\protocol1_packet_handler.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\dujany\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\libraries\\DynamixelSDK\\src\\dynamixel_sdk\\protocol2_packet_handler.cpp",
+    "Include": "",
+    "Includepath": ""
+  }
+]
