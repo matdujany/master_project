@@ -1,0 +1,8 @@
+{
+    "board": "OpenCM904:OpenCM904:OpenCM904",
+    "configuration": "upload_method=UploadMethod",
+    "port": "COM5",
+    "sketch": "pos_progressive_twitch_sdk.ino",
+    "programmer": "AVRISP mkII",
+    "output": "build"
+}
