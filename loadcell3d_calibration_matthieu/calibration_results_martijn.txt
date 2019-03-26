@@ -1,0 +1,42 @@
+ if (I_LOADCELL == 1){
+    Serial.println("asdf");
+    cal_gain[0]   = 14975;
+    cal_gain[1]   = 14840;
+    cal_gain[2]   = 13370;
+    cal_offset[0] = -0.195; 
+    cal_offset[1] = -1.805; 
+    cal_offset[2] = -2.95;
+  }
+  // Loadcell 2 is dead?!
+  else if (I_LOADCELL == 2){
+    cal_gain[0]   = 14600;
+    cal_gain[1]   = 14480;
+    cal_gain[2]   = 13420;
+    cal_offset[0] = 1.94; 
+    cal_offset[1] = 3.47; 
+    cal_offset[2] = -2.62;
+  }
+  else if (I_LOADCELL == 3){
+    cal_gain[0]   = 14810;
+    cal_gain[1]   = 15100;
+    cal_gain[2]   = 13460;
+    cal_offset[0] = -1.745; 
+    cal_offset[1] = -3.41; 
+    cal_offset[2] = 0.10;
+  }
+  else if (I_LOADCELL == 4){
+    cal_gain[0]   = 14220;
+    cal_gain[1]   = 14500;
+    cal_gain[2]   = 13440;
+    cal_offset[0] = 1.09; 
+    cal_offset[1] = 3.395; 
+    cal_offset[2] = -0.3;
+  }
+  else if (I_LOADCELL == 5){
+    cal_gain[0]   = 15030;
+    cal_gain[1]   = 15150;
+    cal_gain[2]   = 13635;
+    cal_offset[0] = -0.30231389; 
+    cal_offset[1] = 0.07867452;
+    cal_offset[2] = 0.287924;
+  }

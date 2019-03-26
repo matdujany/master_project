@@ -1,0 +1,48 @@
+  if (I_LOADCELL == 1){
+    cal_gain[0]   = 13780;
+    cal_gain[1]   = 13827;
+    cal_gain[2]   = 12504;
+    cal_offset[0] = -0.34; 
+    cal_offset[1] = -0.06; 
+    cal_offset[2] = 0.20;
+  }
+  else if (I_LOADCELL == 4){
+    cal_gain[0]   = 13230;
+    cal_gain[1]   = 13330;
+    cal_gain[2]   = 12385;
+    cal_offset[0] = -3.05; 
+    cal_offset[1] = -1.73; 
+    cal_offset[2] = -0.03;
+  }
+  else if (I_LOADCELL == 5){
+    cal_gain[0]   = 13612;
+    cal_gain[1]   = 13785;
+    cal_gain[2]   = 12294;
+    cal_offset[0] = -1.58; 
+    cal_offset[1] = -3.20; 
+    cal_offset[2] = 0.06;
+  }
+  else if (I_LOADCELL == 6){
+    cal_gain[0]   = 13712;
+    cal_gain[1]   = 13614;
+    cal_gain[2]   = 12254;
+    cal_offset[0] = -0.27; 
+    cal_offset[1] = -1.65; 
+    cal_offset[2] = -2.69;
+  }
+  else if (I_LOADCELL == 9){
+    cal_gain[0]   = 13124;
+    cal_gain[1]   = 13301;
+    cal_gain[2]   = 12441;
+    cal_offset[0] = 0.94; 
+    cal_offset[1] = 3.25; 
+    cal_offset[2] = -0.18;
+  }
+  else if (I_LOADCELL == 11){
+    cal_gain[0]   = 13516;
+    cal_gain[1]   = 13481;
+    cal_gain[2]   = 12418;
+    cal_offset[0] = 0.66; 
+    cal_offset[1] = 1.49; 
+    cal_offset[2] = -1.91;
+  }
