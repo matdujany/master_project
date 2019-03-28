@@ -32,7 +32,7 @@ using namespace Ad7124;
 
 #define I_LOADCELL 6
 #define I_AXIS     1
-
+#define BAUD_RATE  500000
 
 double cal_gain[3];
 double cal_offset[3];
@@ -240,8 +240,7 @@ void setup() {
   digitalWrite (spiEnPin, 1); // enable SPI
 
   //Initialize serial and wait for port to open:
-  Serial.begin (57600);
-  Serial1.begin(57600);
+  Serial1.begin(BAUD_RATE);
 
   delay(3000);
 

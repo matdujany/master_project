@@ -13,7 +13,7 @@ refine = 0;
 n_iter = 5;
 eta_sim = 10;
 
-record_list = [77:81];
+record_list = [84:85];
 channelsSelected =[1 2 3]; %1 for X, 1 2 for X Y, 2 3 for Y Z etc ...
 
 closest_sensors_sim = zeros(length(record_list),8);

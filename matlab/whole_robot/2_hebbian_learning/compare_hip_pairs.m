@@ -13,7 +13,7 @@ addpath('../data');
 
 %% Load data
 
-record_list = [74];
+record_list = [84:85];
 good_pair = [1 3; 5 7; zeros(6,2)];
 min_likelihoods = zeros(length(record_list),1);
 good_pair_found = zeros(length(record_list),1);

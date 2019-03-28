@@ -7,7 +7,7 @@ addpath('../data');
 
 %% Load data
 
-record_list = [73:76];
+record_list = [84:85];
 max_dif_norm_pos = zeros(1,length(record_list));
 max_dif_norm = zeros(1,length(record_list));
 n_iter = 5;
