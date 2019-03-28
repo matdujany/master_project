@@ -39,13 +39,13 @@
 #define    SAMPLING_MODE            1
 #define    OUTPUT__DATA_INTERVAL    47
 #define    MAX_NR_ARDUINO           6      // Maximum number of load cell arduino's in the daisychain
-#define    BAUD_RATE                57600  // Baud rate for load cell daisychain
+#define    BAUD_RATE                250000  // Baud rate for load cell daisychain
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
 // LEARNING
 #define TIME_INTERVAL_TWITCH        36     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
 
-#define STEP_AMPL                   5     // Amplitude of step function during twitching (in degrees)
+#define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
 #define LEARNING_RATE               1      // Learning rate for the update rule
 #define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
 #define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
@@ -60,6 +60,7 @@
 
 #define FILTER_SIZE                2 //number of values stored used for filtering during the learning.
 
+
 /* ===================================================================================================================================== */
 
 /////////////////////////////////
@@ -72,6 +73,8 @@
 ///////////////////////////////
 // DAISYCHAIN                //
 ///////////////////////////////
+
+#define DELAY_MIN_FRAMES      20
 
 // Frame properties
 #define FRAME_SYNC_0             0xFF                                                           // Start frame byte 1

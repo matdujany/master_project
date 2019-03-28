@@ -43,7 +43,7 @@ void twitch_record_wrapper(){
   
   Serial3.println(1500);
   SerialUSB.print("Total number of frames found : ");
-  SerialUSB.println(all_frames_found);
+  SerialUSB.println(nb_frames_found);
     
   restaure_default_parameters_all_motors_syncWrite();
   pose_stance();
@@ -128,7 +128,7 @@ void twitch_main()
           // Send one byte if time is right (meaning if bool_send_byte == true)
           if (bool_send_byte)
           {
-            send_frame_byte(1, 0);
+            send_frame_byte(flagVerbose);
           }
 
 
