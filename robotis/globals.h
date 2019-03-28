@@ -73,8 +73,9 @@ rbuffer;
 typedef struct rbuffer_frame
 // Contains ring buffer for sending out frame bytes
 {
-  unsigned int head;                           // 16 bit
+  uint16_t head;                                // 16 bit
   uint8_t buffer[MAX_FRAME_SIZE];              // 8 bit unsigned (like our )
+  uint16_t frame_size;
 }
 rbuffer_frame;
 
@@ -82,22 +83,20 @@ rbuffer ser_rx_buf;                            // Ring buffer for receiving seri
 rbuffer_frame frame_buf;                       // Ring buffer for sending out frame bytes
 
 uint8_t initial_frame[MAX_FRAME_SIZE];         // header plus max data, preallocation needed
-int idx_skip = 0;                              // Number of indices that are skipped in frame_buf. Value is calculated after number of Arduino's is known
 bool arduinos_counted = false;                 // Boolean that states if the LC Arduino's are counted
 bool bool_checksum;                            // Boolean that indicates whether checksum test passed or failed
-unsigned long time_diff;                       // Time difference between sending the first byte and now
-unsigned long timestamp = 0;                   // Timestamp at which the first byte of a frame has been sent
+unsigned long timestamp_startframe = 0;        // Timestamp at which the first byte of a frame has been sent
 bool frame_found;                              // Boolean that indicates whether a full frame has been received
-bool bool_interval;                            // Boolean that indicates whether the interval condition has been met on sending frame bytes
-bool bool_send_byte         = true;            // Boolean that defines if a frame byte has to be send
 bool bool_end_byte_sent     = false;           // Boolean that indicates if the last byte of a frame has been sent
 int  n_frames               = 0;               // Number of collected frames
-int i_loop                  = 0;               // Count number of loops of loop() in the main file
-int i_loop_frame            = -1;              // Keep track of the i_loop at which the first byte of a frame has been sent
 int n_ard                   = MAX_NR_ARDUINO;  // Number of counted loadcell Arduino's; initial guess = maximum number of arduino's
+float duration_daisychain   = 0;               // duration in ms between the moment the first byte is sent by openCM and the last one comes back to openCM
 
+
+//debugging
+unsigned long nb_end_bytes_sent = 0;
+unsigned long nb_frames_found = 0;
 unsigned long count_checksum_mismatches=0;
-unsigned long all_frames_found=0;
 
 /* ===================================================================================================================================== */
 
@@ -186,3 +185,4 @@ learning_struct learning;
 
 //Timing :
 int max_time_computation_p1=0; //in ms
+

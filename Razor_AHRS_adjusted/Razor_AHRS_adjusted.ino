@@ -17,7 +17,7 @@
 // OUTPUT OPTIONS
 /*****************************************************************/
 // Set your serial port baud rate used to send out data here!
-#define OUTPUT__BAUD_RATE 250000 //57600 works, 115200 is bad. 250k and 500k should work
+#define OUTPUT__BAUD_RATE 500000 //57600 works, 115200 is bad. 250k and 500k should work
 
 // Sensor data output interval in milliseconds
 // This may not work, if faster than 20ms (=50Hz)

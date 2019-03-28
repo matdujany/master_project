@@ -79,6 +79,7 @@ void init_circular_frame_array()
 
   // Initialize head
   frame_buf.head = 0;
+  frame_buf.frame_size = MAX_FRAME_SIZE; //for the moment, the frame has the maximal length
 
   // Initialize frame array by taking the initial_frame
   for (int i = 0; i < MAX_FRAME_SIZE; i++)
@@ -96,8 +97,12 @@ void reset_circular_frame_array()
   // 1. Set correct data length. Necessary to fill in the data correctly.
   frame_buf.buffer[4] = n_ard * SENSOR_DATA_LENGTH + IMU_DATA_LENGTH;
 
-  // 2. Set the number of indices that needs to be skipped
-  idx_skip = (MAX_NR_ARDUINO - n_ard) * SENSOR_DATA_LENGTH;
+  // 2. Set correct frame size and adapt content of the buffer;
+  frame_buf.frame_size = 5 + n_ard * SENSOR_DATA_LENGTH + IMU_DATA_LENGTH + 2;
+
+  //3. adapt content of the buffer;
+  frame_buf.buffer[frame_buf.frame_size-1] = END_FRAME;
+  frame_buf.buffer[MAX_FRAME_SIZE-1] = 0; //contained end frame before
 
   // Put the setup in the initial state for a fresh start /////////////////////
   // Reset frame found boolean
@@ -131,292 +136,6 @@ void sleep_while_moving()
   delay(250);
 }
 
-/* ===================================================================================================================================== */
-
-/////////////////////////////////
-// 2. FRAME HANDLING           //
-/////////////////////////////////
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-
-void send_and_get_wrapper(boolean bool_send)
-{
-  // Wrapper for sending and getting frame bytes
-
-  // Send a initial_frame byte through tx port
-  if (bool_send)
-  {
-    send_frame_byte(1, flagVerbose);
-  }
-
-  // Checks if there is data in the USART Buffer and transport it to the ring buffer
-  if (Serial2.available())
-  {
-
-    // Reads one byte from the rx port.
-    get_loadcell_byte(flagVerbose);
-
-    // Boolean to check if frame has been found
-    frame_found = check_frame(flagVerbose);
-
-    if (frame_found)
-    {
-      SerialUSB.println("Frame Found");
-    }
-    else
-    {
-      // When there is nothing in the pipe.
-    }
-  }
-}
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-void send_frame_byte(int frameMode, int flagVerbose)
-{
-  // Write frame or frame byte (depending on the frameMode) to the Serial2 tx bus
-
-  byte sendOut;
-
-  // Frame Mode 1: send only 1 byte /////////////
-  if (frameMode == 1)
-  {
-
-    int idx_out;
-
-    if (arduinos_counted)
-    {
-      // Select the byte to be send from the circular frame array
-      if (frame_buf.head > 5 + n_ard * SENSOR_DATA_LENGTH)
-      {
-
-        // TODO replace 110 by MAX_FRAME_SIZE
-        idx_out = (frame_buf.head + idx_skip) % 110;
-      }
-      else
-      {
-        idx_out = frame_buf.head;
-      }
-      sendOut = frame_buf.buffer[idx_out];
-    }
-    else
-    {
-      // Select the byte to be send from the circular frame array
-      sendOut = frame_buf.buffer[frame_buf.head];
-    }
-
-    // Update the head of the circular frame array
-    frame_buf.head = ((frame_buf.head + 1) % (MAX_FRAME_SIZE - idx_skip));
-
-    // If the last byte of the frame is being send: switch bool_end_byte_sent to true
-    if (idx_out == MAX_FRAME_SIZE - 1)
-    {
-      bool_end_byte_sent = true;
-    }
-    if (flagVerbose)
-    {
-      SerialUSB.print("Send out: \t");
-      SerialUSB.println(sendOut);
-    }
-
-    Serial2.write(sendOut);
-  }
-
-  // Frame Mode 2: send whole frame //////////////
-  else if (frameMode == 2)
-  {
-    // Write initial_frame to tx port
-    Serial2.write(initial_frame, sizeof(initial_frame));
-  }
-  else
-  {
-    SerialUSB.println("Mode does not exist");
-  }
-}
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-boolean check_checksum(int flagVerbose)
-{
-  // Compare checksum that is found in the frame (checksum_frame) to the checksum as calculated from the data bytes in the frame (checksum_calc)
-
-  // Declare variables
-  uint8_t checksum_calc = 0x00;
-  uint8_t checksum_frame;
-  if (ser_rx_buf.head==0){
-    checksum_frame= ser_rx_buf.buffer[BUFFER_SIZE - 1];
-  }
-  else
-  {
-    checksum_frame=ser_rx_buf.buffer[ser_rx_buf.head - 1];
-  }
-  
-  int i_lim;
-  int tmp_count;
-  bool ismatch;
-
-  // Select dataset in the unparsed frame to calculate checksum
-  // Indices of data: 5 to MAX_NR_ARDUINO*SENSOR_DATA_LENGTH+IMU_DATA_LENGTH + 5
-  int i_data_start = ser_rx_buf.tail + 5;
-
-  // Total Data Length                                 // Index of start of data
-  for (int i = i_data_start; i < (n_ard * SENSOR_DATA_LENGTH + IMU_DATA_LENGTH) + (5 + ser_rx_buf.tail); i++)
-  {
-
-    // Correct index in case i > BUFFER_SIZE
-    i_lim = i & (BUFFER_SIZE - 1);
-
-    checksum_calc += ser_rx_buf.buffer[i_lim];
-  }
-
-  // Apply return criteria
-  if (checksum_calc == checksum_frame)
-  {
-    ismatch = true;
-  }
-  else
-  {
-    count_checksum_mismatches++;
-    ismatch = false;
-    //SerialUSB.println("Checksum mismatch");
-    //SSerialUSB.print("Computed checksum : "); SerialUSB.println(checksum_calc,HEX);
-    //SSerialUSB.print("Frame checksum : "); SerialUSB.println(checksum_frame,HEX);
-    //Sprint_buffer();
-  }
-
-  if (flagVerbose)
-  {
-    print_check_checksum(ismatch, checksum_calc, checksum_frame);
-  }
-  return ismatch;
-}
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-void get_loadcell_byte(int flagVerbose)
-{
-  // Read byte from USART buffer and write it to ring buffer
-
-  // Read byte from the USART buffer
-  byte inByte = Serial2.read();
-
-  // Update the head index
-  ser_rx_buf.head = BUFFER_NEXT(ser_rx_buf.head);
-
-  // Write the read byte to the ring buffer
-  ser_rx_buf.buffer[ser_rx_buf.head] = inByte;
-
-  // Verbose mode
-  if (flagVerbose)
-  {
-    print_get_loadcell_byte(inByte);
-  }
-}
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-int check_frame(int flagVerbose)
-{
-  // Check if a frame is collected
-  // There are 4 conditions, comparing:   1. End byte
-  //                                      2. First start byte
-  //                                      3. Second start byte
-  //                                      4. Checksum comparison
-
-  // 1. End byte
-  if (ser_rx_buf.buffer[ser_rx_buf.head] == END_FRAME) // may have more than 1 byte, I sould suggest at least 2
-  {
-    int idx_tmp = (ser_rx_buf.head - (MAX_FRAME_SIZE - idx_skip - 1)) & (BUFFER_SIZE - 1);
-
-    // 2. First start byte
-    if (ser_rx_buf.buffer[(ser_rx_buf.head - (MAX_FRAME_SIZE - idx_skip - 1)) & (BUFFER_SIZE - 1)] == FRAME_SYNC_0) // Reads first start byte (0xFF)
-    {
-      // 3. Second start byte
-      if (ser_rx_buf.buffer[(ser_rx_buf.head - (MAX_FRAME_SIZE - idx_skip - 2)) & (BUFFER_SIZE - 1)] == FRAME_SYNC_1) // Reads first start byte (0xAA)
-      {
-        // Determine new tail and make sure it is circular
-        ser_rx_buf.tail = (ser_rx_buf.head - (MAX_FRAME_SIZE - idx_skip - 1)) & (BUFFER_SIZE - 1);
-
-        // Calculate checksum for the data in the ser_rx_buf buffer
-        bool_checksum = check_checksum(flagVerbose);
-
-        // 4. Checksum comparison
-        if (bool_checksum)
-        {
-          if (flagVerbose)
-          {
-            print_check_frame();
-          }
-          all_frames_found++;
-          return true;
-        }
-        else
-          return false;
-      }
-      else
-        return false;
-    }
-    else
-      return false;
-  }
-  else
-    return false;
-}
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-void update_bool_send_byte()
-{
-
-  /*
-  SerialUSB.println(bool_end_byte_sent);
-   SerialUSB.println(!bool_interval);
-   SerialUSB.println();
-   */
-
-  // If end byte has been send
-  if (bool_end_byte_sent)
-  {
-
-    // If current time is not smaller than the frame sampling time
-    if (!bool_interval)
-    {
-      // Reset boolean that indicates that the end byte has been send
-      // And reset the loop index at which the first frame byte has been send
-      bool_end_byte_sent = false;
-      i_loop_frame = i_loop;
-    }
-  }
-  else if (time_diff >= TIME_INTERVAL_TWITCH) {
-    SerialUSB.println("time diff superior to time interval twitch");
-  } 
-
-  // SAMPLING_MODE = 1 : It will sample at it's fastest frequency possible.
-  // SAMPLING_MODE = 2 : Servo updates will stop, thereby providing a clear indication that the sampling frequency is high.
-  if (SAMPLING_MODE == 1)
-  {
-
-    // Send bytes as long as the end byte has not been sent.
-    bool_send_byte = !bool_end_byte_sent;
-  }
-  
-  else if (SAMPLING_MODE == 2)
-  {
-    // Boolean to send a byte:  - if current time is smaller than the frame sampling time
-    //                          - if end byte has not been send
-    bool_send_byte = bool_interval && !bool_end_byte_sent;
-
-    if (time_diff >= (OUTPUT__DATA_INTERVAL + 10) && bool_walk)
-    {
-      Serial3.write("Can't keep up with the sampling frequency. Execution terminated (try: sampling mode 1)!\n");
-
-      // Stop all servo updates.
-      bool_walk = false;
-    }
-  }
-  else
-  {
-    SerialUSB.println("Sampling Mode Error: mode does not exist. Adjust the mode in constants.h");
-  }
-}
-
-/* ===================================================================================================================================== */
-
 /////////////////////////////////
 // 3. DATA PROCESSING          //
 /////////////////////////////////
@@ -428,25 +147,13 @@ void count_arduinos_wrapper(int flagVerbose)
 
   int i = 0;
 
+  reinitalize_dc_state();
+
   // Keep sending bytes until whole frame is found
   while (!frame_found)
   {
-
-    // Send and get byte
-    send_and_get_wrapper(1);
-
-    // A small delay between the frames being send
-    if (bool_end_byte_sent)
-    {
-      delay(10);
-    }
-
-    // A small delay between the frame bytes being send
-    delay(1);
-
-    // Reset boolean
-    bool_end_byte_sent = false;
-
+    try_capture_1_frame();
+    i++;
     // If no full frame has been received after 1000 loops, throw error and break out of the loop
     // Most likely the frame bytes are not received properly (suggestion: check baud rate, wiring or code of the loadcells/IMU)
     if (i > 1000)
@@ -454,7 +161,6 @@ void count_arduinos_wrapper(int flagVerbose)
       SerialUSB.println("[ERROR] count_arduinos_wrapper(): Can not count the number of Arduino's");
       break;
     }
-    i++;
   }
 
   // Parse the received frame
@@ -502,7 +208,7 @@ void count_arduinos(int flagVerbose)
   // Verbose mode
   if (flagVerbose)
   {
-    SerialUSB.print("Number of (loadcell) arduino's counted: ");
+    SerialUSB.print("Number of arduinos (loacells) counted: ");
     SerialUSB.println(n_ard);
   }
 }
@@ -1251,7 +957,7 @@ void print_servo_offset()
 
 void print_loadcell_values(){
   for (int i_ard =0; i_ard<n_ard; i_ard++){
-    SerialUSB.print("Loadcell ");SerialUSB.print(i_ard);
+    SerialUSB.print("Loadcell ");SerialUSB.print(i_ard+1);
     SerialUSB.print(" channel values ");
     for (int j =0; j<3; j++){
       SerialUSB.print(ser_rx_buf.last_loadcell_data_float[j+3*i_ard]);

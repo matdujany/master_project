@@ -32,20 +32,16 @@
 
 // DAISYCHAIN
 // Sampling Settings
-// It will sample at the frequency given by 1000/OUTPUT__DATA_INTERVAL.
-// However, it might not be possible to achieve that frequency, there are two modes to handle this scenario:
-// SAMPLING_MODE = 1 : It will aim to sample at (1000 / OUTPUT__DATA_INTERVAL) or else as fast as possible.
-// SAMPLING_MODE = 2 : Servo updates will stop, thereby providing a clear indication that the sampling frequency is high.
-#define    SAMPLING_MODE            1
-#define    OUTPUT__DATA_INTERVAL    47
+// It will sample at the frequency given by 1000/TIME_INTERVAL_TWITCH
+
 #define    MAX_NR_ARDUINO           6      // Maximum number of load cell arduino's in the daisychain
-#define    BAUD_RATE                57600  // Baud rate for load cell daisychain
+#define    BAUD_RATE                500000  // Baud rate for load cell daisychain
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
 // LEARNING
-#define TIME_INTERVAL_TWITCH        36     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
+#define TIME_INTERVAL_TWITCH        25     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
 
-#define STEP_AMPL                   5     // Amplitude of step function during twitching (in degrees)
+#define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
 #define LEARNING_RATE               1      // Learning rate for the update rule
 #define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
 #define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
@@ -60,6 +56,7 @@
 
 #define FILTER_SIZE                2 //number of values stored used for filtering during the learning.
 
+
 /* ===================================================================================================================================== */
 
 /////////////////////////////////
@@ -72,6 +69,9 @@
 ///////////////////////////////
 // DAISYCHAIN                //
 ///////////////////////////////
+
+#define MAX_DELAY_FRAME         50 //for initializing the waiting time when the loadcell is discovered
+
 
 // Frame properties
 #define FRAME_SYNC_0             0xFF                                                           // Start frame byte 1

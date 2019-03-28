@@ -31,10 +31,12 @@ disp(time_stamp);
 poolobj= parpool('local',2);
 spmd(2)
     if labindex == 1
+        %daisychain (Serial2), blue cable, blue FTDI
         COMportID = 10;
         bufferSize = predict_n_bytes_approximate(parms);
-        BaudRate = 57600;
+        BaudRate = 500*10^3;
     else
+        %lpdata (Serial3), yellow cable, red FTDI
         COMportID = 9;
         bufferSize = 3000000; %TODO : size this buffer
         BaudRate = 2*10^6;

@@ -12,33 +12,34 @@ void find_closest_LC(){
   memset(servo_matched,0,sizeof(servo_matched));
   uint8_t n_iter = 0;
 
-  uint8_t s = sum_agree(servo_matched, n_servos);
+  uint8_t s = sum_bool_array(servo_matched, n_servos);
   uint8_t s_agree_before = -1;
   while(s<s_agree_before){
     s_agree_before=s;
+    //first we determine for each sensor the closest motor.
     for (uint8_t i=0; i<n_ard; i++){
-      closest_motor[i] = get_index_max();
+      //closest_motor[i] = get_index_max();
     }
   }
 }
 
 uint8_t sum_bool_array(boolean servo_matched[], uint8_t array_size){
   uint8_t s = 0;
-  for (i=0; i< array_size; i++)
+  for (uint8_t i=0; i< array_size; i++)
   {
     s += servo_matched[i];
   } 
   return s; 
 }
 
-uint8_t get_index_max(float weights_vector[], uint8_t vector_length, boolean index_skipped){
+uint8_t get_index_max(float vector[], uint8_t vector_length, boolean index_skipped[]){
   uint8_t index_max = 0;
-  float max_value = weights_vector[0];
+  float max_value = vector[0];
   for (uint8_t index = 1; index <vector_length; index++){
     if (!index_skipped[index]){
-      if (weights_vector[index]>max_value){
+      if (vector[index]>max_value){
         index_max = index;
-        max_value = weights_vector[index];
+        max_value = vector[index];
       }
     }
     
@@ -46,6 +47,8 @@ uint8_t get_index_max(float weights_vector[], uint8_t vector_length, boolean ind
   return index_max;
 }
 
-void compute_partial_sum(bool splitDir, uint8_t n_motors_left, uint8_t n_lc_left, float weights[][]){
-
+void compute_partial_sum(bool splitDir, uint8_t n_motors_left, uint8_t n_lc_left, float* partial_sums){
+  if (splitDir){
+    
+  }
 }

@@ -37,13 +37,15 @@ void twitch_record_wrapper(){
     SerialUSB.print("Max computation time p1 (in ms) : ");
     SerialUSB.println(max_time_computation_p1);SerialUSB.println();
     SerialUSB.print("Checksum mismatch counter value : ");SerialUSB.println(count_checksum_mismatches);SerialUSB.println();
+    SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
+    SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);
   }
   
 
   
   Serial3.println(1500);
   SerialUSB.print("Total number of frames found : ");
-  SerialUSB.println(all_frames_found);
+  SerialUSB.println(nb_frames_found);
     
   restaure_default_parameters_all_motors_syncWrite();
   pose_stance();
@@ -108,82 +110,39 @@ void twitch_main()
         twitch_pre_action(i_part, i_servo, dir_sign[i_dir], ampl_step_pos);
 
         // Keep looping until required number of frames is reached
+
         while (n_frames_tmp < n_frames_part[i_part])
         {
-
-          // If it is the start of a new frame, initialize timestamp.
-          if (i_loop_frame == i_loop - 1)
-          {
-            timestamp = millis();
+          timestamp_startframe = millis();
+          reinitalize_dc_state();
+          while(!bool_end_byte_sent){
+            send_and_get_wrapper();
+          }
+          //TODO add code to measure daisychain duration. (10 is a magic number for the moment)
+          while( (!frame_found) & (millis()-timestamp_startframe<2*duration_daisychain) ){
+            if (Serial2.available())
+              get_dc_byte_wrapper();
           }
 
-          // Calculate if time taken to send the current frame
-          // and if this difference is smaller (or not) than the frame sample frequency
-          time_diff = millis() - timestamp;
-          bool_interval = time_diff <= TIME_INTERVAL_TWITCH;
-
-          // Update the value of the boolean 'bool_send_byte'
-          update_bool_send_byte();
-
-          // Send one byte if time is right (meaning if bool_send_byte == true)
-          if (bool_send_byte)
-          {
-            send_frame_byte(1, 0);
-          }
-
-
-          if (Serial2.available())
-          {
-            // Reads one byte from the rx port of Serial2 (load cells and IMU)
-            get_loadcell_byte(0);
-
-            // Boolean to check if frame has been found
-            frame_found = check_frame(flagVerbose);
-          }
-
+          //if a frame is found, we process it and wait to send the next one
           if (frame_found)
           {
-            unsigned long start_time;
-            if (i_part == 1)
-              start_time = millis();
-
             // Increase number of collected frames
             n_frames_tmp++;
-
-            if (i_part == 1)
-              twitch_part1_moving(i_servo, dir_sign[i_dir], ampl_step_pos, n_frames_tmp, n_frames_part[i_part]);
-
-            // Parse data
-            wrapper_parser(flagVerbose);
-
-            // Start of HEX to DEC conversion
-            // First argument: flagVerbose, second argument: conversion mode
-            // Mode 1: loadcell mode, Mode 2: IMU mode
-            hex_to_float(flagVerbose, 1);
-            hex_to_float(flagVerbose, 2);
-
-            twitch_calculate_s_dot();
-
-            // Learning during part 1
-            if (i_part == 1)
-              twitch_part1_learning(n_frames_tmp, i_servo, i_action, dir_sign[i_dir]);
-            else
-            {
-              update_load_pos_values();
-            }
+            //SerialUSB.print("frame found in "); SerialUSB.print(millis()-timestamp_startframe);SerialUSB.println("ms");
             
-            //Printing results Matlab
-            printing_serial3_lpdata(i_part);
-
-            // Reset frame_found boolean
-            frame_found = false;
-
-            if (i_part == 1){
-              int time_computation = millis()-start_time;
-              max_time_computation_p1 = std::max(max_time_computation_p1,time_computation);
-            }
+            //processing
+            twitch_processing_frame_found(i_part, i_servo, dir_sign[i_dir], i_action, ampl_step_pos, n_frames_tmp, n_frames_part[i_part]);
+            
+            //waiting to send the next one
+            while( millis()-timestamp_startframe<TIME_INTERVAL_TWITCH);
           }
-          i_loop++;
+          //else it means that something got wrong in the daisychain
+          else {
+            SerialUSB.print("No complete frame was received within ");
+            SerialUSB.print(2*duration_daisychain);
+            SerialUSB.println(" ms, trying again.");
+          }
         }
         n_frames_tmp = 0;
       }
@@ -206,6 +165,43 @@ void twitch_main()
     }
 
   }
+}
+
+void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign, int i_action, uint16_t ampl_step_pos, int n_frames_tmp, int n_frames_this_part){
+  unsigned long start_time_computation;
+
+  if (i_part == 1){
+    start_time_computation = millis();
+    twitch_part1_moving(i_servo, dir_sign, ampl_step_pos, n_frames_tmp, n_frames_this_part);
+  }
+
+  // Parse data
+  wrapper_parser(flagVerbose);
+
+  // Start of HEX to DEC conversion
+  // First argument: flagVerbose, second argument: conversion mode
+  // Mode 1: loadcell mode, Mode 2: IMU mode
+  hex_to_float(flagVerbose, 1);
+  hex_to_float(flagVerbose, 2);
+
+  twitch_calculate_s_dot();
+
+  // Learning during part 1
+  if (i_part == 1)
+    twitch_part1_learning(n_frames_tmp, i_servo, i_action, dir_sign);
+  else
+  {
+    update_load_pos_values();
+  }
+
+  //Printing results Matlab
+  printing_serial3_lpdata(i_part);
+
+  if (i_part == 1){
+    int time_computation = millis()-start_time_computation;
+    max_time_computation_p1 = std::max(max_time_computation_p1,time_computation);
+  }
+
 }
 
 //for Matlab recordings
@@ -242,6 +238,10 @@ void twitch_part1_learning(int n_frames, int i_servo, int i_action, int dir_sign
   }
 
   float m_learning = dir_sign*m_dot_pos[i_servo];
+  //SerialUSB.println(i_servo);
+  //SerialUSB.println(dir_sign);
+  //SerialUSB.println(i_action);  
+  //SerialUSB.println(2*i_servo+1+dir_sign);
   twitch_learning_prog(i_action, m_learning);
 
 }
