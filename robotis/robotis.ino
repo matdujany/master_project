@@ -66,27 +66,27 @@ void setup() {
   // Adjust settings to match frame size to the number of load cell Arduino's
   reset_circular_frame_array();
 
+  //timing duration of daisychain;
+  //compute_duration_daisychain_ms();
+  duration_daisychain=5;
+  
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
   pose_stance();
 
   //debugging_send_frame_byte();
 
-  //twitch_record_wrapper();
+  twitch_record_wrapper();
 }
 
 
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() { 
-
-
-
-
-
-  show_value_LC(0);
-  SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
-  SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);
+  //time_daisychain_run_init();
+  //show_value_LC(0);
+  //SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
+  //SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);
   //show_value_LC(5000);
   /*
   SerialUSB.println("servos set to stiff");
