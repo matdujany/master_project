@@ -1,11 +1,11 @@
 clear; 
 close all; clc;
 
-addpath('../data');
+addpath('../2_get_data_code');
 
 %% Load data
-recordID = 73;
-load(strcat(get_record_name(recordID),'_p'));
+recordID = 84;
+[data, lpdata, parms] =  load_data(recordID,1);
 add_parms;
 
 %%
