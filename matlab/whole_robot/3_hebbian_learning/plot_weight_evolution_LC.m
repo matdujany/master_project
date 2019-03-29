@@ -22,13 +22,14 @@ for index_lc=1:parms.n_lc
             for k=1:parms.n_twitches
                 data_for_plot(k) = weights{k}(i+(index_lc-1)*parms.n_ch_lc,j);
             end
-            plot(data_for_plot,'LineStyle',linestyle,'Color',colorlist(ceil(j/2),:),'LineWidth',linewidth);
+            x_data = 0:parms.n_twitches;
+            plot(x_data,[0;data_for_plot],'LineStyle',linestyle,'Color',colorlist(ceil(j/2),:),'LineWidth',linewidth);
         end
         hold off
         title(['Loadcell ' num2str(index_lc) ', channel ' num2str(i)],'FontSize',fontsize);
         xlabel('Twitch iteration number','FontSize',fontsize);
-        xticks([1:parms.n_twitches]);
-        xlim([0.5 parms.n_twitches+0.5]);
+        xticks(x_data);
+        xlim([0 parms.n_twitches+0.5]);
     end
     subplot(2,2,4)
     %just a workaround/hack to plot the legend in a separate subplot

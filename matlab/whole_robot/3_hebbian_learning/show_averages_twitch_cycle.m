@@ -1,11 +1,11 @@
 clear; 
 close all; clc;
 
-addpath('../data');
+addpath('../2_get_data_code');
 
 %% Load data
-recordID = 74;
-load(strcat(get_record_name(recordID),'_p'));
+recordID = 1;
+[data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 
 %%
@@ -34,7 +34,7 @@ if simulate == 1
 else
     weights = read_weights_robotis(recordID,parms);
 end
-[closest_sensors,likelihoods] = find_closest_LC(weights,n_iter,splitDirections,channelsSelected,renorm,refine,parms);
+[closest_sensors] = find_closest_LC(weights,n_iter,splitDirections,channelsSelected,parms);
 
 
 

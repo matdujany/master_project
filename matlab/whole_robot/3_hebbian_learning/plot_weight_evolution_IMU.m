@@ -23,13 +23,14 @@ for i=1:parms.n_useful_ch_IMU
         for k=1:parms.n_twitches
             data_for_plot(k) = weights{k}(end-i+1,j);
         end
-        plot(data_for_plot,'LineStyle',linestyle,'Color',colorlist(ceil(j/2),:),'LineWidth',linewidth);
+        x_data = 0:parms.n_twitches;
+        plot(x_data,[0;data_for_plot],'LineStyle',linestyle,'Color',colorlist(ceil(j/2),:),'LineWidth',linewidth);
     end
     hold off
     title(['IMU channel ' num2str(i)],'FontSize',fontsize);
     xlabel('Twitch iteration number','FontSize',fontsize);
-    xticks([1:parms.n_twitches]);
-    xlim([0.5 parms.n_twitches+0.5]);
+    xticks(x_data);
+    xlim([0 parms.n_twitches+0.5]);
     legend(legend_list{:});
     l=legend(legend_list{:});   
     l.FontSize = fontsize;

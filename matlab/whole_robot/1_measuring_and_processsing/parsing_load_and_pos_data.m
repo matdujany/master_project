@@ -50,6 +50,8 @@ for k=1:parms.n_m
     plot(motor_position(k,:),'Color',colorlist(k,:));
     legend_list{k}= ['Motor ' num2str(k)];
 end
+ylim([-50 50]+512);
+ylabel('Position, the limits are the soft compliance margin borders');
 legend(legend_list);
 subplot(2,1,2);
 hold on;

@@ -1,11 +1,11 @@
 clear; 
 close all; clc;
 
-addpath('../data');
+addpath('../2_get_data_code');
 
 %% Load data
-recordID = 73;
-load(strcat(get_record_name(recordID),'_p'));
+recordID = 1;
+[data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 
 %%
@@ -110,8 +110,8 @@ end
 weights_robotis=read_weights_robotis(recordID,parms);
 hinton_LC(weights_robotis{parms.n_twitches},parms);
 
-weights_filtered = compute_filtered_weights_wrapper(data,lpdata,parms);
+weights_filtered = compute_weights_wrapper(data,lpdata,parms,1,0,0,0);
 hinton_LC(weights_filtered{parms.n_twitches},parms);
 
-weights_sim = compute_weights_wrapper(data,lpdata,parms);
-max_dif_norm = check_weights_diff(weights_sim,weights_robotis,5)
+weights_check = compute_weights_wrapper(data,lpdata,parms,0,0,0,0);
+max_dif_norm = check_weights_diff(weights_check,weights_robotis,5)

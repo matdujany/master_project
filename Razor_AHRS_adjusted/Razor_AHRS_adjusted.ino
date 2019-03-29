@@ -465,7 +465,7 @@ else{
         {
           if (byte_no==(IMU_DATA_LENGTH-1))
             {
-              imu_data[byte_no]=timestamp;
+              imu_data[byte_no]=timestamp_frame;
               //send_data_flag = 0;
             }
             outByte = imu_data[byte_no];

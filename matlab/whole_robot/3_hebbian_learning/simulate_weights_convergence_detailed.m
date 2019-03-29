@@ -1,11 +1,11 @@
 clear; 
 close all; clc;
 
-addpath('../data');
 
 %% Load data
-recordID = 73;
-load(strcat(get_record_name(recordID),'_p'));
+addpath('../2_get_data_code');
+recordID = 1;
+[data, lpdata, parms] =  load_data_processed(recordID);
 
 % Add parameters to struct 'parms'
 add_parms;
@@ -43,8 +43,11 @@ plot(weights_detailed_filtered(:,idx_weight_sensor,idx_weight_motor),'k--');
 for k=1:parms.n_twitches
     scatter(k*n_frames_part1,weights_robotis{k}(idx_weight_sensor,idx_weight_motor),'rx');
 end
+xlabel('Learning Sample number');
+ylabel('Weight Value');
 legend('Unfiltered','Filtered');
-
+title(['Motor ' num2str(idx_motor) ', direction ' num2str(2*idx_dir-3) ', loadcell ' num2str(idx_lc), ', channel ' num2str(idx_channel)]);
+%%
 plot_weight_evolution_LC_detailed(weights_detailed,parms,weights_robotis);
 plot_weight_evolution_LC_detailed(weights_detailed_filtered,parms,weights_robotis);
 
@@ -58,7 +61,9 @@ for k=1:parms.n_twitches
     legend_list{k} = ['Twitch ' num2str(k)];
 end
 legend(legend_list)
-
+xlabel('Learning Sample number');
+ylabel('Weight Value (restarting at 0 at each twitch cycle)');
+title(['Motor ' num2str(idx_motor) ', direction ' num2str(2*idx_dir-3) ', loadcell ' num2str(idx_lc), ', channel ' num2str(idx_channel)]);
 
 %%
 % figure;

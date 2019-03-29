@@ -1,4 +1,4 @@
-function [closest_sensor,likelihood] = find_closest_LC(weights,n_iter,splitDirections,channelsSelected,renorm,refine,parms)
+function [closest_sensor] = find_closest_LC(weights,n_iter,splitDirections,channelsSelected,parms)
 %FIND_CLOSEST_LC Summary of this function goes here
 %   Assumption : the closest loadcell is the one whose connection weights are the highest (in
 %   absolute value)
@@ -7,9 +7,6 @@ function [closest_sensor,likelihood] = find_closest_LC(weights,n_iter,splitDirec
 %allChannels : (false): only the Z channel (n°3) is used.
 
 weights_LC = weights{n_iter}(1:parms.n_lc*3,:);
-if renorm==1
-    weights_LC = weights_LC./sum(weights_LC,2);
-end
 
 if splitDirections==1
     %case 1 : the 2 dirs are split (each physical actuator is split in 2
@@ -20,55 +17,56 @@ else
     n_motors = parms.n_m;
 end
 
+lc_count = zeros(parms.n_lc,1);
 closest_sensor = zeros(n_motors,1);
-likelihood = zeros(n_motors,1);
-partial_sum = zeros(parms.n_lc,n_motors);
-for m = 1:n_motors
-    for i=1:parms.n_lc
-        ch_lc = (i-1)*parms.n_ch_lc + channelsSelected;
-        if splitDirections==1
-            partial_sum(i,m) = sum(abs(weights_LC(ch_lc,m)));
-        else
-            partial_sum(i,m) = sum(sum(abs(weights_LC(ch_lc,1+2*(m-1):2*m))));
+agree = zeros(n_motors,1);
+agree_before = -1;
+
+nb_motors_per_loadcell = 2;
+
+n_iter = 0;
+while sum(agree)<n_motors && sum(agree)>agree_before
+    agree_before = sum(agree);
+    idx_lc = find(lc_count<nb_motors_per_loadcell);
+    idx_motor = find(closest_sensor == 0);
+    
+    partial_sum = zeros(length(idx_lc),length(idx_motor));
+    %first, for each motor, we find the closest loadcell
+    closest_sensor_tmp = zeros(n_motors,1);
+    for m = 1:length(idx_motor)
+        for i=1:length(idx_lc)
+            ch_lc = (idx_lc(i)-1)*parms.n_ch_lc + channelsSelected;
+            if splitDirections==1
+                partial_sum(i,m) = sum(abs(weights_LC(ch_lc,idx_motor(m))));
+            else
+                partial_sum(i,m) = sum(sum(abs(weights_LC(ch_lc,1+2*(idx_motor(m)-1):2*idx_motor(m)))));
+            end
+            [values, idx ] = maxk(partial_sum(:,m),2);
+            closest_sensor_tmp(idx_motor(m),1) = idx_lc(idx(1));
         end
-        [values, idx ] = maxk(partial_sum(:,m),2);
-        closest_sensor(m) = idx(1);
-        likelihood(m) = values(1)/values(2);
     end
+    %second, for each loadcell, we find the closest motor
+    closest_motors = zeros(parms.n_lc,1);
+    for i=1:length(idx_lc)
+        [values, idx ] = maxk(partial_sum(i,:),3);
+        closest_motors(idx_lc(i),1) = idx_motor(idx(1));
+    end
+    
+    %last step, if there is an 'agreement' between loadcell and motor on
+    %the closest, we put them together.
+    for m = 1:n_motors
+        i_lc = closest_sensor_tmp(m);
+        if i_lc>0 && closest_motors(i_lc,1)==m
+            agree(m,1)=1;
+            lc_count(i_lc,1) = lc_count(i_lc,1) + 1;
+            closest_sensor(m,1) = i_lc;
+        end
+    end
+    n_iter=n_iter+1;
 end
 
-%%reaffining to balance the number of motors per loadcell.
-if refine == 1
-    nb_motors_loadcell = zeros(parms.n_lc,1);
-    for m = 1:n_motors
-        nb_motors_loadcell(closest_sensor(m))=nb_motors_loadcell(closest_sensor(m))+1;
-    end
-    count_trials = 0;
-    while sum(abs(nb_motors_loadcell-2*ones(parms.n_lc,1)))>0 && count_trials < 50
-        [~,idx_sensor_too_filled]=max(nb_motors_loadcell);
-        idx_motors = find(closest_sensor==idx_sensor_too_filled);
-        [~,pos_min] = min(likelihood(idx_motors));
-        idx_motor_to_move = idx_motors(pos_min);
-        [values, idx ] = maxk(partial_sum(:,idx_motor_to_move),parms.n_lc);
-        i=1;
-        while idx(i)==idx_sensor_too_filled
-            i=i+1;
-        end
-        %disp(['Motor ' num2str(idx_motor_to_move) ...
-        %    ' moved from sensor ' num2str(closest_sensor(idx_motor_to_move))...
-        %    ' to sensor ' num2str(idx(i))]);
-        closest_sensor(idx_motor_to_move) = idx(i);
-        if idx(i)==1
-            likelihood(idx_motor_to_move) = values(idx(i))/values(2);
-        else
-            likelihood(idx_motor_to_move) = values(idx(i))/values(1);
-        end
-        count_trials = count_trials + 1;
-        nb_motors_loadcell = zeros(parms.n_lc,1);
-        for m = 1:n_motors
-            nb_motors_loadcell(closest_sensor(m))=nb_motors_loadcell(closest_sensor(m))+1;
-        end
-    end
+if sum(agree) < n_motors
+    disp('Warning: some motors have no attributed loadcell');
 end
 end
 

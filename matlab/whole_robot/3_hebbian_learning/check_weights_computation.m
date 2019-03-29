@@ -7,8 +7,7 @@ addpath('../data');
 
 %% Load data
 
-record_list = [84:85];
-max_dif_norm_pos = zeros(1,length(record_list));
+record_list = [1];
 max_dif_norm = zeros(1,length(record_list));
 n_iter = 5;
 
@@ -17,7 +16,7 @@ flagFilter = 0;
 
 for idx=1:length(record_list)
     recordID = record_list(idx);
-    load(strcat(get_record_name(recordID),'_p'));
+    [data, lpdata, parms] =  load_data_processed(recordID);
     add_parms;
     weights_pos_sim = compute_weights_pos_wrapper(data,lpdata,parms,flagFilter,flagPlot);
     weights_pos_read = read_weights_pos_robotis(recordID,parms);

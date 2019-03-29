@@ -90,7 +90,7 @@ bool frame_found;                              // Boolean that indicates whether
 bool bool_end_byte_sent     = false;           // Boolean that indicates if the last byte of a frame has been sent
 int  n_frames               = 0;               // Number of collected frames
 int n_ard                   = MAX_NR_ARDUINO;  // Number of counted loadcell Arduino's; initial guess = maximum number of arduino's
-float duration_daisychain   = 0;               // duration in ms between the moment the first byte is sent by openCM and the last one comes back to openCM
+float duration_daisychain   = MAX_DELAY_FRAME;  // duration in ms between the moment the first byte is sent by openCM and the last one comes back to openCM
 
 
 //debugging
@@ -185,4 +185,5 @@ learning_struct learning;
 
 //Timing :
 int max_time_computation_p1=0; //in ms
+float mean_time_computation_part=0; //in ms
 

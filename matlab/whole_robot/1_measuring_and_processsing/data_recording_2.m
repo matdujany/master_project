@@ -56,9 +56,9 @@ data_rec = out{1};
 pos_load_data_rec = out{2};
 delete(poolobj);
 %%
-file_name_data = strcat("../data/",time_stamp);
+file_name_data = strcat("../../../../data/",time_stamp);
 fprintf("Writing data to file: %s.mat\n", file_name_data);
-save(file_name_data,'data_rec','pos_load_data_rec');
+save(file_name_data,'data_rec','pos_load_data_rec','parms');
 
 
 

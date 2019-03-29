@@ -1,11 +1,10 @@
 clear; 
 close all; clc;
 
-addpath('../data');
-
 %% Load data
+addpath('../2_get_data_code');
 recordID = 84;
-load(strcat(get_record_name(recordID),'_p'));
+[data, lpdata, parms] =  load_data_processed(recordID);
 flagPlot = 0;
 eta_sim = 10;
 

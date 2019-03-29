@@ -4,8 +4,8 @@ close all; clc;
 addpath('../data');
 
 %% Load data
-recordID = 75;
-load(strcat(get_record_name(recordID),'_p'));
+recordID = 1;
+[data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 
 %%

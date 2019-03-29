@@ -34,8 +34,7 @@ void twitch_record_wrapper(){
     //print_sdot_oja();
     print_weights();
     print_weights_pos();
-    SerialUSB.print("Max computation time p1 (in ms) : ");
-    SerialUSB.println(max_time_computation_p1);SerialUSB.println();
+    SerialUSB.print("Max computation time p1 (in ms) : ");SerialUSB.println(max_time_computation_p1);SerialUSB.println();
     SerialUSB.print("Checksum mismatch counter value : ");SerialUSB.println(count_checksum_mismatches);SerialUSB.println();
     SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
     SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);
@@ -72,6 +71,8 @@ void twitch_main()
   int dir_sign[] = {-1, 1};
   int i_action = 0;
 
+  float limit_duration = 1.5 * duration_daisychain;
+
   ///////////////////////////////////////////////////////////////////////////
   /// Learning Loop
   ///////////////////////////////////////////////////////////////////////////
@@ -100,9 +101,10 @@ void twitch_main()
       // Loop over parts of actual twitching process:  - part 0:  servo waits in initial position
       //                                               - part 1:  servo goes to step position.
       //                                               - part 2:  servo goes from step position to initial position
+      
       for (uint8_t i_part = 0; i_part < 3; i_part++)
       {
-
+        mean_time_computation_part = 0;
         // Select interval duration
         int interv_dur = interv_arr[i_part];
 
@@ -110,7 +112,6 @@ void twitch_main()
         twitch_pre_action(i_part, i_servo, dir_sign[i_dir], ampl_step_pos);
 
         // Keep looping until required number of frames is reached
-
         while (n_frames_tmp < n_frames_part[i_part])
         {
           timestamp_startframe = millis();
@@ -118,8 +119,7 @@ void twitch_main()
           while(!bool_end_byte_sent){
             send_and_get_wrapper();
           }
-          //TODO add code to measure daisychain duration. (10 is a magic number for the moment)
-          while( (!frame_found) & (millis()-timestamp_startframe<2*duration_daisychain) ){
+          while( (!frame_found) & (millis()-timestamp_startframe<limit_duration) ){
             if (Serial2.available())
               get_dc_byte_wrapper();
           }
@@ -133,18 +133,31 @@ void twitch_main()
             
             //processing
             twitch_processing_frame_found(i_part, i_servo, dir_sign[i_dir], i_action, ampl_step_pos, n_frames_tmp, n_frames_part[i_part]);
-            
+
+            //SerialUSB.print("Frame captured and processing done in ");SerialUSB.print(millis()-timestamp_startframe);
+            //SerialUSB.println(" ms, waiting until TIME_INTERVAL_TWITCH to send an other one");
             //waiting to send the next one
             while( millis()-timestamp_startframe<TIME_INTERVAL_TWITCH);
           }
           //else it means that something got wrong in the daisychain
+          //we print info and we try again
           else {
-            SerialUSB.print("No complete frame was received within ");
-            SerialUSB.print(2*duration_daisychain);
-            SerialUSB.println(" ms, trying again.");
+            SerialUSB.print("No complete frame received within ");
+            SerialUSB.print(limit_duration);
+            SerialUSB.print(" ms, trying again (trying to collect frame ");SerialUSB.print(n_frames_tmp+1);
+            SerialUSB.print("), servo ");SerialUSB.print(i_servo);
+            SerialUSB.print(", direction ");SerialUSB.print(2*i_dir-1);
+            SerialUSB.print(", part ");SerialUSB.println(i_part);
           }
         }
+
         n_frames_tmp = 0;
+
+        //SerialUSB.print("Mean computation time servo ");SerialUSB.print(i_servo);
+        //SerialUSB.print(" part ");SerialUSB.print(i_part);
+        //SerialUSB.print(" (in ms) : ");
+        //SerialUSB.println(mean_time_computation_part);
+
       }
 
       // Counting number of actions (total = number of servo's * 2 directions)
@@ -169,9 +182,8 @@ void twitch_main()
 
 void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign, int i_action, uint16_t ampl_step_pos, int n_frames_tmp, int n_frames_this_part){
   unsigned long start_time_computation;
-
+  start_time_computation = millis();
   if (i_part == 1){
-    start_time_computation = millis();
     twitch_part1_moving(i_servo, dir_sign, ampl_step_pos, n_frames_tmp, n_frames_this_part);
   }
 
@@ -196,9 +208,9 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
 
   //Printing results Matlab
   printing_serial3_lpdata(i_part);
-
+  int time_computation = millis()-start_time_computation;
+  mean_time_computation_part += (time_computation)/(float)n_frames_this_part;
   if (i_part == 1){
-    int time_computation = millis()-start_time_computation;
     max_time_computation_p1 = std::max(max_time_computation_p1,time_computation);
   }
 

@@ -43,7 +43,7 @@ lpdata.m_dot_learningfiltered = m_dot_learning_filtered;
 for index_lc = 1:parms.nr_arduino
     for index_channel = 1:3
         [data.float_value_time_avg{1,index_lc}(:,index_channel), data.float_value_time_std{1,index_lc}(:,index_channel)]= compute_avg_cycle(data.float_value_time{1,index_lc}(:,index_channel),period);
-        signal_dot = [data.float_value_dot_time{1,index_lc}(:,index_channel); data.float_value_dot_time{1,index_lc}(end,index_channel)];
+        signal_dot = data.float_value_dot_time{1,index_lc}(:,index_channel);
         [data.float_value_dot_time_avg{1,index_lc}(:,index_channel), data.float_value_dot_time_std{1,index_lc}(:,index_channel)] = compute_avg_cycle(signal_dot,period);    
     end
 end

@@ -101,8 +101,8 @@ void reset_circular_frame_array()
   frame_buf.frame_size = 5 + n_ard * SENSOR_DATA_LENGTH + IMU_DATA_LENGTH + 2;
 
   //3. adapt content of the buffer;
-  frame_buf.buffer[frame_buf.frame_size-1] = END_FRAME;
   frame_buf.buffer[MAX_FRAME_SIZE-1] = 0; //contained end frame before
+  frame_buf.buffer[frame_buf.frame_size-1] = END_FRAME;
 
   // Put the setup in the initial state for a fresh start /////////////////////
   // Reset frame found boolean
@@ -963,7 +963,18 @@ void print_loadcell_values(){
       SerialUSB.print(ser_rx_buf.last_loadcell_data_float[j+3*i_ard]);
       SerialUSB.print("\t");
     }
-    SerialUSB.println();
+    SerialUSB.print(", timestamp ");
+    SerialUSB.println(ser_rx_buf.timestamp_loadcell[i_ard],DEC);
   }
+  SerialUSB.println();
+}
+void print_IMU_values(){
+  SerialUSB.print("IMU channel values ");
+  for (int j =0; j<6; j++){
+    SerialUSB.print(ser_rx_buf.last_IMU_data_float[j]);
+    SerialUSB.print("\t");
+  }
+  SerialUSB.print(", timestamp ");
+  SerialUSB.println(ser_rx_buf.timestamp_IMU,DEC);
   SerialUSB.println();
 }

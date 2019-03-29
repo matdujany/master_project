@@ -64,7 +64,7 @@ for m=1:n_motors*2
     x_max_text = max(xvals(1+n_sensors*(m-1):n_sensors*m,2));
     x_center_M_text(m,1)= (x_max_text+x_min_text)/2;
 end
-y_M_text = y_max+0.5;
+y_M_text = y_max+0.75;
 
 h = figure('Name', 'Hinton diagram', ...
   'NumberTitle', 'off', ...

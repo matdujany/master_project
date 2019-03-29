@@ -39,7 +39,7 @@
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
 // LEARNING
-#define TIME_INTERVAL_TWITCH        25     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
+#define TIME_INTERVAL_TWITCH        20     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
 
 #define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
 #define LEARNING_RATE               1      // Learning rate for the update rule
@@ -51,7 +51,7 @@
 #define COMPLIANT_MODE              1   // (0) : all servos remain at default parameters 
                                         // (1) : the non moving servos are compliant, the moving one is stiff
                                         // (2) : all servos are stiff
-#define RECENTERING_TWITCH          0   // (1) : servos are recentered at 512 after each twitching in the 2 directions.
+#define RECENTERING_TWITCH          1   // (1) : servos are recentered at 512 after each twitching in the 2 directions.
 #define RECENTERING_DELAY           500 
 
 #define FILTER_SIZE                2 //number of values stored used for filtering during the learning.

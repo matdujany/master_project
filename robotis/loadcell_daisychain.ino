@@ -5,20 +5,27 @@
 ///////////////////////////////////////////
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
+void show_value_DC(unsigned long delay_updates){
+  send_frame_and_update_sensors();
+  print_loadcell_values();
+  print_IMU_values();
+  delay(delay_updates);
+}
+
 
 //update the values of the LC and prints their latest values.
 void show_value_LC(unsigned long delay_updates){
-  send_frame_and_update_loadcells();
+  send_frame_and_update_sensors();
   print_loadcell_values();
   delay(delay_updates);
 }
 
-void send_frame_and_update_loadcells(){
+void send_frame_and_update_sensors(){
   frame_found = false; //set to false because we want to update it
   while (!frame_found){
     try_capture_1_frame();
   }
-  SerialUSB.println("new frame success, updating loadcell values");
+  SerialUSB.println("new frame success, updating sensor values");
   wrapper_parser(flagVerbose);
   // Start of HEX to DEC conversion
   // Mode 1: loadcell mode, Mode 2: IMU mode
@@ -36,7 +43,7 @@ void measure_mean_values_LC(uint8_t nb_values_mean, unsigned long delay_frames){
   }
   //measuring a mean value
   while (nb_captured_values<nb_values_mean){
-    send_frame_and_update_loadcells();
+    send_frame_and_update_sensors();
     for (int i=0; i<3*n_ard; i++){
       mean_values_LC[i] += ser_rx_buf.last_loadcell_data_float[i]/(float)nb_values_mean;
     }
@@ -60,7 +67,19 @@ void compute_duration_daisychain_ms(){
   int nb_values_mean = 100;
   duration_daisychain = 0;
   for (int i=0; i<nb_values_mean; i++ ){
-    unsigned long duration_trial = try_capture_1_frame();
+    reinitalize_dc_state();
+    unsigned long time_start_trial = millis();
+    while(!bool_end_byte_sent){
+      send_and_get_wrapper();
+    }
+    while( (!frame_found) & (millis()-time_start_trial<MAX_DELAY_FRAME) ){
+      if (Serial2.available())
+        get_dc_byte_wrapper();
+    }
+    unsigned long duration_trial=  millis()-time_start_trial;
+    if (duration_trial>=MAX_DELAY_FRAME){
+      SerialUSB.println("Frame fail, the average will be higher");
+    }
     duration_daisychain += float(duration_trial)/float(nb_values_mean);
     delay(50);   
   }
@@ -90,13 +109,15 @@ void time_daisychain_run_init(){
   delay(100);
 }
 
+
+
 unsigned long try_capture_1_frame(){
   reinitalize_dc_state();
   unsigned long time_start_trial = millis();
   while(!bool_end_byte_sent){
     send_and_get_wrapper();
   }
-  while( (!frame_found) & (millis()-time_start_trial<MAX_DELAY_FRAME) ){
+  while( (!frame_found) & (millis()-time_start_trial<2*duration_daisychain) ){
     if (Serial2.available())
       get_dc_byte_wrapper();
   }
@@ -106,7 +127,7 @@ unsigned long try_capture_1_frame(){
 
 void send_and_get_wrapper()
 {
-  send_frame_byte(flagVerbose); //flagVerbose
+  send_frame_byte(0); //flagVerbose
   if (Serial2.available())
     get_dc_byte_wrapper();
 }
@@ -124,11 +145,14 @@ void send_frame_byte(int flagVerbose)
   // Write 1 frame byte to the Serial2 tx bus
 
   byte sendOut;
-    
   sendOut = frame_buf.buffer[frame_buf.head];
-  if (flagVerbose){
+  
+  if (flagVerbose)
+  {
     SerialUSB.print("Frame buffer head index: ");
-    SerialUSB.println(frame_buf.head);
+    SerialUSB.print(frame_buf.head);
+    SerialUSB.print(", send out: ");
+    SerialUSB.println(sendOut);
   }
 
   // If the last byte of the frame is being send: switch bool_end_byte_sent to true
@@ -141,11 +165,6 @@ void send_frame_byte(int flagVerbose)
   // Update the head of the circular frame array
   frame_buf.head = ((frame_buf.head + 1) % frame_buf.frame_size);
 
-  if (flagVerbose)
-  {
-    SerialUSB.print("Send out: \t");
-    SerialUSB.println(sendOut);
-  }
 
   Serial2.write(sendOut);
 }

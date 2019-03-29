@@ -2,10 +2,11 @@ clear;
 close all; clc;
 
 addpath('learning_functions');
-addpath('../data');
+addpath('../2_get_data_code');
 
-recordID = 58;
-load(strcat(get_record_name(recordID),'_p'));
+recordID = 1;
+[data, lpdata, parms] =  load_data_processed(recordID);
+
 
 i_lc = 3;
 figure;
@@ -24,7 +25,7 @@ figure;
 for channel=1:3
     subplot(2,2,channel);
     hold on;
-    plot(lpdata.last_motor_pos);
+    %plot(lpdata.last_motor_pos);
     ylim([470 550]);
     yyaxis right;
     plot(data.float_value_time{1,i_lc}(:,channel));

@@ -68,34 +68,20 @@ void setup() {
 
   //timing duration of daisychain;
   //compute_duration_daisychain_ms();
-  duration_daisychain=5;
+  duration_daisychain=6;
   
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
   pose_stance();
 
-  //debugging_send_frame_byte();
-
-  twitch_record_wrapper();
+  //twitch_record_wrapper();
 }
 
 
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() { 
-  //time_daisychain_run_init();
-  //show_value_LC(0);
-  //SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
-  //SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);
-  //show_value_LC(5000);
-  /*
-  SerialUSB.println("servos set to stiff");
-  make_all_servos_stiff_syncWrite();
-  pose_stance();
-  delay(10000);
-  SerialUSB.println("servos set to compliant");
-  make_all_servos_compliant_syncWrite();
-  delay(10000);
-  */
+  show_value_DC(16);
+
 
 }

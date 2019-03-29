@@ -1,11 +1,14 @@
+%this is to study the variability of the motor movement from one twitching
+%to an other
+
 clear; 
 close all; clc;
 
-addpath('../data');
+addpath('../2_get_data_code');
 
 %% Load data
-recordID = 74;
-load(strcat(get_record_name(recordID),'_p'));
+recordID = 1;
+[data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 
 %%
@@ -31,3 +34,6 @@ hold on;
 for k=1:parms.n_twitches
     plot(lpdata.motor_position(index_motor_plot,idx_start(k,1):idx_end(k,1)));
 end
+ylabel('Motor Position');
+xlabel('Frame Index');
+title(['Motor ' num2str(index_motor_plot)]);

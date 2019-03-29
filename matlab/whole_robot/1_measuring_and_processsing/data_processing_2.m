@@ -21,7 +21,7 @@ addpath('functions')
 
 clear; clc; close all;
 
-recordID = 84;
+recordID = 4;
 
 % Check if there is already an instance of a communication interface and
 % clears it
@@ -30,27 +30,14 @@ if ~isempty(instrfind)
     delete(instrfind);
 end
 
-% Turn off some annoying warnings
-warning('off');
-
-% Run parameter file
-set_parms
-parms.selected_file  = get_record_name(recordID);
-
-% % % DATA STRUCT % % %
-% Initialize data struct
-data                = struct();
-data.frame          = {};
-data.raw            = [];
-data.count_frames   = 0;
-
-%% Main
-addpath('../get_data_code');
+%% loading
+addpath('../2_load_data_code');
 fprintf("data_processing\n");
+filename = get_record_name(recordID);
+[data_rec, pos_load_data_rec, parms] = load_data_raw(recordID);
+fprintf('Data loaded of file: %s\n', filename)
 
-load(strcat('../data/',parms.selected_file));
-fprintf('Data loaded of file: %s\n', parms.selected_file)
-
+%% Main 
 n_moves = parms.n_twitches * parms.n_m * parms.n_dir;
 n_frames_p0 = floor(parms.duration_part0/parms.time_interval_twitch);
 n_frames_p1 = floor(parms.duration_part1/parms.time_interval_twitch);
@@ -58,6 +45,12 @@ n_frames_p2 = floor(parms.duration_part2/parms.time_interval_twitch);
 n_frames_approx = n_moves*(n_frames_p0+n_frames_p1+n_frames_p2);
 disp(['theoretical number of frames (given parms file) : ' num2str(n_frames_approx)]);
 
+% % % DATA STRUCT % % %
+% Initialize data struct
+data                = struct();
+data.frame          = {};
+data.raw            = [];
+data.count_frames   = 0;
 % Process recorded data
 data.raw                 = dec2hex(data_rec);
 
@@ -103,11 +96,9 @@ end
 
 lpdata = parsing_load_and_pos_data(pos_load_data_rec,parms);
 
-if parms.processed_data_save
-    file_name_processed_data=strcat("../data/",parms.selected_file,'_p');
-    fprintf("Writing processed data to file: %s.mat\n", file_name_processed_data);
-    save(file_name_processed_data,'data','lpdata','parms');
-end
+file_name_processed_data=strcat("../../../../data/",filename,'_p');
+fprintf("Writing processed data to file: %s.mat\n", file_name_processed_data);
+save(file_name_processed_data,'data','lpdata','parms');
 
 %% Functions 
 
