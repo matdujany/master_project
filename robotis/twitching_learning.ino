@@ -7,6 +7,7 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
 void twitch_record_wrapper(){
+  SerialUSB.print("Time interval twitch : "); SerialUSB.println(TIME_INTERVAL_TWITCH);
   SerialUSB.print("Step Amplitude : "); SerialUSB.println(STEP_AMPL);
   SerialUSB.print("Learning rate : "); SerialUSB.println(LEARNING_RATE);
   SerialUSB.print("Duration part 0 : "); SerialUSB.println(DURATION_PART0);
@@ -70,7 +71,8 @@ void twitch_main()
 
   int dir_sign[] = {-1, 1};
   int i_action = 0;
-
+  int count_missed_frames_row = 0; //counter of the number of missed frames in a row.
+  //if this counter gets too high, a long delay is added and the daisychain is reinitialized
   float limit_duration = 1.5 * duration_daisychain;
 
   ///////////////////////////////////////////////////////////////////////////
@@ -127,6 +129,7 @@ void twitch_main()
           //if a frame is found, we process it and wait to send the next one
           if (frame_found)
           {
+            count_missed_frames_row = 0;
             // Increase number of collected frames
             n_frames_tmp++;
             //SerialUSB.print("frame found in "); SerialUSB.print(millis()-timestamp_startframe);SerialUSB.println("ms");
@@ -148,6 +151,16 @@ void twitch_main()
             SerialUSB.print("), servo ");SerialUSB.print(i_servo);
             SerialUSB.print(", direction ");SerialUSB.print(2*i_dir-1);
             SerialUSB.print(", part ");SerialUSB.println(i_part);
+            delay(10);
+            count_missed_frames_row ++;
+            if (count_missed_frames_row>=10){
+              delay(1000);
+              Serial2.flush();
+              reinitalize_dc_state();
+              while(Serial2.available()){
+                Serial2.read();
+              }
+            }
           }
         }
 
@@ -206,8 +219,9 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
     update_load_pos_values();
   }
 
-  //Printing results Matlab
+  //sending measures to Matlab
   printing_serial3_lpdata(i_part);
+  
   int time_computation = millis()-start_time_computation;
   mean_time_computation_part += (time_computation)/(float)n_frames_this_part;
   if (i_part == 1){

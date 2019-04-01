@@ -10,7 +10,7 @@ addpath('clustering_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 4;
+recordID = 6;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 weights_robotis  = read_weights_robotis(recordID,parms);
@@ -51,15 +51,7 @@ for j=1:size(weights_fused,1)/3
     weights_fused_sumc(j,:)=abs(weights_fused(1+3*(j-1),:)) + abs(weights_fused(2+3*(j-1),:)) + abs(weights_fused(3*j,:));
 end
 
-hinton(weights_fused_sumc,'Loadcells');
-
-weights_fused_sumc_norm = weights_fused_sumc./max(weights_fused_sumc,[],2);
-weights_fused_sumc_norm2 = weights_fused_sumc./max(weights_fused_sumc,[],1);
-
-hinton(weights_fused_sumc_norm,'Loadcells normalized');
-%%
-hierarchical_clustering(weights_fused_sumc_norm2','weights from LC');
-
+hinton(weights_fused_sumc,parms);
 
 %%
 %we renorm because we want to use both weights and weights_pos in the same
@@ -73,33 +65,30 @@ for i=1:parms.n_m
     weights_both_std(size(weights_fused,1)+i,:)=standardize(weights_pos_fused(i,:));
 end
 
-%%
-
-
 %% clustering the motors with hierarchical clustering
 
 hierarchical_clustering(weights_fused','weights from LC');
 hierarchical_clustering(weights_pos_fused','weights from motor sensors');
 hierarchical_clustering(weights_both_std','weights from LC and motor sensors, (standardized)');
 
-% %% k means
-% data_kmeans = weights_fused';
-% idx_2clusters = kmeans(data_kmeans,2);
-% idx_4clusters = kmeans(data_kmeans,4);
+%% k means
+data_kmeans = weights_fused';
+idx_2clusters = kmeans(data_kmeans,2);
+idx_4clusters = kmeans(data_kmeans,4);
 
 
 %% PCA for 3d reduction
 %parms.n_lc*3 variables, parms.n_m observations;
 
-% %maybe the data should be centered 
-% my_pca(weights_fused','weights from LC');
-% my_pca(weights_pos_fused','weights from motor sensors');
-% my_pca(weights_both_std','weights from LC and motor sensors, (standardized)');
-% 
-% %% tSNE 
-% my_tsne(weights_fused','weights from LC');
-% my_tsne(weights_pos_fused','weights from motor sensors');
-% my_tsne(weights_both_std','weights from LC and motor sensors, (standardized)');
+%maybe the data should be centered 
+my_pca(weights_fused','weights from LC');
+my_pca(weights_pos_fused','weights from motor sensors');
+my_pca(weights_both_std','weights from LC and motor sensors, (standardized)');
+
+%% tSNE 
+my_tsne(weights_fused','weights from LC');
+my_tsne(weights_pos_fused','weights from motor sensors');
+my_tsne(weights_both_std','weights from LC and motor sensors, (standardized)');
 
 %%
 function  vector_standardized = standardize(vector)

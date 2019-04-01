@@ -21,7 +21,7 @@ addpath('functions')
 
 clear; clc; close all;
 
-recordID = 4;
+recordID = 6;
 
 % Check if there is already an instance of a communication interface and
 % clears it
@@ -35,6 +35,7 @@ addpath('../2_load_data_code');
 fprintf("data_processing\n");
 filename = get_record_name(recordID);
 [data_rec, pos_load_data_rec, parms] = load_data_raw(recordID);
+parms.time_interval_twitch = 25;
 fprintf('Data loaded of file: %s\n', filename)
 
 %% Main 
@@ -42,8 +43,8 @@ n_moves = parms.n_twitches * parms.n_m * parms.n_dir;
 n_frames_p0 = floor(parms.duration_part0/parms.time_interval_twitch);
 n_frames_p1 = floor(parms.duration_part1/parms.time_interval_twitch);
 n_frames_p2 = floor(parms.duration_part2/parms.time_interval_twitch);
-n_frames_approx = n_moves*(n_frames_p0+n_frames_p1+n_frames_p2);
-disp(['theoretical number of frames (given parms file) : ' num2str(n_frames_approx)]);
+n_frames_theo = n_moves*(n_frames_p0+n_frames_p1+n_frames_p2);
+disp(['theoretical number of frames (given parms file) : ' num2str(n_frames_theo)]);
 
 % % % DATA STRUCT % % %
 % Initialize data struct
@@ -62,6 +63,19 @@ if sum(size(data.frame)) == 0
    return
 end
 
+if data.count_frames > n_frames_theo
+    disp('The number of frames found is > to the theoretical number of frames');
+    disp('This could be due to the frames used to count arduinos (in particular if n_arduinos = MAX_NR_ARDUINO)');
+    n_frames_delete = data.count_frames - n_frames_theo;
+    prompt = ['Do you want to remove the ' num2str(n_frames_delete) ' first lines (y/n)? '];
+    answer = input(prompt,'s');
+    if answer == 'y'
+        disp(['Deleting ' num2str(n_frames_delete) ' first lines']);
+        data.count_frames = data.count_frames - n_frames_delete;
+        data.frame = data.frame(1+n_frames_delete:end);
+    end
+end
+        
 % Parsing frames
 frameparser_wrapper     = @(frame_array) parse_frame_wrapper(frame_array, parms) ;
 data.parsed_frame       = cellfun(frameparser_wrapper, data.frame, 'UniformOutput', false) ;

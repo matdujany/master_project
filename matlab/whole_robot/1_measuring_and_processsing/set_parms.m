@@ -17,8 +17,7 @@ parms.n_dir       = 2;
 parms.print_figures  = 0;
 
 % learning parameters
-parms.time_interval_twitch = 20; % in ms
-
+parms.time_interval_twitch = 25; % in ms
 parms.step_ampl      = 10;       %in deg
 parms.eta            = 1;        %learning rate
 parms.duration_part0 = 500; % in ms
@@ -27,6 +26,7 @@ parms.duration_part2 = 500; % in ms
 parms.n_twitches     = 5;
 parms.compliant_mode = 1;
 parms.recentering    = 1;
+parms.recentering_delay    = 500; % in ms
 
 % % % % % % % % % % % % % % % 
 

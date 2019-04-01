@@ -4,7 +4,7 @@ close all; clc;
 addpath('../2_get_data_code');
 
 %% Load data
-recordID = 1;
+recordID = 4;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 
@@ -12,8 +12,8 @@ add_parms;
 good_closest_LC = [3;3;4;4;1;1;2;2];%just to pick motor and loadcells which are related.
 
 n_iter = 1;
-index_motor_plot = 1;
-i_dir = 1;
+index_motor_plot = 2;
+i_dir = 2;
 index_loadcell_plot = good_closest_LC(index_motor_plot);
 index_loadcell_plot = 2;
 index_channel_plot = 3;
@@ -31,7 +31,7 @@ index_start = nb_theo_frames_per_twitch*(n_iter-1) + ...
     (n_frames_part0+n_frames_part1+n_frames_part2)*(i_dir-1) + n_frames_part0 + 1;
 
 index_end = index_start+n_frames_part1-1;
-index_end = index_start+n_frames_part1;
+%index_end = index_start+n_frames_part1;
 
 data = compute_filtered_signal_data(data,parms);
 lpdata = compute_filtered_signal_lpdata(lpdata,parms);

@@ -3,11 +3,11 @@ clear;
 close all; clc;
 
 addpath('learning_functions');
-addpath('../data');
+addpath('../2_load_data_code');
 
 %% Load data
 
-record_list = [1];
+record_list = [5 6];
 max_dif_norm = zeros(1,length(record_list));
 n_iter = 5;
 

@@ -319,7 +319,7 @@ uint32_t timestamp_frame=0;
 void check_and_update_IMU(){
   
   read_sensors();
-  
+  compensate_sensor_errors(); //to use calibration
   memcpy(&imu_data[0],&accel,sizeof(accel));
   memcpy(&imu_data[12],&gyro,sizeof(gyro));
   }

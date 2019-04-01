@@ -5,27 +5,36 @@ close all; clc;
 addpath('learning_functions');
 addpath('../2_load_data_code');
 
-good_closest_LC = [3;3;4;4;1;1;2;2];
-
+n_legs = 6;
 splitDirections = 0;
-renorm = 0;
-refine = 0;
 n_iter = 5;
 eta_sim = 10;
 
-record_list = [4];
+switch n_legs
+    case 4
+        good_closest_LC = [3;3;4;4;1;1;2;2];
+        n_motors = 8;
+    case 6
+        good_closest_LC = [3;3;4;4;5;5;6;6;1;1;2;2];
+        n_motors = 12;
+    otherwise
+        disp('unknown number of legs');
+end
+
+record_list = [6];
 channelsSelected =[1 2 3]; %1 for X, 1 2 for X Y, 2 3 for Y Z etc ...
 
-closest_sensors_sim = zeros(length(record_list),8);
-%likelihoods_sim = zeros(length(record_list),8);
-closest_sensors_read = zeros(length(record_list),8);
-%likelihoods_read = zeros(length(record_list),8);
+
+closest_sensors_sim = zeros(length(record_list),n_motors);
+%likelihoods_sim = zeros(length(record_list),n_motors);
+closest_sensors_read = zeros(length(record_list),n_motors);
+%likelihoods_read = zeros(length(record_list),n_motors);
 max_dif_norm = zeros(1,length(record_list));
 score_read =  zeros(1,length(record_list));
 score_sim =  zeros(1,length(record_list));
 
 for i=1:length(record_list)
-    recordID = record_list(i)
+    recordID = record_list(i);
     [data, lpdata, parms] =  load_data_processed(recordID);
     add_parms;
     weights_read = read_weights_robotis(recordID,parms);

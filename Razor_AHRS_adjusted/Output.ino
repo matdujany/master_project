@@ -129,4 +129,3 @@ void output_sensors()
     }
   }
 }
-

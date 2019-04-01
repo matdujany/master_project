@@ -1,33 +1,43 @@
-%% ROBOTIS - MATLAB ANALYSIS
-% 
-%  DESCRIPTION: 
-%  This part selects the samples that are used to feed the Oja's learning 
-%  rule and subsequently applies this rule to comupute weights
 
-% TODO :  the findpeak could be done for each sensor
 clear; 
 close all; clc;
 
 addpath('learning_functions');
-addpath('../data');
+addpath('../2_load_data_code');
 
 %% Load data
 
-record_list = [84:85];
+n_legs = 6;
+splitDirections = 0;
+n_iter = 5;
+eta_sim = 10;
+flagPlot = 0;
+
+switch n_legs
+    case 4
+        n_motors = 8;
+    case 6
+        n_motors = 12;
+    otherwise
+        disp('unknown number of legs');
+end
+
+record_list = [5];
+channelsSelected =[1 2 3]; %1 for X, 1 2 for X Y, 2 3 for Y Z etc ...
+
 good_pair = [1 3; 5 7; zeros(6,2)];
 min_likelihoods = zeros(length(record_list),1);
 good_pair_found = zeros(length(record_list),1);
 min_likelihoods_sim = zeros(length(record_list),1);
 good_pair_found_sim = zeros(length(record_list),1);
 max_dif_norm = zeros(1,length(record_list));
-n_iter = 5;
 
-eta = 10;
 
-flagPlot = 0;
 for idx=1:length(record_list)
-    recordID = record_list(idx);
-    load(strcat(get_record_name(recordID),'_p'));
+    recordID = record_list(i);
+    [data, lpdata, parms] =  load_data_processed(recordID);
+    add_parms;
+    
     weights_pos_sim = compute_weights_pos_wrapper(data,lpdata,parms,flagPlot);
     weights_pos_filtered = compute_filtered_weights_pos_wrapper(data,lpdata,parms,flagPlot);
     weights_pos_read = read_weights_pos_robotis(recordID,parms);

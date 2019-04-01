@@ -68,20 +68,21 @@ void setup() {
 
   //timing duration of daisychain;
   //compute_duration_daisychain_ms();
-  duration_daisychain=6;
+  duration_daisychain=5;
   
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
   pose_stance();
+  delay(1000);
 
-  //twitch_record_wrapper();
+  twitch_record_wrapper();
 }
 
 
 
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() { 
-  show_value_DC(16);
-
+  //show_value_DC(15);
+  //measure_mean_values_LC(20, 50);
 
 }

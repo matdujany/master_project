@@ -3,7 +3,7 @@ close all; clc;
 
 %% Load data
 addpath('../2_get_data_code');
-recordID = 84;
+recordID = 1;
 [data, lpdata, parms] =  load_data_processed(recordID);
 flagPlot = 0;
 eta_sim = 10;

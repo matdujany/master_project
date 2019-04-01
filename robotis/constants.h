@@ -83,8 +83,8 @@
 #define MAX_FRAME_SIZE           (7 + (MAX_NR_ARDUINO*SENSOR_DATA_LENGTH) + IMU_DATA_LENGTH)    // Maximum frame size
 
 // IMU properties
-#define IMU_DATA_ADC_LENGTH          4                                                          // the IMU return a 4-byte float --> IS THIS TRUE?!
-#define IMU_DATA_LENGTH              (6*IMU_DATA_ADC_LENGTH+1)                                  // 25 bytes: (3 linear values + 3 rotational values) * 4 bytes + 1 timestamp byte
+#define IMU_DATA_ADC_LENGTH          4                                                          // the IMU return a 4-byte float for each channel
+#define IMU_DATA_LENGTH              (6*IMU_DATA_ADC_LENGTH+1)                                  // 25 bytes: [accelerometer (3 linear values) + gyroscope (3 rotational values)] * 4 bytes + 1 timestamp byte
 #define IMU_USEFUL_CHANNELS          4                                                          // we use only the 3 acceleration values and the yaw (not pitch and roll).
 
 // Ring Buffer
@@ -123,6 +123,19 @@
 #define STIFF_COMPLIANCE_MARGIN         0
 #define STIFF_COMPLIANCE_SLOPE          32           
 #define STIFF_PUNCH                     32
+
+///////////////////////////////
+// IMU                     //
+///////////////////////////////
+// source : https://github.com/Razor-AHRS/razor-9dof-ahrs/blob/master/Arduino/Razor_AHRS/Razor_AHRS.ino
+
+// Gain for gyroscope (ITG-3200)
+#define GYRO_GAIN 0.06957 // Same gain on all axes
+#define GYRO_SCALED_RAD(x) (x * TO_RAD(GYRO_GAIN)) // Calculate the scaled gyro readings in radians per second
+#define TO_RAD(x) (x * 0.01745329252)  // *pi/180
+
+#define GRAVITY_IMU 256.0f // "1G reference" used for DCM filter and accelerometer calibration
+
 
 ///////////////////////////////
 // BLUETOOTH                 //

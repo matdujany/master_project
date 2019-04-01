@@ -263,7 +263,7 @@ void hex_to_float(int flagVerbose, int mode)
 
   // Set data_length for the particular mode
   // Mode 1: loadcell mode; Mode 2: IMU mode
-  (mode == 1) ? data_length = n_ard * SENSOR_DATA_LENGTH : (mode == 2) ? data_length = IMU_DATA_LENGTH : data_length = -1;
+  (mode == 1) ? data_length = n_ard * (SENSOR_DATA_LENGTH-1) : (mode == 2) ? data_length = (IMU_DATA_LENGTH-1) : data_length = -1;
 
   // If mode does not exist, print error.
   if (data_length == -1)

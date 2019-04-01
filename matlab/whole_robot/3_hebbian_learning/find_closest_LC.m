@@ -22,7 +22,7 @@ closest_sensor = zeros(n_motors,1);
 agree = zeros(n_motors,1);
 agree_before = -1;
 
-nb_motors_per_loadcell = 2;
+nb_motors_per_loadcell = 6;
 
 n_iter = 0;
 while sum(agree)<n_motors && sum(agree)>agree_before

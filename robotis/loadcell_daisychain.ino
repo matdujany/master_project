@@ -5,6 +5,7 @@
 ///////////////////////////////////////////
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
+//printing loadcell and IMU values adds some delay between the updates
 void show_value_DC(unsigned long delay_updates){
   send_frame_and_update_sensors();
   print_loadcell_values();
@@ -24,8 +25,11 @@ void send_frame_and_update_sensors(){
   frame_found = false; //set to false because we want to update it
   while (!frame_found){
     try_capture_1_frame();
+  
+    if (flagVerbose){
+      SerialUSB.println("Updating sensor values");
+    }
   }
-  SerialUSB.println("new frame success, updating sensor values");
   wrapper_parser(flagVerbose);
   // Start of HEX to DEC conversion
   // Mode 1: loadcell mode, Mode 2: IMU mode
@@ -34,7 +38,7 @@ void send_frame_and_update_sensors(){
   
 }
 
-//measure the mean LC values (over nb_values_mean), with a delay (delay_frames) between each measure
+//measure and prints the mean LC values (over nb_values_mean), with a delay (delay_frames) between each measure
 void measure_mean_values_LC(uint8_t nb_values_mean, unsigned long delay_frames){
   uint8_t nb_captured_values = 0;
   float mean_values_LC[3*n_ard];
@@ -52,7 +56,7 @@ void measure_mean_values_LC(uint8_t nb_values_mean, unsigned long delay_frames){
   }
   //printing results
   for (int i_ard =0; i_ard<n_ard; i_ard++){
-    SerialUSB.print("Loadcell ");SerialUSB.print(i_ard);
+    SerialUSB.print("Loadcell ");SerialUSB.print(i_ard+1);
     SerialUSB.print(" mean channel values ");
     for (int j =0; j<3; j++){
       SerialUSB.print(mean_values_LC[j+3*i_ard]);
@@ -120,6 +124,15 @@ unsigned long try_capture_1_frame(){
   while( (!frame_found) & (millis()-time_start_trial<2*duration_daisychain) ){
     if (Serial2.available())
       get_dc_byte_wrapper();
+  }
+  if (flagVerbose){
+    if  (!frame_found) {
+      SerialUSB.println("no frame found !");
+    }
+    else{
+      SerialUSB.print("frame found in "); SerialUSB.print(millis()-time_start_trial);
+      SerialUSB.println(" ms");
+    }
   }
   return millis()-time_start_trial;
 }
