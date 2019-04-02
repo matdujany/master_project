@@ -452,15 +452,14 @@ else{
     {
       cc_byte+=inByte;
 
-      // INSERT READINGS FROM SENSORS
-      //if ( (frame_type==FRAME_TYPE_SENSOR_DATA) && (send_data_flag) ) //no duplicates, not used here
-      if ( (frame_type==FRAME_TYPE_SENSOR_DATA) )
+      // INSERT READINGS FROM IMU SENSOR only if FRAME_TYPE_SENSOR_DATA or FRAME_TYPE_IMU_RECALIB
+      if ((frame_type==FRAME_TYPE_SENSOR_DATA) || (frame_type==FRAME_TYPE_IMU_RECALIB))
       {
 
         uint8_t place_holder_arduino_no = 1 + (uint8_t) (frame_location_counter - 5) / SENSOR_DATA_LENGTH;
         uint8_t byte_no= frame_location_counter - n_loadcell_arduinos * SENSOR_DATA_LENGTH - 5;
         
-        // If arduino_no > loadcell arduinos, then it must be the IMU
+        // If place_holder_arduino_no > loadcell arduinos, then it must be the IMU
         if (place_holder_arduino_no > n_loadcell_arduinos)
         {
           if (byte_no==(IMU_DATA_LENGTH-1))
@@ -470,32 +469,7 @@ else{
             }
             outByte = imu_data[byte_no];
         }
-        else{
-        // If arduino_no <= loadcell arduinos, then it is not the IMU and do nothing.          
-        }
-        
-      }
-      
-      // COMMANDS FOR ARDUINOS
-      // Never used in this case I reckon?
-      else if (frame_type>=FRAME_TYPE_COMMAND_DATA)
-      {
-        if (frame_location_counter==5)
-        {
-          if(testMode) outByte= 6;
-          if ( (inByte==arduino_ID) || (inByte==0xFF) )
-          {
-            run_command=1;
-          }
-        }
-        if ( (frame_location_counter==6) && (run_command==1) )
-        {
-          if(testMode) outByte= 7;
-          if (frame_type==FRAME_TYPE_COMMAND_TOP_LED)
-          {  
-//            top_led_intensity=inByte; //I should change this to the onboard led
-          }
-        }
+        //else  If place_holder_arduino_no <= loadcell arduinos, then it is not the IMU and do nothing.       
       }
       
       cc_byte_new+=outByte;

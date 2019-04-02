@@ -68,7 +68,7 @@ void setup() {
 
   //timing duration of daisychain;
   //compute_duration_daisychain_ms();
-  duration_daisychain=5;
+  duration_daisychain=6;
   
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
@@ -76,13 +76,11 @@ void setup() {
   delay(1000);
 
   twitch_record_wrapper();
+
 }
 
 
-
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
-void loop() { 
-  //show_value_DC(15);
-  //measure_mean_values_LC(20, 50);
-
+void loop() {
+  
 }

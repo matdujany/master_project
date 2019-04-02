@@ -9,14 +9,13 @@
 #define END_FRAME								0x55
 
 // read and other commands
-#define FRAME_TYPE_SENSOR_DATA					0x01
-#define FRAME_TYPE_COMMAND_DATA                 0x10
-#define FRAME_TYPE_COMMAND_TOP_LED				0x13
+#define FRAME_TYPE_SENSOR_DATA            0x01    //default frametype, using during during learning
+#define FRAME_TYPE_IMU_RECALIB            0x02    //frametype where only the IMU writes data, to recalibrate it
 
 // data length of each Arduino
-#define SENSOR_DATA_ADC_LENGTH	                4 //the loadcells return a 4-byte float
-#define SENSOR_DATA_TIMESTAMP_POINTER	       (SENSOR_DATA_ADC_LENGTH)
-#define SENSOR_DATA_LENGTH				      (3*SENSOR_DATA_ADC_LENGTH+1) //3 loadcells plus the timestamp is an additional byte
+#define SENSOR_DATA_ADC_LENGTH					  4 //the loadcells return a 4-byte float
+#define SENSOR_DATA_TIMESTAMP_POINTER	  	(SENSOR_DATA_ADC_LENGTH)
+#define SENSOR_DATA_LENGTH				      	(3*SENSOR_DATA_ADC_LENGTH+1) //3 loadcells plus the timestamp is an additional byte
 
 // data length of IMU
 #define IMU_DATA_ADC_LENGTH          4 //the IMU return a 4-byte float

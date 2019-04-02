@@ -315,7 +315,6 @@ if(Serial1.available()){
     cc_byte+=inByte;
 
     // INSERT READINGS FROM SENSORS
-    //if ( (frame_type==FRAME_TYPE_SENSOR_DATA) && (send_data_flag) ) //no duplicates, not used here
     if ( (frame_type==FRAME_TYPE_SENSOR_DATA) )
     {
       uint8_t place_holder_arduino_no = 1 + (uint8_t) (frame_location_counter-5) / SENSOR_DATA_LENGTH;    // Keeps track to which Arduino the inByte belongs.
@@ -333,28 +332,6 @@ if(Serial1.available()){
       }
     }
 
-    // COMMANDS FOR ARDUINOS
-    else if (frame_type>=FRAME_TYPE_COMMAND_DATA)
-    {
-      SerialUSB.println("db0");
-      if (frame_location_counter==5){
-        if ( (inByte==arduino_ID) || (inByte==0xFF) ){
-          SerialUSB.println("db1");
-          run_command=1;
-          arduino_ID_target = inByte;
-        }
-      }
-
-      if ( (frame_location_counter==6) && (run_command==1) ){
-          if (frame_type==FRAME_TYPE_COMMAND_TOP_LED){
-            if((arduino_ID_target==arduino_ID) || (arduino_ID_target==0xFF)){
-              SerialUSB.println("db2");
-              exe_blue_command(inByte);
-            }
-          }
-      }
-
-    }
     cc_byte_new+=outByte;
     frame_location_counter++;
   }  

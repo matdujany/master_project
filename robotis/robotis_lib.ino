@@ -152,7 +152,7 @@ void count_arduinos_wrapper(int flagVerbose)
   // Keep sending bytes until whole frame is found
   while (!frame_found)
   {
-    try_capture_1_frame();
+    try_capture_1_frame(1);
     i++;
     // If no full frame has been received after 1000 loops, throw error and break out of the loop
     // Most likely the frame bytes are not received properly (suggestion: check baud rate, wiring or code of the loadcells/IMU)
@@ -976,5 +976,17 @@ void print_IMU_values(){
   }
   SerialUSB.print(", timestamp ");
   SerialUSB.println(ser_rx_buf.timestamp_IMU,DEC);
+
+  SerialUSB.print("IMU acc and gyro values corrected ");
+  for (int i =0; i<3; i++){
+    SerialUSB.print(ser_rx_buf.last_IMU_acc_corrected[i]);
+    SerialUSB.print("\t");
+  }
+  for (int i =0; i<3; i++){
+    SerialUSB.print(ser_rx_buf.last_IMU_gyro_corrected[i]);
+    SerialUSB.print("\t");
+  }
   SerialUSB.println();
+  SerialUSB.println();
+
 }

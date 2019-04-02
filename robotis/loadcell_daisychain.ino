@@ -24,7 +24,7 @@ void show_value_LC(unsigned long delay_updates){
 void send_frame_and_update_sensors(){
   frame_found = false; //set to false because we want to update it
   while (!frame_found){
-    try_capture_1_frame();
+    try_capture_1_frame(1);
   
     if (flagVerbose){
       SerialUSB.println("Updating sensor values");
@@ -35,6 +35,7 @@ void send_frame_and_update_sensors(){
   // Mode 1: loadcell mode, Mode 2: IMU mode
   hex_to_float(flagVerbose, 1);
   hex_to_float(flagVerbose, 2);
+  correct_IMU_data();
   
 }
 
@@ -96,7 +97,72 @@ void compute_duration_daisychain_ms(){
 /* ===================================================================================================================================== */
 
 /////////////////////////////////
-// 2. FRAME HANDLING           //
+// 3. IMU                      //
+/////////////////////////////////
+
+void correct_IMU_data(){
+  for (int i=0; i<3; i++){
+    ser_rx_buf.last_IMU_acc_corrected[i] = ser_rx_buf.last_IMU_data_float[i]-offset_acc[i];
+    ser_rx_buf.last_IMU_gyro_corrected[i] = ser_rx_buf.last_IMU_data_float[3+i]-offset_gyro[i];
+  }
+}
+
+
+void update_IMU_offsets(){
+  SerialUSB.println("Updating IMU offsets");
+  switch_frame_IMU_recalib_mode();
+  measure_offset_accelerometers(NB_VALUES_MEAN_UPDATE_OFFSET,DELAY_FRAMES_UPDATE_OFFSET);
+  switch_frame_all_data_mode();
+}
+
+void switch_frame_IMU_recalib_mode(){
+  frame_buf.buffer[3]  = FRAME_TYPE_IMU_RECALIB;
+  slow_dc_mode = true;
+}
+
+void switch_frame_all_data_mode(){
+  frame_buf.buffer[3]  = FRAME_TYPE_SENSOR_DATA;
+  slow_dc_mode = false;
+  
+}
+
+void measure_offset_accelerometers(int nb_values_mean, unsigned long delay_frames){
+  int nb_captured_values = 0;
+  for (int i=0; i<3; i++){
+    offset_acc[i] = 0;
+    offset_gyro[i] = 0;
+  }
+  //measuring a mean value
+  while (nb_captured_values<nb_values_mean){
+    send_frame_and_update_sensors();
+    for (int i=0; i<3; i++){
+      offset_acc[i] += ser_rx_buf.last_IMU_data_float[i]/(float)nb_values_mean;
+      offset_gyro[i] += ser_rx_buf.last_IMU_data_float[3+i]/(float)nb_values_mean;      
+    }
+    nb_captured_values++;
+    delay(delay_frames);
+  }
+  //printing results
+  SerialUSB.print("IMU accelerometer mean channel values ");
+  for (int i =0; i<3; i++){
+    SerialUSB.print(offset_acc[i]);
+    SerialUSB.print("\t");
+  }
+  SerialUSB.println();
+
+  SerialUSB.print("IMU gyroscope mean channel values ");
+  for (int i =0; i<3; i++){
+    SerialUSB.print(offset_gyro[i]);
+    SerialUSB.print("\t");
+  }
+  SerialUSB.println();
+  SerialUSB.println();
+
+}
+/* ===================================================================================================================================== */
+
+/////////////////////////////////
+// 3. FRAME HANDLING           //
 /////////////////////////////////
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
@@ -109,13 +175,13 @@ void reinitalize_dc_state(){
 }
 
 void time_daisychain_run_init(){
-  SerialUSB.println(try_capture_1_frame());
+  SerialUSB.println(try_capture_1_frame(0));
   delay(100);
 }
 
 
 
-unsigned long try_capture_1_frame(){
+unsigned long try_capture_1_frame(int flagVerbose){
   reinitalize_dc_state();
   unsigned long time_start_trial = millis();
   while(!bool_end_byte_sent){
@@ -125,29 +191,30 @@ unsigned long try_capture_1_frame(){
     if (Serial2.available())
       get_dc_byte_wrapper();
   }
+  unsigned long time_stop = millis()-time_start_trial;
   if (flagVerbose){
     if  (!frame_found) {
       SerialUSB.println("no frame found !");
     }
     else{
-      SerialUSB.print("frame found in "); SerialUSB.print(millis()-time_start_trial);
+      SerialUSB.print("frame found in "); SerialUSB.print(time_stop);
       SerialUSB.println(" ms");
     }
   }
-  return millis()-time_start_trial;
+  return time_stop;
 }
 
 
 void send_and_get_wrapper()
 {
-  send_frame_byte(0); //flagVerbose
+  send_frame_byte(flagVerbose); //flagVerbose
   if (Serial2.available())
     get_dc_byte_wrapper();
 }
 
 void get_dc_byte_wrapper(){
   // Reads one byte from the rx port.
-  get_loadcell_byte(0); //flagVerbose
+  get_loadcell_byte(flagVerbose); //flagVerbose
   // Boolean to check if frame has been found
   frame_found = check_frame(flagVerbose); //flagVerbose
 }
@@ -180,6 +247,15 @@ void send_frame_byte(int flagVerbose)
 
 
   Serial2.write(sendOut);
+  if (slow_dc_mode){
+    count_sent_byte ++;
+    if (count_sent_byte>20){
+      delay(1);
+      count_sent_byte = 0;
+      //SerialUSB.println("slowing down emisssion to help ...");
+    }
+  }
+
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
@@ -224,11 +300,11 @@ int check_frame(int flagVerbose)
   //                                      4. Checksum comparison
 
   if (flagVerbose){
-    SerialUSB.print("Head index: "); SerialUSB.print(ser_rx_buf.head);
-    SerialUSB.print(", value : "); SerialUSB.print(ser_rx_buf.buffer[ser_rx_buf.head]);
+    //SerialUSB.print("Head index: "); SerialUSB.print(ser_rx_buf.head);
+    //SerialUSB.print(", value : "); SerialUSB.print(ser_rx_buf.buffer[ser_rx_buf.head]);
   }
   // 1. End byte
-  if (ser_rx_buf.buffer[ser_rx_buf.head] == END_FRAME) // may have more than 1 byte, I sould suggest at least 2
+  if (ser_rx_buf.buffer[ser_rx_buf.head] == END_FRAME)
   {
     int idx_tail_tmp = ((ser_rx_buf.head - frame_buf.frame_size+1) & (BUFFER_SIZE - 1));
     if (flagVerbose){

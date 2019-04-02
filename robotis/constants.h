@@ -39,7 +39,7 @@
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
 // LEARNING
-#define TIME_INTERVAL_TWITCH        20     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
+#define TIME_INTERVAL_TWITCH        21     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
 
 #define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
 #define LEARNING_RATE               1      // Learning rate for the update rule
@@ -70,14 +70,15 @@
 // DAISYCHAIN                //
 ///////////////////////////////
 
-#define MAX_DELAY_FRAME         50 //for initializing the waiting time when the loadcell is discovered
+#define MAX_DELAY_FRAME         500     //for initializing the waiting time when the loadcell is discovered
 
 
 // Frame properties
 #define FRAME_SYNC_0             0xFF                                                           // Start frame byte 1
 #define FRAME_SYNC_1             0xAA                                                           // Start frame byte 2
 #define END_FRAME                0x55                                                           // End frame byte
-#define FRAME_TYPE_SENSOR_DATA   0x01                                                           // Frame type byte
+#define FRAME_TYPE_SENSOR_DATA   0x01     //default frametype, using during during learning
+#define FRAME_TYPE_IMU_RECALIB   0x02    //frametype where only the IMU writes data, to recalibrate it
 #define SENSOR_DATA_ADC_LENGTH   4                                                              // Sensor Data Length: float, so 4 bytes
 #define SENSOR_DATA_LENGTH       (3*SENSOR_DATA_ADC_LENGTH+1)                                   // 12 bytes: 3 loadcells floats + timestamp integer
 #define MAX_FRAME_SIZE           (7 + (MAX_NR_ARDUINO*SENSOR_DATA_LENGTH) + IMU_DATA_LENGTH)    // Maximum frame size
@@ -85,7 +86,8 @@
 // IMU properties
 #define IMU_DATA_ADC_LENGTH          4                                                          // the IMU return a 4-byte float for each channel
 #define IMU_DATA_LENGTH              (6*IMU_DATA_ADC_LENGTH+1)                                  // 25 bytes: [accelerometer (3 linear values) + gyroscope (3 rotational values)] * 4 bytes + 1 timestamp byte
-#define IMU_USEFUL_CHANNELS          4                                                          // we use only the 3 acceleration values and the yaw (not pitch and roll).
+#define IMU_USEFUL_CHANNELS          6                                                          // we use only the 3 acceleration values and the yaw (not pitch and roll).
+#define IMU_YAW_CHANNEL             0 //TBC, the yaw could actually be channel 0,1 or 2 (my guess is 2)
 
 // Ring Buffer
 #define BUFFER_NEXT(A) ((A+1)&(BUFFER_SIZE -1))    // Bitwise and operator for example will return 0 instead of 16.
@@ -136,6 +138,8 @@
 
 #define GRAVITY_IMU 256.0f // "1G reference" used for DCM filter and accelerometer calibration
 
+#define DELAY_FRAMES_UPDATE_OFFSET      30   //should be more than 20 ms, because the DATA OUTPUTE RATE of the IMU is 20
+#define NB_VALUES_MEAN_UPDATE_OFFSET    50 
 
 ///////////////////////////////
 // BLUETOOTH                 //

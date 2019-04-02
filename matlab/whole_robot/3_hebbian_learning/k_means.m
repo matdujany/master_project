@@ -1,10 +1,6 @@
 clear; 
 close all; clc;
 
-
-%maybe i should try with both weights (LCs and robotis, but the orders of
-%magnitudes are different ...)
-
 addpath('clustering_functions');
 
 
@@ -27,33 +23,52 @@ hinton_LC(weights_lc,parms);
 %% fusing the weights for direction
 %each row is 1 sensor, each column is 1 motor
 %fusing the weights with the 2 directions
-weights_fused = zeros(size(weights_lc,1),parms.n_m);
+weights_fused_lc = zeros(size(weights_lc,1),parms.n_m);
 for i=1:parms.n_m
-    weights_fused(:,i)= abs(weights_lc(:,1+2*(i-1))) + abs(weights_lc(:,2*i));
+    weights_fused_lc(:,i)= abs(weights_lc(:,1+2*(i-1))) + abs(weights_lc(:,2*i));
 end
 
-weights_fused_sumc = zeros(size(weights_fused,1)/3,parms.n_m);
-for j=1:size(weights_fused,1)/3
-    weights_fused_sumc(j,:)=abs(weights_fused(1+3*(j-1),:)) + abs(weights_fused(2+3*(j-1),:)) + abs(weights_fused(3*j,:));
+weights_fused_pos = zeros(size(weights_pos,1),parms.n_m);
+for i=1:parms.n_m
+    weights_fused_pos(:,i)= abs(weights_pos(:,1+2*(i-1))) + abs(weights_pos(:,2*i));
+end
+
+weights_fused_both = [weights_fused_lc; weights_fused_pos];
+
+weights_fused_sumc = zeros(size(weights_fused_lc,1)/3,parms.n_m);
+for j=1:size(weights_fused_lc,1)/3
+    weights_fused_sumc(j,:)=abs(weights_fused_lc(1+3*(j-1),:)) + abs(weights_fused_lc(2+3*(j-1),:)) + abs(weights_fused_lc(3*j,:));
 end
 
 weights_fused_sumc_norm = weights_fused_sumc./max(weights_fused_sumc,[],2);
 weights_fused_sumc_norm2 = weights_fused_sumc./max(weights_fused_sumc,[],1);
 
 %%
-data_k_means = weights_fused_sumc';
+data_k_means = weights_fused_lc';
 data_k_means_standardized = standardize(data_k_means);
+
+data_picked = data_k_means_standardized;
+hinton(data_picked','');
 
 k_list = [1:parms.n_m]';
 n_repeats = 10;
 
-SSE = compute_elbow_curve(data_k_means_standardized,k_list,n_repeats);
+SSE = compute_elbow_curve(data_picked,k_list,n_repeats);
 mean_SSE = mean(SSE,2);
 std_SSE = std(SSE,[],2);
 
-[n_samples, n_dim] = size(data_k_means_standardized);
+[n_samples, n_dim] = size(data_picked);
 AIC  = mean_SSE + 2*k_list*n_dim;
 BIC  = mean_SSE + log(n_samples)*k_list*n_dim;
+
+%%
+[~, idx_min] = min(AIC);
+k_best = k_list(idx_min);
+[idx,C,sumd,D] = kmeans(data_picked,k_best);
+
+
+[idx_2,C,sumd,D] = kmeans(data_picked,2);
+[idx_4,C,sumd,D] = kmeans(data_picked,4);
 
 %%
 figure;
@@ -61,6 +76,10 @@ hold on;
 errorbar(mean_SSE,std_SSE);
 errorbar(AIC,std_SSE);
 errorbar(BIC,std_SSE);
-ylabel('Sum of squared distances');
+ylabel('Metrics');
 xlabel('Number of clusters k');
+legend('Sum of Squared Errors','AIC','BIC');
 
+%%
+data_pca=weights_fused_sumc;
+my_pca(data_pca,'')

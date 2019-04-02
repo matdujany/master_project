@@ -27,6 +27,7 @@ void twitch_record_wrapper(){
     sleep_while_moving();        // Sleep until the servo's reached their imposed positions
     //reset_servo_offset();        // Reset offset of servo's
     delay(3000);
+    update_IMU_offsets();
     
     // EXECUTE TWITCHING PROCESS
     twitch_main();
@@ -74,6 +75,7 @@ void twitch_main()
   int count_missed_frames_row = 0; //counter of the number of missed frames in a row.
   //if this counter gets too high, a long delay is added and the daisychain is reinitialized
   float limit_duration = 1.5 * duration_daisychain;
+
 
   ///////////////////////////////////////////////////////////////////////////
   /// Learning Loop
@@ -208,6 +210,7 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
   // Mode 1: loadcell mode, Mode 2: IMU mode
   hex_to_float(flagVerbose, 1);
   hex_to_float(flagVerbose, 2);
+  correct_IMU_data();
 
   twitch_calculate_s_dot();
 
@@ -291,7 +294,7 @@ void twitch_learning_prog(int i_action, float m_learning)
   float weight;
   int i_dir;
 
-  // Samples used for learning are subjected to conditions as defined by check_learning_conditions()
+  // Learning for Loadcells and IMU
   for (int j_sensor = 0; j_sensor < n_ard * 3 + IMU_USEFUL_CHANNELS; j_sensor++)
   {
 
@@ -388,58 +391,59 @@ void twitch_calculate_s_dot()
   float timestamp_new;
   float t_delta;
 
-  // Loop over all channels /////////////////////////////////////////////////
-  for (int i_tmp = 0; i_tmp < n_ard * 3 + IMU_USEFUL_CHANNELS; i_tmp++)
+  // differentiation needed for the loadcells
+  for (int i_tmp = 0; i_tmp < n_ard * 3; i_tmp++)
   {
+    // Get LC data
+    val_new = ser_rx_buf.last_loadcell_data_float[i_tmp];
 
-    // Loadcell channels /////////////////
-    if (i_tmp < n_ard * 3)
+    // Define new timestamp
+    timestamp_new = (int)ser_rx_buf.timestamp_loadcell[i_tmp / 3];
+
+    // Convert ring buffer to continuous time line (i.e. value 256 will be 256 instead of 256 % 255 = 1)
+    if (timestamp_new - timestamp_old[i_tmp] < 0)
     {
-
-      // Get LC data
-      val_new = ser_rx_buf.last_loadcell_data_float[i_tmp];
-
-      // Define new timestamp
-      timestamp_new = (int)ser_rx_buf.timestamp_loadcell[i_tmp / 3];
-
-      // Convert ring buffer to continuous time line (i.e. value 256 will be 256 instead of 256 % 255 = 1)
-      if (timestamp_new - timestamp_old[i_tmp] < 0)
-      {
-        t_delta = float((timestamp_new + 256) - timestamp_old[i_tmp]) / 1000;
-      }
-      else
-      {
-        t_delta = float(timestamp_new - timestamp_old[i_tmp]) / 1000;
-      }
-
-      // Calculate s_dot value
-      s_dot_last[i_tmp] = (val_new - val_old_lc[i_tmp]) / t_delta;
-
-      // Print information at will
-      if (i_tmp == 1 && 0)
-      {
-        SerialUSB.print(t_delta, 5);
-        SerialUSB.print(" \t");
-        SerialUSB.print(int(timestamp_new));
-        SerialUSB.print(" \t");
-        SerialUSB.print(int(timestamp_old[1]));
-        SerialUSB.print(" \n");
-      }
-
-      // Define old timestamp (should be after t_delta has been calculated for this step)
-      timestamp_old[i_tmp] = timestamp_new;
-
-      // Saving values for next iteration
-      val_old_lc[i_tmp] = val_new;
+      t_delta = float((timestamp_new + 256) - timestamp_old[i_tmp]) / 1000;
     }
-
-    // IMU channels /////////////////
     else
     {
-      // IMU data : no differenciation needed.
-      s_dot_last[i_tmp] = ser_rx_buf.last_IMU_data_float[i_tmp - n_ard * 3];
+      t_delta = float(timestamp_new - timestamp_old[i_tmp]) / 1000;
     }
+
+    // Calculate s_dot value
+    s_dot_last[i_tmp] = (val_new - val_old_lc[i_tmp]) / t_delta;
+
+    // Print information at will
+    if (i_tmp == 1 && 0)
+    {
+      SerialUSB.print(t_delta, 5);
+      SerialUSB.print(" \t");
+      SerialUSB.print(int(timestamp_new));
+      SerialUSB.print(" \t");
+      SerialUSB.print(int(timestamp_old[1]));
+      SerialUSB.print(" \n");
+    }
+
+    // Define old timestamp (should be after t_delta has been calculated for this step)
+    timestamp_old[i_tmp] = timestamp_new;
+
+    // Saving values for next iteration
+    val_old_lc[i_tmp] = val_new;
   }
+
+  // IMU channels : no differentiation needed.
+  //accelerometer first
+  for (int i=0; i<3; i++)
+  {
+    s_dot_last[n_ard * 3+i] = ser_rx_buf.last_IMU_acc_corrected[i];
+  }
+  //yaw after ; TODO : check that yaw is actually that value;
+  for (int i=0; i<3; i++)
+  {
+    s_dot_last[n_ard * 3+3+i] = ser_rx_buf.last_IMU_gyro_corrected[i];
+  }
+  //s_dot_last[n_ard * 3 + 3] = ser_rx_buf.last_IMU_gyro_corrected[IMU_YAW_CHANNEL];
+  
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */

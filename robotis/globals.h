@@ -67,6 +67,9 @@ typedef struct rbuffer
   uint8_t last_IMU_data[IMU_DATA_LENGTH -1 ]; //contains the IMU data (6 channels) coded over 4 bytes without the timestamp (hence the -1)
   float last_IMU_data_float[(IMU_DATA_LENGTH-1)/4]; //contains the last IMU data converted to float (no timestamp)
   char timestamp_IMU; //contains the timestamp from the last loadcells measures
+  float last_IMU_acc_corrected[3]; //contains last acceleration corrected with the offset stored in offset_acc
+  float last_IMU_gyro_corrected[3]; //contains last gyro corrected with the offset stored in offset_gyro
+
 }
 rbuffer;
 
@@ -187,3 +190,11 @@ learning_struct learning;
 int max_time_computation_p1=0; //in ms
 float mean_time_computation_part=0; //in ms
 
+/////////////////////////////////
+// 7. IMU                      //
+/////////////////////////////////
+
+float offset_acc[3] = {0.0};
+float offset_gyro[3] = {0.0};
+bool slow_dc_mode = false; // to put a delay in the DC during IMU calibration.
+int count_sent_byte = 0;
