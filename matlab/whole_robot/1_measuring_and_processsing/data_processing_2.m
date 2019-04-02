@@ -21,7 +21,7 @@ addpath('functions')
 
 clear; clc; close all;
 
-recordID = 6;
+recordID = 8;
 
 % Check if there is already an instance of a communication interface and
 % clears it
@@ -35,7 +35,7 @@ addpath('../2_load_data_code');
 fprintf("data_processing\n");
 filename = get_record_name(recordID);
 [data_rec, pos_load_data_rec, parms] = load_data_raw(recordID);
-parms.time_interval_twitch = 25;
+parms.time_interval_twitch = 21;
 fprintf('Data loaded of file: %s\n', filename)
 
 %% Main 

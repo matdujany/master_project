@@ -27,6 +27,9 @@ if(strcmp(data.last_byte,parms.endByte))
         secondStartByte_calc = data.raw( (i_tmp + 2) - parms.frame_size , :);
         
         if(strcmp(secondStartByte_calc,parms.secondStartByte))
+            
+         datatypeByte = data.raw( (i_tmp + 4) - parms.frame_size , :);
+         if(strcmp(datatypeByte,'01'))
 %             fprintf("Third expression is true\n")
             bool_frame  = compare_checksum(data, parms);
                         
@@ -35,6 +38,7 @@ if(strcmp(data.last_byte,parms.endByte))
 %                 fprintf("Checksum check is true\n")
                 head        = i_tmp;
             end
+         end
         end
     end
 end
