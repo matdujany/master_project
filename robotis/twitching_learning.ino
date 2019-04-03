@@ -214,8 +214,15 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
     twitch_part1_moving(i_servo, dir_sign, ampl_step_pos, n_frames_tmp, n_frames_this_part);
   }
 
-  calculate_m_dot();
-  calculate_s_dot();
+  if (USE_FILTER){
+    calculate_m_dot_filtered();
+    calculate_s_dot_filtered();
+  }
+  else{
+    calculate_m_dot();
+    calculate_s_dot();
+  }
+
 
   // Learning during part 1
   if (i_part == 1){
@@ -353,7 +360,7 @@ void calculate_m_dot_filtered(){
   for (int i = 0; i < n_servos; i++)
   {
     //the actual size of the filter is FILTER_ADD_SIZE+1 because we store last_mpos, old_mpos, and the values contained in the filter.
-    float num_filtered = float(last_motor_pos[i] - motor_pos_filter[oldestvalue_index_filter][i])/float(FILTER_ADD_SIZE+1); 
+    float num_filtered = float(last_motor_pos[i] - buf_filter.motor_pos[oldestvalue_index_filter][i])/float(FILTER_ADD_SIZE+1); 
     m_dot_pos[i] = num_filtered / float(last_motor_timestamp[i] - old_motor_timestamp[i]);
   }    
 }
@@ -416,8 +423,7 @@ void calculate_s_dot_filtered()
   // differentiation needed for the loadcells
   for (int i_tmp = 0; i_tmp < n_ard * 3; i_tmp++)
   {
-    float num_filtered = ser_rx_buf.last_loadcell_data_float[i_tmp]
-    val_new = ser_rx_buf.last_loadcell_data_float[i_tmp];
+    float num_filtered = (ser_rx_buf.last_loadcell_data_float[i_tmp]-buf_filter.val_lc[oldestvalue_index_filter][i_tmp])/float(FILTER_ADD_SIZE+1);
 
     // Define new timestamp
     timestamp_new = (int)ser_rx_buf.timestamp_loadcell[i_tmp / 3];
@@ -433,20 +439,28 @@ void calculate_s_dot_filtered()
     }
 
     // Calculate s_dot value
-    s_dot_last[i_tmp] = (val_new - val_old_lc[i_tmp]) / t_delta;
+    s_dot_last[i_tmp] = num_filtered / t_delta;
   }
 
   // IMU channels : no differentiation needed.
   //accelerometer first
   for (int i=0; i<3; i++)
   {
-    s_dot_last[n_ard * 3+i] = ser_rx_buf.last_IMU_acc_corrected[i];
+    s_dot_last[n_ard * 3+i] = ser_rx_buf.last_IMU_acc_corrected[i] + val_old_IMU_acc_corrected[i];
+    for (int k=0; k<FILTER_ADD_SIZE; k++){
+      s_dot_last[n_ard * 3+i] += buf_filter.val_IMU[k][i];
+    }
+    s_dot_last[n_ard * 3+i] = s_dot_last[n_ard * 3+i]/float(2+FILTER_ADD_SIZE);
   }
 
   //yaw after ; TODO : check that yaw is actually that value;
   for (int i=0; i<3; i++)
   {
-    s_dot_last[n_ard * 3+3+i] = ser_rx_buf.last_IMU_gyro_corrected[i];
+    s_dot_last[n_ard*3+ 3+i] = ser_rx_buf.last_IMU_gyro_corrected[i] + val_old_IMU_gyro_corrected[i];
+    for (int k=0; k<FILTER_ADD_SIZE; k++){
+      s_dot_last[n_ard*3+ 3+i] += buf_filter.val_IMU[k][3+i];
+    }
+    s_dot_last[n_ard*3+ 3+i] = s_dot_last[n_ard*3+ 3+i]/float(2+FILTER_ADD_SIZE);
   }
   
 }
@@ -485,17 +499,17 @@ void print_buf_filter(){
 
 void update_buf_filter(){
   for (int i_lc=0;i_lc<n_ard*3;i_lc++){
-    buf_filter.val_lc_filter[buf_filter.head][i_lc]=val_old_lc[i_lc];
+    buf_filter.val_lc[buf_filter.head][i_lc]=val_old_lc[i_lc];
   }
   for (int i_acc_imu=0;i_acc_imu<3;i_acc_imu++){
-    buf_filter.val_IMU_filter[buf_filter.head][i_acc_imu]=val_old_IMU_acc_corrected[i_acc_imu];
+    buf_filter.val_IMU[buf_filter.head][i_acc_imu]=val_old_IMU_acc_corrected[i_acc_imu];
   }
   for (int i_gyro_imu=0;i_gyro_imu<3;i_gyro_imu++){
-    buf_filter.val_IMU_filter[buf_filter.head][3+i_gyro_imu]=val_old_IMU_gyro_corrected[i_gyro_imu];
+    buf_filter.val_IMU[buf_filter.head][3+i_gyro_imu]=val_old_IMU_gyro_corrected[i_gyro_imu];
   }
 
   for (int i_motor=0;i_motor<n_servos;i_motor++){
-    buf_filter.motor_pos_filter[buf_filter.head][i_motor]=old_motor_pos[i_motor];
+    buf_filter.motor_pos[buf_filter.head][i_motor]=old_motor_pos[i_motor];
   }
   buf_filter.head = (buf_filter.head+1)%(FILTER_ADD_SIZE);
 }
@@ -504,13 +518,13 @@ void init_buf_filter(){
   buf_filter.head = 0;
   for (int k=0;k<FILTER_ADD_SIZE; k++){
     for (int i_ard=0;i_ard<MAX_NR_ARDUINO*3;i_ard++){
-      buf_filter.val_lc_filter[k][i_ard]=0;
+      buf_filter.val_lc[k][i_ard]=0;
     }
     for (int i_imu=0;i_imu<IMU_USEFUL_CHANNELS;i_imu++){
-      buf_filter.val_IMU_filter[k][i_imu]=0;
+      buf_filter.val_IMU[k][i_imu]=0;
     }
     for (int i_motor=0;i_motor<MAX_NR_SERVOS;i_motor++){
-      buf_filter.motor_pos_filter[k][i_motor]=0;
+      buf_filter.motor_pos[k][i_motor]=0;
     }
   }
 }

@@ -33,6 +33,9 @@ parms.delay_frames_update_offset = 30; %in ms
 parms.nb_values_mean_update_offset = 50;
 parms.gyro_gain =  0.06957;
 
+parms.use_filter = 1;
+parms.add_filter_size = 3;
+
 % % % % % % % % % % % % % % % 
 
 
