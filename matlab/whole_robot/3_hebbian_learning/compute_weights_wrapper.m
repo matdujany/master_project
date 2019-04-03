@@ -12,7 +12,12 @@ if flagFilter == 0
         s_dot_lc(:,1+parms.n_ch_lc*(i-1):parms.n_ch_lc*i)=data.float_value_dot_time{i};
     end
     
-    s_IMU = data.float_value_time{parms.n_lc+1}; %we dont diff the IMUS.
+    %we never diff the IMU
+    if parms.IMU_offsets
+        s_IMU = data.IMU_corrected;
+    else
+        s_IMU = data.float_value_time{parms.n_lc+1};
+    end
     
     %% create m_dot_matrix
     [m_dot_values,~]  = compute_mdot_learning(data,lpdata,parms,0);

@@ -39,23 +39,25 @@
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
 // LEARNING
-#define TIME_INTERVAL_TWITCH        21     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
+#define TIME_INTERVAL_TWITCH        20     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
 
 #define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
-#define LEARNING_RATE               1      // Learning rate for the update rule
-#define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
+#define LEARNING_RATE               5      // Learning rate for the update rule
+#define DURATION_PART0              750    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
 #define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
-#define DURATION_PART2              500    // Duration of part 2 in ms; part 2: begins at the action of going back to initial position;   servo goes from step position to initial position
+#define DURATION_PART2              750    // Duration of part 2 in ms; part 2: begins at the action of going back to initial position;   servo goes from step position to initial position
 #define N_TWITCHES                  5
 
 #define COMPLIANT_MODE              1   // (0) : all servos remain at default parameters 
                                         // (1) : the non moving servos are compliant, the moving one is stiff
                                         // (2) : all servos are stiff
 #define RECENTERING_TWITCH          1   // (1) : servos are recentered at 512 after each twitching in the 2 directions.
-#define RECENTERING_DELAY           500 
+#define RECENTERING_DELAY           1500 
 
-#define FILTER_SIZE                2 //number of values stored used for filtering during the learning.
 
+//FILTERS
+#define USE_FILTER                1
+#define FILTER_ADD_SIZE           3  //number of additional values stored, used for filtering during the learning.
 
 /* ===================================================================================================================================== */
 
@@ -132,9 +134,8 @@
 // source : https://github.com/Razor-AHRS/razor-9dof-ahrs/blob/master/Arduino/Razor_AHRS/Razor_AHRS.ino
 
 // Gain for gyroscope (ITG-3200)
-#define GYRO_GAIN 0.06957 // Same gain on all axes
-#define GYRO_SCALED_RAD(x) (x * TO_RAD(GYRO_GAIN)) // Calculate the scaled gyro readings in radians per second
-#define TO_RAD(x) (x * 0.01745329252)  // *pi/180
+#define GYRO_GAIN 0.06957 // Same gain on all axes, should put the gyro readings in deg/seconds
+#define GYRO_GAIN_TO_RAD 0.0012142 //GYRO_GAIN * pi/180 --> should put the gyro readings in rad/seconds
 
 #define GRAVITY_IMU 256.0f // "1G reference" used for DCM filter and accelerometer calibration
 

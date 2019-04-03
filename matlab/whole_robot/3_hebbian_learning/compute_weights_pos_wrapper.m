@@ -11,6 +11,7 @@ if nargin == 5
     weights_pos_init = zeros(parms.n_m,2*parms.n_m);
 end
 
+%parms
 weights_pos = compute_weight_matrix(m_dot_learning, m_s_dot_pos, pos_start_learning, pos_end_learning, parms,weights_pos_init);
 
 if flagPlot

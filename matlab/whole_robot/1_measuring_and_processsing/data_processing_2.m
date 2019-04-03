@@ -21,7 +21,7 @@ addpath('functions')
 
 clear; clc; close all;
 
-recordID = 8;
+recordID = 11;
 
 % Check if there is already an instance of a communication interface and
 % clears it
@@ -35,8 +35,9 @@ addpath('../2_load_data_code');
 fprintf("data_processing\n");
 filename = get_record_name(recordID);
 [data_rec, pos_load_data_rec, parms] = load_data_raw(recordID);
-parms.time_interval_twitch = 21;
-fprintf('Data loaded of file: %s\n', filename)
+fprintf('Data loaded of file: %s\n', filename);
+IMU_offsets = true;
+gyro_in_degs = true;
 
 %% Main 
 n_moves = parms.n_twitches * parms.n_m * parms.n_dir;
@@ -45,6 +46,9 @@ n_frames_p1 = floor(parms.duration_part1/parms.time_interval_twitch);
 n_frames_p2 = floor(parms.duration_part2/parms.time_interval_twitch);
 n_frames_theo = n_moves*(n_frames_p0+n_frames_p1+n_frames_p2);
 disp(['theoretical number of frames (given parms file) : ' num2str(n_frames_theo)]);
+
+lpdata = parsing_load_and_pos_data(pos_load_data_rec,parms);
+disp(['Parsed load and pos data, ' num2str(length(lpdata.i_part)) ' frames found']);
 
 % % % DATA STRUCT % % %
 % Initialize data struct
@@ -108,8 +112,35 @@ for i=1:parms.nr_arduino
     data.float_value_dot_time{1,i}=[zeros(1,3);data.float_value_dot_time{1,i}];
 end
 
-lpdata = parsing_load_and_pos_data(pos_load_data_rec,parms);
+%% if IMU offsets, we correct that
+if IMU_offsets
+    parms.IMU_offsets = true;
+    IMU_offsets = read_IMU_offsets(recordID,parms.n_twitches);
+    n_frames_twitch_cycle =  parms.n_m * parms.n_dir * (n_frames_p0+n_frames_p1+n_frames_p2);
+    data.IMU_corrected = zeros(size(data.float_value_time{1,parms.nr_arduino+1}));
+    if size(data.float_value_time{1,parms.nr_arduino+1},2)~=6
+        disp('Warning, not 6 IMU channels ?');
+    end
+    if size(data.float_value_time{1,parms.nr_arduino+1},1)~=n_frames_theo
+        disp('Not theoretical number of frames in IMU data');
+    end
+    for k=1:parms.n_twitches
+        data_IMU = data.float_value_time{1,parms.nr_arduino+1}(1+(k-1)*n_frames_twitch_cycle:k*n_frames_twitch_cycle,:);
+        data.IMU_corrected(1+(k-1)*n_frames_twitch_cycle:k*n_frames_twitch_cycle,:) = ...
+            data_IMU - IMU_offsets(k,:);
+    end
+end
 
+%% gyro correction
+gyro_gain = 0.06957;
+if gyro_in_degs
+    parms.gyro_in_rads = true;
+    data_gyro = data.IMU_corrected(:,4:6);
+    data_gyro_corrected = data_gyro*gyro_gain;
+    data.IMU_corrected(:,4:6) = data_gyro_corrected;
+end
+
+%%
 file_name_processed_data=strcat("../../../../data/",filename,'_p');
 fprintf("Writing processed data to file: %s.mat\n", file_name_processed_data);
 save(file_name_processed_data,'data','lpdata','parms');

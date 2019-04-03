@@ -69,6 +69,8 @@ n_frames_approx = n_moves*(n_frames_p0+n_frames_p1+n_frames_p2);
 
 n_byte_approx = (parms.frame_size * n_frames_approx)*1.1;
 
+n_byte_approx = n_byte_approx + parms.frame_size*parms.nb_values_mean_update_offset;
+
 end
 
 %duration of the recording (for timeout) in seconds
@@ -79,6 +81,7 @@ if parms.recentering == 1
     duration_approx = duration_approx + (parms.n_twitches * parms.n_m)*parms.recentering_delay/1000;
 end
 
-duration_approx = duration_approx + (parms.n_twitches*50*30/1000); % to recalibrate IMU
+duration_approx = duration_approx + ...
+    (parms.n_twitches*parms.nb_values_mean_update_offset*parms.delay_frames_update_offset/1000); % to recalibrate IMU
 
 end

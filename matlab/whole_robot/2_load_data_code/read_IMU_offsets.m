@@ -10,10 +10,10 @@ fileID = fopen(strcat(filename,'.txt'));
 
 for k=1:n_twitches
     tline = fgetl(fileID);
-    disp(tline);
+    %disp(tline);
     while size(tline)<3 | ~strcmp(tline(1:3),'IMU')
         tline = fgetl(fileID);
-        disp(tline);
+        %disp(tline);
     end
     if feof(fileID)
         disp('End of file reached - Returning');

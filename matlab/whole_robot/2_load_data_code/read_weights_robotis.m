@@ -28,4 +28,6 @@ for k=1:n_twitches
     end
 end
 
+fclose(fileID);
+
 cd(currentFolder);

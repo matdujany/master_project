@@ -1,6 +1,11 @@
 function data = compute_filtered_signal_data(data,parms)
 
-s_IMU = data.float_value_time{parms.n_lc+1}; %we dont diff the IMUS.
+if parms.IMU_offsets
+    s_IMU = data.IMU_corrected;
+else
+    s_IMU = data.float_value_time{parms.n_lc+1};
+end
+
 s_lc = zeros(data.count_frames,parms.n_lc * parms.n_ch_lc);
 for i=1:parms.n_lc
     s_lc(:,1+parms.n_ch_lc*(i-1):parms.n_ch_lc*i)=data.float_value_time{i};

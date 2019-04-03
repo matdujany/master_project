@@ -29,7 +29,7 @@ if(strcmp(data.last_byte,parms.endByte))
         if(strcmp(secondStartByte_calc,parms.secondStartByte))
             
          datatypeByte = data.raw( (i_tmp + 4) - parms.frame_size , :);
-         if(strcmp(datatypeByte,'01'))
+         if(strcmp(datatypeByte,parms.frametype_data))
 %             fprintf("Third expression is true\n")
             bool_frame  = compare_checksum(data, parms);
                         

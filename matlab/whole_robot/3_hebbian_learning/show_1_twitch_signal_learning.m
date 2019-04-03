@@ -20,15 +20,11 @@ index_channel_plot = 3;
 
 index_sensor = index_channel_plot+3*(index_loadcell_plot-1);
 
-n_frames_part0 = floor(parms.duration_part0/parms.time_interval_twitch);
-n_frames_part1 = floor(parms.duration_part1/parms.time_interval_twitch);
-n_frames_part2 = floor(parms.duration_part2/parms.time_interval_twitch);
+n_frames_theo = get_theo_number_frames(parms);
 
-nb_theo_frames_per_twitch = (n_frames_part0+n_frames_part1+n_frames_part2)*(parms.n_m*parms.n_dir);
-
-index_start = nb_theo_frames_per_twitch*(n_iter-1) + ...
-    (n_frames_part0+n_frames_part1+n_frames_part2)*(index_motor_plot-1)*parms.n_dir +...
-    (n_frames_part0+n_frames_part1+n_frames_part2)*(i_dir-1) + n_frames_part0 + 1;
+index_start = n_frames_theo.per_twitch*(n_iter-1) + ...
+    (n_frames_theo.per_action)*(index_motor_plot-1)*parms.n_dir +...
+    (n_frames_theo.per_action)*(i_dir-1) + n_frames_part0 + 1;
 
 index_end = index_start+n_frames_part1-1;
 %index_end = index_start+n_frames_part1;

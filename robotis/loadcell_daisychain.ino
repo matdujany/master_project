@@ -101,9 +101,10 @@ void compute_duration_daisychain_ms(){
 /////////////////////////////////
 
 void correct_IMU_data(){
+
   for (int i=0; i<3; i++){
     ser_rx_buf.last_IMU_acc_corrected[i] = ser_rx_buf.last_IMU_data_float[i]-offset_acc[i];
-    ser_rx_buf.last_IMU_gyro_corrected[i] = ser_rx_buf.last_IMU_data_float[3+i]-offset_gyro[i];
+    ser_rx_buf.last_IMU_gyro_corrected[i] = GYRO_GAIN*(ser_rx_buf.last_IMU_data_float[3+i]-offset_gyro[i]);
   }
 }
 

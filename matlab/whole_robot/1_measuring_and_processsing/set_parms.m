@@ -9,26 +9,32 @@
 
 parms = struct();
 
-parms.nr_arduino  = 6;
-parms.n_m         = 12;
+parms.nr_arduino  = 4;
+parms.n_m         = 8;
 parms.n_dir       = 2;
 
 % Mode settings
 parms.print_figures  = 0;
 
 % learning parameters
-parms.time_interval_twitch = 25; % in ms
+parms.time_interval_twitch = 20; % in ms
 parms.step_ampl      = 10;       %in deg
-parms.eta            = 1;        %learning rate
-parms.duration_part0 = 500; % in ms
+parms.eta            = 5;        %learning rate
+parms.duration_part0 = 750; % in ms
 parms.duration_part1 = 500; % in ms
-parms.duration_part2 = 500; % in ms
+parms.duration_part2 = 750; % in ms
 parms.n_twitches     = 5;
 parms.compliant_mode = 1;
 parms.recentering    = 1;
-parms.recentering_delay    = 500; % in ms
+parms.recentering_delay    = 1500; % in ms
+
+%update IMU offset
+parms.delay_frames_update_offset = 30; %in ms
+parms.nb_values_mean_update_offset = 50;
+parms.gyro_gain =  0.06957;
 
 % % % % % % % % % % % % % % % 
+
 
 % Constants (should be adopted from Robotis file)
 parms.sensor_data_adc_length    = 4;
@@ -43,3 +49,4 @@ parms.idx_end_data              = parms.frame_size -2;
 parms.endByte          = '55';
 parms.firstStartByte   = 'FF';
 parms.secondStartByte  = 'AA';
+parms.frametype_data   = '01';

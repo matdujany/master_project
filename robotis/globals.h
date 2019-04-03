@@ -148,29 +148,38 @@ float phase_shift[MAX_NR_SERVOS]   = {0};
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
-int n_samples_mov_average = 0;
-//uint16_t last_motor_pos = 512 ;
-//unsigned long last_motor_timestamp;
-
-// Number of samples for different parts of the twitching process
-const int n_samples_part0 = DURATION_PART0 / TIME_INTERVAL_TWITCH;
-const int n_samples_part1 = DURATION_PART1 / TIME_INTERVAL_TWITCH;
-const int n_samples_part2 = DURATION_PART2 / TIME_INTERVAL_TWITCH;
-
 // s
 float val_old_lc[MAX_NR_ARDUINO * 3];        // Old values of loadcell data, needed for calculating s_dot
-
-// Time
-int timestamp_old[MAX_NR_ARDUINO * 3] = {0};           // old values of timestamps, used to compute s_dots
+int timestamp_lc_old[MAX_NR_ARDUINO] = {0};    // old values of timestamps, used to compute s_dots
 
 // S_dot
-float s_dot_last[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS];               // Most recent values of s_dot
+float s_dot_last[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS];   // Most recent values of s_dot
 
+float val_old_IMU_acc_corrected[3];
+float val_old_IMU_gyro_corrected[3];
 
+//motor
 uint16_t last_motor_pos[MAX_NR_SERVOS];  // Most recent values of motor positions
-int16_t last_motor_load[MAX_NR_SERVOS];               // Most recent values of motor loads
+int16_t last_motor_load[MAX_NR_SERVOS];  // Most recent values of motor loads
 unsigned long last_motor_timestamp[MAX_NR_SERVOS];
-float m_dot_pos[MAX_NR_SERVOS];           // Most recent values of s_dot
+
+uint16_t old_motor_pos[MAX_NR_SERVOS];    //older values of motor positions
+unsigned long old_motor_timestamp[MAX_NR_SERVOS]; //older values of motor timestamps, needed for derivations
+
+//motor dot
+float m_dot_pos[MAX_NR_SERVOS];           // Most recent values of m_dot
+
+
+//filtering
+typedef struct buffer_filter
+{
+  uint8_t head;
+  float val_lc_filter[FILTER_ADD_SIZE][MAX_NR_ARDUINO * 3];        // Old values of loadcell data used for filtering
+  float val_IMU_filter[FILTER_ADD_SIZE][IMU_USEFUL_CHANNELS];        // Old values of loadcell data used for filtering
+  uint16_t motor_pos_filter[FILTER_ADD_SIZE][MAX_NR_SERVOS];        // Old values of loadcell data used for filtering
+}
+buffer_filter;
+buffer_filter buf_filter;
 
 // Learning struct
 typedef struct learning_struct
@@ -178,8 +187,6 @@ typedef struct learning_struct
   //double s_dot_oja[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];     //last s_dot sent to Oja, useful for comparing with Matlab
   float weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
   float weights_pos[MAX_NR_SERVOS][MAX_NR_SERVOS * 2]; 
-  int peak_sign[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS];                           // Indicates the sign of the peak sample on which should be learned (+1 is positive, -1 is negative peak)
-  int ss_sign[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS];                             // Indicates the sign of the steady state response (+1 is positive, -1 is negative peak)
 }
 learning_struct;
 

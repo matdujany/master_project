@@ -15,6 +15,9 @@ void twitch_record_wrapper(){
   SerialUSB.print("Duration part 2 : "); SerialUSB.println(DURATION_PART2);
   SerialUSB.print("Compliant Mode : "); SerialUSB.println(COMPLIANT_MODE);
   SerialUSB.print("Recentering : "); SerialUSB.println(RECENTERING_TWITCH);
+  SerialUSB.print("Use filter (1:Yes/0:No) : "); SerialUSB.println(1);
+  if (USE_FILTER)
+    SerialUSB.print("Filter Size : "); SerialUSB.println(FILTER_ADD_SIZE);
 
   SerialUSB.println();
   
@@ -28,7 +31,8 @@ void twitch_record_wrapper(){
     //reset_servo_offset();        // Reset offset of servo's
     delay(3000);
     update_IMU_offsets();
-    
+    init_buf_filter();
+
     // EXECUTE TWITCHING PROCESS
     twitch_main();
 
@@ -198,28 +202,25 @@ void twitch_main()
 void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign, int i_action, uint16_t ampl_step_pos, int n_frames_tmp, int n_frames_this_part){
   unsigned long start_time_computation;
   start_time_computation = millis();
+
+  //the filter is updated with the old values to be erased.
+  update_buf_filter();
+
+  update_load_pos_values();
+  update_lc_IMU_values();
+
+  //sending command to move
   if (i_part == 1){
     twitch_part1_moving(i_servo, dir_sign, ampl_step_pos, n_frames_tmp, n_frames_this_part);
   }
 
-  // Parse data
-  wrapper_parser(flagVerbose);
-
-  // Start of HEX to DEC conversion
-  // First argument: flagVerbose, second argument: conversion mode
-  // Mode 1: loadcell mode, Mode 2: IMU mode
-  hex_to_float(flagVerbose, 1);
-  hex_to_float(flagVerbose, 2);
-  correct_IMU_data();
-
-  twitch_calculate_s_dot();
+  calculate_m_dot();
+  calculate_s_dot();
 
   // Learning during part 1
-  if (i_part == 1)
-    twitch_part1_learning(n_frames_tmp, i_servo, i_action, dir_sign);
-  else
-  {
-    update_load_pos_values();
+  if (i_part == 1){
+    float m_learning = dir_sign*m_dot_pos[i_servo];
+    twitch_learning_prog(i_action, m_learning);
   }
 
   //sending measures to Matlab
@@ -230,57 +231,49 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
   if (i_part == 1){
     max_time_computation_p1 = std::max(max_time_computation_p1,time_computation);
   }
-
-}
-
-//for Matlab recordings
-void printing_serial3_lpdata(uint8_t i_part){
-  for (int i = 0; i < n_servos; i++)
-  {
-    Serial3.println(last_motor_pos[i]);
-    Serial3.println(last_motor_load[i]);
-    Serial3.println(last_motor_timestamp[i]);
-  }
-  Serial3.println(i_part);  
 }
 
 void twitch_part1_moving(uint8_t i_servo, int dir_sign, uint16_t ampl_step_pos, int n_frames_tmp, int n_frames_tot)
 {
-    uint16_t command_pos = 512 + dir_sign * ampl_step_pos * double(n_frames_tmp) / double(n_frames_tot);
-    set_goal_position(id[i_servo], command_pos);
+  uint16_t command_pos = 512 + dir_sign * ampl_step_pos * double(n_frames_tmp) / double(n_frames_tot);
+  set_goal_position(id[i_servo], command_pos);
 }
 
-void twitch_part1_learning(int n_frames, int i_servo, int i_action, int dir_sign)
-{
-  uint16_t new_motor_pos;
-  int16_t new_motor_load;
-  unsigned long new_motor_timestamp;
-  for (int i = 0; i < n_servos; i++)
-  {
-      new_motor_pos = read_present_position(id[i]);
-      new_motor_load = read_present_load(id[i]);
-      new_motor_timestamp = millis();
-      m_dot_pos[i] = float(new_motor_pos - last_motor_pos[i]) / float(new_motor_timestamp - last_motor_timestamp[i]);
-      last_motor_pos[i] = new_motor_pos;
-      last_motor_load[i] = new_motor_load; 
-      last_motor_timestamp[i] = new_motor_timestamp;
+
+void update_lc_IMU_values(){
+  //we store the old values before writing the new ones.
+  for (int i=0; i<3 ; i++){
+    val_old_IMU_acc_corrected[i] = ser_rx_buf.last_IMU_acc_corrected[i];
+    val_old_IMU_gyro_corrected[i] = ser_rx_buf.last_IMU_gyro_corrected[i];
+  }
+  for (int i_tmp = 0; i_tmp < n_ard * 3; i_tmp++) {
+    val_old_lc[i_tmp] = ser_rx_buf.last_loadcell_data_float[i_tmp];
+  }
+  for (int i_ard= 0; i_ard < n_ard; i_ard++) {
+    timestamp_lc_old[i_ard] = (int)ser_rx_buf.timestamp_loadcell[i_ard];
   }
 
-  float m_learning = dir_sign*m_dot_pos[i_servo];
-  //SerialUSB.println(i_servo);
-  //SerialUSB.println(dir_sign);
-  //SerialUSB.println(i_action);  
-  //SerialUSB.println(2*i_servo+1+dir_sign);
-  twitch_learning_prog(i_action, m_learning);
-
+  // Parse data
+  wrapper_parser(flagVerbose);
+  // Start of HEX to DEC conversion
+  // First argument: flagVerbose, second argument: conversion mode
+  // Mode 1: loadcell mode, Mode 2: IMU mode
+  hex_to_float(flagVerbose, 1);
+  hex_to_float(flagVerbose, 2);
+  correct_IMU_data();
 }
 
 void update_load_pos_values(){
   for (int i = 0; i < n_servos; i++)
   {
-    last_motor_pos[i] = read_present_position(id[i]);
-    last_motor_load[i] = read_present_load(id[i]);
-    last_motor_timestamp[i] = millis();
+      old_motor_pos[i] = last_motor_pos[i];
+      last_motor_pos[i] = read_present_position(id[i]);
+
+      last_motor_load[i] = read_present_load(id[i]);
+
+      old_motor_timestamp[i] = last_motor_timestamp[i];
+      last_motor_timestamp[i] = millis();
+      //m_dot_pos[i] = float(new_motor_pos - last_motor_pos[i]) / float(new_motor_timestamp - last_motor_timestamp[i]);
   }
 }
 
@@ -307,16 +300,6 @@ void twitch_learning_prog(int i_action, float m_learning)
     // Apply Oja's differential learning rule
     weight_delta = oja_diff_learning_rule(m_learning, s_dot_select, weight);
 
-    // Print information at will
-    if (j_sensor == 1 && 0)
-    {
-      SerialUSB.print(s_dot_select);
-      SerialUSB.print("\t");
-      SerialUSB.print(weight);
-      SerialUSB.print("\t");
-      SerialUSB.println(weight_delta);
-    }
-
     // Apply weight update rule
     learning.weights[j_sensor][i_action] = weight + alpha * weight_delta;
   }
@@ -339,34 +322,9 @@ void reset_twitch_variables()
   for (int j_tmp = 0; j_tmp < n_ard * 3 + IMU_USEFUL_CHANNELS; j_tmp++)
   {
     s_dot_last[j_tmp] = 0;
-    /*
-    s_dot_peak[j_tmp][0] = 0;
-    s_dot_peak[j_tmp][1] = 0;
-    s_dot_sq_err[j_tmp] = 0;
-    s_dot_mean_pseudo[j_tmp] = 0;
-    s_dot_mean[j_tmp] = 0;
-    s_dot_std[j_tmp] = 0;
-    learning.peak_sign[j_tmp] = 0;
-    learning.ss_sign[j_tmp] = 0;
-
-
-    if (j_tmp < n_ard * 3)
-    {
-      val_old[j_tmp] = 0;
-      s_ss_part0[j_tmp] = 0;
-      s_ss_part1[j_tmp] = 0;
-    }
-    */
   }
 }
 
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-float oja_diff_learning_rule(float m, float s_dot, float weight)
-{
-  // Oja's differential learning rule
-  return -1 * (m * s_dot + m * m * weight);
-}
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 void twitch_pre_action(int i_part, int i_servo, int sign, uint16_t ampl_step_pos)
@@ -383,7 +341,24 @@ void twitch_pre_action(int i_part, int i_servo, int sign, uint16_t ampl_step_pos
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
-void twitch_calculate_s_dot()
+void calculate_m_dot(){
+  for (int i = 0; i < n_servos; i++)
+  {
+    m_dot_pos[i] = float(last_motor_pos[i] - old_motor_pos[i]) / float(last_motor_timestamp[i] - old_motor_timestamp[i]);
+  }
+}
+
+void calculate_m_dot_filtered(){
+  uint8_t oldestvalue_index_filter = (buf_filter.head + FILTER_ADD_SIZE-1) % (FILTER_ADD_SIZE);
+  for (int i = 0; i < n_servos; i++)
+  {
+    //the actual size of the filter is FILTER_ADD_SIZE+1 because we store last_mpos, old_mpos, and the values contained in the filter.
+    float num_filtered = float(last_motor_pos[i] - motor_pos_filter[oldestvalue_index_filter][i])/float(FILTER_ADD_SIZE+1); 
+    m_dot_pos[i] = num_filtered / float(last_motor_timestamp[i] - old_motor_timestamp[i]);
+  }    
+}
+
+void calculate_s_dot()
 {
 
   // Initialization of local variables to compute derivatives of laodcell measurements
@@ -401,34 +376,17 @@ void twitch_calculate_s_dot()
     timestamp_new = (int)ser_rx_buf.timestamp_loadcell[i_tmp / 3];
 
     // Convert ring buffer to continuous time line (i.e. value 256 will be 256 instead of 256 % 255 = 1)
-    if (timestamp_new - timestamp_old[i_tmp] < 0)
+    if (timestamp_new - timestamp_lc_old[i_tmp / 3] < 0)
     {
-      t_delta = float((timestamp_new + 256) - timestamp_old[i_tmp]) / 1000;
+      t_delta = float((timestamp_new + 256) - timestamp_lc_old[i_tmp / 3]) / 1000;
     }
     else
     {
-      t_delta = float(timestamp_new - timestamp_old[i_tmp]) / 1000;
+      t_delta = float(timestamp_new - timestamp_lc_old[i_tmp / 3]) / 1000;
     }
 
     // Calculate s_dot value
     s_dot_last[i_tmp] = (val_new - val_old_lc[i_tmp]) / t_delta;
-
-    // Print information at will
-    if (i_tmp == 1 && 0)
-    {
-      SerialUSB.print(t_delta, 5);
-      SerialUSB.print(" \t");
-      SerialUSB.print(int(timestamp_new));
-      SerialUSB.print(" \t");
-      SerialUSB.print(int(timestamp_old[1]));
-      SerialUSB.print(" \n");
-    }
-
-    // Define old timestamp (should be after t_delta has been calculated for this step)
-    timestamp_old[i_tmp] = timestamp_new;
-
-    // Saving values for next iteration
-    val_old_lc[i_tmp] = val_new;
   }
 
   // IMU channels : no differentiation needed.
@@ -437,12 +395,59 @@ void twitch_calculate_s_dot()
   {
     s_dot_last[n_ard * 3+i] = ser_rx_buf.last_IMU_acc_corrected[i];
   }
+
   //yaw after ; TODO : check that yaw is actually that value;
   for (int i=0; i<3; i++)
   {
     s_dot_last[n_ard * 3+3+i] = ser_rx_buf.last_IMU_gyro_corrected[i];
   }
-  //s_dot_last[n_ard * 3 + 3] = ser_rx_buf.last_IMU_gyro_corrected[IMU_YAW_CHANNEL];
+  
+}
+
+void calculate_s_dot_filtered()
+{
+
+  // Initialization of local variables to compute derivatives of laodcell measurements
+  float val_new;
+  float timestamp_new;
+  float t_delta;
+  uint8_t oldestvalue_index_filter = (buf_filter.head + FILTER_ADD_SIZE-1) % (FILTER_ADD_SIZE);
+
+  // differentiation needed for the loadcells
+  for (int i_tmp = 0; i_tmp < n_ard * 3; i_tmp++)
+  {
+    float num_filtered = ser_rx_buf.last_loadcell_data_float[i_tmp]
+    val_new = ser_rx_buf.last_loadcell_data_float[i_tmp];
+
+    // Define new timestamp
+    timestamp_new = (int)ser_rx_buf.timestamp_loadcell[i_tmp / 3];
+
+    // Convert ring buffer to continuous time line (i.e. value 256 will be 256 instead of 256 % 255 = 1)
+    if (timestamp_new - timestamp_lc_old[i_tmp / 3] < 0)
+    {
+      t_delta = float((timestamp_new + 256) - timestamp_lc_old[i_tmp / 3]) / 1000;
+    }
+    else
+    {
+      t_delta = float(timestamp_new - timestamp_lc_old[i_tmp / 3]) / 1000;
+    }
+
+    // Calculate s_dot value
+    s_dot_last[i_tmp] = (val_new - val_old_lc[i_tmp]) / t_delta;
+  }
+
+  // IMU channels : no differentiation needed.
+  //accelerometer first
+  for (int i=0; i<3; i++)
+  {
+    s_dot_last[n_ard * 3+i] = ser_rx_buf.last_IMU_acc_corrected[i];
+  }
+
+  //yaw after ; TODO : check that yaw is actually that value;
+  for (int i=0; i<3; i++)
+  {
+    s_dot_last[n_ard * 3+3+i] = ser_rx_buf.last_IMU_gyro_corrected[i];
+  }
   
 }
 
@@ -450,4 +455,62 @@ void twitch_calculate_s_dot()
 int get_sign(float val)
 {
   return (val < 0) ? -1 : (val > 0) ? 1 : 0;
+}
+
+/* ------------------------------------------------------------------------------------------------------------------------------------- */
+float oja_diff_learning_rule(float m, float s_dot, float weight)
+{
+  // Oja's differential learning rule
+  return -1 * (m * s_dot + m * m * weight);
+}
+
+
+//for Matlab recordings
+void printing_serial3_lpdata(uint8_t i_part){
+  for (int i = 0; i < n_servos; i++)
+  {
+    Serial3.println(last_motor_pos[i]);
+    Serial3.println(last_motor_load[i]);
+    Serial3.println(last_motor_timestamp[i]);
+  }
+  Serial3.println(i_part);  
+}
+
+
+/// Filter used during learning
+
+void print_buf_filter(){
+  SerialUSB.print("Head value ");SerialUSB.println(buf_filter.head);
+}
+
+void update_buf_filter(){
+  for (int i_lc=0;i_lc<n_ard*3;i_lc++){
+    buf_filter.val_lc_filter[buf_filter.head][i_lc]=val_old_lc[i_lc];
+  }
+  for (int i_acc_imu=0;i_acc_imu<3;i_acc_imu++){
+    buf_filter.val_IMU_filter[buf_filter.head][i_acc_imu]=val_old_IMU_acc_corrected[i_acc_imu];
+  }
+  for (int i_gyro_imu=0;i_gyro_imu<3;i_gyro_imu++){
+    buf_filter.val_IMU_filter[buf_filter.head][3+i_gyro_imu]=val_old_IMU_gyro_corrected[i_gyro_imu];
+  }
+
+  for (int i_motor=0;i_motor<n_servos;i_motor++){
+    buf_filter.motor_pos_filter[buf_filter.head][i_motor]=old_motor_pos[i_motor];
+  }
+  buf_filter.head = (buf_filter.head+1)%(FILTER_ADD_SIZE);
+}
+
+void init_buf_filter(){
+  buf_filter.head = 0;
+  for (int k=0;k<FILTER_ADD_SIZE; k++){
+    for (int i_ard=0;i_ard<MAX_NR_ARDUINO*3;i_ard++){
+      buf_filter.val_lc_filter[k][i_ard]=0;
+    }
+    for (int i_imu=0;i_imu<IMU_USEFUL_CHANNELS;i_imu++){
+      buf_filter.val_IMU_filter[k][i_imu]=0;
+    }
+    for (int i_motor=0;i_motor<MAX_NR_SERVOS;i_motor++){
+      buf_filter.motor_pos_filter[k][i_motor]=0;
+    }
+  }
 }

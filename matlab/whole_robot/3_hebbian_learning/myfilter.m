@@ -25,7 +25,7 @@ function signal_filtered = myfilter(input_signal)
 
 nb_samples = size(input_signal,1);
 nb_channels = size(input_signal,2);
-nb_moving_average = 5; % nb of samples used to average --> 1 means no filtering
+nb_moving_average = 6; % nb of samples used to average --> 1 means no filtering
 signal_filtered = zeros(nb_samples,nb_channels);
 if nb_channels>nb_samples
     disp('Warning more channels than samples in the input signal to be filtered, transposing');
