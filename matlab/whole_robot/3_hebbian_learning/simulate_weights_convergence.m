@@ -3,16 +3,17 @@ close all; clc;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 13;
+recordID = 15;
 [data, lpdata, parms] =  load_data_processed(recordID);
 flagPlot = 0;
-flagFiltersim = 1;
+flagFiltersim = 0;
 eta_sim = 10;
 
 % Add parameters to struct 'parms'
 add_parms;
 parms_sim = parms;
 parms_sim.eta = eta_sim;
+parms_sim.use_filter = 0;
 weights_sim = compute_weights_wrapper(data,lpdata,parms_sim,flagFiltersim,flagPlot,0,0);
 weights_pos_sim = compute_weights_pos_wrapper(data,lpdata,parms_sim,flagFiltersim,flagPlot);
 
@@ -27,7 +28,7 @@ max_dif_norm_pos = check_weights_diff(weights_pos_check,weights_pos_robotis,parm
 %plot_weight_evolution_LC(weights_sim,parms_sim);
 %plot_weight_evolution_IMU(weights_sim,parms_sim);
 hidediag=true;
-plot_weight_pos_evolution(weights_pos_sim,parms_sim,hidediag);
+%plot_weight_pos_evolution(weights_pos_sim,parms_sim,hidediag);
 
 %% normal weights
 % reps = 5;

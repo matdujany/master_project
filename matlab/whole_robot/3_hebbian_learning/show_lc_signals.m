@@ -11,7 +11,7 @@ recordID = 1;
 add_parms;
 
 %%
-i_twitch = 1;
+i_twitch = 5;
 i_lc = 3;
 
 %% loadcell plots
@@ -33,8 +33,17 @@ for channel=1:3
     subplot(2,2,channel);
     hold on;
     plot(data.float_value_time{1,i_lc}(i_start_twitch_cycle:i_end_twitch_cycle,channel));
-    plot_patch_learning(gcf(),pos_start_learning_cycle,pos_end_learning_cycle);
+    plot_patch_learning(gcf(),pos_start_learning_cycle-i_start_twitch_cycle+1,pos_end_learning_cycle-i_start_twitch_cycle+1);
     xlabel('Frame index');
     ylabel('Load in N');
     title(['Channel ' num2str(channel)]);
 end
+
+%%
+figure;
+hold on;
+plot(data.float_value_time{1,i_lc}(i_start_twitch_cycle:i_end_twitch_cycle,3));
+plot_patch_learning(gcf(),pos_start_learning_cycle-i_start_twitch_cycle+1,pos_end_learning_cycle-i_start_twitch_cycle+1);
+xlabel('Frame index');
+ylabel('Load in N');
+title(['Channel 3']);

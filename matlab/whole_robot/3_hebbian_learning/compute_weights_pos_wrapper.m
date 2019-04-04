@@ -4,7 +4,7 @@ function weights_pos = compute_weights_pos_wrapper(data,lpdata,parms,flagFilter,
 %%
 [pos_start_learning,pos_end_learning] = get_start_end_learning(data,lpdata,parms,flagPlot);
 %% Creating s and s_dot matrix
-flagFiltercombined = (flagFilter == 1 || parms.use_filter == 1);
+flagFiltercombined = (flagFilter == 1 || (isfield(parms,'use_filter') && parms.use_filter == 1));
 [m_dot_learning, m_s_dot_pos]  = compute_mdot_learning(data,lpdata,parms,flagFiltercombined);
 
 %%

@@ -5,7 +5,7 @@ function weights = compute_weights_wrapper(data,lpdata,parms,flagFilter,flagPlot
 [pos_start_learning,pos_end_learning] = get_start_end_learning(data,lpdata,parms,flagPlot);
 
 %% Creating s and s_dot matrix
-if flagFilter == 1 || parms.use_filter == 1
+if flagFilter == 1 || (isfield(parms,'use_filter') && parms.use_filter == 1)
     disp('using filtered data');
     data = compute_filtered_signal_data(data,parms);
     s_dot_lc = data.s_dot_lc_filtered;
@@ -19,7 +19,7 @@ else
     end
     
     %we never diff the IMU
-    if parms.IMU_offsets
+    if isfield(parms,'IMU_offset') && parms.IMU_offsets==1
         s_IMU = data.IMU_corrected;
     else
         s_IMU = data.float_value_time{parms.n_lc+1};

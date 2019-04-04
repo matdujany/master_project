@@ -47,3 +47,42 @@ end
 for i=1:4
     text(i-0.5,y_max+0.1,['LC ' num2str(i)],'FontSize',fontSize-2,'HorizontalAlignment','center','VerticalAlignment','bottom');
 end
+
+%%
+[~,closest_LC] = max(weights_fused_sumc',[],2);
+good_closest_LC = [3;3;4;4;1;1;2;2];
+
+if sum(abs(good_closest_LC-closest_LC))~=0
+    disp('Problem with closest LCs found');
+end
+
+limb=zeros(parms.n_lc,2);
+for i=1:parms.n_lc
+    limb(i,:) = find(closest_LC == i);
+end
+
+%%
+n_limb = size(limb,1);
+weights_limb_z_dir = zeros(n_limb,parms.n_lc);
+for i=1:n_limb
+    for i_lc = 1:parms.n_lc
+        weights_limb_z_dir(i,i_lc) = weights_fused(3*i_lc,limb(i,1))+weights_fused(3*i_lc,limb(i,2));
+    end
+end
+
+[h2,fig_parms] = hinton_raw(weights_limb_z_dir);
+x_min = fig_parms.xmin-0.2;
+x_max = fig_parms.xmax+0.2;
+y_min = fig_parms.ymin-0.2;
+y_max = fig_parms.ymax+0.2;
+
+hold on;
+xlim([x_min, x_max]);
+ylim([y_min, y_max]);
+for i=1:4
+    text(x_min-0.1,i-0.5,['Limb ' num2str(5-i)],'FontSize',fontSize-2,'HorizontalAlignment','right');
+end
+for i=1:4
+    text(i-0.5,y_max+0.1,['LC ' num2str(i)],'FontSize',fontSize-2,'HorizontalAlignment','center','VerticalAlignment','bottom');
+end
+

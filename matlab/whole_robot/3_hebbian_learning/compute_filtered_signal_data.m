@@ -1,7 +1,7 @@
 function data = compute_filtered_signal_data(data,parms)
 
 %loading IMU and loadcells data
-if parms.IMU_offsets
+if isfield(parms,'IMU_offsets')&& parms.IMU_offsets ==1
     s_IMU = data.IMU_corrected;
 else
     s_IMU = data.float_value_time{parms.n_lc+1};
@@ -13,7 +13,7 @@ for i=1:parms.n_lc
 end
 
 %filtering
-if parms.use_filter == 1
+if isfield(parms,'use_filter')&& parms.use_filter ==1
     data.s_IMU_filtered = myfilter(s_IMU,parms.add_filter_size+2);
     data.s_lc_filtered = myfilter(s_lc,parms.add_filter_size+1);
 else
