@@ -5,7 +5,13 @@ function weights = compute_weights_wrapper(data,lpdata,parms,flagFilter,flagPlot
 [pos_start_learning,pos_end_learning] = get_start_end_learning(data,lpdata,parms,flagPlot);
 
 %% Creating s and s_dot matrix
-if flagFilter == 0
+if flagFilter == 1 || parms.use_filter == 1
+    disp('using filtered data');
+    data = compute_filtered_signal_data(data,parms);
+    s_dot_lc = data.s_dot_lc_filtered;
+    s_IMU = data.s_IMU_filtered;
+    [m_dot_values,~]  = compute_mdot_learning(data,lpdata,parms,1);
+else
     s_dot_lc = zeros(data.count_frames,parms.n_lc * parms.n_ch_lc);
     %-1 because the diff makes us lose 1 frame.
     for i=1:parms.n_lc
@@ -21,12 +27,6 @@ if flagFilter == 0
     
     %% create m_dot_matrix
     [m_dot_values,~]  = compute_mdot_learning(data,lpdata,parms,0);
-
-else
-    data = compute_filtered_signal_data(data,parms);
-    s_dot_lc = data.s_dot_lc_filtered;
-    s_IMU = data.s_IMU_filtered;
-    [m_dot_values,~]  = compute_mdot_learning(data,lpdata,parms,1);
 end
 %%
 sensor_values = [s_dot_lc s_IMU(:,1:parms.n_useful_ch_IMU)];
