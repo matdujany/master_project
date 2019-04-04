@@ -173,7 +173,7 @@ float m_dot_pos[MAX_NR_SERVOS];           // Most recent values of m_dot
 //filtering
 typedef struct buffer_filter
 {
-  uint8_t head;
+  uint8_t head;  //the head is the index of the oldest values in the filter
   float val_lc[FILTER_ADD_SIZE][MAX_NR_ARDUINO * 3];        // Old values of loadcell data used for filtering
   float val_IMU[FILTER_ADD_SIZE][IMU_USEFUL_CHANNELS];        // Old values of loadcell data used for filtering
   uint16_t motor_pos[FILTER_ADD_SIZE][MAX_NR_SERVOS];        // Old values of loadcell data used for filtering

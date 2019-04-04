@@ -10,7 +10,7 @@ addpath('clustering_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 4;
+recordID = 15;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 weights_robotis  = read_weights_robotis(recordID,parms);

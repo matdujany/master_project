@@ -18,14 +18,14 @@ parms.print_figures  = 0;
 
 % learning parameters
 parms.time_interval_twitch = 20; % in ms
-parms.step_ampl      = 10;       %in deg
-parms.eta            = 5;        %learning rate
-parms.duration_part0 = 750; % in ms
+parms.step_ampl      = 20;       %in deg
+parms.eta            = 10;        %learning rate
+parms.duration_part0 = 1000; % in ms
 parms.duration_part1 = 500; % in ms
-parms.duration_part2 = 750; % in ms
+parms.duration_part2 = 1000; % in ms
 parms.n_twitches     = 5;
-parms.compliant_mode = 1;
-parms.recentering    = 1;
+parms.compliant_mode = 2;
+parms.recentering    = 0;
 parms.recentering_delay    = 1500; % in ms
 
 %update IMU offset

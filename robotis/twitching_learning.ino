@@ -95,20 +95,14 @@ void twitch_main()
 
   for (uint8_t i_servo = 0; i_servo < n_servos; i_servo++)
   {
-    if (COMPLIANT_MODE==1){
-      make_servo_stiff(id[i_servo]);
-    }
-
     // Loop over directions
     for (uint8_t i_dir = 0; i_dir < 2; i_dir++)
     {
-
+      if (COMPLIANT_MODE==1){
+        make_servo_stiff(id[i_servo]);
+      }
       // Reset variables for learning
       reset_twitch_variables();
-
-      // Loop over parts of actual twitching process:  - part 0:  servo waits in initial position
-      //                                               - part 1:  servo goes to step position.
-      //                                               - part 2:  servo goes from step position to initial position
       
       for (uint8_t i_part = 0; i_part < 3; i_part++)
       {
@@ -179,21 +173,20 @@ void twitch_main()
 
       }
 
+      if (COMPLIANT_MODE==1){
+        if (RECENTERING_TWITCH==1){
+          restaure_default_parameters_all_motors_syncWrite();
+          //make_all_servos_stiff();
+          pose_stance();
+          delay(RECENTERING_DELAY);
+          make_all_servos_compliant_syncWrite();
+        
+        }
+        make_servo_compliant(id[i_servo]);
+      }
+
       // Counting number of actions (total = number of servo's * 2 directions)
       i_action++;
-    }
-    
-    if (COMPLIANT_MODE==1){
-      if (RECENTERING_TWITCH==1){
-        make_all_servos_stiff_syncWrite();
-        //make_all_servos_stiff();
-        pose_stance();
-        delay(RECENTERING_DELAY);
-        make_all_servos_compliant_syncWrite();
-        //make_all_servos_compliant();
-       
-      }
-      make_servo_compliant(id[i_servo]);
     }
 
   }
@@ -205,6 +198,7 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
 
   //the filter is updated with the old values to be erased.
   update_buf_filter();
+  //print_buf_filter();
 
   update_load_pos_values();
   update_lc_IMU_values();
@@ -275,6 +269,17 @@ void update_load_pos_values(){
   {
       old_motor_pos[i] = last_motor_pos[i];
       last_motor_pos[i] = read_present_position(id[i]);
+      if(last_motor_pos[i]>612 || last_motor_pos[i]<412){
+        delay(1);
+        SerialUSB.println("Weird position value");
+        uint8_t counter_read= 0;
+        while (last_motor_pos[i]>612 || last_motor_pos[i]<412){
+          last_motor_pos[i] = read_present_position(id[i]);
+          counter_read++;
+        }
+        SerialUSB.print("Found reasonable value after ");SerialUSB.print(counter_read);
+        SerialUSB.println(" trials");
+      }
 
       last_motor_load[i] = read_present_load(id[i]);
 
@@ -300,7 +305,7 @@ void twitch_learning_prog(int i_action, float m_learning)
 
     // Select data from array
     s_dot_select = s_dot_last[j_sensor];
-
+    //SerialUSB.println(s_dot_select,3);
     // Select weight from array
     weight = learning.weights[j_sensor][i_action];
 
@@ -311,6 +316,7 @@ void twitch_learning_prog(int i_action, float m_learning)
     learning.weights[j_sensor][i_action] = weight + alpha * weight_delta;
   }
 
+  //Learning for Motor Positions
   for (int j_motor_sensor = 0; j_motor_sensor < n_servos; j_motor_sensor++){
     s_dot_select = m_dot_pos[j_motor_sensor];
     weight = learning.weights_pos[j_motor_sensor][i_action];
@@ -356,13 +362,14 @@ void calculate_m_dot(){
 }
 
 void calculate_m_dot_filtered(){
-  uint8_t oldestvalue_index_filter = (buf_filter.head + FILTER_ADD_SIZE-1) % (FILTER_ADD_SIZE);
+  //uint8_t oldestvalue_index_filter = (buf_filter.head + FILTER_ADD_SIZE-1) % (FILTER_ADD_SIZE);
   for (int i = 0; i < n_servos; i++)
   {
     //the actual size of the filter is FILTER_ADD_SIZE+1 because we store last_mpos, old_mpos, and the values contained in the filter.
-    float num_filtered = float(last_motor_pos[i] - buf_filter.motor_pos[oldestvalue_index_filter][i])/float(FILTER_ADD_SIZE+1); 
+    float num_filtered = float(last_motor_pos[i] - buf_filter.motor_pos[buf_filter.head][i])/float(FILTER_ADD_SIZE+1); 
     m_dot_pos[i] = num_filtered / float(last_motor_timestamp[i] - old_motor_timestamp[i]);
-  }    
+  }
+
 }
 
 void calculate_s_dot()
@@ -418,12 +425,12 @@ void calculate_s_dot_filtered()
   float val_new;
   float timestamp_new;
   float t_delta;
-  uint8_t oldestvalue_index_filter = (buf_filter.head + FILTER_ADD_SIZE-1) % (FILTER_ADD_SIZE);
+  //uint8_t oldestvalue_index_filter = (buf_filter.head + FILTER_ADD_SIZE-1) % (FILTER_ADD_SIZE);
 
   // differentiation needed for the loadcells
   for (int i_tmp = 0; i_tmp < n_ard * 3; i_tmp++)
   {
-    float num_filtered = (ser_rx_buf.last_loadcell_data_float[i_tmp]-buf_filter.val_lc[oldestvalue_index_filter][i_tmp])/float(FILTER_ADD_SIZE+1);
+    float num_filtered = (ser_rx_buf.last_loadcell_data_float[i_tmp]-buf_filter.val_lc[buf_filter.head][i_tmp])/float(FILTER_ADD_SIZE+1);
 
     // Define new timestamp
     timestamp_new = (int)ser_rx_buf.timestamp_loadcell[i_tmp / 3];
@@ -437,6 +444,10 @@ void calculate_s_dot_filtered()
     {
       t_delta = float(timestamp_new - timestamp_lc_old[i_tmp / 3]) / 1000;
     }
+    
+    //Debugging
+    //SerialUSB.println("num filtered "); SerialUSB.println(num_filtered,3);
+    //SerialUSB.print("t delta "); SerialUSB.println(t_delta);
 
     // Calculate s_dot value
     s_dot_last[i_tmp] = num_filtered / t_delta;
@@ -495,6 +506,48 @@ void printing_serial3_lpdata(uint8_t i_part){
 
 void print_buf_filter(){
   SerialUSB.print("Head value ");SerialUSB.println(buf_filter.head);
+  for (int i_ard=0;i_ard<n_ard;i_ard++){
+    SerialUSB.print("Loadcell "); SerialUSB.print(i_ard+1);SerialUSB.print(" values \t");
+    for (int k=0; k<FILTER_ADD_SIZE; k++){
+      for (int i_channel=0; i_channel<3;i_channel++){
+        SerialUSB.print(buf_filter.val_lc[k][i_ard*3+i_channel],3);
+        SerialUSB.print("\t");
+      }
+      SerialUSB.print("\t");
+    }
+    SerialUSB.println();
+  }
+
+  SerialUSB.print("Accelerometer values ");
+  for (int k=0; k<FILTER_ADD_SIZE; k++){
+    for (int i_acc_imu=0;i_acc_imu<3;i_acc_imu++){
+      SerialUSB.print(buf_filter.val_IMU[k][i_acc_imu],3);
+      SerialUSB.print("\t");
+    }
+    SerialUSB.print("\t");
+  }
+  SerialUSB.println();
+
+  SerialUSB.print("Gyro values ");
+  for (int k=0; k<FILTER_ADD_SIZE; k++){
+    for (int i_gyro_imu=0;i_gyro_imu<3;i_gyro_imu++){
+      SerialUSB.print(buf_filter.val_IMU[k][3+i_gyro_imu],3);
+      SerialUSB.print("\t");
+    }
+    SerialUSB.print("\t");
+    }
+  SerialUSB.println();
+
+  for (int k=0; k<FILTER_ADD_SIZE; k++){
+  SerialUSB.print("Motor position values ");
+    for (int i_motor=0;i_motor<n_servos;i_motor++){
+      SerialUSB.print(buf_filter.motor_pos[k][i_motor]);
+      SerialUSB.print("\t");
+    }
+  SerialUSB.println();
+  }
+  SerialUSB.println();
+
 }
 
 void update_buf_filter(){

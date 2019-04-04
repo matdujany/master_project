@@ -3,14 +3,14 @@ close all; clc;
 
 
 %% Load data
-addpath('../2_get_data_code');
-recordID = 1;
+addpath('../2_load_data_code');
+recordID = 14;
 [data, lpdata, parms] =  load_data_processed(recordID);
 
 % Add parameters to struct 'parms'
 add_parms;
 parms_sim = parms;
-parms_sim.eta = 1;
+parms_sim.eta = 10;
 weights_check = compute_weights_wrapper(data,lpdata,parms,0,0,0,0);
 weights_robotis  = read_weights_robotis(recordID,parms);
 max_dif_norm     = check_weights_diff(weights_check,weights_robotis,parms.n_twitches);
@@ -28,8 +28,8 @@ diff_norm = check_weights_detailed(weights_detailed,weights_robotis,parms);
 
 
 %%
-idx_motor = 1;
-idx_dir = 1;
+idx_motor = 3;
+idx_dir = 2;
 idx_lc = 2;
 idx_channel = 2;
 idx_weight_motor = idx_dir+2*(idx_motor-1);
@@ -68,3 +68,5 @@ title(['Motor ' num2str(idx_motor) ', direction ' num2str(2*idx_dir-3) ', loadce
 %%
 % figure;
 % plot(log(abs(weights_detailed(:,idx_sensor,idx_motor))));
+
+[m_dot_values,m_s_dot_pos]  = compute_mdot_learning(data,lpdata,parms,1);

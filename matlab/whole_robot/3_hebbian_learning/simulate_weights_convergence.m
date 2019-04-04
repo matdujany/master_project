@@ -3,11 +3,11 @@ close all; clc;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 11;
+recordID = 13;
 [data, lpdata, parms] =  load_data_processed(recordID);
 flagPlot = 0;
 flagFiltersim = 1;
-eta_sim = 12;
+eta_sim = 10;
 
 % Add parameters to struct 'parms'
 add_parms;
@@ -24,10 +24,10 @@ max_dif_norm     = check_weights_diff(weights_check,weights_robotis,parms.n_twit
 max_dif_norm_pos = check_weights_diff(weights_pos_check,weights_pos_robotis,parms.n_twitches);
 
 
-plot_weight_evolution_LC(weights_sim,parms_sim);
-plot_weight_evolution_IMU(weights_sim,parms_sim);
+%plot_weight_evolution_LC(weights_sim,parms_sim);
+%plot_weight_evolution_IMU(weights_sim,parms_sim);
 hidediag=true;
-%plot_weight_pos_evolution(weights_pos_sim,parms_sim,hidediag);
+plot_weight_pos_evolution(weights_pos_sim,parms_sim,hidediag);
 
 %% normal weights
 % reps = 5;

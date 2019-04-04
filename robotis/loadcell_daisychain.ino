@@ -146,14 +146,14 @@ void measure_offset_accelerometers(int nb_values_mean, unsigned long delay_frame
   //printing results
   SerialUSB.print("IMU accelerometer mean channel values ");
   for (int i =0; i<3; i++){
-    SerialUSB.print(offset_acc[i]);
+    SerialUSB.print(offset_acc[i],5);
     SerialUSB.print("\t");
   }
   SerialUSB.println();
 
   SerialUSB.print("IMU gyroscope mean channel values ");
   for (int i =0; i<3; i++){
-    SerialUSB.print(offset_gyro[i]);
+    SerialUSB.print(offset_gyro[i],5);
     SerialUSB.print("\t");
   }
   SerialUSB.println();

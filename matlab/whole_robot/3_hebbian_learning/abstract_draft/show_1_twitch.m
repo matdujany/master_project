@@ -145,7 +145,7 @@ hinton_LC(weights{5},parms)
 
 %%
 weights_part = weights{parms.n_twitches}(1+3*(index_loadcell_plot-1):3*index_loadcell_plot,1+2*(index_motor_plot-1):2*(index_motor_plot+1));
-weights_part
+%weights_part
 [h,fig_parms] = hinton(weights_part,'Loadcell channels');
 hold on;
 plot([2 2],[fig_parms.ymin fig_parms.ymax],'k--');

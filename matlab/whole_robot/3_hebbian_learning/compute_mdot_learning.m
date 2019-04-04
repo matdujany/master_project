@@ -1,31 +1,28 @@
 function [m_dot_learning,m_s_dot_pos]  = compute_mdot_learning(data,lpdata,parms,flagFilter)
 
-%to do : maybe this should be scaled to seconds.
-scale_m_dot = 1;
-% 
-m_s_dot_pos = zeros(data.count_frames,parms.n_m);
+
+%filtering if needed 
 if flagFilter == 1
-    motor_pos_filtered = myfilter(lpdata.motor_position);
-    for m=1:parms.n_m
-        for i=2:data.count_frames
-            m_s_dot_pos(i,m)=scale_m_dot*(motor_pos_filtered(m,i)-motor_pos_filtered(m,i-1))/(lpdata.motor_timestamp(m,i)-lpdata.motor_timestamp(m,i-1));
-        end
+    if parms.use_filter==1
+        motor_pos_filtered = myfilter(lpdata.motor_position,parms.add_filter_size+1);
+    else
+        motor_pos_filtered = myfilter(lpdata.motor_position);
     end
+    data_for_msdotpos = motor_pos_filtered;
 else
-    m_s_dot_pos = zeros(data.count_frames,parms.n_m);
-    for m=1:parms.n_m
-        for i=2:data.count_frames
-            m_s_dot_pos(i,m)=scale_m_dot*(lpdata.motor_position(m,i)-lpdata.motor_position(m,i-1))/(lpdata.motor_timestamp(m,i)-lpdata.motor_timestamp(m,i-1));
-        end
+    data_for_msdotpos = lpdata.motor_position;
+end
+
+%m s dot pos is created by differemtiation
+m_s_dot_pos = zeros(data.count_frames,parms.n_m);
+for m=1:parms.n_m
+    for i=2:data.count_frames
+        m_s_dot_pos(i,m)=(data_for_msdotpos(m,i)-data_for_msdotpos(m,i-1))/(lpdata.motor_timestamp(m,i)-lpdata.motor_timestamp(m,i-1));
     end
 end
-% 
-% for i=1:parms.n_m
-%     m_s_dot_pos(:,i)=[0 diff(lpdata.motor_position(i,:))];
-% end
 
-%% create m_dot_matrix
-
+%m dot learning is filled by tracking ipart to know when the motor action
+%changes
 m_dot_learning = zeros(data.count_frames,1);
 idx_new_cycle = find(diff(lpdata.i_part)==-2);
 start_idx = 1;

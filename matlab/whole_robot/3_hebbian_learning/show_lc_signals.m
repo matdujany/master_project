@@ -2,7 +2,7 @@ clear;
 close all; clc;
 
 addpath('learning_functions');
-addpath('../2_get_data_code');
+addpath('../2_load_data_code');
 addpath('../plotting_functions');
 
 %% Load data
@@ -36,17 +36,5 @@ for channel=1:3
     plot_patch_learning(gcf(),pos_start_learning_cycle,pos_end_learning_cycle);
     xlabel('Frame index');
     ylabel('Load in N');
-    title(['Channel ' num2str(channel)]);
-end
-
-%% IMU plots
-figure;
-for channel=1:4
-    subplot(2,2,channel);
-    hold on;
-    plot(data.float_value_time{1,parms.nr_arduino+1}(i_start_twitch_cycle:i_end_twitch_cycle,channel));
-    plot_patch_learning(gcf(),pos_start_learning_cycle,pos_end_learning_cycle);
-    xlabel('Frame index');
-    ylabel('');
     title(['Channel ' num2str(channel)]);
 end

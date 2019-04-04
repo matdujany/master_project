@@ -1,10 +1,10 @@
 clear; 
 close all; clc;
 
-addpath('../2_get_data_code');
+addpath('../2_load_data_code');
 
 %% Load data
-recordID = 1;
+recordID = 13;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 
@@ -72,5 +72,5 @@ for channel=1:3
 end
 
 %%
-weights=read_weights_robotis(recordID,parms);
-hinton_LC(weights{parms.n_twitches},parms);
+%weights=read_weights_robotis(recordID,parms);
+%hinton_LC(weights{parms.n_twitches},parms);

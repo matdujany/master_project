@@ -52,6 +52,9 @@ for k=1:parms.n_m
 end
 ylim([-50 50]+512);
 ylabel('Position, the limits are the soft compliance margin borders');
+plot([1 nb_samples],[512 512]-50,'k--');
+plot([1 nb_samples],[512 512]+50,'k--');
+
 legend(legend_list);
 subplot(2,1,2);
 hold on;
