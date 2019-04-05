@@ -3,7 +3,7 @@ close all; clc;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 16;
+recordID = 19;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 
@@ -15,3 +15,6 @@ plot_weight_evolution_IMU(weights_robotis,parms);
 
 hidediag=true;
 plot_weight_pos_evolution(weights_pos_robotis,parms,hidediag);
+
+%%
+hinton_LC(weights_robotis{5},parms)

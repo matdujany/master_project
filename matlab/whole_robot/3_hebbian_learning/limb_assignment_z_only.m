@@ -4,7 +4,7 @@ close all; clc;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 15;
+recordID = 17;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 parms.n_useful_ch_IMU    = 6;
@@ -21,14 +21,16 @@ weights_lc=weights_robotis{parms.n_twitches}(1:parms.n_lc*3,:);
 %fusing the weights with the 2 directions
 weights_fused = zeros(size(weights_lc,1),parms.n_m);
 for i=1:parms.n_m
-    weights_fused(:,i)= abs(weights_lc(:,1+2*(i-1))) + abs(weights_lc(:,2*i));
+    %weights_fused(:,i)= abs(weights_lc(:,1+2*(i-1))) + abs(weights_lc(:,2*i));
+    weights_fused(:,i)= weights_lc(:,1+2*(i-1)) + weights_lc(:,2*i);
 end
 
 
 %% fusing the weights over loadcell channels
 weights_fused_sumc = zeros(parms.n_m,size(weights_fused,1)/3);
 for j=1:size(weights_fused,1)/3
-    weights_fused_sumc(:,j)=abs(weights_fused(1+3*(j-1),:)) + abs(weights_fused(2+3*(j-1),:)) + abs(weights_fused(3*j,:));
+    %weights_fused_sumc(:,j)=abs(weights_fused(1+3*(j-1),:)) + abs(weights_fused(2+3*(j-1),:)) + abs(weights_fused(3*j,:));
+    weights_fused_sumc(:,j) = abs(weights_fused(3*j,:));
 end
 
 %%
@@ -58,7 +60,6 @@ end
 addpath('../../export_fig');
 set(h,'Position',[10 10 1920-100 1080-100]);
 set(h,'PaperOrientation','portrait');
-export_fig 'figures_simon/limb_assignment.pdf'
 
 
 %%
@@ -131,13 +132,6 @@ end
 h2.Color = 'w';
 set(h2,'Position',[10 10 1920-100 1080-100]);
 set(h2,'PaperOrientation','portrait');
-export_fig 'figures_simon/limb_assignment_limbsummed.pdf'
-
-% set(h2,'PaperPositionMode','auto');         
-% set(h2,'PaperOrientation','landscape');
-% set(h2,'Position',[10 10 1200 1200]);
-% print(h2, '-dpdf', 'figures_simon/limb_assignment_limbsummed2.pdf')
-
 
 %% inverted map
 
@@ -171,4 +165,3 @@ end
 h3.Color = 'w';
 set(h3,'Position',[10 10 1920-100 1080-100]);
 set(h3,'PaperOrientation','portrait');
-export_fig 'figures_simon/limb_assignment_invmap.pdf'

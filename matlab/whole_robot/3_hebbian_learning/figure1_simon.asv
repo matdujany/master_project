@@ -18,14 +18,14 @@ idx_motor = 1;
 idx_other_motor = idx_motor+1;
 idx_direction = 1; %1 or 2 (1 means neg direction, 2 means pos direction);
 idx_channel = 1;
-idx_channel_acc = 2;
+idx_channel_acc = 1;
 idx_channel_gyro = 3;
 good_closest_LC = [3;3;4;4;1;1;2;2];
 idx_lc = good_closest_LC(idx_motor);
 
 txt_channel_lc ={' X',' Y',' Z'};
 txt_channel_acc = {'Acc. X', 'Acc. Y', 'Acc. Z'};
-txt_channel_gyro = {'Gyro. Roll','Gyro. Pitch','Gyro. Yaw'};
+txt_channel_gyro = {'Ang. Velocity Roll','Ang. Velocity Pitch','Ang. Velocity Yaw'};
 
 n_frames_theo = get_theo_number_frames(parms);
 index_start = 1+n_frames_theo.per_twitch*(idx_twitch-1) + n_frames_theo.per_action*(idx_motor-1)*parms.n_dir;
@@ -63,7 +63,7 @@ data_acc_rescaled = data_acc*rescale_acc;
 data_gyro_rescaled = data_gyro*rescale_gyro;
 
 legend_list_time = {['Motor ' num2str(idx_motor)], ['Motor ' num2str(idx_other_motor)],...
-               strcat('Loadcell',txt_channel_lc{1,idx_channel}),txt_channel_acc{1,idx_channel_acc},txt_channel_gyro{1,idx_channel_gyro}};
+               strcat('Loadcell channel ',txt_channel_lc{1,idx_channel}),txt_channel_acc{1,idx_channel_acc},txt_channel_gyro{1,idx_channel_gyro}};
 
 %% learning signals
 motor_pos_filtered = myfilter(motor_pos_plot);
@@ -78,9 +78,9 @@ diff_other_motor_pos_filtered = diff(other_motor_pos_filtered)./diff(lpdata.moto
 diff_data_lc_filtered = 10^3*diff(data_lc_filtered)./diff(data.time(index_start:index_end,idx_lc));
 
 rescale_acc_filtered = 10/max(abs(data_acc_filtered));
-data_acc_filtered_rescaled = data_acc_filtered*rescale_acc_filtered;
-rescale_gyro_filtered = 10/max(abs(data_gyro_filtered));
-data_gyro_filtered_rescaled = data_gyro_filtered*rescale_gyro_filtered;
+data_a_filtered_rescaled = data_acc_filtered*rescale_acc_filtered;
+rescale_IMU_filtered = 10/max(abs(data_IMU_filtered));
+data_IMU_filtered_rescaled = data_IMU_filtered*rescale_IMU_filtered;
 rescale_diff_lc_filtered = 10/max(abs(diff_data_lc_filtered));
 diff_data_lc_filtered_rescaled = diff_data_lc_filtered*rescale_diff_lc_filtered;
 
@@ -91,16 +91,14 @@ speed_min = -0.05;
 speed_max = +0.05;
 y_patch_learning_speed = [speed_min speed_min speed_max speed_max];
 
-%sprintf(['Loadcell' txt_channel_lc{1,idx_channel} '\nfilt and diff']),...
 legend_list_dot_time = {['Motor ' num2str(idx_motor) ' filt and diff'],...
                 ['Motor ' num2str(idx_other_motor) ' filt and diff'],...
-               ['Loadcell' txt_channel_lc{1,idx_channel} ' filt and diff'],...
-               strcat(txt_channel_acc{1,idx_channel_acc}, ' filtered'),...
-               strcat(txt_channel_gyro{1,idx_channel_gyro}, ' filtered')};
+               strcat('Loadcell channel ',txt_channel_lc{1,idx_channel},' filt and diff'),...
+               strcat(txt_channel_IMU{1,idx_channel_IMU}, ' filtered')};
            
            
 %% figure time signals
-color_list=lines(5);
+color_list=lines(4);
 f=figure;
 %time signals part
 subplot(1,2,1);
@@ -113,20 +111,16 @@ ylabel('Position [deg]','FontSize',fontSize);
 %patch(x_patch_learning2,y_patch_learning_pos,'blue','FaceAlpha',0.1,'EdgeColor','none','HandleVisibility','off');
 yyaxis right;
 plot(time_plot,data_lc_plot_rescaled,'Color',color_list(3,:),'LineStyle', '--','LineWidth',lineWidth);
-plot(time_plot,data_acc_rescaled,'Color',color_list(4,:),'LineStyle','--','LineWidth',lineWidth);
-plot(time_plot,data_gyro_rescaled,'Color',color_list(5,:),'LineStyle','--','LineWidth',lineWidth);
+plot(time_plot,data_IMU_plot_rescaled,'Color',color_list(4,:),'LineStyle','--','LineWidth',lineWidth);
 ylabel('Sensor values rescaled','Color','k','FontSize',fontSize);
 title('Raw signals','FontSize',fontSize);
 lgd = legend(legend_list_time);
 lgd.FontSize = fontSize-2;
-lgd.Orientation='vertical';
-lgd.NumColumns = 2;
-lgd.Location = 'northwest';
+lgd.Location = 'north';
 ax = gca;
 ax.FontSize = fontSizeTicks;
 ax.YAxis(2).Color = 'k'; 
 grid on;
-
 %dot time signals part
 subplot(1,2,2);
 hold on;
@@ -139,25 +133,17 @@ patch(x_patch_learning2,y_patch_learning_speed,'blue','FaceAlpha',0.1,'EdgeColor
 ylim([speed_min speed_max]);
 yyaxis right;
 plot(time_plot_diff,diff_data_lc_filtered_rescaled,'Color',color_list(3,:),'LineStyle', '--','LineWidth',lineWidth);
-plot(time_plot_diff,data_acc_filtered_rescaled(2:end),'Color',color_list(4,:),'LineStyle','--','LineWidth',lineWidth);
-plot(time_plot_diff,data_gyro_filtered_rescaled(2:end),'Color',color_list(5,:),'LineStyle','--','LineWidth',lineWidth);
+plot(time_plot_diff,data_IMU_filtered_rescaled(2:end),'Color',color_list(4,:),'LineStyle','--','LineWidth',lineWidth);
 ylabel('sensor values rescaled','Color','k','FontSize',fontSize);
 title('Learning signals','FontSize',fontSize);
 ylim([-10 10]);
 lgd = legend(legend_list_dot_time);
 lgd.FontSize = fontSize-2;
-%lgd.Position = [0.68,0.7071,0.189,0.202];
-lgd.Orientation='vertical';
-lgd.NumColumns = 2;
 lgd.Location = 'north';
 ax = gca;
 ax.FontSize = fontSizeTicks;
 ax.YAxis(2).Color = 'k';
 grid on;
-% 
-% handle_plots = get(ax, 'Children');
-% neworder = [1 2 4 5 3];
-%legend(hplots(neworder), labels(neworder));
 
 f.Color = 'w';
 
@@ -165,7 +151,7 @@ addpath('../../export_fig');
 
 set(f,'PaperPositionMode','auto');         
 set(f,'PaperOrientation','landscape');
-set(f,'Position',[10 10 1300 500]);
+set(f,'Position',[10 10 1400 500]);
 print(f, '-dpdf', 'figures_simon/figure1_simon2.pdf');
 
 %%

@@ -39,53 +39,71 @@ for k=1:parms.n_twitches
     end
 end
 
+renorm_pos = max(max(abs(weights_pos_robotis{5})));
+renorm_lc = max(max(abs(weights_robotis{5}(1:3*(parms.nr_arduino),:))));
+renorm_imu = max(max(abs(weights_robotis{5}(3*(parms.nr_arduino)+1:3*(parms.nr_arduino)+3,:))));
+renorm_gyro = max(max(abs(weights_robotis{5}(3*(parms.nr_arduino)+4:3*(parms.nr_arduino)+6,:))));
+
+weights_pos_plot = weights_pos_plot/renorm_pos;
+weights_lc_plot = weights_lc_plot/renorm_lc;
+weights_acc_plot = weights_acc_plot/renorm_imu;
+weights_gyro_plot = weights_gyro_plot/renorm_gyro;
+
+ylims = [-1 1];
+
 %%
-figure;
+f=figure;
+subplot(1,4,1);
 hold on;
 plot([0:parms.n_twitches],weights_pos_plot(:,1),'LineStyle', '-','LineWidth',lineWidth);
 plot([0:parms.n_twitches],weights_pos_plot(:,2),'LineStyle', '-','LineWidth',lineWidth);
-xlabel('Twitch iteration','FontSize',fontSize);
-xticks([0:parms.n_twitches]);
-lgd=legend({'Motor 1','Motor 2'});
-lgd.FontSize = fontSize;
-title('Motor Sensor','FontSize',fontSize);
+ylabel('Weight Value','FontSize',fontSize);
+plot_layout(parms,fontSize,fontSizeTicks,ylims,{'Motor 1','Motor 2'},'Motor Positions')
 
 %%
-figure;
+subplot(1,4,2);
 hold on;
+legend_list = {'X','Y','Z'};
 for i_channel=1:3
     plot([0:parms.n_twitches],weights_lc_plot(:,i_channel),'LineStyle', '-','LineWidth',lineWidth);
-    legend_list{i_channel,1} = ['Channel ' num2str(i_channel)];
 end
-xlabel('Twitch iteration','FontSize',fontSize);
-xticks([0:parms.n_twitches]);
-lgd=legend(legend_list);
-lgd.FontSize = fontSize;
-title('Loadcell','FontSize',fontSize);
+plot_layout(parms,fontSize,fontSizeTicks,ylims,legend_list,'Loadcell')
 
 %%
-figure;
+subplot(1,4,3);
 hold on;
+legend_list = {'X','Y','Z'};
 for i_channel=1:3
     plot([0:parms.n_twitches],weights_acc_plot(:,i_channel),'LineStyle', '-','LineWidth',lineWidth);
-    legend_list{i_channel,1} = ['Channel ' num2str(i_channel)];
 end
-xlabel('Twitch iteration','FontSize',fontSize);
-xticks([0:parms.n_twitches]);
-lgd=legend(legend_list);
-lgd.FontSize = fontSize;
-title('Accelerometer','FontSize',fontSize);
-
+plot_layout(parms,fontSize,fontSizeTicks,ylims,legend_list,'Accelerometer')
 
 %%
-figure;
+subplot(1,4,4);
 hold on;
+legend_list = {'Gyro. Roll','Gyro. Pitch','Gyro. Yaw'};
 for i_channel=1:3
     plot([0:parms.n_twitches],weights_gyro_plot(:,i_channel),'LineStyle', '-','LineWidth',lineWidth);
-    legend_list{i_channel,1} = ['Channel ' num2str(i_channel)];
 end
+plot_layout(parms,fontSize,fontSizeTicks,ylims,legend_list,'Gyroscope')
+
+%%
+f.Color = 'w';
+addpath('../../export_fig');
+set(f,'Position',[10 10 1900 400]);
+set(f,'PaperOrientation','landscape');
+export_fig 'figures_simon/weights_convergence.pdf'
+
+
+
+function plot_layout(parms,fontSize,fontSizeTicks,ylims,legend_list,titleString)
 xlabel('Twitch iteration','FontSize',fontSize);
 xticks([0:parms.n_twitches]);
 lgd=legend(legend_list);
 lgd.FontSize = fontSize;
-title('Gyroscope','FontSize',fontSize);
+title(titleString,'FontSize',fontSize);
+ax = gca;
+ax.FontSize = fontSizeTicks;
+grid on;
+ylim(ylims);
+end

@@ -7,20 +7,7 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
 void twitch_record_wrapper(){
-  SerialUSB.print("Time interval twitch : "); SerialUSB.println(TIME_INTERVAL_TWITCH);
-  SerialUSB.print("Step Amplitude : "); SerialUSB.println(STEP_AMPL);
-  SerialUSB.print("Learning rate : "); SerialUSB.println(LEARNING_RATE);
-  SerialUSB.print("Duration part 0 : "); SerialUSB.println(DURATION_PART0);
-  SerialUSB.print("Duration part 1 : "); SerialUSB.println(DURATION_PART1);
-  SerialUSB.print("Duration part 2 : "); SerialUSB.println(DURATION_PART2);
-  SerialUSB.print("Compliant Mode : "); SerialUSB.println(COMPLIANT_MODE);
-  SerialUSB.print("Recentering : "); SerialUSB.println(RECENTERING_TWITCH);
-  SerialUSB.print("Use filter (1:Yes/0:No) : "); SerialUSB.println(1);
-  if (USE_FILTER)
-    SerialUSB.print("Filter Size : "); SerialUSB.println(FILTER_ADD_SIZE);
-
-  SerialUSB.println();
-  
+  print_twitching_parameters();
   // Execute twitching procedure n_twitch times.
   for(int i_twitch = 0; i_twitch < N_TWITCHES; i_twitch++){
 
@@ -45,8 +32,6 @@ void twitch_record_wrapper(){
     SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
     SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);
   }
-  
-
   
   Serial3.println(1500);
   SerialUSB.print("Total number of frames found : ");
@@ -580,4 +565,21 @@ void init_buf_filter(){
       buf_filter.motor_pos[k][i_motor]=0;
     }
   }
+}
+
+void print_twitching_parameters(){
+  SerialUSB.print("Step Amplitude : "); SerialUSB.println(STEP_AMPL);
+  SerialUSB.print("Learning rate : "); SerialUSB.println(LEARNING_RATE);
+  SerialUSB.print("Duration part 0 : "); SerialUSB.println(DURATION_PART0);
+  SerialUSB.print("Duration part 1 : "); SerialUSB.println(DURATION_PART1);
+  SerialUSB.print("Duration part 2 : "); SerialUSB.println(DURATION_PART2);
+  SerialUSB.print("Compliant Mode : "); SerialUSB.println(COMPLIANT_MODE);
+  SerialUSB.print("Recentering : "); SerialUSB.println(RECENTERING_TWITCH);
+  if (RECENTERING_TWITCH)
+    SerialUSB.print("Recentering delay : "); SerialUSB.println(RECENTERING_DELAY);  
+  SerialUSB.print("Time interval twitch : "); SerialUSB.println(TIME_INTERVAL_TWITCH);
+  SerialUSB.print("Use filter (1:Yes/0:No) : "); SerialUSB.println(1);
+  if (USE_FILTER)
+    SerialUSB.print("Filter Size : "); SerialUSB.println(FILTER_ADD_SIZE);
+  SerialUSB.println();
 }
