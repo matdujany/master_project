@@ -26,14 +26,16 @@ index_start = 1+n_frames_theo.per_twitch*(idx_twitch-1) + n_frames_theo.per_acti
 index_end = n_frames_theo.per_twitch*(idx_twitch-1)  + n_frames_theo.per_action*idx_motor*parms.n_dir;
 
 %% time signals
-time_plot =(0:index_end-index_start)*parms.time_interval_twitch;
+time_plot =(0:index_end-index_start)*parms.time_interval_twitch/1000;
 motor_pos_plot = pos2deg(lpdata.motor_position(idx_motor,index_start:index_end));
 
+idx_channel = 3;
 for i=1:4
-    data_lc{i} = data.float_value_time{1,i}(index_start:index_end,3);
+    data_lc{i} = data.float_value_time{1,i}(index_start:index_end,idx_channel);
 end
 
 legend_list_time = {['Motor ' num2str(idx_motor)],'Loadcell 1 Z','Loadcell 2 Z','Loadcell 3 Z','Loadcell 4 Z'};
+%legend_list_time = {['Motor ' num2str(idx_motor)],'LC 1 Z','LC 2 Z','LC 3 Z','LC 4 Z'};
 
 %% patches learning
 index_start_learning1 = n_frames_theo.part0+1;
@@ -48,12 +50,12 @@ x_patch_learning1 = [index_start_learning1 index_stop_learning1 index_stop_learn
 y_patch_learning_pos = [ymin ymin ymax ymax];
 x_patch_learning2 = [index_start_learning2 index_stop_learning2 index_stop_learning2 index_start_learning2]*parms.time_interval_twitch;
 
-x_patch_dropoff = [825 1050 1050 825];
+x_patch_dropoff = [825 1050 1050 825]/1000;
 y_patch_dropoff = [-1 -1 4 4];
 
 %% figure
 
-manual_grid_values = [0]; 
+manual_grid_values = [0 4]; 
 
 color_list=lines(5);
 f=figure;
@@ -79,8 +81,9 @@ ylabel('Load channel Z [N]','Color','r','FontSize',fontSize);
 ylim([-3 15]);
 lgd = legend(legend_list_time);
 lgd.FontSize = fontSize-2;
-%lgd.Location = 'northwest';
-lgd.Position = [0.1527,0.6267,0.139,0.3171];
+lgd.Location = 'northwest';
+lgd.Position = [0.4317,0.7244,0.278,0.2267];
+lgd.NumColumns = 2;
 ax = gca;
 ax.FontSize = fontSizeTicks;
 ax.YAxis(2).Color = 'r'; 
@@ -94,7 +97,9 @@ addpath('../../export_fig');
 %%
 set(f,'PaperPositionMode','auto');         
 set(f,'PaperOrientation','landscape');
-set(f,'Position',[10 10 1000 350]);
+set(f,'Position',[10 10 1000 300]);
+
+%%
 print(f, '-dpdf', 'figures_simon/z_dropoff.pdf');
 
 

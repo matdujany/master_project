@@ -40,12 +40,12 @@ n_frames = index_end-index_start+1;
 
 ymin = -8;
 ymax = 8;
-x_patch_learning1 = [index_start_learning1 index_stop_learning1 index_stop_learning1 index_start_learning1]*parms.time_interval_twitch;
+x_patch_learning1 = [index_start_learning1 index_stop_learning1 index_stop_learning1 index_start_learning1]*parms.time_interval_twitch/1000;
 y_patch_learning_pos = [ymin ymin ymax ymax];
-x_patch_learning2 = [index_start_learning2 index_stop_learning2 index_stop_learning2 index_start_learning2]*parms.time_interval_twitch;
+x_patch_learning2 = [index_start_learning2 index_stop_learning2 index_stop_learning2 index_start_learning2]*parms.time_interval_twitch/1000;
 
 %% time signals
-time_plot =(0:index_end-index_start)*parms.time_interval_twitch;
+time_plot =(0:index_end-index_start)*parms.time_interval_twitch/1000;
 motor_pos_plot = pos2deg(lpdata.motor_position(idx_motor,index_start:index_end));
 other_motor_pos_plot = pos2deg(lpdata.motor_position(idx_other_motor,index_start:index_end));
 

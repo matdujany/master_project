@@ -72,7 +72,7 @@ end
 
 limb=zeros(parms.n_lc,2);
 for i=1:parms.n_lc
-    limb(i,:) = find(closest_LC == i);
+    limb(i,:) = find(good_closest_LC == i);
 end
 
 %%

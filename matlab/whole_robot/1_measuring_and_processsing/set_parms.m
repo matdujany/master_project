@@ -17,7 +17,7 @@ parms.n_dir       = 2;
 parms.print_figures  = 0;
 
 % learning parameters
-parms.step_ampl      = 10;       %in deg
+parms.step_ampl      = 20;       %in deg
 parms.eta            = 10;        %learning rate
 parms.duration_part0 = 500; % in ms
 parms.duration_part1 = 500; % in ms
