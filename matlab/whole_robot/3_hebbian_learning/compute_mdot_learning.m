@@ -3,7 +3,7 @@ function [m_dot_learning,m_s_dot_pos]  = compute_mdot_learning(data,lpdata,parms
 
 %filtering if needed 
 if flagFilter == 1
-    if parms.use_filter==1
+    if isfield(parms,'use_filter') && parms.use_filter==1
         motor_pos_filtered = myfilter(lpdata.motor_position,parms.add_filter_size+1);
     else
         motor_pos_filtered = myfilter(lpdata.motor_position);

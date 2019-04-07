@@ -26,7 +26,7 @@ color = 0.5*(sign(w(:)) + 3);
 
 delx = 1;
 dely = 1;
-[X, Y] = meshgrid(0.5*delx:delx:(ncols-0.5*delx), 0.5*dely:dely:(nrows-0.5*dely));
+[X, Y] = meshgrid((0.5:1:(ncols-0.5))*delx, (0.5:1:(nrows-0.5))*dely);
 
 % Now convert from matrix format to column vector format, and then duplicate
 % columns with appropriate offsets determined by normalized weight magnitudes. 

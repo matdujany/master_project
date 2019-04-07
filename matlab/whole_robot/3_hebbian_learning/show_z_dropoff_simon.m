@@ -16,7 +16,7 @@ weights_robotis = read_weights_robotis(recordID,parms);
 hinton_LC(weights_robotis{parms.n_twitches},parms);
 
 idx_twitch = 2;
-idx_motor = 1;
+idx_motor = 7;
 %idx_dir = 1; %-1 for - dir, +1 for + dir
 good_closest_LC = [3;3;4;4;1;1;2;2];
 idx_lc = good_closest_LC(idx_motor);
@@ -100,7 +100,7 @@ set(f,'PaperOrientation','landscape');
 set(f,'Position',[10 10 1000 300]);
 
 %%
-print(f, '-dpdf', 'figures_simon/z_dropoff.pdf');
+%print(f, '-dpdf', 'figures_simon/z_dropoff.pdf');
 
 
 

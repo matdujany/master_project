@@ -15,7 +15,7 @@ weights_robotis = read_weights_robotis(recordID,parms);
 hinton_LC(weights_robotis{parms.n_twitches},parms);
 
 %%
-i_twitch = 5;
+i_twitch = 2;
 i_lc = 3;
 
 %% loadcell plots

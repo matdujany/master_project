@@ -23,9 +23,9 @@ idx_limb = 1;
 motor_selected = motor_indexes(idx_limb,:);
 lc_selected = loadcell_indexes(idx_limb);
 disp('Index loadcell channels');
-idx_lc_channels = 3*(lc_selected-1)+[1:3]
+idx_lc_channels = 3*(lc_selected-1)+[1:3];
 disp('Index motor weight matrices');
-idx_motor_wm = 2*motor_selected(1)-1:2*motor_selected(2)
+idx_motor_wm = 2*motor_selected(1)-1:2*motor_selected(2);
 
 weights_lc = weights_read{n_iter}(idx_lc_channels,idx_motor_wm);
 weights_IMU = weights_read{n_iter}(end-5:end,idx_motor_wm);
@@ -74,10 +74,10 @@ plot([2 2],[y_min y_max],'k--')
 plot([5 5],[y_min y_max],'k--')
 plot([8 8],[y_min y_max],'k--')
 x_shift1 = 0.15;
-text(x_min-x_shift1,3.5,'Motor 1 +','FontSize',fontSize-2,'HorizontalAlignment','right');
-text(x_min-x_shift1,2.5,'Motor 1 -','FontSize',fontSize-2,'HorizontalAlignment','right');
-text(x_min-x_shift1,1.5,'Motor 2 +','FontSize',fontSize-2,'HorizontalAlignment','right');
-text(x_min-x_shift1,0.5,'Motor 2 -','FontSize',fontSize-2,'HorizontalAlignment','right');
+text(x_min-x_shift1,3.5,'Motor 1 -','FontSize',fontSize-2,'HorizontalAlignment','right');
+text(x_min-x_shift1,2.5,'Motor 1 +','FontSize',fontSize-2,'HorizontalAlignment','right');
+text(x_min-x_shift1,1.5,'Motor 2 -','FontSize',fontSize-2,'HorizontalAlignment','right');
+text(x_min-x_shift1,0.5,'Motor 2 +','FontSize',fontSize-2,'HorizontalAlignment','right');
 
 y_shift = 0.15;
 text(0.5,y_max+y_shift,'   Motor 1','FontSize',fontSize-2,'HorizontalAlignment','center');
