@@ -4,7 +4,7 @@ close all; clc;
 addpath('../2_load_data_code');
 
 %% Load data
-recordID = 13;
+recordID = 15;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 

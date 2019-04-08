@@ -2,9 +2,12 @@ clear;
 close all; clc;
 
 
+%here I assume that the limbs have been properly formed with
+%limb_assignment, using the sum over all channels.
+
 %% Load data
 addpath('../2_load_data_code');
-recordID = 22;
+recordID = 23;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 parms.n_useful_ch_IMU    = 6;
@@ -16,16 +19,19 @@ weights_sim = compute_weights_wrapper(data,lpdata,parms,1,0,0,0);
 
 weights_chosen = weights_sim; %sim or robotis
 
-%%
-
+%% showing weights used,correcting the sign
 weights_lc_read=weights_chosen{parms.n_twitches}(1:parms.n_lc*3,:);
 
 renorm_factor = max(max(abs(weights_lc_read)));
 weights_lc = weights_lc_read/renorm_factor; 
 weights_lc = weights_lc';
 
-hinton_LC_2(weights_lc,parms,1);
+for i=1:parms.n_m*2
+    weights_lc(i,:)=weights_lc(i,:)*(-1)^(i);
+end
 
+hinton_LC_2(weights_lc,parms,0);
+hinton_IMU_2(weights_chosen{parms.n_twitches},parms);
 
 %here I assume that the limbs have been properly formed with
 %limb_assignment.
@@ -37,7 +43,7 @@ for i=1:parms.n_lc
     limb(i,:) = find(closest_LC == i);
 end
 
-%% Manual weights for lifting ?
+%% Manual weights where liftoff ?
 
 %we see the lift off on record 17 but not on 15.
 %M5+ lifts limb1
@@ -47,7 +53,7 @@ end
 m_lift = [10 13 1 6];
 for i=1:4
     %weights_lc(m_lift(i),:)=zeros(1,size(weights_lc,2));
-    %weights_lc(m_lift(i),3*i)=1;
+    weights_lc(m_lift(i),3*i)=1;
 end
 hinton_LC_2(weights_lc,parms,1);
 
@@ -55,6 +61,8 @@ hinton_LC_2(weights_lc,parms,1);
 %%
 n_limb = size(limb,1);
 weights_limb_summedz = zeros(n_limb,parms.n_lc);
+weights_limb_hip = zeros(n_limb,parms.n_lc,3);
+weights_limb_knee = zeros(n_limb,parms.n_lc,3);
 for i=1:n_limb
     for i_lc = 1:parms.n_lc
         index_m_neg = 1+2*(limb(i,1)-1);
@@ -62,15 +70,37 @@ for i=1:n_limb
         index_m_neg2 = 1+2*(limb(i,2)-1);
         index_m_pos2 = 2*limb(i,2);
         index_list =[index_m_neg index_m_pos index_m_neg2 index_m_pos2];
-        weights_limb_summedz(i,i_lc) = sum(abs(weights_lc(index_list,3*i_lc)));
-        %weights_limb_summedz(i,i_lc) = weights_lc(index_m_neg,3*i_lc)+weights_lc(index_m_neg2,3*i_lc)-weights_lc(index_m_pos,3*i_lc)-weights_lc(index_m_pos2,3*i_lc);
-        
-        %index_list =[index_m_neg index_m_pos];
-        %weights_limb_summedz(i,i_lc) = sum(abs(weights_lc(index_list,3*i_lc)))/2;
+        weights_limb_summedz(i,i_lc) = sum(weights_lc(index_list,3*i_lc))/4;        
+        for channel=1:3
+            weights_limb_hip(i,i_lc,channel) = sum(weights_lc([index_m_neg index_m_pos],3*(i_lc-1)+channel))/2;
+            weights_limb_knee(i,i_lc,channel) = sum(weights_lc([index_m_neg2 index_m_pos2],3*(i_lc-1)+channel))/2;
+        end
     end
 end
 
-[h2,fig_parms] = hinton_raw(weights_limb_summedz);
+%%
+channel = 3;
+channel_txt_list = {' X',' Y',' Z'};
+
+limb_to_loadcell_effect_map(weights_limb_hip(:,:,channel),['Limb to Loadcell effect - Hip only - Channel ' channel_txt_list{1,channel}]);
+limb_to_loadcell_effect_map(weights_limb_knee(:,:,channel),['Limb to Loadcell effect - Knee only - Channel ' channel_txt_list{1,channel}]);    
+limb_to_loadcell_effect_map(0.5*(weights_limb_hip(:,:,channel)+weights_limb_knee(:,:,channel)),['Limb to Loadcell effect - Hip and Knee - Channel ' channel_txt_list{1,channel}]);
+
+%%
+inverse_map(weights_limb_hip(:,:,channel),['Inverse map - Hip only - Channel ' channel_txt_list{1,channel}])
+inverse_map(weights_limb_knee(:,:,channel),['Inverse map - Knee only - Channel ' channel_txt_list{1,channel}]);    
+inverse_map(0.5*(weights_limb_hip(:,:,channel)+weights_limb_knee(:,:,channel)),['Inverse map - Hip and Knee - Channel ' channel_txt_list{1,channel}]);
+
+%%
+
+
+limb_to_loadcell_effect_map(weights_limb_summedz,'Limb to Loadcell effect - Hip and Knee - Channel Z');
+inverse_map(weights_limb_summedz,'Inverse map - Hip and Knee - Channel Z');
+
+
+function h=limb_to_loadcell_effect_map(weights_limb,titleString)
+
+[h,fig_parms] = hinton_raw(weights_limb);
 x_min = fig_parms.xmin-0.2;
 x_max = fig_parms.xmax+0.2;
 y_min = fig_parms.ymin-0.2;
@@ -89,7 +119,7 @@ for i=1:4
 end
 for i_limb=1:4
     for i_lc=1:4
-        value = weights_limb_summedz(i_limb,i_lc);
+        value = weights_limb(i_limb,i_lc);
         if value>0
             color = 'k';
         else
@@ -98,27 +128,23 @@ for i_limb=1:4
         text(i_lc-0.5,5-i_limb-0.5,num2str(value,'%.2f'),'Color',color,'FontSize',fontSize,'HorizontalAlignment','center');
     end
 end
-xlabel('Limb to Loadcell effect','Color','k');
-h2.Color = 'w';
-set(h2,'Position',[10 10 600 600]);
-set(h2,'PaperOrientation','portrait');
-%export_fig 'figures_simon/limb_assignment_limbsummed.pdf'
+xlabel(titleString,'Color','k');
+h.Color = 'w';
+%set(h,'Position',[10 10 600 600]);
+%set(h,'PaperOrientation','portrait');
+end
 
-% set(h2,'PaperPositionMode','auto');         
-% set(h2,'PaperOrientation','landscape');
-% set(h2,'Position',[10 10 1200 1200]);
-% print(h2, '-dpdf', 'figures_simon/limb_assignment_limbsummed2.pdf')
+function h=inverse_map(weights_limb,titleString)
+% inverted map
 
+inv_map_mat = inv(weights_limb);
+[h,fig_parms] = hinton_raw(inv_map_mat);
+x_min = fig_parms.xmin-0.2;
+x_max = fig_parms.xmax+0.2;
+y_min = fig_parms.ymin-0.2;
+y_max = fig_parms.ymax+0.2;
 
-%% inverted map
-
-inv_map_mat = inv(weights_limb_summedz);
-[h3,fig_parms3] = hinton_raw(inv_map_mat);
-x_min = fig_parms3.xmin-0.2;
-x_max = fig_parms3.xmax+0.2;
-y_min = fig_parms3.ymin-0.2;
-y_max = fig_parms3.ymax+0.2;
-
+fontSize = 14;
 hold on;
 xlim([x_min, x_max]);
 ylim([y_min, y_max]);
@@ -138,8 +164,8 @@ for i_limb=1:4
         end
     end
 end
-xlabel('Inverse map','Color','k');
-% h3.Color = 'w';
-% set(h3,'Position',[10 10 1920-100 1080-100]);
-% set(h3,'PaperOrientation','portrait');
-% export_fig 'figures_simon/limb_assignment_invmap.pdf'
+xlabel(titleString,'Color','k');
+h.Color = 'w';
+set(h,'Position',[700 10 600 600]);
+set(h,'PaperOrientation','portrait');
+end

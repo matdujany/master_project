@@ -4,7 +4,7 @@ close all; clc;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 15;
+recordID = 20;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 parms.n_useful_ch_IMU    = 6;
@@ -22,5 +22,5 @@ h=hinton_full(weights_robotis,weights_pos_robotis,parms);
 addpath('../../export_fig');
 set(h,'Position',[50 50 1500 800]);
 set(h,'PaperOrientation','landscape');
-export_fig 'figures_simon/hinton_full_rescaled.pdf'
+%export_fig 'figures_simon/hinton_full_rescaled.pdf'
 

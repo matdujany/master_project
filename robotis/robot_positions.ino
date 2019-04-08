@@ -74,3 +74,27 @@ void move_hips_int_out_wrapper(){
   pose_stance();
   delay(10000); 
 }
+
+void hardcoded_lift_limb(int idx_limb_lift){
+  uint16_t delta_angle = uint16_t(20* 3.413);
+  if (idx_limb_lift==1)
+    set_goal_position(15,512+delta_angle);
+  else if (idx_limb_lift==2)
+    set_goal_position(17,512-delta_angle);
+  else if (idx_limb_lift==3)
+    set_goal_position(2,512-delta_angle);
+  else if (idx_limb_lift==4)
+    set_goal_position(13,512+delta_angle);
+}
+
+void serial_read_lift_limb(){
+  if(SerialUSB.available()){
+    char char_read = SerialUSB.read();
+    SerialUSB.println(char_read);
+    SerialUSB.println(char_read,DEC);    
+    pose_stance();
+    delay(2000);
+    if (char_read>48 && char_read<53)
+      hardcoded_lift_limb(char_read-48);
+  }
+}

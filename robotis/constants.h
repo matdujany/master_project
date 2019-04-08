@@ -39,7 +39,7 @@
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
 // LEARNING
-#define STEP_AMPL                   20     // Amplitude of step function during twitching (in degrees)
+#define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
 #define LEARNING_RATE               10      // Learning rate for the update rule
 #define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
 #define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
@@ -105,7 +105,7 @@
                                                             //DEVICENAME "3" -> Serial3(OpenCM 485 EXP)
 #define BAUDRATE_DXL    1000000
 #define PROTOCOL_VERSION 1.0                // AX supports only Protocol Version 1.0 --> syncWrite OK but no syncRead
-                                                         
+
 // Control table adresses
 #define ADDR_GOAL_POSITION              30        
 //#define ADDR_GOAL_SPEED                 32           
@@ -118,8 +118,9 @@
 #define ADDR_CCW_COMPLIANCE_SLOPE       29
 #define ADDR_PUNCH                      48
 
-#define CONTROL_PERIOD (2000)  // msec
+//#define CONTROL_PERIOD (2000)  // msec
 
+//Motor parameters
 #define SOFT_COMPLIANCE_MARGIN          50  //uint8_t value
 #define SOFT_COMPLIANCE_SLOPE           1   //uint8_t value
 #define SOFT_PUNCH                      1   //uint26_t value

@@ -1,6 +1,10 @@
-function h = hinton_LC_2(weights,parms)
+function h = hinton_LC_2(weights,parms,writeValues)
 %HINTON_LC Summary of this function goes here
 %   Detailed explanation goes here
+
+if nargin ==2
+    writeValues = 0;
+end
 
 weights_lc = weights(:,1:parms.n_lc*3);
 [h,fig_parms] = hinton_raw(weights_lc);
@@ -39,6 +43,23 @@ for i=1:parms.n_lc
 end
 
 h.Color = 'w';
+
+if writeValues
+for i_motor=1:2*parms.n_m
+    for i_channel=1:3*parms.n_lc
+        value = weights_lc(2*parms.n_m+1-i_motor,i_channel);
+        if value<0
+            color = 'w';
+        else
+            color = 'k';
+        end
+        text(i_channel-0.5,i_motor-0.5,num2str(10*value,'%.1f'),'FontSize',fontSize-2,'HorizontalAlignment','center','Color',color);
+    end
+end
+end
+
+size_factor = 60;
+h.Position = [10,10, size_factor*3*parms.n_lc, size_factor*2*parms.n_m];
 hold off;
 end
 
