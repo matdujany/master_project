@@ -882,8 +882,8 @@ void print_weights()
     SerialUSB.print("; ... \n");
   }
   SerialUSB.println("];\n");
-
   counter++;
+  delay(1000);
 }
 
 void print_weights_pos()
@@ -905,6 +905,7 @@ void print_weights_pos()
   SerialUSB.println("];\n");
 
   counter_pos++;
+  delay(1000);
 }
 
 /*

@@ -1,15 +1,8 @@
-function h = hinton_pos_2(weights_pos,parms,hidediag)
+function h = hinton_speed(weights_speed,parms)
 %HINTON_LC Summary of this function goes here
 %   Detailed explanation goes here
-if hidediag
-    for i=1:parms.n_m
-        weights_pos(i,1+2*(i-1))=0;
-        weights_pos(i,2*i)=0;
-    end
-end
-[h,fig_parms] = hinton_raw(weights_pos);
 
-n_motors = parms.n_m;
+[h,fig_parms] = hinton_raw(weights_speed);
 
 hold on;
 x_min = fig_parms.xmin-0.2;
@@ -29,13 +22,18 @@ for i=1:parms.n_m
 end
 
 %column labels
-y_shift_motors = 0.9;
-for i=1:parms.n_m
-    text(i,y_max+y_shift_motors,['M' num2str(i)],'FontSize',fontSize-2,'HorizontalAlignment','right');
+y_shift_1 = 0.6;
+y_shift_2 = 1.2;
+txt_list = {'Speed (integrated from IMU)'};
+text(1.5,y_max+y_shift_2,txt_list{1},'FontSize',fontSize-2,'HorizontalAlignment','center');
+
+txt_list2 = {'X','Y','Z'};
+for i=1:3
+    text(i-0.5,y_max+y_shift_1,txt_list2{i},'FontSize',fontSize-4,'HorizontalAlignment','center');
 end
 
 h.Color = 'w';
+h.Position = [10 10 400 900];
 hold off;
-
 end
 

@@ -75,7 +75,7 @@ void setup() {
   pose_stance();
   delay(1000);
 
-  twitch_record_wrapper();
+  //twitch_record_wrapper();
 
 }
 
@@ -85,5 +85,5 @@ void loop() {
 
   //show_value_DC(500);
 
-  //serial_read_lift_limb();
+  serial_read_lift_limb();
 }

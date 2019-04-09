@@ -8,7 +8,7 @@ fontSizeTicks = 11;
 lineWidth = 1.4;
 
 %% Load data
-recordID = 15;
+recordID = 15; %15
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -166,7 +166,7 @@ addpath('../../export_fig');
 set(f,'PaperPositionMode','auto');         
 set(f,'PaperOrientation','landscape');
 set(f,'Position',[10 10 1300 500]);
-print(f, '-dpdf', 'figures_simon/figure1_simon2.pdf');
+%print(f, '-dpdf', 'figures_simon/figure1_simon2.pdf');
 
 %%
 %hinton_LC(weights_robotis{5},parms);

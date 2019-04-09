@@ -1,17 +1,19 @@
 function h=hinton_full(weights_robotis,weights_pos_robotis,parms)
 
+% if nargin == 3
+%     writeValues = 0;
+% end
+
 n_iter = parms.n_twitches;
 weights = weights_robotis{n_iter};
 weights_pos = weights_pos_robotis{n_iter};
 
 %% rescaling
-weights = weights';
-weights_pos = weights_pos';
-weights_lc = weights(:,1:parms.n_lc*3);
-weights_acc = weights(:,parms.n_lc*3+1:parms.n_lc*3+3);
-weights_gyro = weights(:,parms.n_lc*3+4:parms.n_lc*3+6);
+weights_lc = weights(1:parms.n_lc*3,:);
+weights_acc = weights(parms.n_lc*3+1:parms.n_lc*3+3,:);
+weights_gyro = weights(parms.n_lc*3+4:parms.n_lc*3+6,:);
 
-weights_rescaled = [rescale(weights_pos) rescale(weights_lc) rescale(weights_acc) rescale(weights_gyro)];
+weights_rescaled = [rescale(weights_pos); rescale(weights_lc); rescale(weights_acc); rescale(weights_gyro)];
 
 [h,fig_parms]=hinton_raw(weights_rescaled);
 hold on;
@@ -19,46 +21,53 @@ x_min = fig_parms.xmin-0.2;
 x_max = fig_parms.xmax+0.2;
 y_min = fig_parms.ymin-0.2;
 y_max = fig_parms.ymax+0.2;
-fontSize = 18;
-
-%line labels
-x_shift = 1.5;
-for i=1:parms.n_m
-    text(x_min-x_shift,2*i-0.5,['M' num2str(parms.n_m+1-i) ' -'],'FontSize',fontSize-2,'HorizontalAlignment','left');
-    text(x_min-x_shift,2*(i-1)+0.5,['M' num2str(parms.n_m+1-i) ' +'],'FontSize',fontSize-2,'HorizontalAlignment','left');
-    if i<parms.n_m
-        plot([x_min x_max],[2*i 2*i],'k--')
-    end
-end
+fontSize_lines = 13;
+fontSize_columns = 13;
 
 %column labels
-y_shift_motors = 0.9;
+y_shift_up = 0.75;
+y_shift_bottom = 0.25;
+
 for i=1:parms.n_m
-    text(i,y_max+y_shift_motors,['M' num2str(i)],'FontSize',fontSize-2,'HorizontalAlignment','right');
+    text(2*i-1,y_max+y_shift_up,['M' num2str(i)],'FontSize',fontSize_columns,'HorizontalAlignment','center');
+    text(2*i-0.5,y_max+y_shift_bottom,'+','FontSize',fontSize_columns,'HorizontalAlignment','center');
+    text(2*i-1.5,y_max+y_shift_bottom,'-','FontSize',fontSize_columns,'HorizontalAlignment','center');   
+    %text(2*i-1.5,y_max+y_shift,['M' num2str(i) '-'],'FontSize',fontSize_columns,'HorizontalAlignment','center');
+    %text(2*i-0.5,y_max+y_shift,['M' num2str(i) '+'],'FontSize',fontSize_columns,'HorizontalAlignment','center');
+    if i<parms.n_m
+        plot([2*i 2*i],[y_min y_max],'k--')
+    end
 end
-
-y_shift_1 = 0.6;
-y_shift_2 = 1.2;
-x_shift_motors = parms.n_m;
-plot(x_shift_motors+[0 0],[y_min y_max],'k--');
-for i=1:parms.n_lc
-    text(x_shift_motors+3*(i-1)+1.5,y_max+y_shift_2,sprintf(['Loadcell ' num2str(i)]),'FontSize',fontSize-2,'HorizontalAlignment','center');
-    plot(x_shift_motors+[3*i 3*i],[y_min y_max],'k--');
+%
+%line labels motors
+n_sensors = size(weights_rescaled,1);
+x_shift = 0.25;
+for i=1:parms.n_m
+    text(x_min-x_shift,n_sensors+0.5-i,['Motor ' num2str(i)],'FontSize',fontSize_lines,'HorizontalAlignment','right');
 end
+plot([x_min x_max],n_sensors-parms.n_m + [0 0],'k--')
 
-text(x_shift_motors+3*parms.n_lc+1.5,y_max+y_shift_2,sprintf('Accelero.'),'FontSize',fontSize-2,'HorizontalAlignment','center');
-plot(x_shift_motors+[3*(parms.n_lc+1) 3*(parms.n_lc+1)],[y_min y_max],'k--');
-text(x_shift_motors+3*(parms.n_lc+1)+1.5,y_max+y_shift_2,sprintf('Gyro.'),'FontSize',fontSize-2,'HorizontalAlignment','center');
-
+%line labels loadcells
+txt_loadcell = {' X',' Y',' Z'};
+for i=1:3*parms.n_lc
+    text(x_min-x_shift,n_sensors-parms.n_m+0.5-i,['Loadcell ' num2str(ceil(i/3)) txt_loadcell{mod(i-1,3)+1}],'FontSize',fontSize_lines,'HorizontalAlignment','right');
+end
 for i=1:parms.n_lc+1
-    text(x_shift_motors+3*(i-1)+0.5,y_max+y_shift_1,'X','FontSize',fontSize-4,'HorizontalAlignment','center');
-    text(x_shift_motors+3*(i-1)+1.5,y_max+y_shift_1,'Y','FontSize',fontSize-4,'HorizontalAlignment','center');
-    text(x_shift_motors+3*(i-1)+2.5,y_max+y_shift_1,'Z','FontSize',fontSize-4,'HorizontalAlignment','center');
+    plot([x_min x_max],n_sensors-parms.n_m-3*i + [0 0],'k--')
 end
-text(x_shift_motors+3*(parms.n_lc+1)+0.5,y_max+y_shift_1,'Roll','FontSize',fontSize-6,'HorizontalAlignment','center');
-text(x_shift_motors+3*(parms.n_lc+1)+1.5,y_max+y_shift_1,'Pitch','FontSize',fontSize-6,'HorizontalAlignment','center');
-text(x_shift_motors+3*(parms.n_lc+1)+2.5,y_max+y_shift_1,'Yaw','FontSize',fontSize-6,'HorizontalAlignment','center');
-  
+
+%line labels IMU
+txt_IMU = {'Acc. X','Acc. Y','Acc. Z','Gyro. Roll','Gyro. Pitch','Gyro. Yaw'};
+for i=1:6
+    text(x_min-x_shift,n_sensors-parms.n_m-3*parms.n_lc+0.5-i,txt_IMU{i},'FontSize',fontSize_lines,'HorizontalAlignment','right');
+end
+
+xlim([x_min x_max]);
+ylim([y_min y_max]);
+
+ax=gca();
+ax.Position = [0.01 0.01 1 0.95];
+
 h.Color = 'w';
 hold off;
 end

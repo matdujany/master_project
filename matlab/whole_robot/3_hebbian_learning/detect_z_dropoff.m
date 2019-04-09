@@ -8,13 +8,13 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 22;
+recordID = 25;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 weights = read_weights_robotis(recordID,parms);
 weights_pos = read_weights_pos_robotis(recordID,parms);
 
-idx_twitch = 3;
+idx_twitch = 4;
 
 %%
 % hinton_pos_2(weights_pos{parms.n_twitches}',parms,0);

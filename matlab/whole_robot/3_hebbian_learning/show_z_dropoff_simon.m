@@ -92,7 +92,7 @@ ax.XGrid = 'on';
 
 f.Color = 'w';
 
-addpath('../../export_fig');
+%addpath('../../export_fig');
 
 %%
 set(f,'PaperPositionMode','auto');         

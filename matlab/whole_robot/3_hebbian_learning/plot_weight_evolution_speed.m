@@ -1,4 +1,4 @@
-function plot_weight_evolution_IMU(weights,parms)
+function plot_weight_evolution_speed(weights_speed,parms)
 %PLOT_WEIGHT_EVOLUTION_IMU Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -7,29 +7,13 @@ linewidth=1.3;
 
 colorlist = lines(parms.n_m);
 legend_list = cell(parms.n_m*2,1);
-if parms.n_useful_ch_IMU == 4
-    figure;
-    for i=1:parms.n_useful_ch_IMU
-        subplot(2,2,i)
-        plot_IMU(weights,parms,i,colorlist,['IMU channel ' num2str(i)],fontsize,linewidth,1);        
-    end
-else
-    if parms.n_useful_ch_IMU ==6
-        txt_list_channels = {'X','Y','Z','Roll','Pitch','Yaw'};
-        figure;
-        for i=1:3
-            subplot(2,2,i)
-            legend_list = plot_IMU(weights,parms,i,colorlist,['IMU Accelerometer channel ' txt_list_channels{i}],fontsize,linewidth,0);
-        end
-        plot_legend_hack(parms,colorlist,legend_list,fontsize);
-        figure;
-        for i=1:3
-            subplot(2,2,i)
-            legend_list = plot_IMU(weights,parms,i+3,colorlist,['IMU Gyroscope channel ' txt_list_channels{3+i}],fontsize,linewidth,0);
-        end
-        plot_legend_hack(parms,colorlist,legend_list,fontsize);
-    end
+text_list_channels = {'X','Y','Z'};
+figure;
+for i=1:3
+    subplot(2,2,i)
+    legend_list = plot_speed(weights_speed,parms,i,colorlist,['Speed ' text_list_channels{i}],fontsize,linewidth,0);
 end
+plot_legend_hack(parms,colorlist,legend_list,fontsize);
 
 end
 
@@ -52,7 +36,7 @@ l=legend(legend_list{:});
 l.FontSize = fontsize;
 end
 
-function legend_list = plot_IMU(weights,parms,channel,colorlist,titleString,fontsize,linewidth,flagShowLegend)
+function legend_list = plot_speed(weights_speed,parms,channel,colorlist,titleString,fontsize,linewidth,flagShowLegend)
 legend_list = cell(parms.n_m*2,1);
 hold on
 for j=1:parms.n_m*2
@@ -64,7 +48,7 @@ for j=1:parms.n_m*2
         legend_list{j} = ['Motor ' num2str(ceil(j/2)) ', direction +'];
     end
     for k=1:parms.n_twitches
-        data_for_plot(k) = weights{k}(3*parms.nr_arduino+channel,j);
+        data_for_plot(k) = weights_speed{k}(channel,j);
     end
     x_data = 0:parms.n_twitches;
     plot(x_data,[0;data_for_plot'],'LineStyle',linestyle,'Color',colorlist(ceil(j/2),:),'LineWidth',linewidth);

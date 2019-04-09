@@ -15,8 +15,8 @@ fontSize = 18;
 %line labels
 x_shift = 1.5;
 for i=1:parms.n_m
-    text(x_min-x_shift,2*i-0.5,['M' num2str(parms.n_m+1-i) ' +'],'FontSize',fontSize-2,'HorizontalAlignment','left');
-    text(x_min-x_shift,2*(i-1)+0.5,['M' num2str(parms.n_m+1-i) ' -'],'FontSize',fontSize-2,'HorizontalAlignment','left');
+    text(x_min-x_shift,2*i-0.5,['M' num2str(parms.n_m+1-i) ' -'],'FontSize',fontSize-2,'HorizontalAlignment','left');
+    text(x_min-x_shift,2*(i-1)+0.5,['M' num2str(parms.n_m+1-i) ' +'],'FontSize',fontSize-2,'HorizontalAlignment','left');
     if i<parms.n_m
         plot([x_min x_max],[2*i 2*i],'k--')
     end
@@ -25,7 +25,7 @@ end
 %column labels
 y_shift_1 = 0.6;
 y_shift_2 = 1.2;
-txt_list = {'Accelero.','Gyro-'};
+txt_list = {'Accelero.','Gyro.'};
 for i=1:2
     text(3*(i-1)+1.5,y_max+y_shift_2,txt_list{i},'FontSize',fontSize-2,'HorizontalAlignment','center');
 end
@@ -37,6 +37,7 @@ for i=1:6
 end
 
 h.Color = 'w';
+h.Position = [10 10 400 900];
 hold off;
 end
 

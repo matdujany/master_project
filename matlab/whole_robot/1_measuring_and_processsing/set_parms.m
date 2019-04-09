@@ -19,9 +19,9 @@ parms.print_figures  = 0;
 % learning parameters
 parms.step_ampl      = 10;       %in deg
 parms.eta            = 10;        %learning rate
-parms.duration_part0 = 500; % in ms
+parms.duration_part0 = 250; % in ms
 parms.duration_part1 = 500; % in ms
-parms.duration_part2 = 500; % in ms
+parms.duration_part2 = 250; % in ms
 parms.n_twitches     = 5;
 parms.compliant_mode = 1;
 parms.recentering    = 1;

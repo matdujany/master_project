@@ -46,6 +46,8 @@ end
 
 
 h = figure('Name', 'Hinton diagram', 'NumberTitle', 'off', 'Colormap', [0 0 0; 1 1 1], 'Units', 'pixels','Position', [x01 y01 delx dely]);
+%h = figure('Name', 'Hinton diagram', 'NumberTitle', 'off', 'Colormap', [0 0 0; 1 1 1], 'Units', 'pixels');
+
 set(gca, 'Position', [0 0 1 1]);
 set(gca, 'units', 'normalized', 'OuterPosition', [0 0 1 1]);
 hold on

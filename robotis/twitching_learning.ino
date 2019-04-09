@@ -34,8 +34,7 @@ void twitch_record_wrapper(){
   }
   
   Serial3.println(1500);
-  SerialUSB.print("Total number of frames found : ");
-  SerialUSB.println(nb_frames_found);
+  SerialUSB.println("Twitching and learning completed !");
     
   restaure_default_parameters_all_motors_syncWrite();
   pose_stance();
@@ -96,7 +95,8 @@ void twitch_main()
         int interv_dur = interv_arr[i_part];
 
         // Perform part specific actions before recording (sending servo commands)
-        twitch_pre_action(i_part, i_servo, dir_sign[i_dir], ampl_step_pos);
+        if (i_part == 0)
+          set_goal_position(id[i_servo], 512);
 
         // Keep looping until required number of frames is reached
         while (n_frames_tmp < n_frames_part[i_part])
@@ -193,6 +193,10 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
     twitch_part1_moving(i_servo, dir_sign, ampl_step_pos, n_frames_tmp, n_frames_this_part);
   }
 
+  if (i_part==2){
+    twitch_part2_moving(i_servo, n_frames_tmp, n_frames_this_part);
+  }
+
   if (USE_FILTER){
     calculate_m_dot_filtered();
     calculate_s_dot_filtered();
@@ -222,6 +226,12 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
 void twitch_part1_moving(uint8_t i_servo, int dir_sign, uint16_t ampl_step_pos, int n_frames_tmp, int n_frames_tot)
 {
   uint16_t command_pos = 512 + dir_sign * ampl_step_pos * double(n_frames_tmp) / double(n_frames_tot);
+  set_goal_position(id[i_servo], command_pos);
+}
+
+void twitch_part2_moving(uint8_t i_servo, int n_frames_tmp, int n_frames_tot)
+{
+  uint16_t command_pos = 512 + (last_motor_pos[i_servo]-512) * double(n_frames_tot-n_frames_tmp) / double(n_frames_tot);
   set_goal_position(id[i_servo], command_pos);
 }
 
@@ -323,19 +333,6 @@ void reset_twitch_variables()
   }
 }
 
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-void twitch_pre_action(int i_part, int i_servo, int sign, uint16_t ampl_step_pos)
-{
-  if (i_part == 0)
-  {
-    set_goal_position(id[i_servo], 512);
-  }
-  else if (i_part == 2)
-  {
-    set_goal_position(id[i_servo], 512);
-  }
-}
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
