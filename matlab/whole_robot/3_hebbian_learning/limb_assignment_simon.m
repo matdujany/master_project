@@ -4,7 +4,7 @@ close all; clc;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 26;
+recordID = 15;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 parms.n_useful_ch_IMU    = 6;
@@ -68,7 +68,89 @@ end
 
 %%
 addpath('../../export_fig');
-set(h,'Position',[10 10 900 600]);
+set(h,'Position',[10 10 1000 700]);
 set(h,'PaperOrientation','landscape');
 export_fig 'figures_simon/limb_assignment.pdf'
 
+
+%%
+[~,closest_LC] = max(weights_fused_sumc,[],1);
+good_closest_LC = [3;3;4;4;1;1;2;2];
+
+if sum(abs(good_closest_LC-closest_LC))~=0
+    disp('Problem with closest LCs found');
+end
+
+limb=zeros(parms.n_lc,2);
+for i=1:parms.n_lc
+    limb(i,:) = find(closest_LC == i);
+end
+
+%%
+n_limb = size(limb,1);
+weights_limb_summed = zeros(parms.n_lc,n_limb);
+for i=1:n_limb
+    for i_lc = 1:parms.n_lc
+        weights_limb_summed(i_lc,i) = weights_fused_sumc(i_lc,limb(i,1))+weights_fused_sumc(i_lc,limb(i,2));
+    end
+end
+
+[h2,fig_parms] = hinton_raw(weights_limb_summed);
+x_min = fig_parms.xmin-0.2;
+x_max = fig_parms.xmax+0.2;
+y_min = fig_parms.ymin-0.2;
+y_max = fig_parms.ymax+0.2;
+
+hold on;
+xlim([x_min, x_max]);
+ylim([y_min, y_max]);
+for i=1:4
+    text(x_min-0.1,i-0.5,['LC ' num2str(5-i)],'FontSize',fontSize,'HorizontalAlignment','right');
+end
+for i=1:4
+    text(i-0.5,y_max+0.1,['Limb ' num2str(i)],'FontSize',fontSize,'HorizontalAlignment','center','VerticalAlignment','bottom');
+end
+for i_limb=1:4
+    for i_lc=1:4
+        text(i_lc-0.5,5-i_limb-0.5,num2str(weights_limb_summed(i_limb,i_lc),'%.2f'),'FontSize',fontSize,'HorizontalAlignment','center');
+    end
+end
+h2.Color = 'w';
+set(h2,'Position',[10 10 700 700]);
+set(h2,'PaperOrientation','landscape');
+export_fig 'figures_simon/limb_assignment_limbsummed.pdf'
+
+
+%%
+
+inv_map = inv(weights_limb_summed);
+[h3,fig_parms] = hinton_raw(inv_map);
+x_min = fig_parms.xmin-0.2;
+x_max = fig_parms.xmax+0.2;
+y_min = fig_parms.ymin-0.2;
+y_max = fig_parms.ymax+0.2;
+
+hold on;
+xlim([x_min, x_max]);
+ylim([y_min, y_max]);
+for i=1:4
+    text(x_min-0.1,i-0.5,['Limb ' num2str(5-i)],'FontSize',fontSize,'HorizontalAlignment','right');
+end
+for i=1:4
+    text(i-0.5,y_max+0.1,['LC ' num2str(i)],'FontSize',fontSize,'HorizontalAlignment','center','VerticalAlignment','bottom');
+end
+for i_limb=1:4
+    for i_lc=1:4
+        value = inv_map(i_limb,i_lc);
+        if value>0
+            color = 'k';
+        else
+            color = 'w';
+        end
+        text(i_lc-0.5,5-i_limb-0.5,num2str(value,'%.2f'),'FontSize',fontSize,'HorizontalAlignment','center','Color',color);
+    end
+end
+h3.Color = 'w';
+set(h3,'Position',[10 10 700 700]);
+set(h3,'PaperOrientation','landscape');
+export_fig 'figures_simon/limb_assignment_invmap.pdf'

@@ -21,7 +21,7 @@ addpath('functions')
 
 clear; clc; close all;
 
-recordID = 26;
+recordID = 45;
 
 % Check if there is already an instance of a communication interface and
 % clears it
@@ -77,6 +77,13 @@ if data.count_frames > n_frames_theo
         disp(['Deleting ' num2str(n_frames_delete) ' first lines']);
         data.count_frames = data.count_frames - n_frames_delete;
         data.frame = data.frame(1+n_frames_delete:end);
+    else
+        prompt = ['Do you want to remove the ' num2str(n_frames_delete) ' last lines (y/n)? '];
+        answer = input(prompt,'s');
+        if answer == 'y'
+            data.count_frames = data.count_frames - n_frames_delete;
+            data.frame = data.frame(1:end-n_frames_delete);
+        end
     end
 end
         

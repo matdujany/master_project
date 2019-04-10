@@ -8,13 +8,22 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 25;
+recordID = 45;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
+parms.n_useful_ch_IMU=4;
 weights = read_weights_robotis(recordID,parms);
 weights_pos = read_weights_pos_robotis(recordID,parms);
 
-idx_twitch = 4;
+idx_twitch = 1;
+
+%%
+weights_lc = weights{5}(1:parms.n_lc*3,:);
+for i=1:parms.n_m*2
+    weights_lc_flipped(:,i)=weights_lc(:,i)*(-1)^(i);
+end
+
+hinton_LC(weights_lc_flipped,parms,1);
 
 %%
 % hinton_pos_2(weights_pos{parms.n_twitches}',parms,0);
@@ -31,11 +40,11 @@ FontSize = 12;
 %fontSizeTicks = 12;
 lineWidth = 1.4;
 
-x_patch_learning = [26 50 50 26];
+n_frames_theo = get_theo_number_frames(parms)
+x_patch_learning = [n_frames_theo.part0+1 n_frames_theo.part0+n_frames_theo.part1 n_frames_theo.part0+n_frames_theo.part1 n_frames_theo.part0+1];
 y_min = -10;
 y_max = 10;
 y_patch_learning = [y_min y_min y_max y_max];
-n_frames_theo = get_theo_number_frames(parms);
 
 index_start_twitch = 1+n_frames_theo.per_twitch*(idx_twitch-1);
 
@@ -59,7 +68,7 @@ for i_sensor = 1:parms.n_lc
         plot([0 n_frames_theo.per_action-1],[0 0]);
         %yyaxis right;
         %plot(lpdata.motor_position(ceil(i_motor/2),index_start:index_end));
-        xlim([n_frames_theo.part0-10 n_frames_theo.part0+n_frames_theo.part1+10]);
+        %xlim([n_frames_theo.part0-10 n_frames_theo.part0+n_frames_theo.part1+10]);
     end
 end
 

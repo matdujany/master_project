@@ -1,7 +1,7 @@
 function data = parse_datastream(data, parms)
 % Main function for parsing
 
-fprintf('Parse data stream\n')
+fprintf('Parse daisychain data stream\n')
 
 n_data = length(data.raw);
 

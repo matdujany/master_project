@@ -2,7 +2,7 @@ clear;
 close all; clc;
 
 addpath('../2_load_data_code');
-recordID = 14;
+recordID = 27;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 

@@ -8,7 +8,7 @@ fontSizeTicks = 12;
 lineWidth = 1.4;
 
 %% Load data
-recordID = 17;
+recordID = 17; %17 is good (high twitching amplitude).
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 weights_robotis = read_weights_robotis(recordID,parms);

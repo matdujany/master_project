@@ -16,7 +16,9 @@ void twitch_record_wrapper(){
     pose_stance();               // Set servo positions to stance pose
     sleep_while_moving();        // Sleep until the servo's reached their imposed positions
     //reset_servo_offset();        // Reset offset of servo's
-    delay(3000);
+    SerialUSB.println("10 s delay starting, recenter robot on rugs if needed");
+    delay(10000);
+    SerialUSB.println("10 s delay over");
     update_IMU_offsets();
     init_buf_filter();
 

@@ -2,9 +2,10 @@ close all;
 
 
 addpath('../2_load_data_code');
-recordID = 15;
+recordID = 45;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
+parms.n_useful_ch_IMU=4;
 
 good_closest_LC = [3;3;4;4;1;1;2;2];
 limb=zeros(parms.n_lc,2);
@@ -31,15 +32,37 @@ for i=1:parms.n_m*2
     weights_lc_flipped(:,i)=weights_lc(:,i)*(-1)^(i);
 end
 
-hinton_LC(weights_lc_flipped,parms,1);
+% for i=1:parms.n_m
+%     weights_lc_fused(:,i)=(weights_lc_flipped(:,2*i-1)+weights_lc_flipped(:,2*i))/2;
+% end
 
+
+% signs_motor_order = [-1 -1 1 1 1 1 -1 -1]; %in motor order (M1 ... M8)
+% for i=1:parms.n_m*2
+%     weights_lc_sign_corrected(:,i)=weights_lc_flipped(:,i)*signs_motor_order(ceil(i/2));
+% end
+% hinton_LC_zonly(weights_lc_sign_corrected,parms,1);
+
+%%
+hinton_LC(weights_lc_flipped,parms,1);
+hinton_LC_zonly(weights_lc_flipped,parms,1);
+
+
+
+%%
 idx_m_methoda = [9 11; 14 16; 2 4; 5 7];%without the corrupted directions
 idx_m_methodb = [10 12; 13 15; 1 3; 6 8];%with the corrupted directions
 
+% for i=1:4
+%     weights_lc_flipped(3*i,idx_m_methodb(i,1))=signs(i,1)*1;
+% end
+
+signs = [1 1; -1 -1; -1 -1; 1 1]; % in limb order (so M5 M6; M7 M8; M1 M2; M3 M4);
+
 for i_sensor = 1:parms.n_lc
     for j = 1:4
-        limb_effect_methoda(i_sensor,j) = sum(weights_lc_flipped(3*i_sensor,idx_m_methoda(j,:)));
-        limb_effect_methodb(i_sensor,j) = sum(weights_lc_flipped(3*i_sensor,idx_m_methodb(j,:)));
+        limb_effect_methoda(i_sensor,j) = sum(signs(j,:).*weights_lc_flipped(3*i_sensor,idx_m_methoda(j,:)));
+        limb_effect_methodb(i_sensor,j) = sum(signs(j,:).*weights_lc_flipped(3*i_sensor,idx_m_methodb(j,:)));
     end
 end
 

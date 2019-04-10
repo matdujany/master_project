@@ -8,7 +8,7 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 22;
+recordID = 34;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 weights = read_weights_robotis(recordID,parms);
