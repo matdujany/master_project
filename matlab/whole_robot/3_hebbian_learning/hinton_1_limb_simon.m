@@ -79,7 +79,7 @@ end
 plot([2 2],[y_min y_max],'k--');
 
 x_shift = 0.15;
-row_names_list = {'Motor 1','Motor 2','Loadcell X','Loadcell Y','Loadcell Z','Acc. X','Acc. Y','Acc. Z','Gyro. Roll','Gyro. Pitch','Gyro. Yaw'};
+row_names_list = {'Motor 1','Motor 2','Loadcell 3 X','Loadcell 3 Y','Loadcell 3 Z','Acc. X','Acc. Y','Acc. Z','Gyro. Roll','Gyro. Pitch','Gyro. Yaw'};
 for i=1:size(weights,1)
     text(x_min-x_shift,size(weights,1)-i+0.5,row_names_list{i},'FontSize',fontSize-2,'HorizontalAlignment','right');
 end

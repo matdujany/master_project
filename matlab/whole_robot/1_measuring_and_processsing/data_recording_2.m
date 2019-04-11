@@ -22,7 +22,7 @@ warning('off');
 
 %% Parameters
 set_parms
-
+predict_duration(parms)
 %% Main
 time_vec   = clock;
 time_stamp = strcat(num2str(time_vec(1)),"-",num2str(time_vec(2)),"-",num2str(time_vec(3)),"-",num2str(time_vec(4)),"_",num2str(time_vec(5)),"_",num2str(round(time_vec(6))));
