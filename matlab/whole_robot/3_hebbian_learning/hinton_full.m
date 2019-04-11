@@ -1,8 +1,8 @@
-function h=hinton_full(weights_robotis,weights_pos_robotis,parms)
+function h=hinton_full(weights_robotis,weights_pos_robotis,parms,writeValues)
 
-% if nargin == 3
-%     writeValues = 0;
-% end
+if nargin == 3
+    writeValues = 0;
+end
 
 n_iter = parms.n_twitches;
 weights = weights_robotis{n_iter};
@@ -67,6 +67,22 @@ ylim([y_min y_max]);
 
 ax=gca();
 ax.Position = [0.01 0.01 1 0.95];
+
+[n_sensors, n_motors] = size(weights_rescaled);
+fontSize_values=10;
+if writeValues == 1
+for i=1:n_sensors
+    for j=1:n_motors
+        value = weights_rescaled(i,j);
+        if value>0
+            color = 'k';
+        else
+            color ='w';
+        end
+        text(j-0.5,n_sensors-i+0.5,num2str(value,'%.2f'),'FontSize',fontSize_values,'HorizontalAlignment','center','Color',color);
+    end
+end
+end
 
 h.Color = 'w';
 hold off;

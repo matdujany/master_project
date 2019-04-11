@@ -70,7 +70,7 @@ end
 addpath('../../export_fig');
 set(h,'Position',[10 10 1000 700]);
 set(h,'PaperOrientation','landscape');
-export_fig 'figures_simon/limb_assignment.pdf'
+% export_fig 'figures_simon/limb_assignment.pdf'
 
 
 %%
@@ -118,7 +118,7 @@ end
 h2.Color = 'w';
 set(h2,'Position',[10 10 700 700]);
 set(h2,'PaperOrientation','landscape');
-export_fig 'figures_simon/limb_assignment_limbsummed.pdf'
+% export_fig 'figures_simon/limb_assignment_limbsummed.pdf'
 
 
 %%
@@ -153,4 +153,4 @@ end
 h3.Color = 'w';
 set(h3,'Position',[10 10 700 700]);
 set(h3,'PaperOrientation','landscape');
-export_fig 'figures_simon/limb_assignment_invmap.pdf'
+% export_fig 'figures_simon/limb_assignment_invmap.pdf'
