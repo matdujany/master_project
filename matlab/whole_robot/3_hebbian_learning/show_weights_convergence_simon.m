@@ -51,16 +51,28 @@ weights_gyro_plot = weights_gyro_plot/renorm_gyro;
 
 ylims = [-1.2 1.2];
 
+transpose = false;
 %%
 f=figure;
-ah{1}=subplot(4,1,1);
+if transpose
+    ah{1}=subplot(4,1,1);
+else
+    ah{1}=subplot(1,4,1); 
+end
 hold on;
 plot([0:parms.n_twitches],weights_pos_plot(:,1),'LineStyle', '-','LineWidth',lineWidth);
 plot([0:parms.n_twitches],weights_pos_plot(:,2),'LineStyle', '-','LineWidth',lineWidth);
 plot_layout(parms,fontSize,fontSizeTicks,ylims,{'M1','M2'},'Motor Positions')
+if ~transpose
+    ylabel('Weight Value','FontSize',fontSize);
+end
 
 %%
-ah{2}=subplot(4,1,2);
+if transpose
+    ah{2}=subplot(4,1,2);
+else
+    ah{2}=subplot(1,4,2); 
+end
 hold on;
 legend_list = {'X','Y','Z'};
 for i_channel=1:3
@@ -69,7 +81,11 @@ end
 plot_layout(parms,fontSize,fontSizeTicks,ylims,legend_list,'Loadcell')
 
 %%
-ah{3}=subplot(4,1,3);
+if transpose
+    ah{3}=subplot(4,1,3);
+else
+    ah{3}=subplot(1,4,3); 
+end
 hold on;
 legend_list = {'X','Y','Z'};
 for i_channel=1:3
@@ -78,16 +94,22 @@ end
 plot_layout(parms,fontSize,fontSizeTicks,ylims,legend_list,'Accelerometer')
 
 %%
-ah{4}=subplot(4,1,4);
+if transpose
+    ah{4}=subplot(4,1,4);
+else
+    ah{4}=subplot(1,4,4); 
+end
 hold on;
 legend_list = {'Roll','Pitch','Yaw'};
 for i_channel=1:3
     plot([0:parms.n_twitches],weights_gyro_plot(:,i_channel),'LineStyle', '-','LineWidth',lineWidth);
 end
 plot_layout(parms,fontSize,fontSizeTicks,ylims,legend_list,'Gyroscope')
-xlabel('Twitch iteration','FontSize',fontSize);
+if transpose
+    xlabel('Twitch iteration','FontSize',fontSize);
+end
 
-
+if transpose
 %# find current position [x,y,width,height]
 for i=1:4
     pos{i} = get(ah{i},'Position');
@@ -100,25 +122,41 @@ end
 for i=1:3
     set(ah{i},'Position',pos{i})
 end
+end
 
 %%
 f.Color = 'w';
 addpath('../../export_fig');
+if transpose
 set(f,'Position',[10 10 550 900]);
+else
+    set(f,'Position',[10 10 1800 300]);
+end
 %set(f,'PaperOrientation','landscape');
-export_fig 'figures_simon/weights_convergence.pdf'
+% export_fig 'figures_simon/weights_convergence.pdf'
 
 
 
 function plot_layout(parms,fontSize,fontSizeTicks,ylims,legend_list,titleString)
-ylabel('Weight Value','FontSize',fontSize);
+transpose = false;
 xticks([0:parms.n_twitches]);
-lgd=legend(legend_list,'Location','eastoutside');
+lgd=legend(legend_list);
+if transpose
+    lgd.Location='eastoutside';
+else
+    lgd.Location='best';    
+end
 %lgd.Position = [0.670634920634921,0.146500001072884,0.221428568448339,0.076999997854233];
-lgd.FontSize = fontSize-2;
+lgd.FontSize = fontSize-3;
+%lgd.NumColumns = 3;
 title(titleString,'FontSize',fontSize);
 ax = gca;
 ax.FontSize = fontSizeTicks;
 grid on;
 ylim(ylims);
+if transpose
+    ylabel('Weight Value','FontSize',fontSize);
+else
+    xlabel('Twitch iteration','FontSize',fontSize);
+end   
 end

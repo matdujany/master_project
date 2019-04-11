@@ -48,16 +48,20 @@ weights_rescaled = [weights_motor_rescaled; weights_lc_rescaled; weights_acc_res
 %%
 addpath('../../export_fig');
 %%
-h1 = hinton_limb(weights,parms,0);
+% h1 = hinton_limb(weights,parms,0);
+h1 = hinton_limb_2(weights',0);
+
 set(h1,'Position',[10 10 600 1000]);
 % set(h1,'PaperOrientation','landscape');
-export_fig 'figures_simon/hinton_limb_raw.pdf'
+% export_fig 'figures_simon/hinton_limb_raw.pdf'
 
 %%
-h2 = hinton_limb(weights_rescaled,parms,1);
+% h2 = hinton_limb(weights_rescaled,parms,1);
+h2 = hinton_limb_2(weights_rescaled',1);
+
 set(h2,'Position',[10 10 600 1000]);
 % set(h2,'PaperOrientation','landscape');
-export_fig 'figures_simon/hinton_limb_rescaled.pdf'
+% export_fig 'figures_simon/hinton_limb_rescaled.pdf'
 
 %%
 function h = hinton_limb(weights,parms,writeValues)
@@ -137,12 +141,12 @@ text(1.5,y_max+y_shift,'Motor 2','FontSize',fontSize-2,'HorizontalAlignment','ce
 text(2.5,y_max+y_shift,sprintf('Loadcell X'),'FontSize',fontSize-2,'HorizontalAlignment','center');
 text(3.5,y_max+y_shift,sprintf('Loadcell Y'),'FontSize',fontSize-2,'HorizontalAlignment','center');
 text(4.5,y_max+y_shift,sprintf('Loadcell Z'),'FontSize',fontSize-2,'HorizontalAlignment','center');
-text(5.5,y_max+y_shift,sprintf('Accelero. X'),'FontSize',fontSize-2,'HorizontalAlignment','center');
-text(6.5,y_max+y_shift,sprintf('Accelero. Y'),'FontSize',fontSize-2,'HorizontalAlignment','center');
-text(7.5,y_max+y_shift,sprintf('Accelero. Z'),'FontSize',fontSize-2,'HorizontalAlignment','center');
-text(8.5,y_max+y_shift,sprintf('Gyro. Roll'),'FontSize',fontSize-2,'HorizontalAlignment','center');
-text(9.5,y_max+y_shift,sprintf('Gyro. Pitch'),'FontSize',fontSize-2,'HorizontalAlignment','center');
-text(10.5,y_max+y_shift,sprintf('Gyro. Yaw'),'FontSize',fontSize-2,'HorizontalAlignment','center');
+text(5.5,y_max+y_shift,sprintf('Acc. X'),'FontSize',fontSize-2,'HorizontalAlignment','center');
+text(6.5,y_max+y_shift,sprintf('Acc. Y'),'FontSize',fontSize-2,'HorizontalAlignment','center');
+text(7.5,y_max+y_shift,sprintf('Acc. Z'),'FontSize',fontSize-2,'HorizontalAlignment','center');
+text(8.5,y_max+y_shift,sprintf('Roll'),'FontSize',fontSize-2,'HorizontalAlignment','center');
+text(9.5,y_max+y_shift,sprintf('Pitch'),'FontSize',fontSize-2,'HorizontalAlignment','center');
+text(10.5,y_max+y_shift,sprintf('Yaw'),'FontSize',fontSize-2,'HorizontalAlignment','center');
 hold off;
 
 h.Color = 'w';
