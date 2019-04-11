@@ -17,9 +17,9 @@ weights_pos = weights_pos_robotis{n_iter};
 
 %% hinton
 %h=hinton_full_2(weights_robotis,weights_pos_robotis,parms);
-h=hinton_full(weights_robotis,weights_pos_robotis,parms,1);
+h=hinton_full(weights_robotis,weights_pos_robotis,parms,0);
 %% export
 addpath('../../export_fig');
 set(h,'Position',[10 50 800 950]);
-% export_fig 'figures_simon/hinton_full_rescaled.pdf'
+export_fig 'figures_simon/hinton_full_rescaled.pdf'
 
