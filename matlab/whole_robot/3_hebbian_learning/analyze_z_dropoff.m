@@ -17,10 +17,10 @@ weights_pos = read_weights_pos_robotis(recordID,parms);
 idx_twitch = 2;
 
 %%
-hinton_pos(weights_pos{parms.n_twitches},parms,0);
+% hinton_pos(weights_pos{parms.n_twitches},parms,0);
 hinton_LC(weights{parms.n_twitches},parms);
-hinton_IMU(weights{parms.n_twitches},parms);
-hinton_full(weights,weights_pos,parms);
+% hinton_IMU(weights{parms.n_twitches},parms);
+% hinton_full(weights,weights_pos,parms);
 
 %% computing learning signals
 data = compute_filtered_signal_data(data,parms);
@@ -31,10 +31,10 @@ s_IMU = data.s_IMU_filtered;
 %%
 % subplots_z_loadcells(idx_twitch,s_dot_lc,parms);
 % 
-% list_hip_motors = [1 2 5 6 9 10 13 14];
-% subplots_z_loadcells(idx_twitch,s_dot_lc,parms,list_hip_motors);
+list_hip_motors = [1 2 5 6 9 10 13 14];
+subplots_z_loadcells(idx_twitch,s_dot_lc,parms,list_hip_motors);
 
 %%
 flagPlot = 1;
-threshold_factor = 0.3;
+threshold_factor = 0.1;
 dropoffs = count_dropoffs(threshold_factor,data,parms,flagPlot);

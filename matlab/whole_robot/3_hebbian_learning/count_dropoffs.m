@@ -19,7 +19,8 @@ for k_twitch = 1:parms.n_twitches
 end
 %%
 if flagPlot
-    figure;
+    fontsize=14;
+    f=figure;
     colormap gray;
     image(sum(dropoffs.totalcounts,3),'CDataMapping','scaled');
     lc_tick_label_list = cell(parms.n_lc,1);
@@ -40,8 +41,15 @@ if flagPlot
     end
     xticks(1:2*parms.n_m);
     xticklabels(motor_tick_label_list);
-    colorbar;
-    title(['Total counts of value below threshold (' num2str(threshold_factor) ' of static load)']);
+    c=colorbar;
+    c.FontSize = fontsize;
+    title(['Total counts of value below threshold (' num2str(threshold_factor) ' of static load)'],'FontSize',fontsize);
+    ax=gca();
+    ax.TickLength = [0 0];
+    ax.FontSize = fontsize;
+    axis image;
+    f.Color = 'w';
+    f.Position = [10 10 825 250];
 end
 end
 

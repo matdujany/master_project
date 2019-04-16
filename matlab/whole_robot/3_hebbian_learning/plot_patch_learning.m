@@ -1,11 +1,9 @@
-function f = plot_patch_learning(f,pos_start_learning,pos_end_learning,flagText)
+function plot_patch_learning(ylimits,pos_start_learning,pos_end_learning,flagText)
 %PLOT_PATCH_LEARNING Summary of this function goes here
-%   f figure handle;
 if nargin == 3
     flagText = 0;
 end
 hold on;
-ylimits = f.CurrentAxes.YLim;
 y_patch_learning = [ylimits(1) ylimits(1) ylimits(2) ylimits(2)];
 counts = 0;
 txt_list = {'Hip -','Hip +', 'Knee -', 'Knee +'};

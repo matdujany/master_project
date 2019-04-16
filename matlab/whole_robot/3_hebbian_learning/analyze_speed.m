@@ -7,7 +7,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 14;
+recordID = 17;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -33,18 +33,29 @@ index_end = n_frames_theo.per_twitch*twitch_cycle_idx;
 n_action = (parms.n_m*parms.n_dir);
 idx_start_learning = pos_start_learning(1+n_action*(twitch_cycle_idx-1):n_action*twitch_cycle_idx);  
 idx_end_learning = pos_end_learning(1+n_action*(twitch_cycle_idx-1):n_action*twitch_cycle_idx);  
+sign_motor_dirs1 = compute_sign_data_speed(1,integrated_speed,data,lpdata,parms);
+sign_motor_dirs2 = compute_sign_data_speed(2,integrated_speed,data,lpdata,parms);
+sign_motor_dirs3 = compute_sign_data_speed(3,integrated_speed,data,lpdata,parms);
 
 figure;
 text_list_channels = {'X','Y','Z'};
-for i=1:3
-subplot(2,2,i);
+for i_dir=1:3
+subplot(2,2,i_dir);
 hold on;
-plot(integrated_speed(index_start:index_end,i));
-plot(myfilter(integrated_speed(index_start:index_end,i)));
-plot_patch_learning(gcf(),idx_start_learning,idx_end_learning,1);
+plot(integrated_speed(index_start:index_end,i_dir));
+ax = gca();
+plot_patch_learning(ax.YLim,idx_start_learning,idx_end_learning,0);
+for i_motor=1:2*parms.n_m
+    text((idx_start_learning(i_motor)+idx_end_learning(i_motor))/2,ax.YLim(2)*0.8,num2str(sign_motor_dirs1(i_dir, i_motor,twitch_cycle_idx)));
+    text((idx_start_learning(i_motor)+idx_end_learning(i_motor))/2,ax.YLim(2)*0.9,num2str(sign_motor_dirs2(i_dir, i_motor,twitch_cycle_idx)));
+    text((idx_start_learning(i_motor)+idx_end_learning(i_motor))/2,ax.YLim(2),num2str(sign_motor_dirs3(i_dir, i_motor,twitch_cycle_idx)));
+end
+ylim(ax.YLim);
+ylabel(['Speed ' text_list_channels{i_dir} ' [m/s]']);
+text(ax.XLim(2),ax.YLim(2)*0.8,'Method 1 : max');
+text(ax.XLim(2),ax.YLim(2)*0.9,'Method 2 : threshold');
+text(ax.XLim(2),ax.YLim(2)*1,'Method 3 : average');
 
-legend('Filtered IMU integrated','Filtered IMU integrated then filtered');
-ylabel(['Speed ' text_list_channels{i} ' [m/s]']);
 end
 sgtitle('IMU accelerometer integrated signal');
 
@@ -60,7 +71,8 @@ sign_motor_dirs = compute_sign_data_speed(method,integrated_speed,data,lpdata,pa
 
 %%
 data_pixels = sum(sign_motor_dirs,3);
-plot_results_speed_effects(data_pixels,parms,['Method ' num2str(method)]);
+titleStrings = {'Method 1 : max','Method 2 : threshold','Method 3 : average'};
+plot_results_speed_effects(data_pixels,parms,titleStrings{1,method});
 end
 
 function sign_motor_dirs = compute_sign_data_speed(method,integrated_speed,data,lpdata,parms)

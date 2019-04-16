@@ -39,14 +39,14 @@
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
 // LEARNING
-#define STEP_AMPL                   15     // Amplitude of step function during twitching (in degrees)
+#define STEP_AMPL                   20     // Amplitude of step function during twitching (in degrees)
 #define LEARNING_RATE               10     // Learning rate for the update rule
 #define DURATION_PART0              250    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
 #define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
 #define DURATION_PART2              250    // Duration of part 2 in ms; part 2: begins at the action of going back to initial position;   servo goes from step position to initial position
 #define N_TWITCHES                  5
 
-#define COMPLIANT_MODE              1   // (0) : all servos remain at default parameters 
+#define COMPLIANT_MODE              0   // (0) : all servos remain at default parameters 
                                         // (1) : the non moving servos are compliant, the moving one is stiff
                                         // (2) : all servos are stiff
 #define RECENTERING_TWITCH          1   // (1) : servos are recentered at 512 after each twitching in the 2 directions.

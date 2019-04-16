@@ -160,15 +160,18 @@ void twitch_main()
 
       }
 
-      if (COMPLIANT_MODE==1){
-        if (RECENTERING_TWITCH==1){
-          restaure_default_parameters_all_motors_syncWrite();
-          //make_all_servos_stiff();
-          pose_stance();
-          delay(RECENTERING_DELAY);
+      if (RECENTERING_TWITCH==1){
+        restaure_default_parameters_all_motors_syncWrite();
+        //make_all_servos_stiff();
+        pose_stance();
+        delay(RECENTERING_DELAY);
+        if (COMPLIANT_MODE==1)
           make_all_servos_compliant_syncWrite();
-        
-        }
+        if (COMPLIANT_MODE==2)
+          make_all_servos_stiff_syncWrite();
+      }
+
+      if (COMPLIANT_MODE==1){
         make_servo_compliant(id[i_servo]);
       }
 

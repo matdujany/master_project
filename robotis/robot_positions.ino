@@ -76,7 +76,7 @@ void move_hips_int_out_wrapper(){
 }
 
 void hardcoded_lift_limb(int idx_limb_lift){
-  uint16_t delta_angle = uint16_t(20* 3.413);
+  uint16_t delta_angle = uint16_t(30* 3.413);
   if (idx_limb_lift==1)
     set_goal_position(15,512+delta_angle);
   else if (idx_limb_lift==2)
@@ -87,14 +87,20 @@ void hardcoded_lift_limb(int idx_limb_lift){
     set_goal_position(13,512+delta_angle);
 }
 
+//reads console and lifts limb if input = ID of one limb, i.e 1, 2, 3 ... n_limbs
 void serial_read_lift_limb(){
   if(SerialUSB.available()){
     char char_read = SerialUSB.read();
     SerialUSB.println(char_read);
     SerialUSB.println(char_read,DEC);    
-    pose_stance();
-    delay(2000);
-    if (char_read>48 && char_read<53)
+
+    if (char_read=='s') //ASCII code : 's' = 115
+      pose_stance();
+    if (char_read>'0' && char_read<'5'){ //ASCII code : 0 = 48
+      pose_stance();
+      SerialUSB.println("Staying for 5 s in stance to prepare lift off");
+      delay(5000);
       hardcoded_lift_limb(char_read-48);
+    }
   }
 }
