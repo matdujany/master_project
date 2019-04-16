@@ -41,7 +41,7 @@ s_IMU = data.s_IMU_filtered;
 amp_acc = 20;
 amp_gyro = 15;
 all_subplots_Acc_Gyro(idx_twitch,s_IMU(:,1:3),parms,amp_acc,{'Acc. X', 'Acc. Y', 'Acc. Z'});
-all_subplots_Acc_Gyro(idx_twitch,s_IMU(:,4:6),parms,amp_gyro,{'Gyro. Roll','Gyro. Pitch','Gyro. Yaw'});
+% all_subplots_Acc_Gyro(idx_twitch,s_IMU(:,4:6),parms,amp_gyro,{'Gyro. Roll','Gyro. Pitch','Gyro. Yaw'});
 
 
 function all_subplots_Acc_Gyro(idx_twitch,s_IMU,parms,amp,txt_list)
@@ -61,10 +61,10 @@ index_start_twitch = 1+n_frames_theo.per_twitch*(idx_twitch-1);
 f=figure;
 f.Color = 'w';
 % tight_subplot(Nh, Nw, gap, marg_h, marg_w) 
-[ha, pos] = tight_subplot(parms.n_m*2,3,[.01 .01],[.01 .03],[.035 .01]);
-for i_motor = 1:parms.n_m*2
-    for i_sensor_IMU = 1:3
-        axes(ha(3*(i_motor-1)+i_sensor_IMU));
+[ha, pos] = tight_subplot(3,parms.n_m*2,[.01 .01],[.01 .03],[.035 .01]);
+for i_sensor_IMU = 1:3
+        for i_motor = 1:parms.n_m*2
+        axes(ha(parms.n_m*2*(i_sensor_IMU-1)+i_motor));
         hold on;
         index_start = index_start_twitch+n_frames_theo.per_action*(i_motor-1);
         index_end = index_start + n_frames_theo.per_action-1;
@@ -76,20 +76,21 @@ for i_motor = 1:parms.n_m*2
     end    
 end
 
-step_y = -pos{1+3}(2)+pos{1}(2);
+step_y = -pos{1+2*parms.n_m}(2)+pos{1}(2);
 y_shift = pos{end}(2)+pos{end}(4);
-for i_motor = 1:parms.n_m
-    y_pos = step_y*2*(i_motor-1)+y_shift;
-    annotation('textbox', [0,y_pos, 0, 0], 'string',['M' num2str(parms.n_m+1-i_motor) '+'],'FontSize',FontSize,'FitBoxToText','on','EdgeColor','none');
-    annotation('textbox', [0,y_pos+step_y, 0, 0], 'string',['M' num2str(parms.n_m+1-i_motor) '-'],'FontSize',FontSize,'FitBoxToText','on','EdgeColor','none');
+for i_sensor = 1:3
+    y_pos = step_y*(i_sensor-1)+y_shift;
+    annotation('textbox',  [0,y_pos, 0, 0],'string',txt_list{1,4-i_sensor},'FontSize',FontSize,'HorizontalAlignment','center','FitBoxToText','on','EdgeColor','none');
 end
 
 step_x = pos{2}(1)-pos{1}(1);
 x_shift = pos{1}(1)+pos{1}(3)/2;
 y_pos_column_title = 1.0;
-for i_sensor = 1:3
-    x_pos = step_x*(i_sensor-1)+x_shift;
-    annotation('textbox', [x_pos, y_pos_column_title, 0, 0], 'string',txt_list{1,i_sensor},'FontSize',FontSize,'HorizontalAlignment','center','FitBoxToText','on','EdgeColor','none');
+for i_motor = 1:parms.n_m
+    x_pos = step_x*2*(i_motor-1)+x_shift;
+    annotation('textbox', [x_pos, y_pos_column_title, 0, 0],'string',['M' num2str(i_motor) '-'],'FontSize',FontSize,'FitBoxToText','on','EdgeColor','none');
+    annotation('textbox', [x_pos+step_x, y_pos_column_title, 0, 0], 'string',['M' num2str(i_motor) '+'],'FontSize',FontSize,'FitBoxToText','on','EdgeColor','none');
+
 end
 
 end
