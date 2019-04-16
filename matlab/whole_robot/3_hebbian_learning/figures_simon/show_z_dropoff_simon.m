@@ -2,7 +2,6 @@ clear;
 close all; clc;
 
 addpath('../2_load_data_code');
-addpath('hinton_plot_functions');
 
 fontSize = 14;
 fontSizeTicks = 12;
@@ -25,9 +24,6 @@ idx_lc = good_closest_LC(idx_motor);
 n_frames_theo = get_theo_number_frames(parms);
 index_start = 1+n_frames_theo.per_twitch*(idx_twitch-1) + n_frames_theo.per_action*(idx_motor-1)*parms.n_dir;
 index_end = n_frames_theo.per_twitch*(idx_twitch-1)  + n_frames_theo.per_action*idx_motor*parms.n_dir;
-
-index_start = index_start;
-index_end = index_start + n_frames_theo.per_action;
 
 %% time signals
 time_plot =(0:index_end-index_start)*parms.time_interval_twitch/1000;
@@ -80,8 +76,7 @@ for i=1:length(manual_grid_values)
     plot([time_plot(1)-10 time_plot(end)+10],[manual_grid_values(i) manual_grid_values(i)],'LineStyle', '-','Color',[1,0,0,0.5]);
 end
 xlim([time_plot(1) time_plot(end)]);
-xlim([0.4 1.25]);
-%patch(x_patch_dropoff,y_patch_dropoff,'red','FaceAlpha',0.1,'EdgeColor','none','HandleVisibility','off');
+patch(x_patch_dropoff,y_patch_dropoff,'red','FaceAlpha',0.1,'EdgeColor','none','HandleVisibility','off');
 ylabel('Load channel Z [N]','Color','r','FontSize',fontSize);
 ylim([-3 15]);
 lgd = legend(legend_list_time);
@@ -92,7 +87,7 @@ lgd.NumColumns = 2;
 ax = gca;
 ax.FontSize = fontSizeTicks;
 ax.YAxis(2).Color = 'r'; 
-ax.YGrid = 'on'; 
+ax.YGrid = 'off'; 
 ax.XGrid = 'on'; 
 
 f.Color = 'w';
