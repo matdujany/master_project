@@ -9,20 +9,20 @@ x_min = fig_parms.xmin-0.2;
 x_max = fig_parms.xmax+0.2;
 y_min = fig_parms.ymin-0.2;
 y_max = fig_parms.ymax+0.2;
-fontSize = 18;
+fontSize = 15;
 
 %line labels
 x_shift = 0.5;
 txt_list2 = {'X','Y','Z'};
 for i=1:3
-    text(x_min-x_shift,i-0.5,txt_list2{4-i},'FontSize',fontSize-2,'HorizontalAlignment','left');
+    text(x_min-x_shift,i-0.5,txt_list2{4-i},'FontSize',fontSize,'HorizontalAlignment','left');
 end
 
 %column labels
 y_shift = 0.3;
 for i=1:parms.n_m
-    text(2*i-1.5,y_max+y_shift,['M' num2str(i) ' -'],'FontSize',fontSize-2,'HorizontalAlignment','center');
-    text(2*i-0.5,y_max+y_shift,['M' num2str(i) ' +'],'FontSize',fontSize-2,'HorizontalAlignment','center');
+    text(2*i-1.5,y_max+y_shift,['M' num2str(i) '-'],'FontSize',fontSize,'HorizontalAlignment','center');
+    text(2*i-0.5,y_max+y_shift,['M' num2str(i) '+'],'FontSize',fontSize,'HorizontalAlignment','center');
     if i<parms.n_m
         plot([2*i 2*i],[y_min y_max],'k--')
     end
@@ -50,7 +50,7 @@ end
 % end
 
 h.Color = 'w';
-h.Position = [10 10 900 400];
+h.Position = [10 10 1000 350];
 hold off;
 
 xlabel('Speed weights, integrated from IMU','FontSize',fontSize);

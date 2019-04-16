@@ -61,5 +61,5 @@ sgtitle('IMU accelerometer integrated signal');
 %%
 weights_speed = compute_weights_speed(data,lpdata,parms);
 
-hinton_speed(weights_speed{parms.n_twitches}',parms);
+hinton_speed(weights_speed{parms.n_twitches},parms);
 plot_weight_evolution_speed(weights_speed,parms);
