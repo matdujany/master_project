@@ -7,7 +7,7 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 //printing loadcell and IMU values adds some delay between the updates
 void show_value_DC(unsigned long delay_updates){
-  send_frame_and_update_sensors();
+  send_frame_and_update_sensors(0);
   print_loadcell_values();
   print_IMU_values();
   delay(delay_updates);
@@ -16,15 +16,15 @@ void show_value_DC(unsigned long delay_updates){
 
 //update the values of the LC and prints their latest values.
 void show_value_LC(unsigned long delay_updates){
-  send_frame_and_update_sensors();
+  send_frame_and_update_sensors(0);
   print_loadcell_values();
   delay(delay_updates);
 }
 
-void send_frame_and_update_sensors(){
+void send_frame_and_update_sensors(int flagVerbose){
   frame_found = false; //set to false because we want to update it
   while (!frame_found){
-    try_capture_1_frame(1);
+    try_capture_1_frame(flagVerbose);
   
     if (flagVerbose){
       SerialUSB.println("Updating sensor values");
@@ -48,7 +48,7 @@ void measure_mean_values_LC(uint8_t nb_values_mean, unsigned long delay_frames){
   }
   //measuring a mean value
   while (nb_captured_values<nb_values_mean){
-    send_frame_and_update_sensors();
+    send_frame_and_update_sensors(0);
     for (int i=0; i<3*n_ard; i++){
       mean_values_LC[i] += ser_rx_buf.last_loadcell_data_float[i]/(float)nb_values_mean;
     }
@@ -66,6 +66,32 @@ void measure_mean_values_LC(uint8_t nb_values_mean, unsigned long delay_frames){
     SerialUSB.println();
   }
   SerialUSB.println();
+}
+
+void measure_mean_values_IMU(uint8_t nb_values_mean, unsigned long delay_frames){
+  uint8_t nb_captured_values = 0;
+  float mean_values_IMU[6];
+  for (int i=0; i<6; i++){
+    mean_values_IMU[i] = 0;
+  }
+  //measuring a mean value
+  while (nb_captured_values<nb_values_mean){
+    send_frame_and_update_sensors(0);
+    for (int i=0; i<3; i++){
+      mean_values_IMU[i] += ser_rx_buf.last_IMU_acc_corrected[i]/(float)nb_values_mean;
+      mean_values_IMU[3+i] += ser_rx_buf.last_IMU_gyro_corrected[i]/(float)nb_values_mean;
+    }
+    nb_captured_values++;
+    delay(delay_frames);
+  }
+  //printing results
+  SerialUSB.print("IMU mean channel values ");
+  for (int j =0; j<6; j++){
+    SerialUSB.print(mean_values_IMU[j]);
+    SerialUSB.print("\t");
+  }
+  SerialUSB.println();
+  
 }
 
 void compute_duration_daisychain_ms(){
@@ -135,7 +161,7 @@ void measure_offset_accelerometers(int nb_values_mean, unsigned long delay_frame
   }
   //measuring a mean value
   while (nb_captured_values<nb_values_mean){
-    send_frame_and_update_sensors();
+    send_frame_and_update_sensors(0);
     for (int i=0; i<3; i++){
       offset_acc[i] += ser_rx_buf.last_IMU_data_float[i]/(float)nb_values_mean;
       offset_gyro[i] += ser_rx_buf.last_IMU_data_float[3+i]/(float)nb_values_mean;      

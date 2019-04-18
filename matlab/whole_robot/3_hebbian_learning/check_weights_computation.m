@@ -7,7 +7,7 @@ addpath('../2_load_data_code');
 
 %% Load data
 
-record_list = 27;
+record_list = 51;
 max_dif_norm = zeros(1,length(record_list));
 n_iter = 5;
 

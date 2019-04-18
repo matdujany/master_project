@@ -75,14 +75,23 @@ void setup() {
   pose_stance();
   delay(1000);
 
-  //twitch_record_wrapper();
+  //updating IMU offsets (recalibration)
+  //update_IMU_offsets();
+  //pose_stance_soft();
+
+  twitch_record_wrapper();
+
 }
 
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
 
+
+  //pose_stance_soft();
+
+  //measure_mean_values_IMU(50,20);
   //show_value_DC(20);
 
-  serial_read_lift_limb();
+  //serial_read_lift_limb();
 }

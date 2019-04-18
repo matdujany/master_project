@@ -1,19 +1,20 @@
 {
     "configurations": [
         {
-            "name": "Arduino",
+            "name": "openCM",
             "includePath": [
-                "{path-to-arduino}/hardware/arduino/avr/cores/arduino/",
-                "{path-to-arduino}/hardware/arduino/avr/libraries/EEPROM/",
-                "{path-to-arduino}/hardware/arduino/avr/libraries/SPI/",
-                "{path-to-arduino}/hardware/arduino/avr/libraries/SoftwareSerial/",
-                "{path-to-arduino}/hardware/arduino/avr/libraries/Wire/",
-                "{path-to-arduino}/hardware/tools/avr/avr/include/",
-                "{path-to-arduino}/hardware/tools/avr/avr/include/avr/",
-                "{path-to-arduino}/hardware/tools/avr/avr/include/compat/",
-                "{path-to-arduino}/hardware/tools/avr/avr/include/util/",
-                "{path-to-arduino}/hardware/tools/avr/lib/gcc/avr/4.*.*/include/",
-                "{path-to-arduino}/hardware/tools/avr/lib/gcc/avr/4.*.*/include-fixed/"
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/cores/arduino/",
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/EEPROM/",
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/SPI/",
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/SoftwareSerial/",
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/Wire/",
+                "C:/Program Files (x86)/Arduino/hardware/tools/avr/avr/include/",
+                "C:/Program Files (x86)/Arduino/hardware/tools/avr/avr/include/avr/",
+                "C:/Program Files (x86)/Arduino/hardware/tools/avr/avr/include/compat/",
+                "C:/Program Files (x86)/Arduino/hardware/tools/avr/avr/include/util/",
+                "C:/Program Files (x86)/Arduino/hardware/tools/avr/lib/gcc/avr/5.4.0/include/",
+                "C:/Program Files (x86)/Arduino/hardware/tools/avr/lib/gcc/avr/5.4.0/include-fixed/",
+                "C:/Users/dujany/AppData/Local/Arduino15/packages/OpenCM904/hardware/OpenCM904/1.4.0/libraries/DynamixelSDK/src/"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,

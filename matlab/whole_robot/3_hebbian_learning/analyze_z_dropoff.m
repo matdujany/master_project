@@ -8,7 +8,7 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 17;
+recordID = 56;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 weights = read_weights_robotis(recordID,parms);
@@ -36,5 +36,5 @@ subplots_z_loadcells(idx_twitch,s_dot_lc,parms,list_hip_motors);
 
 %%
 flagPlot = 1;
-threshold_factor = 0.1;
+threshold_factor = 0.2;
 dropoffs = count_dropoffs(threshold_factor,data,parms,flagPlot);

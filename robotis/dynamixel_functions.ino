@@ -144,24 +144,6 @@ float pos2rad(uint16_t pos)
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
-/*void pose_stance()
-{
-  for (int i = 0; i < n_servos; i++)
-  {
-    set_goal_position(id[i], 512);
-  }
-}
-*/
-
-void pose_stance()
-{
-  uint16_t  goal_positions_stance[n_servos];
-  for (int i = 0; i < n_servos; i++)
-  {
-    goal_positions_stance[i]= 512;
-  } 
-  syncWrite_position_n_servos(n_servos, id, goal_positions_stance); 
-}
 
 //TODO : maybe change the limits of goal position
 void set_goal_position(uint8_t servo_id, uint16_t goal_position)
@@ -212,6 +194,24 @@ uint8_t is_moving(uint8_t servo_id)
   return is_moving;
 }
 
+void sleep_while_moving()
+{
+  // Sleep as long as servo's are moving
+
+  int32_t n_moving = 1;
+
+  while (n_moving > 0)
+  {
+    n_moving = 0;
+
+    for (int k = 0; k < n_servos; k++)
+    {
+      n_moving += is_moving(id[k]);
+    }
+  }
+  delay(10);
+}
+
 void syncWrite_position_n_servos(uint8_t n_servos_write, uint8_t *servo_ids, uint16_t *goal_positions)
 {
   dynamixel::GroupSyncWrite groupSyncWrite(portHandler, packetHandler, ADDR_GOAL_POSITION, 2); //goal position is 2 bytes in AX.
@@ -231,7 +231,6 @@ void syncWrite_position_n_servos(uint8_t n_servos_write, uint8_t *servo_ids, uin
   groupSyncWrite.clearParam();
 }
 
-
 void syncWrite_same_punch_all_servos(uint16_t punch_value){
   dynamixel::GroupSyncWrite groupSyncWrite(portHandler, packetHandler, ADDR_PUNCH, 2); //punch is 2 bytes in AX.
 
@@ -242,6 +241,43 @@ void syncWrite_same_punch_all_servos(uint16_t punch_value){
     groupSyncWrite.addParam(id[i], punch_value_in_bytes);
   }
   // Syncwrite goal position -->  send packet
+  groupSyncWrite.txPacket();
+
+  // Clear syncwrite parameter storage
+  groupSyncWrite.clearParam();
+}
+
+
+void syncWrite_2bytes_n_servos(uint8_t n_servos_write, uint8_t *servo_ids, uint16_t *two_bytes_array, uint8_t adress)
+{
+  dynamixel::GroupSyncWrite groupSyncWrite(portHandler, packetHandler, adress, 2); //write 2 bytes at adress
+
+  // Add goal position value to the Syncwrite storage
+  uint8_t array_in_bytes[2];
+  for (int i = 0; i < n_servos_write; i++)
+  {
+    array_in_bytes[0] = DXL_LOBYTE(two_bytes_array[i]);
+    array_in_bytes[1] = DXL_HIBYTE(two_bytes_array[i]);
+    groupSyncWrite.addParam(servo_ids[i], array_in_bytes);
+  }
+  // Syncwrite goal position -->  send packez
+  groupSyncWrite.txPacket();
+
+  // Clear syncwrite parameter storage
+  groupSyncWrite.clearParam();
+}
+
+void syncWrite_1byte_n_servos(uint8_t n_servos_write, uint8_t *servo_ids, uint8_t *bytes_array, uint8_t adress)
+{
+  dynamixel::GroupSyncWrite groupSyncWrite(portHandler, packetHandler, adress, 1); //write 1 byte at adress
+
+  // Add goal position value to the Syncwrite storage
+  for (int i = 0; i < n_servos_write; i++)
+  {
+    uint8_t value = bytes_array[i];
+    groupSyncWrite.addParam(servo_ids[i], &value);
+  }
+  // Syncwrite goal position -->  send packez
   groupSyncWrite.txPacket();
 
   // Clear syncwrite parameter storage
@@ -344,4 +380,18 @@ void restaure_default_parameters_all_motors_syncWrite()
 {
   change_all_motor_parameters_syncWrite(1,32,32);
   //SerialUSB.println("all motor parameters set to default");
+}
+
+void syncWrite_compliance_margins(uint8_t n_servos_write, uint8_t *servo_ids, uint8_t *compliance_margins_array){
+  syncWrite_1byte_n_servos(n_servos_write,servo_ids,compliance_margins_array,ADDR_CW_COMPLIANCE_MARGIN);
+  syncWrite_1byte_n_servos(n_servos_write,servo_ids,compliance_margins_array,ADDR_CCW_COMPLIANCE_MARGIN);
+}
+
+void syncWrite_compliance_slopes(uint8_t n_servos_write, uint8_t *servo_ids, uint8_t *compliance_slopes_array){
+  syncWrite_1byte_n_servos(n_servos_write,servo_ids,compliance_slopes_array,ADDR_CW_COMPLIANCE_SLOPE);
+  syncWrite_1byte_n_servos(n_servos_write,servo_ids,compliance_slopes_array,ADDR_CCW_COMPLIANCE_SLOPE);
+}
+
+void syncWrite_punchs(uint8_t n_servos_write, uint8_t *servo_ids, uint16_t *punchs_array){
+  syncWrite_2bytes_n_servos(n_servos_write,servo_ids,punchs_array,ADDR_PUNCH);
 }

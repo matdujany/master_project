@@ -6,7 +6,7 @@ addpath('../2_load_data_code');
 addpath('../plotting_functions');
 
 %% Load data
-recordID = 43;
+recordID = 56;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 
@@ -44,12 +44,14 @@ i_end_twitch_cycle = nb_theo_frames_twitch*i_twitch;
 % end
 
 %%
+channel_plot = 3;
 for i_lc_plot = 1:4
     figure;
     hold on;
-    plot(data.float_value_time{1,i_lc_plot}(i_start_twitch_cycle:i_end_twitch_cycle,3));
-    plot_patch_learning(gcf(),pos_start_learning_cycle-i_start_twitch_cycle+1,pos_end_learning_cycle-i_start_twitch_cycle+1,1);
+    plot(data.float_value_time{1,i_lc_plot}(i_start_twitch_cycle:i_end_twitch_cycle,channel_plot));
+    ax=gca();
+    plot_patch_learning(ax.YLim,pos_start_learning_cycle-i_start_twitch_cycle+1,pos_end_learning_cycle-i_start_twitch_cycle+1,1);
     xlabel('Frame index');
     ylabel('Load in N');
-    title(['Loadcell ' num2str(i_lc_plot) ' Channel 3']);
+    title(['Loadcell ' num2str(i_lc_plot) ' Channel ' num2str(channel_plot)]);
 end

@@ -9,8 +9,8 @@
 
 parms = struct();
 
-parms.nr_arduino  = 4;
-parms.n_m         = 8;
+parms.nr_arduino  = 6;
+parms.n_m         = 12;
 parms.n_dir       = 2;
 
 % Mode settings
@@ -23,18 +23,18 @@ parms.duration_part0 = 500; % in ms
 parms.duration_part1 = 500; % in ms
 parms.duration_part2 = 500; % in ms
 parms.n_twitches     = 5;
-parms.compliant_mode = 0;
-parms.recentering    = 0;
+parms.compliant_mode = 1;
+parms.recentering    = 1;
 parms.recentering_delay    = 1500; % in ms
-parms.time_interval_twitch = 20; % in ms
+parms.time_interval_twitch = 21; % in ms
+
+parms.use_filter = 1;
+parms.add_filter_size = 4;
 
 %update IMU offset
 parms.delay_frames_update_offset = 30; %in ms
 parms.nb_values_mean_update_offset = 50;
 parms.gyro_gain =  0.06957;
-
-parms.use_filter = 1;
-parms.add_filter_size = 3;
 
 % % % % % % % % % % % % % % % 
 

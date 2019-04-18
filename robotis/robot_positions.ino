@@ -1,3 +1,30 @@
+void pose_stance()
+{
+  uint16_t  goal_positions_stance[n_servos];
+  for (int i = 0; i < n_servos; i++)
+  {
+    goal_positions_stance[i]= 512;
+  } 
+  syncWrite_position_n_servos(n_servos, id, goal_positions_stance); 
+}
+
+//syncWrite takes approximately 0.36 msec to write the goal positions.
+void progressive_pose_stance(int total_delay,int number_of_steps){
+  uint16_t  goal_positions_stance[n_servos];
+  int delay_steps = total_delay/number_of_steps;
+  for (int count_steps = 1; count_steps < number_of_steps + 1; count_steps++){
+    unsigned long timestart = millis();
+    update_load_pos_values(); // takes 0.25 ms per read per motor, so 0.5 ms per motor (load and pos) so 
+    for (int i_servo = 0; i_servo < n_servos; i_servo++){
+      goal_positions_stance[i_servo] = 512 + (last_motor_pos[i_servo]-512) * double(number_of_steps-count_steps) / double(number_of_steps);
+    }
+    syncWrite_position_n_servos(n_servos, id, goal_positions_stance);
+    while (millis()-timestart<delay_steps);
+  }
+}
+
+
+
 void harcoded_hip_flexed_inside(){
   uint16_t pos_flexed_hip1 = 432;
   set_goal_position(13,pos_flexed_hip1);

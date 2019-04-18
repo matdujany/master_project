@@ -7,7 +7,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 17;
+recordID = 55;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -61,10 +61,26 @@ sgtitle('IMU accelerometer integrated signal');
 
 %% 
 test_method(1,data,lpdata,parms);
-test_method(2,data,lpdata,parms);
+% test_method(2,data,lpdata,parms);
 test_method(3,data,lpdata,parms);
 
-%%
+%% plot 1 motor
+figure;
+idx_motor = 12;
+i_dir = 1; %1 for X
+for i=1:parms.n_twitches
+    subplot(1,parms.n_twitches,i);
+    hold on;
+    idx_start_motor = 1 + n_frames_theo.per_twitch*(i-1) + n_frames_theo.per_action*(idx_motor-1);
+    idx_end_motor = idx_start_motor + n_frames_theo.per_action;
+    plot(integrated_speed(idx_start_motor:idx_end_motor,i_dir));
+    ax = gca();
+    text(n_frames_theo.part0,ax.YLim(2)*0.8,['Method 1 : ' num2str(sign_motor_dirs1(i_dir, idx_motor,i))]);
+    text(n_frames_theo.part0,ax.YLim(2)*0.9,['Method 2 : ' num2str(sign_motor_dirs2(i_dir, idx_motor,i))]);
+    text(n_frames_theo.part0,ax.YLim(2)*1.0,['Method 3 : ' num2str(sign_motor_dirs3(i_dir, idx_motor,i))]);
+    hold off;
+end
+
 function test_method(method,data,lpdata,parms)
 integrated_speed = compute_integrated_speed(data,lpdata,parms);
 sign_motor_dirs = compute_sign_data_speed(method,integrated_speed,data,lpdata,parms);
@@ -141,7 +157,7 @@ end
 dir_label_list = {' X',' Y',' Z'};
 
 f=figure;
-colormap gray;
+colormap gray(11);
 for dir=1:3
     subplot(3,1,dir)
     hold on;
@@ -155,7 +171,7 @@ for dir=1:3
     plot([0.5 0.5+2*parms.n_m],[1.5 1.5],'k-');   
     hold off;
     caxis manual
-    caxis(parms.n_twitches*[-1 1]);
+    caxis(parms.n_twitches*[-1 1]+[-0.5 0.5]);
 %     title(strcat('Direction ',dir_label_list{1,dir}));
 %     yticks([]);
     yticks([1]);
@@ -168,7 +184,7 @@ for dir=1:3
     ax.FontSize=fontsize;
     ax.Visible = 'on';
 end
-colorbar('location','Manual', 'position', [0.93 0.12 0.02 0.73]);
+colorbar('location','Manual', 'position', [0.93 0.12 0.02 0.73],'YTick',-parms.n_twitches:2:parms.n_twitches);
 
 sgtitle(titleString,'FontSize',fontsize);
 

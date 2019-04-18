@@ -4,7 +4,7 @@ close all; clc;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 15;
+recordID = 56;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 parms.n_useful_ch_IMU    = 6;
@@ -77,7 +77,7 @@ set(h,'PaperOrientation','landscape');
 [~,closest_LC] = max(weights_fused_sumc,[],1);
 good_closest_LC = [3;3;4;4;1;1;2;2];
 
-if sum(abs(good_closest_LC-closest_LC))~=0
+if sum(abs(good_closest_LC'-closest_LC))~=0
     disp('Problem with closest LCs found');
 end
 

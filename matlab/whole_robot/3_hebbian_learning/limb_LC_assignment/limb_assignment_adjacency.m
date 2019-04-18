@@ -4,7 +4,7 @@ close all; clc;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 22;
+recordID = 50;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 parms.n_useful_ch_IMU    = 6;

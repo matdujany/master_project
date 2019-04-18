@@ -1,3 +1,5 @@
+
+
 /* ===================================================================================================================================== */
 
 /////////////////////////////////
@@ -70,23 +72,13 @@ void twitch_main()
   ///////////////////////////////////////////////////////////////////////////
   /// Learning Loop
   ///////////////////////////////////////////////////////////////////////////
-  if (COMPLIANT_MODE==1){
-    make_all_servos_compliant_syncWrite();
-    //make_all_servos_compliant();
-  }
-  if (COMPLIANT_MODE==2){
-    make_all_servos_stiff_syncWrite();   
-    //make_all_servos_stiff(); 
-  }
 
   for (uint8_t i_servo = 0; i_servo < n_servos; i_servo++)
   {
     // Loop over directions
     for (uint8_t i_dir = 0; i_dir < 2; i_dir++)
     {
-      if (COMPLIANT_MODE==1){
-        make_servo_stiff(id[i_servo]);
-      }
+
       // Reset variables for learning
       reset_twitch_variables();
       
@@ -96,9 +88,15 @@ void twitch_main()
         // Select interval duration
         int interv_dur = interv_arr[i_part];
 
-        // Perform part specific actions before recording (sending servo commands)
-        if (i_part == 0)
-          set_goal_position(id[i_servo], 512);
+        // Changing  servo parameters before learning part
+        if (i_part == 1){
+          if (COMPLIANT_MODE==1){
+            make_all_servos_compliant_syncWrite();
+            make_servo_stiff(id[i_servo]);
+          }
+          if (COMPLIANT_MODE==2)
+            make_all_servos_stiff_syncWrite();
+        }
 
         // Keep looping until required number of frames is reached
         while (n_frames_tmp < n_frames_part[i_part])
@@ -126,6 +124,7 @@ void twitch_main()
 
             //SerialUSB.print("Frame captured and processing done in ");SerialUSB.print(millis()-timestamp_startframe);
             //SerialUSB.println(" ms, waiting until TIME_INTERVAL_TWITCH to send an other one");
+           
             //waiting to send the next one
             while( millis()-timestamp_startframe<TIME_INTERVAL_TWITCH);
           }
@@ -151,6 +150,12 @@ void twitch_main()
           }
         }
 
+        //if part1 is over and the compliance mode is different than the default one
+        //then the default parameters are restaured
+        if (i_part == 1 && COMPLIANT_MODE>0){
+          //restaure_default_parameters_all_motors_syncWrite();
+        }        
+
         n_frames_tmp = 0;
 
         //SerialUSB.print("Mean computation time servo ");SerialUSB.print(i_servo);
@@ -161,19 +166,9 @@ void twitch_main()
       }
 
       if (RECENTERING_TWITCH==1){
-        restaure_default_parameters_all_motors_syncWrite();
-        //make_all_servos_stiff();
-        pose_stance();
-        delay(RECENTERING_DELAY);
-        if (COMPLIANT_MODE==1)
-          make_all_servos_compliant_syncWrite();
-        if (COMPLIANT_MODE==2)
-          make_all_servos_stiff_syncWrite();
+        recentering();
       }
 
-      if (COMPLIANT_MODE==1){
-        make_servo_compliant(id[i_servo]);
-      }
 
       // Counting number of actions (total = number of servo's * 2 directions)
       i_action++;
@@ -182,11 +177,155 @@ void twitch_main()
   }
 }
 
+void recentering(){
+  restaure_default_parameters_all_motors_syncWrite();
+  pose_stance();
+  delay(RECENTERING_DELAY);
+
+  //unsigned long timestart_pose_stance_soft = millis();
+  //pose_stance_soft();
+  //SerialUSB.print("duration pose_stance_soft ");
+  //SerialUSB.println(millis()-timestart_pose_stance_soft);
+
+  update_load_pos_values();
+  SerialUSB.print("Recentering result. ");
+  print_motor_positions();
+}
+
+void print_motor_positions(){
+  SerialUSB.print("Motor positions: ");
+  for (int i = 0; i < n_servos; i++)
+  {
+    SerialUSB.print(last_motor_pos[i]);SerialUSB.print("\t");
+  }
+  SerialUSB.println();
+}
+
+void compute_max_gap_stance(uint16_t &max_pos_gap, uint8_t &index_servo_max, uint16_t *pos_gaps, uint16_t *count_max_idx){
+  update_load_pos_values();
+  max_pos_gap = 0;
+  index_servo_max = 1;
+  for (int i = 0; i < n_servos; i++)
+  {
+    pos_gaps[i] = abs(last_motor_pos[i]-512);
+    if (pos_gaps[i]>max_pos_gap){
+      max_pos_gap=pos_gaps[i];
+      index_servo_max = i;
+    }
+  }
+  count_max_idx[index_servo_max]++;
+}
+
+void pose_stance_soft(){
+
+  restaure_default_parameters_all_motors_syncWrite();
+  pose_stance();
+  sleep_while_moving();
+  update_load_pos_values();  
+
+  uint16_t max_pos_gap = 0;
+  uint16_t pos_gaps[n_servos];
+  uint16_t count_max_idx[n_servos];
+  for (int i=0; i<n_servos; i++)
+    count_max_idx[i] = 0;
+  uint8_t index_servo_max = 1;
+  uint8_t index_servo_max_old = 1;
+  compute_max_gap_stance(max_pos_gap, index_servo_max, pos_gaps, count_max_idx);
+
+  uint8_t count_iterations = 0;
+  while (max_pos_gap>3 & count_iterations<20){
+    get_closer_to_stance(max_pos_gap, index_servo_max, pos_gaps, count_max_idx);
+    sleep_while_moving();
+    compute_max_gap_stance(max_pos_gap, index_servo_max, pos_gaps, count_max_idx);
+    SerialUSB.print(index_servo_max);
+    SerialUSB.print("\t");
+    SerialUSB.println(max_pos_gap);
+    count_iterations++;
+  }
+}
+
+void get_closer_to_stance(uint16_t max_pos_gap, uint8_t index_servo_max, uint16_t *pos_gaps, uint16_t *count_max_idx){
+  /*
+  uint8_t new_compliance_margin[n_servos];
+  uint16_t new_punch[n_servos];
+  uint8_t new_compliance_slope[n_servos];
+  for (int i = 0; i < n_servos; i++){
+    new_compliance_margin[i] = std::max(1, max_pos_gap - pos_gaps[i]);
+    new_punch[i] = std::min(1023,32 + pos_gaps[i] * count_max_idx[i]);
+    new_compliance_slope[i] = std::max(1,32 + pos_gaps[i] * count_max_idx[i]);
+  }
+  
+  syncWrite_compliance_margins(n_servos, id, new_compliance_margin);
+  syncWrite_compliance_slopes(n_servos, id, new_compliance_slope);
+  syncWrite_punchs(n_servos, id, new_punch);
+  */
+ make_all_servos_stiff_syncWrite();
+ pose_stance();
+ sleep_while_moving();
+
+}
+
+/*
+void pose_stance_soft(){
+  uint16_t max_pos_gap = 0;
+  uint8_t index_servo_max = 1;
+  compute_max_gap_stance(max_pos_gap, index_servo_max);
+  uint8_t count_iterations = 0;
+  while (max_pos_gap>3 & count_iterations<20){
+    uint8_t new_compliance_margin = max_pos_gap-2;
+    for (int i = 0; i < n_servos; i++){
+      if (i==index_servo_max)
+        set_compliance_margin(id[i],3);
+      else
+        set_compliance_margin(id[i],new_compliance_margin);
+    }
+    set_goal_position(id[index_servo_max],512);
+    delay(1000);
+    //sleep_while_moving();
+    compute_max_gap_stance(max_pos_gap, index_servo_max);
+    SerialUSB.print(index_servo_max);
+    SerialUSB.print("\t");
+    SerialUSB.println(max_pos_gap);
+    count_iterations++;    
+  }
+
+  //to put things back to normal
+  restaure_default_parameters_all_motors_syncWrite();
+  pose_stance();
+  update_load_pos_values();
+}
+*/
+
+/*
+void pose_stance_soft(){
+  uint16_t max_pos_gap = 0;
+  uint8_t index_servo_max = 1;
+  compute_max_gap_stance(max_pos_gap, index_servo_max);
+  uint8_t new_compliance_margin = 1;
+  uint8_t count_iterations = 0;
+  SerialUSB.println("Max pos gap");
+  while (max_pos_gap>3 & count_iterations<20){
+    new_compliance_margin = max_pos_gap - 2;
+    syncWrite_compliance_margin_all_servo(new_compliance_margin);
+    syncWrite_same_punch_all_servos(10);
+    syncWrite_compliance_slope_all_servo(200);
+    pose_stance();
+    sleep_while_moving();
+    compute_max_gap_stance(max_pos_gap, index_servo_max);
+    SerialUSB.print(index_servo_max);
+    SerialUSB.print("\t");
+    SerialUSB.println(max_pos_gap);
+    count_iterations++;
+  }
+}
+*/
+
+
 void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign, int i_action, uint16_t ampl_step_pos, int n_frames_tmp, int n_frames_this_part){
   unsigned long start_time_computation;
   start_time_computation = millis();
 
-  //the filter is updated with the old values to be erased.
+  //the filter is updated : the values (last_motor_pos and l)
   update_buf_filter();
   //print_buf_filter();
 
@@ -199,7 +338,8 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
   }
 
   if (i_part==2){
-    twitch_part2_moving(i_servo, n_frames_tmp, n_frames_this_part);
+    //twitch_part2_moving(i_servo, n_frames_tmp, n_frames_this_part);
+    twitch_part2_allrecentering(n_frames_tmp, n_frames_this_part);
   }
 
   if (USE_FILTER){
@@ -240,6 +380,16 @@ void twitch_part2_moving(uint8_t i_servo, int n_frames_tmp, int n_frames_tot)
   set_goal_position(id[i_servo], command_pos);
 }
 
+void twitch_part2_allrecentering(int n_frames_tmp, int n_frames_tot)
+{
+  uint16_t  goal_positions_stance[n_servos];
+  for (int i_servo = 0; i_servo < n_servos; i_servo++){
+    goal_positions_stance[i_servo] = 512 + (last_motor_pos[i_servo]-512) * double(n_frames_tot-n_frames_tmp) / double(n_frames_tot);
+  }
+  syncWrite_position_n_servos(n_servos, id, goal_positions_stance);
+  
+}
+
 
 void update_lc_IMU_values(){
   //we store the old values before writing the new ones.
@@ -264,6 +414,7 @@ void update_lc_IMU_values(){
   correct_IMU_data();
 }
 
+//takes takes 0.25 ms per read per motor, so 0.5 ms per motor (load and pos) so 4 ms if 8 motors.
 void update_load_pos_values(){
   for (int i = 0; i < n_servos; i++)
   {

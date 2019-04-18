@@ -3,12 +3,11 @@
 clear; 
 close all; clc;
 
-addpath('learning_functions');
-addpath('../data');
+addpath('../2_load_data_code');
 
 %% Load data
-recordID = 26;
-load(strcat(get_record_name(recordID),'_p'));
+recordID = 55;
+[data, lpdata, parms] =  load_data_processed(recordID);
 
 %% Plot position
 if isfield(parms,'step_ampl')
@@ -26,9 +25,9 @@ ylim(ylims);
 mean(lpdata.motor_position,2);
 
 %% theoretical movement amplitude
-ampl_step_pos = floor(parms.step_ampl*3.413);
-n_frames_p1 = floor(parms.duration_part1/parms.time_interval_twitch);
-ampl_step_pos_ad = floor((n_frames_p1-1)/n_frames_p1*floor(parms.step_ampl*3.413));
-
-
+% ampl_step_pos = floor(parms.step_ampl*3.413);
+% n_frames_p1 = floor(parms.duration_part1/parms.time_interval_twitch);
+% ampl_step_pos_ad = floor((n_frames_p1-1)/n_frames_p1*floor(parms.step_ampl*3.413));
+% 
+% 
 

@@ -36,7 +36,7 @@
 float pi               = float(3.1415926535);
 int start_at_location  = 1;       // 1: start at given positions, 0: start at 0 angle
 int flagVerbose        = 0;       // Default mode: print no information
-boolean bool_walk      = false;   // Boolean to turn servo's on/off
+bool bool_walk      = false;   // Boolean to turn servo's on/off
 
 // CPG/Tegotae related:
 float frequency       = 0.5;

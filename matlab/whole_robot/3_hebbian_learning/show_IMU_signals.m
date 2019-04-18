@@ -4,7 +4,7 @@ close all; clc;
 addpath('../2_load_data_code');
 
 %% Load data
-recordID = 22;
+recordID = 56;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -21,7 +21,7 @@ idx_start_learning = pos_start_learning(1+n_action*(twitch_cycle_idx-1):n_action
 idx_end_learning = pos_end_learning(1+n_action*(twitch_cycle_idx-1):n_action*twitch_cycle_idx);  
 
 %%
-hinton_IMU_2(weights_robotis{parms.n_twitches}',parms);
+hinton_IMU(weights_robotis{parms.n_twitches},parms);
 
 
 %% acc IMU raw
@@ -39,8 +39,10 @@ figure;
 for i=1:3
 subplot(2,2,i);
 hold on;
-plot(data.IMU_corrected(index_start:index_end,i));
-plot_patch_learning(gcf(),idx_start_learning,idx_end_learning);
+% plot(data.IMU_corrected(index_start:index_end,i));
+plot(myfilter(data.IMU_corrected(index_start:index_end,i),parms.add_filter_size+2));
+ax=gca();
+plot_patch_learning(ax.YLim,idx_start_learning,idx_end_learning);
 end
 sgtitle('IMU accelerometer corrected signals');
 
@@ -59,8 +61,10 @@ figure;
 for i=1:3
 subplot(2,2,i);
 hold on;
-plot(data.IMU_corrected(index_start:index_end,i+3));
-plot_patch_learning(gcf(),idx_start_learning,idx_end_learning);
+% plot(data.IMU_corrected(index_start:index_end,i+3));
+plot(myfilter(data.IMU_corrected(index_start:index_end,i+3),parms.add_filter_size+2));
+ax=gca();
+plot_patch_learning(ax.YLim,idx_start_learning,idx_end_learning);
 end
 sgtitle('IMU gyroscope corrected signals');
 

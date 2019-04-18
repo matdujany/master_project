@@ -23,7 +23,7 @@ end
 
 
 %%
-n_prints = 1 + parms.n_m*3; %1 (i ppart)+ n_m * 2 (load and pos);
+n_prints = 1 + parms.n_m*3; %1 (i ppart)+ n_m * 3 (load and pos and timestamp);
 
 nb_samples = (length(pos_load_data)-1)/n_prints; %-1 because 1500 printed at the end just to confirm.
 motor_position = zeros(parms.n_m,nb_samples);
