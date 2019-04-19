@@ -4,10 +4,12 @@ close all; clc;
 
 addpath('learning_functions');
 addpath('../2_load_data_code');
+addpath('hinton_plot_functions');
+addpath('computing_functions');
 
 %% Load data
 
-record_list = 51;
+record_list = 60;
 max_dif_norm = zeros(1,length(record_list));
 n_iter = 5;
 

@@ -382,6 +382,12 @@ void restaure_default_parameters_all_motors_syncWrite()
   //SerialUSB.println("all motor parameters set to default");
 }
 
+void change_parameters_all_motors_recentering_syncWrite()
+{
+  change_all_motor_parameters_syncWrite(RECENTERING_COMPLIANCE_MARGIN,RECENTERING_COMPLIANCE_SLOPE,RECENTERING_PUNCH);
+  //SerialUSB.println("all motor parameters set to recentering");
+}
+
 void syncWrite_compliance_margins(uint8_t n_servos_write, uint8_t *servo_ids, uint8_t *compliance_margins_array){
   syncWrite_1byte_n_servos(n_servos_write,servo_ids,compliance_margins_array,ADDR_CW_COMPLIANCE_MARGIN);
   syncWrite_1byte_n_servos(n_servos_write,servo_ids,compliance_margins_array,ADDR_CCW_COMPLIANCE_MARGIN);

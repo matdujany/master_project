@@ -75,7 +75,7 @@ end
 
 %duration of the recording (for timeout) in seconds
 function duration_approx = predict_duration(parms)
-duration_approx = 100 + (parms.n_twitches * parms.n_m * parms.n_dir)...
+duration_approx = 100 + 15*parms.n_twitches + (parms.n_twitches * parms.n_m * parms.n_dir)...
         *(parms.duration_part0+parms.duration_part1+parms.duration_part2)/1000; %in seconds
 if parms.recentering == 1
     duration_approx = duration_approx + (parms.n_twitches * parms.n_m * parms.n_dir)*parms.recentering_delay/1000;

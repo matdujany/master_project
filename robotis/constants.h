@@ -117,7 +117,10 @@
 #define SOFT_PUNCH                      1       //uint16_t value
 #define STIFF_COMPLIANCE_MARGIN         1
 #define STIFF_COMPLIANCE_SLOPE          16           
-#define STIFF_PUNCH                     50
+#define STIFF_PUNCH                     80
+#define RECENTERING_COMPLIANCE_MARGIN         1
+#define RECENTERING_COMPLIANCE_SLOPE          16           
+#define RECENTERING_PUNCH                     40
 
 ///////////////////////////////
 // IMU                     //

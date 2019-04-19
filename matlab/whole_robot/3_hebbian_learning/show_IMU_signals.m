@@ -4,7 +4,7 @@ close all; clc;
 addpath('../2_load_data_code');
 
 %% Load data
-recordID = 56;
+recordID = 57;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 weights_robotis = read_weights_robotis(recordID,parms);

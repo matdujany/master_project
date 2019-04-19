@@ -2,9 +2,12 @@ clear;
 close all; clc;
 
 
+addpath('computing_functions');
+addpath('hinton_plot_functions');
+
 %% Load data
 addpath('../2_load_data_code');
-recordID = 56;
+recordID = 63;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 parms.n_useful_ch_IMU    = 6;
@@ -52,17 +55,17 @@ y_max = fig_parms.ymax+0.2;
 hold on;
 xlim([x_min, x_max]);
 ylim([y_min, y_max]);
-for i=1:4
-    text(x_min-0.1,i-0.5,['LC ' num2str(5-i)],'FontSize',fontSize,'HorizontalAlignment','right');
+for i=1:parms.n_lc
+    text(x_min-0.1,i-0.5,['LC ' num2str(parms.n_lc+1-i)],'FontSize',fontSize,'HorizontalAlignment','right');
 end
-for i=1:8
+for i=1:parms.n_m
     text(i-0.5,y_max+0.1,['Motor ' num2str(i)],'FontSize',fontSize,'HorizontalAlignment','center','VerticalAlignment','bottom');
 end
 h.Color = 'w';
 
-for i_motor=1:8
-    for i_lc=1:4
-        text(i_motor-0.5,4-i_lc+0.5,num2str(weights_fused_limbass(i_lc,i_motor),'%.2f'),'FontSize',fontSize-2,'HorizontalAlignment','center');
+for i_motor=1:parms.n_m
+    for i_lc=1:parms.n_lc
+        text(i_motor-0.5,parms.n_lc-i_lc+0.5,num2str(weights_fused_limbass(i_lc,i_motor),'%.2f'),'FontSize',fontSize-2,'HorizontalAlignment','center');
     end
 end
 

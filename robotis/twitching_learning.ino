@@ -18,9 +18,9 @@ void twitch_record_wrapper(){
     pose_stance();               // Set servo positions to stance pose
     sleep_while_moving();        // Sleep until the servo's reached their imposed positions
     //reset_servo_offset();        // Reset offset of servo's
-    SerialUSB.println("10 s delay starting, recenter robot on rugs if needed");
-    delay(10000);
-    SerialUSB.println("10 s delay over");
+    SerialUSB.println("15 s delay starting, recenter robot on rugs if needed");
+    delay(15000);
+    SerialUSB.println("15 s delay over");
     update_IMU_offsets();
     init_buf_filter();
 
@@ -178,7 +178,8 @@ void twitch_main()
 }
 
 void recentering(){
-  restaure_default_parameters_all_motors_syncWrite();
+  //restaure_default_parameters_all_motors_syncWrite();
+  change_parameters_all_motors_recentering_syncWrite();
   pose_stance();
   delay(RECENTERING_DELAY);
 
@@ -726,13 +727,25 @@ void print_twitching_parameters(){
   SerialUSB.print("Duration part 0 : "); SerialUSB.println(DURATION_PART0);
   SerialUSB.print("Duration part 1 : "); SerialUSB.println(DURATION_PART1);
   SerialUSB.print("Duration part 2 : "); SerialUSB.println(DURATION_PART2);
-  SerialUSB.print("Compliant Mode : "); SerialUSB.println(COMPLIANT_MODE);
-  SerialUSB.print("Recentering : "); SerialUSB.println(RECENTERING_TWITCH);
-  if (RECENTERING_TWITCH)
-    SerialUSB.print("Recentering delay : "); SerialUSB.println(RECENTERING_DELAY);  
   SerialUSB.print("Time interval twitch : "); SerialUSB.println(TIME_INTERVAL_TWITCH);
+  
   SerialUSB.print("Use filter (1:Yes/0:No) : "); SerialUSB.println(1);
   if (USE_FILTER)
     SerialUSB.print("Filter Size : "); SerialUSB.println(FILTER_ADD_SIZE);
   SerialUSB.println();
+
+  SerialUSB.print("Compliant Mode : "); SerialUSB.println(COMPLIANT_MODE);
+  SerialUSB.print("Soft compliance margin : "); SerialUSB.println(SOFT_COMPLIANCE_MARGIN); 
+  SerialUSB.print("Soft compliance slope : "); SerialUSB.println(SOFT_COMPLIANCE_SLOPE); 
+  SerialUSB.print("Soft punch : "); SerialUSB.println(SOFT_PUNCH);  
+  SerialUSB.print("Stiff compliance margin : "); SerialUSB.println(STIFF_COMPLIANCE_MARGIN); 
+  SerialUSB.print("Stiff compliance slope : "); SerialUSB.println(STIFF_COMPLIANCE_SLOPE); 
+  SerialUSB.print("Stiff punch : "); SerialUSB.println(STIFF_PUNCH);  
+  SerialUSB.print("Recentering : "); SerialUSB.println(RECENTERING_TWITCH);
+  if (RECENTERING_TWITCH){
+    SerialUSB.print("Recentering delay : "); SerialUSB.println(RECENTERING_DELAY);
+    SerialUSB.print("Recentering compliance margin : "); SerialUSB.println(RECENTERING_COMPLIANCE_MARGIN); 
+    SerialUSB.print("Recentering compliance slope : "); SerialUSB.println(RECENTERING_COMPLIANCE_SLOPE); 
+    SerialUSB.print("Recentering punch : "); SerialUSB.println(RECENTERING_PUNCH);   
+  }
 }
