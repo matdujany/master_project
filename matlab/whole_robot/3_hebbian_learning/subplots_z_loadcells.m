@@ -11,13 +11,13 @@ FontSize = 12;
 %fontSizeTicks = 12;
 lineWidth = 1.4;
 
-x_patch_learning = [26 50 50 26];
-y_min = -30;
-y_max = 30;
+y_min = -6;
+y_max = 6;
 y_patch_learning = [y_min y_min y_max y_max];
 n_frames_theo = get_theo_number_frames(parms);
 
 index_start_twitch = 1+n_frames_theo.per_twitch*(idx_twitch-1);
+x_patch_learning = [n_frames_theo.part0+1 n_frames_theo.part0+n_frames_theo.part1  n_frames_theo.part0+n_frames_theo.part1 n_frames_theo.part0+1];
 
 f=figure;
 f.Color = 'w';

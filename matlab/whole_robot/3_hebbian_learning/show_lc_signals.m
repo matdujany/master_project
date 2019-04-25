@@ -6,7 +6,7 @@ addpath('../2_load_data_code');
 addpath('../plotting_functions');
 
 %% Load data
-recordID = 56;
+recordID = 62;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 
@@ -45,7 +45,7 @@ i_end_twitch_cycle = nb_theo_frames_twitch*i_twitch;
 
 %%
 channel_plot = 3;
-for i_lc_plot = 1:4
+for i_lc_plot = 1:parms.n_lc
     figure;
     hold on;
     plot(data.float_value_time{1,i_lc_plot}(i_start_twitch_cycle:i_end_twitch_cycle,channel_plot));

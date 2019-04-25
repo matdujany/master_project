@@ -36,7 +36,7 @@ y_shift_up = 0.5;
 y_shift_bottom = 0.25;
 
 for i=1:parms.n_m
-    text(2*i-1,y_max+y_shift_up,['Motor ' num2str(i)],'FontSize',fontSize_columns,'HorizontalAlignment','center');
+    text(2*i-1,y_max+y_shift_up,['M' num2str(i)],'FontSize',fontSize_columns,'HorizontalAlignment','center');
     text(2*i-0.5,y_max+y_shift_bottom,'+','FontSize',fontSize_columns,'HorizontalAlignment','center');
     text(2*i-1.5,y_max+y_shift_bottom,'-','FontSize',fontSize_columns,'HorizontalAlignment','center');   
     %text(2*i-1.5,y_max+y_shift,['M' num2str(i) '-'],'FontSize',fontSize_columns,'HorizontalAlignment','center');

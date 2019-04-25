@@ -2,9 +2,12 @@ clear;
 close all; clc;
 
 
+addpath('computing_functions');
+addpath('hinton_plot_functions');
+
 %% Load data
 addpath('../2_load_data_code');
-recordID = 17;
+recordID = 63;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 parms.n_useful_ch_IMU    = 6;

@@ -8,7 +8,7 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 45;
+recordID = 62;
 [data, lpdata, parms] =  load_data_processed(recordID);
 add_parms;
 parms.n_useful_ch_IMU=4;

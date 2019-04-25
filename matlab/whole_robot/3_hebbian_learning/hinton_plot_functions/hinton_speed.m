@@ -50,7 +50,7 @@ end
 % end
 
 h.Color = 'w';
-h.Position = [10 10 1000 350];
+h.Position = [10 10 1000 250];
 hold off;
 
 xlabel('Speed weights, integrated from IMU','FontSize',fontSize);

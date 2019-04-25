@@ -63,7 +63,9 @@ for i_motor=1:2*parms.n_m
         else
             color = 'k';
         end
-        text(i_motor-0.5,3*parms.n_lc-i_channel+0.5,num2str(10*value,'%.1f'),'FontSize',fontSize_values,'HorizontalAlignment','center','Color',color);
+        stringnum = num2str(10*value,'%.1f');
+%         stringnum = num2str(10*value,3);
+        text(i_motor-0.5,3*parms.n_lc-i_channel+0.5,stringnum,'FontSize',fontSize_values,'HorizontalAlignment','center','Color',color);
     end
 end
 end
