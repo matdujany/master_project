@@ -21,7 +21,7 @@ addpath('functions')
 
 clear; clc; close all;
 
-recordID = 63;
+recordID = 71;
 
 % Check if there is already an instance of a communication interface and
 % clears it
@@ -45,7 +45,7 @@ n_frames_p0 = floor(parms.duration_part0/parms.time_interval_twitch);
 n_frames_p1 = floor(parms.duration_part1/parms.time_interval_twitch);
 n_frames_p2 = floor(parms.duration_part2/parms.time_interval_twitch);
 n_frames_theo = n_moves*(n_frames_p0+n_frames_p1+n_frames_p2);
-disp(['theoretical number of frames (given parms file) : ' num2str(n_frames_theo)]);
+disp(['theoretical number of learning frames (given parms file) : ' num2str(n_frames_theo)]);
 
 lpdata = parsing_load_and_pos_data(pos_load_data_rec,parms);
 disp(['Parsed load and pos data, ' num2str(length(lpdata.i_part)) ' frames found']);

@@ -31,7 +31,7 @@ for idx = 1:length(data.raw)
 end
 
 
-fprintf("%i frames found!\n", data.count_frames)
+fprintf("%i learning frames found!\n", data.count_frames)
 
 
 end

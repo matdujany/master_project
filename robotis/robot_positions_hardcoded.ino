@@ -102,7 +102,7 @@ void move_hips_int_out_wrapper(){
   delay(10000); 
 }
 
-void hardcoded_lift_limb(int idx_limb_lift){
+void hardcoded_lift_limb_4legs(int idx_limb_lift){
   uint16_t delta_angle = uint16_t(30* 3.413);
   if (idx_limb_lift==1)
     set_goal_position(15,512+delta_angle);
@@ -127,7 +127,20 @@ void serial_read_lift_limb(){
       pose_stance();
       SerialUSB.println("Staying for 5 s in stance to prepare lift off");
       delay(5000);
-      hardcoded_lift_limb(char_read-48);
+      hardcoded_lift_limb_4legs(char_read-48);
     }
   }
 }
+
+void serial_read_change_motor_parms(){
+  if (SerialUSB.available()){
+    char char_read = SerialUSB.read();
+    if (char_read=='s') //ASCII code : 's' = 115
+      make_all_servos_stiff_syncWrite();
+    if (char_read=='c') //ASCII code : 's' = 115
+      make_all_servos_compliant_syncWrite();
+    if (char_read=='d') //ASCII code : 's' = 115
+      restaure_default_parameters_all_motors_syncWrite();
+  }
+}
+

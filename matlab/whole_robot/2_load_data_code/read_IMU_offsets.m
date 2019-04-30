@@ -11,7 +11,7 @@ fileID = fopen(strcat(filename,'.txt'));
 for k=1:n_twitches
     tline = fgetl(fileID);
     %disp(tline);
-    while size(tline)<3 | ~strcmp(tline(1:3),'IMU')
+    while size(tline)<37 | ~strcmp(tline(1:37),'IMU accelerometer mean channel values')
         tline = fgetl(fileID);
         %disp(tline);
     end

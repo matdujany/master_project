@@ -4,11 +4,9 @@ close all; clc;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 14;
+recordID = 62;
 [data, lpdata, parms] =  load_data_processed(recordID);
-
-% Add parameters to struct 'parms'
-add_parms;
+parms=add_parms(parms);
 parms_sim = parms;
 parms_sim.eta = 10;
 weights_check = compute_weights_wrapper(data,lpdata,parms,0,0,0,0);
@@ -21,7 +19,6 @@ flagDetailed = 1;
 weights_detailed = compute_weights_wrapper(data,lpdata,parms,0,flagPlot,flagDetailed,0);
 weights_detailed_filtered = compute_weights_wrapper(data,lpdata,parms,1,flagPlot,flagDetailed,0);
 
-weights_detailed_reinit = compute_weights_wrapper(data,lpdata,parms,0,flagPlot,flagDetailed,1);
 
 %%
 diff_norm = check_weights_detailed(weights_detailed,weights_robotis,parms);
@@ -48,8 +45,7 @@ ylabel('Weight Value');
 legend('Unfiltered','Filtered');
 title(['Motor ' num2str(idx_motor) ', direction ' num2str(2*idx_dir-3) ', loadcell ' num2str(idx_lc), ', channel ' num2str(idx_channel)]);
 %%
-plot_weight_evolution_LC_detailed(weights_detailed,parms,weights_robotis);
-plot_weight_evolution_LC_detailed(weights_detailed_filtered,parms,weights_robotis);
+plot_weight_evolution_LC_both(weights_robotis,parms,1,weights_detailed);
 
 %%
 

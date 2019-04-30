@@ -49,7 +49,7 @@ void construct_initial_frame()
   initial_frame[0] = FRAME_SYNC_0;                                          // First start byte
   initial_frame[1] = FRAME_SYNC_1;                                          // Second start byte
   initial_frame[2] = 0;                                                     // Arduino ID
-  initial_frame[3] = FRAME_TYPE_SENSOR_DATA;                                // Frame Type
+  initial_frame[3] = FRAME_TYPE_NORMAL;                                     // Frame Type
   initial_frame[4] = SENSOR_DATA_LENGTH * MAX_NR_ARDUINO + IMU_DATA_LENGTH; // Data size
 
   // Filling in zeros as initial data for the load cells

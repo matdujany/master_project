@@ -9,9 +9,9 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 63;
+recordID = 71;
 [data, lpdata, parms] =  load_data_processed(recordID);
-add_parms;
+parms = add_parms(parms);
 weights = read_weights_robotis(recordID,parms);
 weights_pos = read_weights_pos_robotis(recordID,parms);
 
@@ -45,19 +45,29 @@ end
 
 %%
 flagPlot = 1;
-threshold_factor = 0.2;
-[dropoffs, min_dropoffs] = count_dropoffs(threshold_factor,data,parms,flagPlot);
+threshold_factor = 0.1;
+[totalcounts, min_dropoffs] = count_dropoffs(threshold_factor,data,parms,flagPlot);
 
 %%
-i_lc_part_plot = 4;
-i_motor_part_plot = 7;
-i_dir = 2;
+i_lc_part_plot = 1; %6;
+i_motor_part_plot = 1;%5;
+i_dir = 1;
 figure;
 count = 1;
 for i_twitch_part_plot=[1 3 5]
     subplot(1,3,count);
     plot_lc_motor_part(i_lc_part_plot,i_motor_part_plot,i_dir,i_twitch_part_plot,s_lc,lpdata,threshold_factor,parms);
     count = count+1;
+end
+
+%%
+dropoffs_summed = sum(totalcounts,3);
+motor_ids_dropoff = zeros(parms.n_lc,1);
+direction_dropoff = zeros(parms.n_lc,1);
+for i=1:parms.n_lc
+    [~, idx_raw] = max(dropoffs_summed(i,:));
+    motor_ids_dropoff(i,1) = ceil(idx_raw/2);
+    direction_dropoff(i,1) = -2*mod(idx_raw,2)+1;
 end
 
 function plot_lc_motor_part(i_lc,i_motor,i_dir,i_twitch,s_lc,lpdata,threshold_factor,parms)

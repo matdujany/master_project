@@ -7,7 +7,7 @@ void demo_problem_recalib_mode(){
         delay(20);
     }
     SerialUSB.println("Switching to normal mode");
-    switch_frame_all_data_mode();
+    switch_frame_normal_mode();
     for(int i=0; i<10; i++){
         try_capture_1_frame(1);
         delay(20);

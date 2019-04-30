@@ -30,7 +30,7 @@
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
 // LEARNING
-#define STEP_AMPL                   15     // Amplitude of step function during twitching (in degrees)
+#define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
 #define LEARNING_RATE               10     // Learning rate for the update rule
 #define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
 #define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
@@ -43,7 +43,11 @@
 #define RECENTERING_TWITCH          1   // (1) : servos are recentered at 512 after each twitching in the 2 directions.
 #define RECENTERING_DELAY           1000 
 
-#define TIME_INTERVAL_TWITCH        21     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
+#define TIME_INTERVAL_TWITCH        20     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
+
+
+#define DURATION_MANUAL_RECENTERING         15     //in s, manual recentering between twitch cycles
+#define TIME_INTERVAL_MANUAL_RECENTERING    200    //in ms, delay between frames during manual recentering (the frames are just sent to update the LC values to print on console)
 
 //FILTERS
 #define USE_FILTER                1
@@ -69,8 +73,10 @@
 #define FRAME_SYNC_0             0xFF                                                           // Start frame byte 1
 #define FRAME_SYNC_1             0xAA                                                           // Start frame byte 2
 #define END_FRAME                0x55                                                           // End frame byte
-#define FRAME_TYPE_SENSOR_DATA   0x01     //default frametype, using during during learning
+#define FRAME_TYPE_RECORDING     0x01     //default frametype, using during learning, Matlab will record these frames only
 #define FRAME_TYPE_IMU_RECALIB   0x02    //frametype where only the IMU writes data, to recalibrate it
+#define FRAME_TYPE_NORMAL        0x03    //frametype where IMU and LCs write data, but frames are not used for learning
+
 #define SENSOR_DATA_ADC_LENGTH   4                                                              // Sensor Data Length: float, so 4 bytes
 #define SENSOR_DATA_LENGTH       (3*SENSOR_DATA_ADC_LENGTH+1)                                   // 12 bytes: 3 loadcells floats + timestamp integer
 #define MAX_FRAME_SIZE           (7 + (MAX_NR_ARDUINO*SENSOR_DATA_LENGTH) + IMU_DATA_LENGTH)    // Maximum frame size
@@ -112,12 +118,13 @@
 //#define CONTROL_PERIOD (2000)  // msec
 
 //Motor parameters
+//for compliance slope, the smaller the stiffer
 #define SOFT_COMPLIANCE_MARGIN          50      //uint8_t value 
 #define SOFT_COMPLIANCE_SLOPE           128     //uint8_t value
 #define SOFT_PUNCH                      1       //uint16_t value
 #define STIFF_COMPLIANCE_MARGIN         1
 #define STIFF_COMPLIANCE_SLOPE          16           
-#define STIFF_PUNCH                     80
+#define STIFF_PUNCH                     150
 #define RECENTERING_COMPLIANCE_MARGIN         1
 #define RECENTERING_COMPLIANCE_SLOPE          16           
 #define RECENTERING_PUNCH                     40

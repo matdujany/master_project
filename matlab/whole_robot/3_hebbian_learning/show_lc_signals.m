@@ -6,16 +6,16 @@ addpath('../2_load_data_code');
 addpath('../plotting_functions');
 
 %% Load data
-recordID = 62;
+recordID = 63;
 [data, lpdata, parms] =  load_data_processed(recordID);
-add_parms;
+parms=add_parms(parms);
 
 %%
 weights_robotis = read_weights_robotis(recordID,parms);
 hinton_LC(weights_robotis{parms.n_twitches},parms);
 
 %%
-i_twitch = 2;
+i_twitch = 5;
 i_lc = 3;
 
 %% loadcell plots

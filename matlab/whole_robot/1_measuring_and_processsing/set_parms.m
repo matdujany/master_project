@@ -9,15 +9,12 @@
 
 parms = struct();
 
-parms.nr_arduino  = 6;
-parms.n_m         = 12;
+parms.nr_arduino  = 4;
+parms.n_m         = 8;
 parms.n_dir       = 2;
 
-% Mode settings
-parms.print_figures  = 0;
-
 % learning parameters
-parms.step_ampl      = 17;       %in deg
+parms.step_ampl      = 10;       %in deg
 parms.eta            = 10;        %learning rate
 parms.duration_part0 = 500; % in ms
 parms.duration_part1 = 500; % in ms
@@ -26,18 +23,25 @@ parms.n_twitches     = 5;
 parms.compliant_mode = 1;
 parms.recentering    = 1;
 parms.recentering_delay    = 1000; % in ms
-parms.time_interval_twitch = 21; % in ms
+parms.time_interval_twitch = 20; % in ms
 
+%filter
 parms.use_filter = 1;
 parms.add_filter_size = 4;
 
-%update IMU offset
+%IMU offset update
 parms.delay_frames_update_offset = 30; %in ms
 parms.nb_values_mean_update_offset = 50;
 parms.gyro_gain =  0.06957;
 
-% % % % % % % % % % % % % % % 
+%%manual recentering between twitches
+parms.manual_recentering_duration    = 15; % in s
+parms.manual_recentering_time_interval_frame    = 200; % in ms
 
+% % % % % % % % % % % % % % % 
+parms.n_lc        = parms.nr_arduino;
+parms.n_ch_lc     = 3;
+parms.n_useful_ch_IMU    = 6;
 
 % Constants (should be adopted from Robotis file)
 parms.sensor_data_adc_length    = 4;

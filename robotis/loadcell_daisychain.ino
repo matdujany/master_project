@@ -9,10 +9,29 @@
 void show_value_DC(unsigned long delay_updates){
   send_frame_and_update_sensors(0);
   print_loadcell_values();
+  show_total_z_load();
+  show_load_info_hardcoded();
   print_IMU_values();
   delay(delay_updates);
 }
 
+void show_total_z_load(){
+  float totalz_load = 0;
+  for (int i=0; i<n_ard ; i++){
+    totalz_load += ser_rx_buf.last_loadcell_data_float[3*i+2];
+  }
+  SerialUSB.print("Total Z load ");
+  SerialUSB.println(totalz_load);
+}
+
+void show_total_z_load_right_side(){
+  float totalz_load_right_side = 0;
+  for (int i : {1, 2}){
+    totalz_load_right_side += ser_rx_buf.last_loadcell_data_float[3*i+2];
+  }
+  SerialUSB.print("Total Z load right side ");
+  SerialUSB.println(totalz_load_right_side);
+}
 
 //update the values of the LC and prints their latest values.
 void show_value_LC(unsigned long delay_updates){
@@ -97,7 +116,8 @@ void measure_mean_values_IMU(uint8_t nb_values_mean, unsigned long delay_frames)
 void compute_duration_daisychain_ms(){
   int nb_values_mean = 100;
   duration_daisychain = 0;
-  for (int i=0; i<nb_values_mean; i++ ){
+  int nb_frames_success = 0;
+  while (nb_frames_success<nb_values_mean){
     reinitalize_dc_state();
     unsigned long time_start_trial = millis();
     while(!bool_end_byte_sent){
@@ -108,10 +128,13 @@ void compute_duration_daisychain_ms(){
         get_dc_byte_wrapper();
     }
     unsigned long duration_trial=  millis()-time_start_trial;
-    if (duration_trial>=MAX_DELAY_FRAME){
-      SerialUSB.println("Frame fail, the average will be higher");
+    if (frame_found){
+      duration_daisychain += float(duration_trial)/float(nb_values_mean);
+      nb_frames_success++;
     }
-    duration_daisychain += float(duration_trial)/float(nb_values_mean);
+    else {
+      SerialUSB.println("Frame fail.");
+    }
     delay(50);   
   }
   SerialUSB.print("Duration (in ms) daisychain (average over ");
@@ -136,10 +159,11 @@ void correct_IMU_data(){
 
 
 void update_IMU_offsets(){
-  SerialUSB.println("Updating IMU offsets");
+  SerialUSB.println("Updating IMU offsets, do not move the structure !");
   switch_frame_IMU_recalib_mode();
   measure_offset_accelerometers(NB_VALUES_MEAN_UPDATE_OFFSET,DELAY_FRAMES_UPDATE_OFFSET);
-  switch_frame_all_data_mode();
+  switch_frame_recording_mode();
+  SerialUSB.println("IMU offsets recalibration completed.");
 }
 
 void switch_frame_IMU_recalib_mode(){
@@ -147,10 +171,14 @@ void switch_frame_IMU_recalib_mode(){
   slow_dc_mode = true;
 }
 
-void switch_frame_all_data_mode(){
-  frame_buf.buffer[3]  = FRAME_TYPE_SENSOR_DATA;
+void switch_frame_recording_mode(){
+  frame_buf.buffer[3]  = FRAME_TYPE_RECORDING;
   slow_dc_mode = false;
-  
+}
+
+void switch_frame_normal_mode(){
+  frame_buf.buffer[3]  = FRAME_TYPE_NORMAL;
+  slow_dc_mode = false;
 }
 
 void measure_offset_accelerometers(int nb_values_mean, unsigned long delay_frames){

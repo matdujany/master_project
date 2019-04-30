@@ -10,13 +10,10 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 62;
+recordID = 70;
 [data, lpdata, parms] =  load_data_processed(recordID);
-add_parms;
+parms=add_parms(parms);
 
-
-%%write a script where the theoretical ramp is plotted and also the motor s
-%%ramp.
 %% compare motor to motor actual movement.
 
 

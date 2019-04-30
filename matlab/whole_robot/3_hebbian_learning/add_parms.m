@@ -1,12 +1,12 @@
-%% set_parms
-
+function parms_struct = add_parms(parms_struct)
 
 % parms = struct();
 
-parms.colour = {'r','b','g','b.-'};
+parms_struct.colour = {'r','b','g','b.-'};
 
 
 % Number of servos (m) and sensors (s)
-parms.n_lc        = parms.nr_arduino;
-parms.n_ch_lc     = 3;
-parms.n_useful_ch_IMU    = 6;
+parms_struct.n_lc        = parms_struct.nr_arduino;
+parms_struct.n_ch_lc     = 3;
+parms_struct.n_useful_ch_IMU    = 6;
+end

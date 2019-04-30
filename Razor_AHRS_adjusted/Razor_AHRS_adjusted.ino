@@ -452,8 +452,8 @@ else{
     {
       cc_byte+=inByte;
 
-      // INSERT READINGS FROM IMU SENSOR only if FRAME_TYPE_SENSOR_DATA or FRAME_TYPE_IMU_RECALIB
-      if ((frame_type==FRAME_TYPE_SENSOR_DATA) || (frame_type==FRAME_TYPE_IMU_RECALIB))
+      // INSERT READINGS FROM IMU SENSOR only if FRAME_TYPE_RECORDING or FRAME_TYPE_IMU_RECALIB or FRAME_TYPE_NORMAL
+      if ((frame_type==FRAME_TYPE_RECORDING) || (frame_type==FRAME_TYPE_IMU_RECALIB) || (frame_type==FRAME_TYPE_NORMAL) )
       {
 
         uint8_t place_holder_arduino_no = 1 + (uint8_t) (frame_location_counter - 5) / SENSOR_DATA_LENGTH;

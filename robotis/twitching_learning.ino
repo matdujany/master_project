@@ -18,9 +18,7 @@ void twitch_record_wrapper(){
     pose_stance();               // Set servo positions to stance pose
     sleep_while_moving();        // Sleep until the servo's reached their imposed positions
     //reset_servo_offset();        // Reset offset of servo's
-    SerialUSB.println("15 s delay starting, recenter robot on rugs if needed");
-    delay(15000);
-    SerialUSB.println("15 s delay over");
+    recenter_robot_delay();
     update_IMU_offsets();
     init_buf_filter();
 
@@ -603,7 +601,7 @@ void calculate_s_dot_filtered()
     s_dot_last[n_ard * 3+i] = s_dot_last[n_ard * 3+i]/float(2+FILTER_ADD_SIZE);
   }
 
-  //yaw after ; TODO : check that yaw is actually that value;
+  //gyroscope after (roll, pitch, yaw)
   for (int i=0; i<3; i++)
   {
     s_dot_last[n_ard*3+ 3+i] = ser_rx_buf.last_IMU_gyro_corrected[i] + val_old_IMU_gyro_corrected[i];
@@ -613,6 +611,18 @@ void calculate_s_dot_filtered()
     s_dot_last[n_ard*3+ 3+i] = s_dot_last[n_ard*3+ 3+i]/float(2+FILTER_ADD_SIZE);
   }
   
+}
+
+void recenter_robot_delay(){
+  SerialUSB.print(DURATION_MANUAL_RECENTERING);
+  SerialUSB.println(" s delay starting, recenter robot on rugs if needed");
+  switch_frame_normal_mode();
+  unsigned long time_start = millis();
+  while (millis()-time_start<DURATION_MANUAL_RECENTERING*1000){
+    show_value_DC(TIME_INTERVAL_MANUAL_RECENTERING);
+  }
+  switch_frame_recording_mode();
+  SerialUSB.println("Delay over");
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
@@ -732,8 +742,6 @@ void print_twitching_parameters(){
   SerialUSB.print("Use filter (1:Yes/0:No) : "); SerialUSB.println(1);
   if (USE_FILTER)
     SerialUSB.print("Filter Size : "); SerialUSB.println(FILTER_ADD_SIZE);
-  SerialUSB.println();
-
   SerialUSB.print("Compliant Mode : "); SerialUSB.println(COMPLIANT_MODE);
   SerialUSB.print("Soft compliance margin : "); SerialUSB.println(SOFT_COMPLIANCE_MARGIN); 
   SerialUSB.print("Soft compliance slope : "); SerialUSB.println(SOFT_COMPLIANCE_SLOPE); 

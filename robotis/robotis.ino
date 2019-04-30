@@ -67,7 +67,7 @@ void setup() {
   reset_circular_frame_array();
 
   //timing duration of daisychain;
-  //compute_duration_daisychain_ms();
+  compute_duration_daisychain_ms();
   duration_daisychain=6;
   
   //just to be sure that all motors have their default parameters;
@@ -88,10 +88,7 @@ void setup() {
 void loop() {
 
 
-  //pose_stance_soft();
-
-  //measure_mean_values_IMU(50,20);
-  //show_value_DC(20);
-
-  //serial_read_lift_limb();
+  //pose_stance();
+  //show_value_DC(50);
+  //serial_read_change_motor_parms();
 }

@@ -32,7 +32,7 @@ using namespace Ad7124;
 //using namespace Ad7124;
 
 #define DT 1000        // interrupt period of timer1 in microseconds, use multiples of hundred
-#define I_LOADCELL 4   // Arduino-Loadcell number (written on the arduino and loadcell sensor).
+#define I_LOADCELL 9   // Arduino-Loadcell number (written next to the # on loadcell sensor).
 #define BAUD_RATE 500000
 
 double cal_gain[3];
@@ -315,7 +315,7 @@ if(Serial1.available()){
     cc_byte+=inByte;
 
     // INSERT READINGS FROM SENSORS
-    if ( (frame_type==FRAME_TYPE_SENSOR_DATA) )
+    if ( (frame_type==FRAME_TYPE_RECORDING)||(frame_type==FRAME_TYPE_NORMAL))
     {
       uint8_t place_holder_arduino_no = 1 + (uint8_t) (frame_location_counter-5) / SENSOR_DATA_LENGTH;    // Keeps track to which Arduino the inByte belongs.
       uint8_t byte_no=(frame_location_counter-5) % SENSOR_DATA_LENGTH;                                    // Number of the byte in data array
