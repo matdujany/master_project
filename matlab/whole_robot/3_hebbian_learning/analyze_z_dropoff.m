@@ -9,7 +9,7 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 71;
+recordID = 75;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights = read_weights_robotis(recordID,parms);
@@ -40,8 +40,6 @@ for i_lc=1:parms.n_lc
 end
 % list_part_motors = [1:24];
 % subplots_z_loadcells(idx_twitch,s_lc,parms,list_part_motors);
-
-
 
 %%
 flagPlot = 1;
@@ -123,21 +121,5 @@ theoretical_traj = compute_theoretical_traj(i_dir,parms);
 plot(theoretical_traj);
 ylabel(['Motor ' num2str(i_motor) ' Position']);
 title(['Twitch ' num2str(i_twitch) ', total counts ' num2str(total_count)]);
-ylim([505 max(theoretical_traj)]);
-end
-
-function theoretical_traj = compute_theoretical_traj(i_dir,parms)
-ampl_step_pos = floor(parms.step_ampl*3.413);
-n_frames_theo = get_theo_number_frames(parms);
-
-theoretical_traj = 512*ones(1,n_frames_theo.part0);
-signs = [-1;1];
-for i=1:n_frames_theo.part1
-    theoretical_traj(1,n_frames_theo.part0+i) = 512 +signs(i_dir)*floor(ampl_step_pos*i/n_frames_theo.part1);
-end
-% for i=1:n_frames_theo.part2
-%     last_motor_pos = lpdata.motor_position(i_motor,index_start_motor+n_frames_theo.part0+n_frames_theo.part1+i-1);
-%     theoretical_traj(1,n_frames_theo.part0+n_frames_theo.part1+i) = ...
-%         512 + floor((last_motor_pos-512)*(1-i/n_frames_theo.part2));
-% end
+ylim([min(theoretical_traj)-5 max(theoretical_traj)+5]);
 end

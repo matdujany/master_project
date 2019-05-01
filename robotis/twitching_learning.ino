@@ -18,7 +18,7 @@ void twitch_record_wrapper(){
     pose_stance();               // Set servo positions to stance pose
     sleep_while_moving();        // Sleep until the servo's reached their imposed positions
     //reset_servo_offset();        // Reset offset of servo's
-    recenter_robot_delay();
+    manual_recenter_robot_delay_twitch();
     update_IMU_offsets();
     init_buf_filter();
 
@@ -163,8 +163,8 @@ void twitch_main()
 
       }
 
-      if (RECENTERING_TWITCH==1){
-        recentering();
+      if (RECENTERING_BETWEEN_ACTION==1){
+        recentering_between_action();
       }
 
 
@@ -175,11 +175,16 @@ void twitch_main()
   }
 }
 
-void recentering(){
+void recentering_between_action(){
   //restaure_default_parameters_all_motors_syncWrite();
   change_parameters_all_motors_recentering_syncWrite();
   pose_stance();
-  delay(RECENTERING_DELAY);
+  unsigned long time_start = millis();
+  switch_frame_normal_mode(); // just so that the frames to come are discarded by Matlab
+  while (millis()-time_start < RECENTERING_DELAY){
+    show_value_DC(TIME_INTERVAL_MANUAL_RECENTERING);
+  }
+  switch_frame_recording_mode();
 
   //unsigned long timestart_pose_stance_soft = millis();
   //pose_stance_soft();
@@ -187,7 +192,7 @@ void recentering(){
   //SerialUSB.println(millis()-timestart_pose_stance_soft);
 
   update_load_pos_values();
-  SerialUSB.print("Recentering result. ");
+  SerialUSB.print("Recentering results, ");
   print_motor_positions();
 }
 
@@ -333,7 +338,8 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
 
   //sending command to move
   if (i_part == 1){
-    twitch_part1_moving(i_servo, dir_sign, ampl_step_pos, n_frames_tmp, n_frames_this_part);
+    //twitch_part1_moving(i_servo, dir_sign, ampl_step_pos, n_frames_tmp, n_frames_this_part);
+    twitch_part1_moving_ramp(i_servo, dir_sign, n_frames_tmp);
   }
 
   if (i_part==2){
@@ -370,6 +376,12 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
 void twitch_part1_moving(uint8_t i_servo, int dir_sign, uint16_t ampl_step_pos, int n_frames_tmp, int n_frames_tot)
 {
   uint16_t command_pos = 512 + dir_sign * ampl_step_pos * double(n_frames_tmp) / double(n_frames_tot);
+  set_goal_position(id[i_servo], command_pos);
+}
+
+void twitch_part1_moving_ramp(uint8_t i_servo, int dir_sign, int n_frames_tmp)
+{
+  uint16_t command_pos = 512 + dir_sign * n_frames_tmp * SLOPE_LEARNING;
   set_goal_position(id[i_servo], command_pos);
 }
 
@@ -613,7 +625,7 @@ void calculate_s_dot_filtered()
   
 }
 
-void recenter_robot_delay(){
+void manual_recenter_robot_delay_twitch(){
   SerialUSB.print(DURATION_MANUAL_RECENTERING);
   SerialUSB.println(" s delay starting, recenter robot on rugs if needed");
   switch_frame_normal_mode();
@@ -749,9 +761,9 @@ void print_twitching_parameters(){
   SerialUSB.print("Stiff compliance margin : "); SerialUSB.println(STIFF_COMPLIANCE_MARGIN); 
   SerialUSB.print("Stiff compliance slope : "); SerialUSB.println(STIFF_COMPLIANCE_SLOPE); 
   SerialUSB.print("Stiff punch : "); SerialUSB.println(STIFF_PUNCH);  
-  SerialUSB.print("Recentering : "); SerialUSB.println(RECENTERING_TWITCH);
-  if (RECENTERING_TWITCH){
-    SerialUSB.print("Recentering delay : "); SerialUSB.println(RECENTERING_DELAY);
+  SerialUSB.print("Recentering between 2 actions : "); SerialUSB.println(RECENTERING_BETWEEN_ACTION);
+  if (RECENTERING_BETWEEN_ACTION){
+    SerialUSB.print("Recentering between 2 actions delay : "); SerialUSB.println(RECENTERING_DELAY);
     SerialUSB.print("Recentering compliance margin : "); SerialUSB.println(RECENTERING_COMPLIANCE_MARGIN); 
     SerialUSB.print("Recentering compliance slope : "); SerialUSB.println(RECENTERING_COMPLIANCE_SLOPE); 
     SerialUSB.print("Recentering punch : "); SerialUSB.println(RECENTERING_PUNCH);   

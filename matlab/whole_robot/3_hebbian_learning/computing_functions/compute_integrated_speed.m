@@ -4,6 +4,7 @@ function integrated_speed = compute_integrated_speed(data,lpdata,parms)
 
 integrated_speed = zeros(size(data.IMU_corrected,1),3);
 
+
 data_IMU_filtered = myfilter(data.IMU_corrected);
 for i=1:length(pos_start_learning)
     for k=pos_start_learning(i):pos_end_learning(i)

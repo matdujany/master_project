@@ -7,7 +7,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 75;
+recordID = 71;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
@@ -15,14 +15,15 @@ parms=add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
 hinton_IMU(weights_robotis{parms.n_twitches},parms);
 
+integrated_speed = compute_integrated_speed(data,lpdata,parms);
 weights_speed = compute_weights_speed(data,lpdata,parms);
-hinton_IMU(weights_robotis{parms.n_twitches},parms);
-
+hinton_speed(weights_speed{parms.n_twitches},parms);
+plot_weight_evolution_speed(weights_speed,parms);
 %%
 n_iter = 2;
-index_motor_plot = 5;
+index_motor_plot = 6;
 i_dir = 2;
-index_channel_IMU = 6;
+index_channel_speed = 1;
 bool_plot_lc_signal = true;
 
 good_closest_LC = get_good_closest_LC(parms,recordID);
@@ -61,8 +62,7 @@ plot(lpdata.motor_positionfiltered(index_motor_plot,index_start:index_end),'b--'
 xlabel('Frame index');
 ylabel(['Motor ' num2str(index_motor_plot) ' Position']);
 yyaxis right;
-plot(data.IMU_corrected(index_start:index_end,index_channel_IMU),'r-');
-plot(data.s_IMU_filtered(index_start:index_end,index_channel_IMU),'r--');
+plot(integrated_speed(index_start:index_end,index_channel_speed),'r-');
 if bool_plot_lc_signal
     ax=gca();
     rescale_factor = max(abs(ax.YLim));
@@ -70,7 +70,7 @@ if bool_plot_lc_signal
     data_lc_rescaled = rescale_factor*data_lc_signal/max(abs(data_lc_signal));
     plot(data_lc_rescaled,'k-');
 end
-ylabel(['IMU channel ' num2str(index_channel_IMU) ' value']);
+ylabel(['Integrated speed ' num2str(index_channel_speed) ' (m/s)']);
 hold off;
 ax=gca();
 ax.YAxis(1).Color = 'b';
@@ -91,10 +91,9 @@ xlabel('Frame index');
 ylabel(['Learning Signal (+/- Motor ' num2str(index_motor_plot) ' speed)']);
 ylim([0 0.2]);
 yyaxis right;
-plot(data.IMU_corrected(index_start:index_end,index_channel_IMU),'r-');
-plot(data.s_IMU_filtered(index_start:index_end,index_channel_IMU),'r--');
+plot(integrated_speed(index_start:index_end,index_channel_speed),'r-');
 plot([0 n_frames_theo.part1+1],[0 0],'Color',[1,0,0,0.2]);
-ylabel(['IMU channel ' num2str(index_channel_IMU) ' value']);
+ylabel(['Integrated speed ' num2str(index_channel_speed) ' (m/s)']);
 %ylim([-100 100]);
 xlim([0 n_frames_theo.part1+1]);
 ax=gca();
@@ -104,20 +103,20 @@ hold off;
 title('Differentiated Signals in Learning Window');
 
 %%
-weights_read=read_weights_robotis(recordID,parms);
+weights_read=weights_speed;
 if n_iter == 1
     weights_init = 0;
 else
-    weights_init = weights_read{n_iter-1}(3*parms.n_lc+index_channel_IMU,i_dir+2*(index_motor_plot-1));
+    weights_init = weights_read{n_iter-1}(index_channel_speed,i_dir+2*(index_motor_plot-1));
 end
 
 m_dot=sign_learning*lpdata.m_s_dot_pos(index_motor_plot,index_start:index_end)';
 
-s_dot = data.IMU_corrected(index_start:index_end,index_channel_IMU);
+s_dot = integrated_speed(index_start:index_end,index_channel_speed);
 weights_det = compute_weight_detailled_evolution_helper(m_dot,s_dot, parms.eta, weights_init);
 
 m_dot_filtered = sign_learning*lpdata.m_s_dot_posfiltered(index_motor_plot,index_start:index_end)';
-s_dot_filtered = data.s_IMU_filtered(index_start:index_end,index_channel_IMU);
+s_dot_filtered = integrated_speed(index_start:index_end,index_channel_speed);
 weights_det_filtered = compute_weight_detailled_evolution_helper(m_dot_filtered,s_dot_filtered, parms.eta, weights_init);
 
 %%
@@ -125,7 +124,7 @@ subplot(2,2,2);
 hold on;
 plot(weights_det);
 scatter(0,weights_init);
-scatter(n_frames_theo.part1,weights_read{n_iter}(3*parms.n_lc+index_channel_IMU,i_dir+2*(index_motor_plot-1)));
+scatter(n_frames_theo.part1,weights_speed{n_iter}(index_channel_speed,i_dir+2*(index_motor_plot-1)));
 title('Learning with unfiltered signals');
 
 
@@ -133,5 +132,5 @@ subplot(2,2,4);
 hold on;
 plot(weights_det_filtered);
 scatter(0,weights_init);
-scatter(n_frames_theo.part1,weights_read{n_iter}(3*parms.n_lc+index_channel_IMU,i_dir+2*(index_motor_plot-1)));
+scatter(n_frames_theo.part1,weights_speed{n_iter}(index_channel_speed,i_dir+2*(index_motor_plot-1)));
 title('Learning with filtered signals');

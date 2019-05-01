@@ -9,7 +9,7 @@ addpath('hinton_plot_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 71;
+recordID = 75;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
@@ -51,7 +51,7 @@ for i=1:parms.n_m
         direction_corrupted = direction_dropoff(idx(1));
         switch direction_corrupted
             case 1
-                weights_fused(:,i) = weights_lc(:,2*i-1);
+                weights_fused(:,i) = -weights_lc(:,2*i-1);
             case -1
                 weights_fused(:,i) = weights_lc(:,2*i);
         end              
@@ -59,12 +59,13 @@ for i=1:parms.n_m
         weights_fused(:,i) = -weights_lc(:,2*i-1) + (weights_lc(:,2*i));
     end
 end
+hinton_LC_weights_fused(weights_fused,parms,1)
  
 %% fusing the weights over loadcell channels
 weights_fused_sumc = zeros(size(weights_fused,1)/3,parms.n_m);
 for j=1:size(weights_fused,1)/3
     %weights_fused_sumc(j,:)=(abs(weights_fused(1+3*(j-1),:)) + abs(weights_fused(2+3*(j-1),:)) + abs(weights_fused(3*j,:)))/3;
-    weights_fused_sumc(j,:)=sum(abs(weights_fused([1:3]+3*(j-1),:)));
+    weights_fused_sumc(j,:)=sum(abs(weights_fused([1:3]+3*(j-1),:)),1);
 
 end
 
@@ -87,7 +88,7 @@ disp(min(likelihood_LC));
 %%
 good_closest_LC = get_good_closest_LC(parms,recordID);
 
-score_LC = sum(closest_LC' == good_closest_LC)
+score_LC = sum(closest_LC' == good_closest_LC);
 if sum(abs(good_closest_LC'-closest_LC))~=0
     disp('Problem with closest LCs found');
 end

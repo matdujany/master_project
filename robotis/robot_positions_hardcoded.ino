@@ -102,6 +102,50 @@ void move_hips_int_out_wrapper(){
   delay(10000); 
 }
 
+
+void hardcoded_progressive_lift_limb_4legs(int idx_limb_lift){
+  uint8_t i_servo = 0;
+  int dir_sign = 0;
+  if (idx_limb_lift==1){
+    i_servo = 5;
+    dir_sign = +1;
+  }
+  else if (idx_limb_lift==2){
+    i_servo = 7;
+    dir_sign = -1;  
+  }
+  else if (idx_limb_lift==3){
+    i_servo = 1;
+    dir_sign = -1;  
+  }
+  else if (idx_limb_lift==4){
+    i_servo = 3;
+    dir_sign = 1; 
+  } 
+  i_servo = i_servo -1;
+  if (COMPLIANT_MODE==1){
+    make_all_servos_compliant_syncWrite();
+    make_servo_stiff(id[i_servo]);
+  }
+  uint16_t ampl_step_pos = STEP_AMPL * 3.413;
+  int n_frames_prog_lift = DURATION_PART1/TIME_INTERVAL_TWITCH;
+  for (int i=0; i<n_frames_prog_lift; i++){
+    unsigned long time_start = millis();
+    //twitch_part1_moving(i_servo, dir_sign, ampl_step_pos, i, n_frames_prog_lift);
+    twitch_part1_moving_ramp(i_servo, dir_sign, n_frames_prog_lift);
+    show_value_DC(0);
+    if (millis()-time_start>TIME_INTERVAL_TWITCH)
+      SerialUSB.println("Not fast enough");
+    while (millis()-time_start<TIME_INTERVAL_TWITCH);
+  }
+  SerialUSB.println("End of movement, 5s delay to assess static stability.");
+  delay(5000);
+  restaure_default_parameters_all_motors_syncWrite();
+  SerialUSB.println("Back to stance.");
+  pose_stance();
+
+}
+
 void hardcoded_lift_limb_4legs(int idx_limb_lift){
   uint16_t delta_angle = uint16_t(30* 3.413);
   if (idx_limb_lift==1)
@@ -115,12 +159,9 @@ void hardcoded_lift_limb_4legs(int idx_limb_lift){
 }
 
 //reads console and lifts limb if input = ID of one limb, i.e 1, 2, 3 ... n_limbs
-void serial_read_lift_limb(){
+void serial_read_brutal_lift_limb(){
   if(SerialUSB.available()){
     char char_read = SerialUSB.read();
-    SerialUSB.println(char_read);
-    SerialUSB.println(char_read,DEC);    
-
     if (char_read=='s') //ASCII code : 's' = 115
       pose_stance();
     if (char_read>'0' && char_read<'5'){ //ASCII code : 0 = 48
@@ -141,6 +182,22 @@ void serial_read_change_motor_parms(){
       make_all_servos_compliant_syncWrite();
     if (char_read=='d') //ASCII code : 's' = 115
       restaure_default_parameters_all_motors_syncWrite();
+  }
+}
+
+void serial_read_progressive_lift(){
+  if(SerialUSB.available()){
+    char char_read = SerialUSB.read();
+    if (char_read>'0' && char_read<'5'){ //ASCII code : 0 = 48
+      pose_stance();
+      int idx_limb_lifted = char_read-48;
+      SerialUSB.print("Staying for 5 s in stance to prepare progressive lift off of limb ");
+      SerialUSB.println(idx_limb_lifted);
+      delay(5000);
+      hardcoded_progressive_lift_limb_4legs(idx_limb_lifted);
+      //an other delay to read the final values of the loadcells
+      delay(5000);
+    }
   }
 }
 

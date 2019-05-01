@@ -68,11 +68,12 @@ n_frames_p2 = floor(parms.duration_part2/parms.time_interval_twitch);
 n_frames_learning = n_moves*(n_frames_p0+n_frames_p1+n_frames_p2);
 
 %manual recentering
+n_frames_recentering = parms.n_twitches * n_moves*ceil(parms.recentering_delay/parms.manual_recentering_time_interval_frame);
 n_frames_manual_recentering = parms.n_twitches * ceil(parms.manual_recentering_duration*10^3/parms.manual_recentering_time_interval_frame);
 %imu recalib
 n_frames_calib = parms.n_twitches * parms.nb_values_mean_update_offset;
 
-n_frames_approx = n_frames_learning + n_frames_manual_recentering + n_frames_calib;
+n_frames_approx = n_frames_learning + n_frames_recentering + n_frames_manual_recentering + n_frames_calib;
 
 n_byte_approx = (parms.frame_size * n_frames_approx)*1.1;
 end

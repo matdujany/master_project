@@ -2,11 +2,13 @@ clear;
 close all; clc;
 
 addpath('../2_load_data_code');
+addpath('hinton_plot_functions');
+addpath('computing_functions');
 
 %% Load data
-recordID = 57;
+recordID = 71;
 [data, lpdata, parms] =  load_data_processed(recordID);
-add_parms;
+parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
 
 twitch_cycle_idx = 1;

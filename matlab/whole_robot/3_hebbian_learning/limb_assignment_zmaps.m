@@ -15,7 +15,7 @@ addpath('hinton_plot_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 71;
+recordID = 75;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 % parms.n_useful_ch_IMU    = 6;
@@ -25,7 +25,7 @@ weights_robotis  = read_weights_robotis(recordID,parms);
 
 %%
 renorm_factor = max(max(abs(weights_robotis{parms.n_twitches})));
-weights = 10*weights_robotis{parms.n_twitches}/renorm_factor;
+weights = 1*weights_robotis{parms.n_twitches}/renorm_factor;
 
 hinton_LC(weights,parms,1);
 
@@ -58,7 +58,15 @@ for i_limb=1:n_limb
 end
 
 plot_limb_to_lc_effect(z_effect_limb_to_lc,parms);
+direct_map_symetrized = (z_effect_limb_to_lc+z_effect_limb_to_lc')/2;
+
+plot_limb_to_lc_effect(direct_map_symetrized,parms);
 
 %% inverse map
 inv_map = inv(z_effect_limb_to_lc);
 plot_lc_to_limb_inv_map(inv_map,parms);
+
+
+inv_map2 = inv(direct_map_symetrized);
+plot_lc_to_limb_inv_map(inv_map2,parms);
+

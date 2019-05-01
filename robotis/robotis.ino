@@ -90,5 +90,5 @@ void loop() {
 
   //pose_stance();
   //show_value_DC(50);
-  //serial_read_change_motor_parms();
+  //serial_read_progressive_lift();
 }

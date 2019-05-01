@@ -4,24 +4,26 @@ close all; clc;
 addpath('learning_functions');
 addpath('../2_load_data_code');
 addpath('../plotting_functions');
+addpath('hinton_plot_functions');
+addpath('computing_functions');
 
 %% Load data
-recordID = 71;
+recordID = 75;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
 %%
 weights_robotis  = read_weights_robotis(recordID,parms);
-hinton_LC(weights_robotis{parms.n_twitches},parms);
+hinton_LC(weights_robotis{parms.n_twitches},parms,1);
 
 
 %%
 good_closest_LC = get_good_closest_LC(parms,recordID);
-n_iter = 1;
-index_motor_plot = 7;
-i_dir = 1;
-index_loadcell_plot = 2;
-index_channel_plot = 2;
+n_iter = 5;
+index_motor_plot = 1;
+index_loadcell_plot = 4;
+index_channel_plot = 3;
+i_dir = 2;
 
 % index_loadcell_plot = good_closest_LC(index_motor_plot);
 index_sensor = index_channel_plot+3*(index_loadcell_plot-1);
@@ -38,12 +40,17 @@ index_end = index_start+n_frames_theo.part1-1;
 data = compute_filtered_signal_data(data,parms);
 lpdata = compute_filtered_signal_lpdata(lpdata,parms);
 
+
+theoretical_traj = compute_theoretical_traj(i_dir,parms.step_ampl,n_frames_theo.part0,n_frames_theo.part1);
+
+
 figure;
 %% time signals
 subplot(2,2,1);
 hold on;
 plot(lpdata.motor_position(index_motor_plot,index_start:index_end),'b-');
 plot(lpdata.motor_positionfiltered(index_motor_plot,index_start:index_end),'b--');
+plot(theoretical_traj(n_frames_theo.part0 + 1:n_frames_theo.part0 + n_frames_theo.part1),'k-');
 xlabel('Frame index');
 ylabel(['Motor ' num2str(index_motor_plot) ' Position']);
 %     for i=1:parms.n_m
