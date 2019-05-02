@@ -15,7 +15,7 @@ addpath('hinton_plot_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 75;
+recordID = 79;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 % parms.n_useful_ch_IMU    = 6;
@@ -25,7 +25,7 @@ weights_robotis  = read_weights_robotis(recordID,parms);
 
 %%
 renorm_factor = max(max(abs(weights_robotis{parms.n_twitches})));
-weights = 1*weights_robotis{parms.n_twitches}/renorm_factor;
+weights = 100*weights_robotis{parms.n_twitches}/renorm_factor;
 
 hinton_LC(weights,parms,1);
 
@@ -53,7 +53,7 @@ for i_limb=1:n_limb
 %         sign_direction_knee(i_limb)*weights_fused_dir(3*i_lc,limb(i_limb,2));
         
 %% just taking the hip effect for the moment, i flip the sign because it goes in the opposite direction as the uncorrupted
-        z_effect_limb_to_lc(i_lc,i_limb) = -weights_hips_uncorrupted(3*i_lc,i_limb);
+        z_effect_limb_to_lc(i_lc,i_limb) = sign_direction_dropoff(i_limb)* weights_hips_uncorrupted(3*i_lc,i_limb);
     end
 end
 

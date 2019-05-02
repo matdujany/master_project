@@ -16,13 +16,13 @@ parms.n_dir       = 2;
 % learning parameters
 parms.rampe_slope    = 2;         %position increment per frame
 parms.eta            = 10;        %learning rate
-parms.duration_part0 = 400; % in ms
+parms.duration_part0 = 500; % in ms
 parms.duration_part1 = 400; % in ms
-parms.duration_part2 = 400; % in ms
+parms.duration_part2 = 500; % in ms
 parms.n_twitches     = 5;
 parms.compliant_mode = 1;
 parms.recentering    = 1;
-parms.recentering_delay    = 3000; % in ms
+parms.recentering_delay    = 1500; % in ms
 parms.time_interval_twitch = 20; % in ms
 
 %filter

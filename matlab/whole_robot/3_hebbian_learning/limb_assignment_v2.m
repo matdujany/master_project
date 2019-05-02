@@ -9,7 +9,7 @@ addpath('hinton_plot_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 75;
+recordID = 79;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
@@ -30,33 +30,27 @@ weights_lc = 100*weights_lc_read/renorm_factor;
 hinton_LC(weights_lc,parms,1);
 
 %%
-threshold_factor = 0.1;
-[totalcounts, min_dropoffs] = count_dropoffs(threshold_factor,data,parms,0);
-dropoffs_summed = sum(totalcounts,3);
-motor_ids_dropoff = zeros(parms.n_lc,1);
-direction_dropoff = zeros(parms.n_lc,1);
-for i=1:parms.n_lc
-    [~, idx_raw] = max(dropoffs_summed(i,:));
-    motor_ids_dropoff(i,1) = ceil(idx_raw/2);
-    direction_dropoff(i,1) = -2*mod(idx_raw,2)+1;
-end
+[motor_ids_dropoff,sign_direction_dropoff]= get_hardcoded_dropoff_results(parms);
 
 %% fusing the weights for direction
 %each row is 1 sensor, each column is 1 motor
 %removing the corrupted directions for the hips
+direction_slips = [-1  1 -1 1];
 weights_fused = zeros(size(weights_lc,1),parms.n_m);
 for i=1:parms.n_m
     idx = find(motor_ids_dropoff == i);
     if ~isempty(idx)
-        direction_corrupted = direction_dropoff(idx(1));
-        switch direction_corrupted
-            case 1
-                weights_fused(:,i) = -weights_lc(:,2*i-1);
-            case -1
-                weights_fused(:,i) = weights_lc(:,2*i);
-        end              
+        direction_corrupted = sign_direction_dropoff(idx(1));
+            
     else
-        weights_fused(:,i) = -weights_lc(:,2*i-1) + (weights_lc(:,2*i));
+        i/2
+        direction_corrupted = direction_slips(i/2);
+    end
+    switch direction_corrupted
+        case 1
+            weights_fused(:,i) = weights_lc(:,2*i-1);
+        case -1
+            weights_fused(:,i) = weights_lc(:,2*i);
     end
 end
 hinton_LC_weights_fused(weights_fused,parms,1)

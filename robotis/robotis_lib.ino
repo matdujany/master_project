@@ -15,10 +15,7 @@
 // 8. PRINT FUNCTIONS
 //
 //
-// TO DO:
-// - Replace parts of the code with push_byte where possible
-// - update_oscillators_tegotae(): Replace hardcoded mapping by learned mapping
-//
+
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
 /* ===================================================================================================================================== */
@@ -394,6 +391,8 @@ void read_bluetooth_command(int flagVerbose)
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
+
+/*
 void exe_blue_command(int flagVerbose)
 {
   // Execute bluetooth command
@@ -447,6 +446,8 @@ void exe_blue_command(int flagVerbose)
     }
   }
 }
+*/
+
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 void construct_initial_frame_blue(byte arduino_target)
@@ -461,137 +462,6 @@ void construct_initial_frame_blue(byte arduino_target)
   initial_frame_blue[6] = 0x00;           // Command
   initial_frame_blue[7] = 0x00;           // Checksum
   initial_frame_blue[8] = END_FRAME;      // End frame
-}
-
-/////////////////////////////////
-// 5. DYNAMIXEL MOVING         //
-/////////////////////////////////
-
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-void init_phase_shift()
-{
-  // Initialize phase_shift
-
-  ////// LEG 1
-  // Servo number: 2
-  phase_shift[0] = 0.5 * pi;
-  // Servo number: 3
-  phase_shift[1] = 1.25 * pi;
-
-  ////// LEG 2
-  // Servo number: 13
-  phase_shift[2] = 0.5 * pi;
-  // Servo number: 14
-  phase_shift[3] = 1.25 * pi;
-
-  ////// LEG 3
-  // Servo number: 15
-  phase_shift[4] = 1.5 * pi;
-  // Servo number: 16
-  phase_shift[5] = 0.25 * pi;
-
-  ////// LEG 4
-  // Servo number: 17
-  phase_shift[6] = 1.5 * pi;
-  // Servo number: 18
-  phase_shift[7] = 0.25 * pi;
-
-  for (int i_s = 0; i_s < 8; i_s++)
-  {
-    SerialUSB.print("Phase shift [Servo ");
-    SerialUSB.print(id[i_s]);
-    SerialUSB.print("]:");
-    SerialUSB.println(phase_shift[i_s]);
-  }
-}
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-void init_servo_offset()
-{
-  // Initialize servo offset values in a way that at the lowest point, the leg pushes off in the forward direction.
-
-  int factor = 1;
-  //  double amplitude_tmp[] = {pi, pi};
-  float amplitude_tmp[] = {amplitude_arr[0], amplitude_arr[1]};
-
-  servo_offset[0] = -factor * amplitude_tmp[0];
-  servo_offset[1] = 0;
-
-  servo_offset[2] = factor * amplitude_tmp[0];
-  servo_offset[3] = 0;
-
-  servo_offset[4] = factor * amplitude_tmp[0];
-  servo_offset[5] = 0;
-
-  servo_offset[6] = -factor * amplitude_tmp[0];
-  servo_offset[7] = 0;
-
-  if (0)
-  {
-    for (int i_s = 0; i_s < 8; i_s++)
-    {
-      SerialUSB.print("Servo offset [Servo ");
-      SerialUSB.print(id[i_s]);
-      SerialUSB.print("]:");
-      SerialUSB.println(servo_offset[i_s]);
-    }
-  }
-}
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-void update_oscillators_tegotae()
-{
-  // Update the state of the oscillators
-  //double N_s;
-  //double N_h;
-
-  ///////////////////////////////////////////////////////////////////////
-  // Hardcoded mapping
-  // To be replaces by the learned mapping.
-
-  // Force in z direction
-  float N_s_lc1 = ser_rx_buf.last_loadcell_data_float[2 + 0 * 3];
-  float N_s_lc2 = ser_rx_buf.last_loadcell_data_float[2 + 1 * 3];
-  float N_s_lc3 = ser_rx_buf.last_loadcell_data_float[2 + 2 * 3];
-  float N_s_lc4 = 0;
-
-  // Force in y direction
-  float N_h_lc1 = ser_rx_buf.last_loadcell_data_float[1];
-  float N_h_lc2 = ser_rx_buf.last_loadcell_data_float[1 + 1 * 3];
-  float N_h_lc3 = ser_rx_buf.last_loadcell_data_float[1 + 2 * 3];
-  float N_h_lc4 = 0;
-
-  // Leg:         // Left front     // Right front    // Left rear      // Right rear
-  float N_s[] = {N_s_lc3, N_s_lc3, N_s_lc2, N_s_lc2, N_s_lc1, N_s_lc1, N_s_lc2, N_s_lc2};
-  float N_h[] = {N_h_lc3, N_h_lc3, N_h_lc2, N_h_lc2, N_h_lc1, N_h_lc1, N_h_lc2, N_h_lc2};
-
-  ///////////////////////////////////////////////////////////////////////
-
-  t_current = millis();
-
-  for (int i = 0; i < n_servos; i++)
-  {
-    //            omega            Tvertical                        Thorizontal
-    phi_dot[i] = 2 * pi * frequency + sigma_s * N_s[i] * cos(phi[i]) + sigma_p * N_h[i] * cos(phi[i]);
-    phi[i] = phi[i] + phi_dot[i] * (t_current - t_old) / 1000;
-
-    float val_tmp = amplitude_arr[i % 2] * sin(phi[i] + phase_shift[i]) + servo_offset[i];
-
-    // Limit theta to 400 to 600 range
-    pos[i] = rad2pos(val_tmp);
-    if (pos[i] < 400)
-    {
-      pos[i] = 400;
-    }
-    if (pos[i] > 600)
-    {
-      pos[i] = 600;
-    }
-
-    set_goal_position(id[i], pos[i]);
-  }
-  t_old = t_current;
 }
 
 
@@ -926,17 +796,6 @@ void print_data_columns()
     SerialUSB.print("\t");
   }
   SerialUSB.println("");
-}
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-void print_servo_offset()
-{
-  for (int i = 0; i < n_servos; i++)
-  {
-    SerialUSB.print(servo_offset[i]);
-    SerialUSB.print(", ");
-  }
-  SerialUSB.print("\n");
 }
 
 void print_loadcell_values(){

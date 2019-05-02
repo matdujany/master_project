@@ -20,6 +20,7 @@
 
 // SERVO'S
 #define MAX_NR_SERVOS               12
+#define MAX_N_LIMB 6
 
 // DAISYCHAIN
 // Sampling Settings
@@ -33,16 +34,16 @@
 #define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
 #define SLOPE_LEARNING              2       
 #define LEARNING_RATE               10     // Learning rate for the update rule
-#define DURATION_PART0              400    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
+#define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
 #define DURATION_PART1              400    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
-#define DURATION_PART2              400    // Duration of part 2 in ms; part 2: begins at the action of going back to initial position;   servo goes from step position to initial position
+#define DURATION_PART2              500    // Duration of part 2 in ms; part 2: begins at the action of going back to initial position;   servo goes from step position to initial position
 #define N_TWITCHES                  5
 
 #define COMPLIANT_MODE              1   // (0) : all servos remain at default parameters 
                                         // (1) : the non moving servos are compliant, the moving one is stiff
                                         // (2) : all servos are stiff
 #define RECENTERING_BETWEEN_ACTION  1   // (1) : servos are recentered at 512 after each twitching in the 2 directions.
-#define RECENTERING_DELAY           3000 
+#define RECENTERING_DELAY           1500 
 
 #define TIME_INTERVAL_TWITCH        20     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
 
@@ -83,10 +84,9 @@
 #define MAX_FRAME_SIZE           (7 + (MAX_NR_ARDUINO*SENSOR_DATA_LENGTH) + IMU_DATA_LENGTH)    // Maximum frame size
 
 // IMU properties
-#define IMU_DATA_ADC_LENGTH          4                                                          // the IMU return a 4-byte float for each channel
-#define IMU_DATA_LENGTH              (6*IMU_DATA_ADC_LENGTH+1)                                  // 25 bytes: [accelerometer (3 linear values) + gyroscope (3 rotational values)] * 4 bytes + 1 timestamp byte
-#define IMU_USEFUL_CHANNELS          6                                                          // we use only the 3 acceleration values and the yaw (not pitch and roll).
-#define IMU_YAW_CHANNEL             0 //TBC, the yaw could actually be channel 0,1 or 2 (my guess is 2)
+#define IMU_DATA_ADC_LENGTH         4                                                          // the IMU return a 4-byte float for each channel
+#define IMU_DATA_LENGTH             (6*IMU_DATA_ADC_LENGTH+1)                                  // 25 bytes: [accelerometer (3 linear values) + gyroscope (3 rotational values)] * 4 bytes + 1 timestamp byte
+#define IMU_USEFUL_CHANNELS         6                                                          // 3 accelerometer channel (X Y Z), 3 gyro channels (roll pitch yaw)
 
 // Ring Buffer
 #define BUFFER_NEXT(A) ((A+1)&(BUFFER_SIZE -1))    // Bitwise and operator for example will return 0 instead of 16.
@@ -127,8 +127,11 @@
 #define RECENTERING_COMPLIANCE_SLOPE          16           
 #define RECENTERING_PUNCH                     40
 #define STIFF_COMPLIANCE_MARGIN         1
-#define STIFF_COMPLIANCE_SLOPE          16           
-#define STIFF_PUNCH                     150
+#define STIFF_COMPLIANCE_SLOPE          16  //16           
+#define STIFF_PUNCH                     100  //150
+#define MOV_LEARNING_COMPLIANCE_MARGIN         1
+#define MOV_LEARNING_COMPLIANCE_SLOPE          16  //16           
+#define MOV_LEARNING_PUNCH                     50  //150
 
 
 ///////////////////////////////

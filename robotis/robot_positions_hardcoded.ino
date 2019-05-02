@@ -201,3 +201,57 @@ void serial_read_progressive_lift(){
   }
 }
 
+void serial_read_test_twitch(){
+  if(SerialUSB.available()){
+    char char_read = SerialUSB.read();
+    if (char_read>'0' && char_read<'9'){ //ASCII code : 0 = 48
+      char char_read_dir = SerialUSB.read();
+      if (char_read_dir=='+' || char_read_dir=='-')
+      {
+        int dir_sign = 1;
+        if (char_read_dir =='-')
+          dir_sign = -1;
+        pose_stance();
+        int idx_servo = char_read-49;
+        SerialUSB.print("Staying for 5 s in stance to prepare movement of motor ");
+        SerialUSB.print(idx_servo+1);
+        SerialUSB.print(" direction ");
+        SerialUSB.print(char_read_dir);
+        delay(5000);
+
+        if (COMPLIANT_MODE==1){
+          make_all_servos_compliant_syncWrite();
+        }
+        
+        change_motor_parameters_movement_learning(id[idx_servo]);
+        int n_frames_prog_lift = DURATION_PART1/TIME_INTERVAL_TWITCH;
+        for (int i=0; i<n_frames_prog_lift; i++){
+          unsigned long time_start = millis();
+          twitch_part1_moving_ramp(idx_servo, dir_sign, n_frames_prog_lift);
+          show_value_DC(0);
+          if (millis()-time_start>TIME_INTERVAL_TWITCH)
+            SerialUSB.println("Not fast enough");
+          while (millis()-time_start<TIME_INTERVAL_TWITCH);
+        }
+        delay(5000);// delay to read the final values of the loadcells on the console
+
+        SerialUSB.println("Movement part 2, recentering of only the servo that had twitched");
+        int n_frames_prog_recent = DURATION_PART2/TIME_INTERVAL_TWITCH;
+        for (int i=0; i<n_frames_prog_recent; i++){
+          unsigned long time_start = millis();
+          update_load_pos_values();
+          twitch_part2_recentering(idx_servo,i, n_frames_prog_recent);
+          show_value_DC(0);
+          if (millis()-time_start>TIME_INTERVAL_TWITCH)
+            SerialUSB.println("Not fast enough");
+          while (millis()-time_start<TIME_INTERVAL_TWITCH);
+        }
+        recentering_between_action();
+        delay(5000);
+        restaure_default_parameters_all_motors_syncWrite();
+      }
+    }
+  }
+}
+
+

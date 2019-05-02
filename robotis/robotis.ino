@@ -79,8 +79,9 @@ void setup() {
   //update_IMU_offsets();
   //pose_stance_soft();
 
-  twitch_record_wrapper();
+  //twitch_record_wrapper();
 
+  harcoded_tegotae();
 }
 
 
@@ -90,5 +91,5 @@ void loop() {
 
   //pose_stance();
   //show_value_DC(50);
-  //serial_read_progressive_lift();
+  //serial_read_test_twitch();
 }

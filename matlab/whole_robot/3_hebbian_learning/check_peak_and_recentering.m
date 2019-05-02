@@ -10,7 +10,7 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 70;
+recordID = 80;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
@@ -39,22 +39,13 @@ for k = 1:parms.n_twitches
 end
 
 
-
-ampl_step_pos = floor(parms.step_ampl*3.413);
-
-theoretical_traj = 512*ones(1,n_frames_theo.part0);
-for i=1:n_frames_theo.part1
-    theoretical_traj(1,n_frames_theo.part0+i) = 512 - floor(ampl_step_pos*i/n_frames_theo.part1);
-end
+theoretical_traj = compute_theoretical_traj_wrapper(1,parms);
 for i=1:n_frames_theo.part2
     last_motor_pos = lpdata.motor_position(i_motor,index_start_motor+n_frames_theo.part0+n_frames_theo.part1+i-1);
     theoretical_traj(1,n_frames_theo.part0+n_frames_theo.part1+i) = ...
         512 + floor((last_motor_pos-512)*(1-i/n_frames_theo.part2));
 end
-theoretical_traj = [theoretical_traj 512*ones(1,n_frames_theo.part0)];
-for i=1:n_frames_theo.part1
-    theoretical_traj(1,n_frames_theo.per_action+n_frames_theo.part0+i) = 512 + floor(ampl_step_pos*i/n_frames_theo.part1);
-end
+theoretical_traj = [theoretical_traj compute_theoretical_traj_wrapper(2,parms)];
 for i=1:n_frames_theo.part2
     last_motor_pos = lpdata.motor_position(i_motor,index_start_motor+n_frames_theo.per_action+n_frames_theo.part0+n_frames_theo.part1+i-1);
     theoretical_traj(1,n_frames_theo.per_action+n_frames_theo.part0+n_frames_theo.part1+i) = ...
@@ -89,8 +80,8 @@ end
 
 %%
 plot_erorrbar_static_mean(mean(recentering_own_movement,2),std(recentering_own_movement,[],2),512,parms,'Recentering after own movement static mean')
-plot_erorrbar_peaks(mean(peak_neg,2),std(peak_neg,[],2),512-ampl_step_pos,parms,'Negative peak (learning)')
-plot_erorrbar_peaks(mean(peak_pos,2),std(peak_pos,[],2),512+ampl_step_pos,parms,'Positive peak (learning)')
+plot_erorrbar_peaks(mean(peak_neg,2),std(peak_neg,[],2),min(theoretical_traj),parms,'Negative peak (learning)')
+plot_erorrbar_peaks(mean(peak_pos,2),std(peak_pos,[],2),max(theoretical_traj),parms,'Positive peak (learning)')
 
 %%
 position_before_action = zeros(parms.n_m,parms.n_twitches*2*parms.n_m);

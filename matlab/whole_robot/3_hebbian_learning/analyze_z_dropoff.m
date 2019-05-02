@@ -9,7 +9,7 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 75;
+recordID = 80;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights = read_weights_robotis(recordID,parms);
@@ -47,7 +47,7 @@ threshold_factor = 0.1;
 [totalcounts, min_dropoffs] = count_dropoffs(threshold_factor,data,parms,flagPlot);
 
 %%
-i_lc_part_plot = 1; %6;
+i_lc_part_plot = 3; %6;
 i_motor_part_plot = 1;%5;
 i_dir = 1;
 figure;
@@ -83,7 +83,8 @@ index_end = index_start + n_frames_theo.per_action-1;
 data_loadz = s_lc(index_start:index_end,3*i_lc);
 
 hold on;
-plot(data_loadz,'LineWidth',lineWidth);
+plot(data_loadz,'b-','LineWidth',lineWidth);
+plot(myfilter(data_loadz,6),'b--','LineWidth',lineWidth);
 patch(x_patch_learning,y_patch_learning,'blue','FaceAlpha',0.1,'EdgeColor','none');
 plot([0 n_frames_theo.per_action-1],[0 0]);
 xlim([n_frames_theo.part0-10 n_frames_theo.part0+n_frames_theo.part1+10]);
@@ -117,7 +118,7 @@ end
 yyaxis right;
 hold on;
 plot(lpdata.motor_position(i_motor,index_start:index_end));
-theoretical_traj = compute_theoretical_traj(i_dir,parms);
+theoretical_traj = compute_theoretical_traj_wrapper(i_dir,parms);
 plot(theoretical_traj);
 ylabel(['Motor ' num2str(i_motor) ' Position']);
 title(['Twitch ' num2str(i_twitch) ', total counts ' num2str(total_count)]);

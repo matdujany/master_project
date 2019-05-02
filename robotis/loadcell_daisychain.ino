@@ -24,15 +24,6 @@ void show_total_z_load(){
   SerialUSB.println(totalz_load);
 }
 
-void show_total_z_load_right_side(){
-  float totalz_load_right_side = 0;
-  for (int i : {1, 2}){
-    totalz_load_right_side += ser_rx_buf.last_loadcell_data_float[3*i+2];
-  }
-  SerialUSB.print("Total Z load right side ");
-  SerialUSB.println(totalz_load_right_side);
-}
-
 //update the values of the LC and prints their latest values.
 void show_value_LC(unsigned long delay_updates){
   send_frame_and_update_sensors(0);
@@ -54,9 +45,9 @@ void send_frame_and_update_sensors(int flagVerbose){
   // Mode 1: loadcell mode, Mode 2: IMU mode
   hex_to_float(flagVerbose, 1);
   hex_to_float(flagVerbose, 2);
-  correct_IMU_data();
-  
+  correct_IMU_data(); 
 }
+
 
 //measure and prints the mean LC values (over nb_values_mean), with a delay (delay_frames) between each measure
 void measure_mean_values_LC(uint8_t nb_values_mean, unsigned long delay_frames){

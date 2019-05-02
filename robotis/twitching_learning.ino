@@ -90,10 +90,11 @@ void twitch_main()
         if (i_part == 1){
           if (COMPLIANT_MODE==1){
             make_all_servos_compliant_syncWrite();
-            make_servo_stiff(id[i_servo]);
           }
-          if (COMPLIANT_MODE==2)
+          if (COMPLIANT_MODE==2){
             make_all_servos_stiff_syncWrite();
+          }
+          change_motor_parameters_movement_learning(id[i_servo]);
         }
 
         // Keep looping until required number of frames is reached
@@ -148,12 +149,6 @@ void twitch_main()
           }
         }
 
-        //if part1 is over and the compliance mode is different than the default one
-        //then the default parameters are restaured
-        if (i_part == 1 && COMPLIANT_MODE>0){
-          //restaure_default_parameters_all_motors_syncWrite();
-        }        
-
         n_frames_tmp = 0;
 
         //SerialUSB.print("Mean computation time servo ");SerialUSB.print(i_servo);
@@ -181,9 +176,22 @@ void recentering_between_action(){
   pose_stance();
   unsigned long time_start = millis();
   switch_frame_normal_mode(); // just so that the frames to come are discarded by Matlab
+  while (millis()-time_start < RECENTERING_DELAY/2){
+    show_value_DC(TIME_INTERVAL_MANUAL_RECENTERING);
+  }
+  update_load_pos_values();
+  int pos_gap = 0;
+  for (int i = 0; i < n_servos; i++){
+    pos_gap = last_motor_pos[i]-512;
+    if (abs(pos_gap)>1){
+      set_goal_position(id[i],512-get_sign(pos_gap));
+    }
+  }
   while (millis()-time_start < RECENTERING_DELAY){
     show_value_DC(TIME_INTERVAL_MANUAL_RECENTERING);
   }
+
+
   switch_frame_recording_mode();
 
   //unsigned long timestart_pose_stance_soft = millis();
@@ -359,7 +367,8 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
 
   // Learning during part 1
   if (i_part == 1){
-    float m_learning = dir_sign*m_dot_pos[i_servo];
+    //float m_learning = dir_sign*m_dot_pos[i_servo]; // sign is flipped for M-
+    float m_learning = m_dot_pos[i_servo]; // no sign flip
     twitch_learning_prog(i_action, m_learning);
   }
 
@@ -385,7 +394,7 @@ void twitch_part1_moving_ramp(uint8_t i_servo, int dir_sign, int n_frames_tmp)
   set_goal_position(id[i_servo], command_pos);
 }
 
-void twitch_part2_moving(uint8_t i_servo, int n_frames_tmp, int n_frames_tot)
+void twitch_part2_recentering(uint8_t i_servo, int n_frames_tmp, int n_frames_tot)
 {
   uint16_t command_pos = 512 + (last_motor_pos[i_servo]-512) * double(n_frames_tot-n_frames_tmp) / double(n_frames_tot);
   set_goal_position(id[i_servo], command_pos);
@@ -647,7 +656,7 @@ int get_sign(float val)
 float oja_diff_learning_rule(float m, float s_dot, float weight)
 {
   // Oja's differential learning rule
-  return -1 * (m * s_dot + m * m * weight);
+  return m * s_dot - m * m * weight;
 }
 
 
@@ -761,6 +770,10 @@ void print_twitching_parameters(){
   SerialUSB.print("Stiff compliance margin : "); SerialUSB.println(STIFF_COMPLIANCE_MARGIN); 
   SerialUSB.print("Stiff compliance slope : "); SerialUSB.println(STIFF_COMPLIANCE_SLOPE); 
   SerialUSB.print("Stiff punch : "); SerialUSB.println(STIFF_PUNCH);  
+  SerialUSB.print("Movement Learning compliance margin : "); SerialUSB.println(MOV_LEARNING_COMPLIANCE_MARGIN); 
+  SerialUSB.print("Movement Learning compliance slope : "); SerialUSB.println(MOV_LEARNING_COMPLIANCE_SLOPE); 
+  SerialUSB.print("Movement Learning punch : "); SerialUSB.println(MOV_LEARNING_PUNCH);  
+    
   SerialUSB.print("Recentering between 2 actions : "); SerialUSB.println(RECENTERING_BETWEEN_ACTION);
   if (RECENTERING_BETWEEN_ACTION){
     SerialUSB.print("Recentering between 2 actions delay : "); SerialUSB.println(RECENTERING_DELAY);

@@ -25,9 +25,9 @@ for k=1:parms.n_twitches
             start_learning = pos_start_learning(move_count);
             stop_learning = pos_end_learning(move_count);
             motor_learning = m_dot(start_learning:stop_learning);
-            if i_dir==1
-                motor_learning = - motor_learning;
-            end
+%             if i_dir==1
+%                 motor_learning = - motor_learning;
+%             end
             for i_sensor = 1:size(s_dot,2)
                 sensor_signal = s_dot(start_learning:stop_learning,i_sensor);
                 old_weight = weights{k}(i_sensor,i_dir+2*(i_motor-1));

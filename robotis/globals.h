@@ -34,16 +34,45 @@
 
 // General settings:
 float pi               = float(3.1415926535);
-int start_at_location  = 1;       // 1: start at given positions, 0: start at 0 angle
+//int start_at_location  = 1;       // 1: start at given positions, 0: start at 0 angle
 int flagVerbose        = 0;       // Default mode: print no information
-bool bool_walk      = false;   // Boolean to turn servo's on/off
+//bool bool_walk      = false;   // Boolean to turn servo's on/off
 
 // CPG/Tegotae related:
-float frequency       = 0.5;
-float amplitude_arr[] =  {15*pi/180, 30*pi/180};
-float amplitude_deg   = 20;
-float sigma_s         = 0;       // Sigma S; see Tegotae article
-float sigma_p         = 0;       // Sigma P; see Tegotae article
+float frequency       = 1;
+float amplitude_knee_deg = 15;
+float amplitude_hip_deg = 12;
+float alpha = 0.2; //reduction of amplitude during stance for hip
+float sigma_s         = 0.01;       // Sigma S; see Fukuhara 2018 article
+float sigma_advanced  = 2;       // Sigma for rescaling the map*GRF term 
+
+//for limb oscillators
+unsigned long t_last_phi_update      = 0;
+unsigned long t_offset_oscillators  = 0;
+float phi[MAX_N_LIMB]           = {0};
+float phi_dot[MAX_N_LIMB]       = {0};
+
+//float servo_offset[MAX_N_LIMB]  = {0};
+//float phase_shift[MAX_N_LIMB]   = {0};
+float N_s[MAX_N_LIMB] = {0};
+uint16_t goal_positions_tegotae[MAX_NR_SERVOS];
+
+
+//hardcoded in initialize_hardcoded_limbs()
+int n_limb = 4; // to change with number of detected limbs
+uint8_t limbs[MAX_N_LIMB][2];  //2 motors per limb
+boolean changeDirs[MAX_N_LIMB][2];  //2 motors per limb
+float offset_knee_to_hip[MAX_N_LIMB] = {0};
+
+  //recordID 79
+float inverse_map[4][4] = { { 0.3606,-0.3424, 0.2946,-0.2940} ,
+                            {-0.2401, 0.3333,-0.2977, 0.3155} ,
+                            { 0.3170,-0.3175, 0.3229,-0.2866} ,
+                            {-0.2127, 0.2447,-0.2821, 0.2984} };
+float inverse_map_custom[4][4] = { { 1  , -0.5, 0.2 , -0.5} ,
+                            {-0.5,  1  , -0.5, 0.2} ,
+                            { 0.2, -0.5, 1   , -0.5} ,
+                            {-0.5, 0.2 , -0.5,  1} };
 
 /* ===================================================================================================================================== */
 
@@ -125,20 +154,14 @@ uint8_t    initial_frame_blue[9];
 dynamixel::PortHandler *portHandler;     //for communication with Dynamixels (SDK)
 dynamixel::PacketHandler *packetHandler; //for communication with Dynamixels (SDK)
 
-unsigned long t_offset       = 0;
-unsigned long t_current      = 0;
-unsigned long t_old          = 0;
-int currentPosition          = 0;
-int model                    = 0;
+//unsigned long t_offset       = 0;
+
+//int currentPosition          = 0;
+//int model                    = 0;
 
 uint8_t n_servos                    = 0;
 uint8_t id[MAX_NR_SERVOS];         // 
-float phi[MAX_NR_SERVOS]           = {0};
-float phi_dot[MAX_NR_SERVOS]       = {0};
-uint16_t amplitude                 = uint16_t(amplitude_deg*3.413);
-uint16_t pos[MAX_NR_SERVOS]        = {512};
-float servo_offset[MAX_NR_SERVOS]  = {0};
-float phase_shift[MAX_NR_SERVOS]   = {0};
+//uint16_t pos[MAX_NR_SERVOS]        = {512};
 
 /* ===================================================================================================================================== */
 

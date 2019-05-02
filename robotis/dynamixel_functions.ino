@@ -40,45 +40,10 @@ void init_dynamixel()
   // Initialize dynamixels
   init_port_and_packet_handler();
   count_dynamixels();
-
-  // starting the oscillation at the given positions
-  /*
-  if (start_at_location)
-  {
-    SerialUSB.println("starting oscillations at given positions");
-    reset_servo_offset();
-  }
-  */
-
-  //Dxl.jointMode(id); //jointMode() is to use position mode, NOT SURE IF THIS IS NEEDED IN THE BROADCAST MODE
-  //KIND OF NOT IF ALL THE SEERVOS ARE SET UP CORRECTLY, CHECK WITH ROBOPLUS
   SerialUSB.println("setup of Dynamixel complete");
-
-  t_offset = millis();
-  t_old = millis();
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
-
-void reset_servo_offset()
-{
-  for (int i = 0; i < n_servos; i++)
-  {
-    uint16_t tmp = read_present_position(id[i]);
-    if (tmp > amplitude)
-    {
-      tmp = amplitude;
-    } // making sure the asin is defined
-    if (tmp < -amplitude)
-    {
-      tmp = -amplitude;
-    }
-
-    servo_offset[i] = asin(double(tmp)/double(amplitude));
-    //SerialUSB.print("servo offset: ");
-    //SerialUSB.println(servo_offset[i]);
-  }
-}
 
 void count_dynamixels()
 {
@@ -145,10 +110,26 @@ float pos2rad(uint16_t pos)
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
+uint16_t check_goal_position(uint16_t goal_position){
+  uint16_t pos = goal_position;
+  uint16_t saturation = 200;
+  if (abs(pos-512)>saturation){
+    SerialUSB.print("Warning position value ");
+    SerialUSB.println(pos);
+    SerialUSB.print(" is higher than saturation");
+    if (pos>512)
+      pos = 512 + saturation;
+    else
+      pos = 512 - saturation;
+  }
+  return pos;
+}
+
 //TODO : maybe change the limits of goal position
 void set_goal_position(uint8_t servo_id, uint16_t goal_position)
 {
-  packetHandler->write2ByteTxRx(portHandler, servo_id, ADDR_GOAL_POSITION, goal_position);
+  uint16_t goal_position_checked = check_goal_position(goal_position);
+  packetHandler->write2ByteTxRx(portHandler, servo_id, ADDR_GOAL_POSITION, goal_position_checked);
 }
 
 void set_compliance_margin(uint8_t servo_id, uint8_t value)
@@ -220,8 +201,9 @@ void syncWrite_position_n_servos(uint8_t n_servos_write, uint8_t *servo_ids, uin
   uint8_t position_in_bytes[2];
   for (int i = 0; i < n_servos_write; i++)
   {
-    position_in_bytes[0] = DXL_LOBYTE(goal_positions[i]);
-    position_in_bytes[1] = DXL_HIBYTE(goal_positions[i]);
+    uint16_t goal_position_checked = check_goal_position(goal_positions[i]);
+    position_in_bytes[0] = DXL_LOBYTE(goal_position_checked);
+    position_in_bytes[1] = DXL_HIBYTE(goal_position_checked);
     groupSyncWrite.addParam(servo_ids[i], position_in_bytes);
   }
   // Syncwrite goal position -->  send packez
@@ -365,6 +347,12 @@ void change_all_motor_parameters_syncWrite(uint8_t compliance_margin, uint8_t co
   syncWrite_compliance_margin_all_servo(compliance_margin);
   syncWrite_compliance_slope_all_servo(compliance_slope);
   syncWrite_same_punch_all_servos(punch);
+}
+
+void change_motor_parameters_movement_learning(uint8_t servo_id){
+  set_compliance_margin(servo_id,MOV_LEARNING_COMPLIANCE_MARGIN);
+  set_compliance_slope(servo_id,MOV_LEARNING_COMPLIANCE_SLOPE);
+  set_punch(servo_id,MOV_LEARNING_PUNCH);
 }
 
 void make_all_servos_stiff_syncWrite(){
