@@ -46,6 +46,7 @@
 #define RECENTERING_DELAY           1500 
 
 #define TIME_INTERVAL_TWITCH        20     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
+#define DELAY_UPDATE_TEGOTAE        20     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
 
 
 #define DURATION_MANUAL_RECENTERING         15     //in s, manual recentering between twitch cycles
@@ -72,12 +73,13 @@
 
 
 // Frame properties
-#define FRAME_SYNC_0             0xFF                                                           // Start frame byte 1
-#define FRAME_SYNC_1             0xAA                                                           // Start frame byte 2
-#define END_FRAME                0x55                                                           // End frame byte
-#define FRAME_TYPE_RECORDING     0x01     //default frametype, using during learning, Matlab will record these frames only
-#define FRAME_TYPE_IMU_RECALIB   0x02    //frametype where only the IMU writes data, to recalibrate it
-#define FRAME_TYPE_NORMAL        0x03    //frametype where IMU and LCs write data, but frames are not used for learning
+#define FRAME_SYNC_0                    0xFF                                                           // Start frame byte 1
+#define FRAME_SYNC_1                    0xAA                                                           // Start frame byte 2
+#define END_FRAME                       0x55                                                           // End frame byte
+#define FRAME_TYPE_RECORDING            0x01     //default frametype, using during learning, Matlab will record these frames only
+#define FRAME_TYPE_IMU_RECALIB          0x02    //frametype where only the IMU writes data, to recalibrate it
+#define FRAME_TYPE_NORMAL               0x03    //frametype where IMU and LCs write data, but frames are not used for learning
+#define FRAME_TYPE_IMU_UPDATE_OFF       0x04    //frametype where IMU stops to update its sensors and write its values, it is 'off' but still checks the bytes and can be turned on again to add values again.
 
 #define SENSOR_DATA_ADC_LENGTH   4                                                              // Sensor Data Length: float, so 4 bytes
 #define SENSOR_DATA_LENGTH       (3*SENSOR_DATA_ADC_LENGTH+1)                                   // 12 bytes: 3 loadcells floats + timestamp integer

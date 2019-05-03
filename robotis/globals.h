@@ -38,12 +38,13 @@ float pi               = float(3.1415926535);
 int flagVerbose        = 0;       // Default mode: print no information
 //bool bool_walk      = false;   // Boolean to turn servo's on/off
 
-// CPG/Tegotae related:
-float frequency       = 1;
-float amplitude_knee_deg = 15;
-float amplitude_hip_deg = 12;
+// CPG/Tegotae Locomotion related:
+float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
+float amplitude_knee_deg = 20;
+float amplitude_hip_deg = 20;
+
 float alpha = 0.2; //reduction of amplitude during stance for hip
-float sigma_s         = 0.01;       // Sigma S; see Fukuhara 2018 article
+float sigma_s         = 0.3;       // Sigma S; see Fukuhara 2018 article
 float sigma_advanced  = 2;       // Sigma for rescaling the map*GRF term 
 
 //for limb oscillators
@@ -51,9 +52,6 @@ unsigned long t_last_phi_update      = 0;
 unsigned long t_offset_oscillators  = 0;
 float phi[MAX_N_LIMB]           = {0};
 float phi_dot[MAX_N_LIMB]       = {0};
-
-//float servo_offset[MAX_N_LIMB]  = {0};
-//float phase_shift[MAX_N_LIMB]   = {0};
 float N_s[MAX_N_LIMB] = {0};
 uint16_t goal_positions_tegotae[MAX_NR_SERVOS];
 
@@ -226,5 +224,5 @@ float mean_time_computation_part=0; //in ms
 
 float offset_acc[3] = {0.0};
 float offset_gyro[3] = {0.0};
-bool slow_dc_mode = false; // to put a delay in the DC during IMU calibration.
+bool slow_dc_mode = false; // to put a time delay when sending bytes in the daisychain during IMU calibration.
 int count_sent_byte = 0;

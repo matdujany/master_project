@@ -1,9 +1,14 @@
-function h = hinton_LC(weights,parms,writeValues)
+function h = hinton_LC(weights,parms,writeValues,titleString)
 %HINTON_LC Summary of this function goes here
 %   Detailed explanation goes here
 
 if nargin ==2
     writeValues = 0;
+    titleString = '';
+end
+
+if nargin == 3
+    titleString = '';
 end
 
 weights_lc = weights(1:parms.n_lc*parms.n_ch_lc,:);
@@ -69,6 +74,8 @@ for i_motor=1:2*parms.n_m
     end
 end
 end
+
+xlabel(titleString,'FontSize',fontSize_values+2);
 
 end
 

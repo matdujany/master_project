@@ -1,4 +1,4 @@
-/*
+  /*
   AD7124 Full Test
 
   Prints out the voltages measured at pins AIN1/AIN, AIN3/AIN2, AIN5/AIN4 and
@@ -32,7 +32,7 @@ using namespace Ad7124;
 //using namespace Ad7124;
 
 #define DT 1000        // interrupt period of timer1 in microseconds, use multiples of hundred
-#define I_LOADCELL 9   // Arduino-Loadcell number (written next to the # on loadcell sensor).
+#define I_LOADCELL 5   // Arduino-Loadcell number (written next to the # on loadcell sensor).
 #define BAUD_RATE 500000
 
 double cal_gain[3];
@@ -93,6 +93,24 @@ double voltage;
 Ad7124Chip adc;
 
 unsigned long tp, tc, tp2, tc2;
+
+
+//03.05 : I got 6.87 ms as average for LC 6.
+//03.05 : I got 6.91 ms as average for LC 9.
+//I am leaving this function here for future possible use but it is not called
+void timing_check_and_update_loadcells(){
+  int n_reps = 10000;
+  unsigned long time_start = millis();
+  for (int i=0; i<n_reps; i++){
+    check_and_update_loadcells();
+  }
+  unsigned long time_elapsed = millis() - time_start;
+  float average_duration = float(time_elapsed)/float(n_reps);
+  SerialUSB.print("Duration check_and_update_loadcells of loadcell (average in ms over ");
+  SerialUSB.print(n_reps);
+  SerialUSB.print(" repetitions) : ");
+  SerialUSB.println(average_duration);  
+}
 
 
 // -----------------------------------------------------------------------------
@@ -241,6 +259,7 @@ check_and_update_loadcells();
   tc = micros();
   tp2 = micros();
   tc2 = micros();
+
 }
 
 
@@ -315,7 +334,7 @@ if(Serial1.available()){
     cc_byte+=inByte;
 
     // INSERT READINGS FROM SENSORS
-    if ( (frame_type==FRAME_TYPE_RECORDING)||(frame_type==FRAME_TYPE_NORMAL))
+    if ( (frame_type==FRAME_TYPE_RECORDING)||(frame_type==FRAME_TYPE_NORMAL)||(frame_type==FRAME_TYPE_IMU_UPDATE_OFF))
     {
       uint8_t place_holder_arduino_no = 1 + (uint8_t) (frame_location_counter-5) / SENSOR_DATA_LENGTH;    // Keeps track to which Arduino the inByte belongs.
       uint8_t byte_no=(frame_location_counter-5) % SENSOR_DATA_LENGTH;                                    // Number of the byte in data array

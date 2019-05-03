@@ -67,8 +67,8 @@ void setup() {
   reset_circular_frame_array();
 
   //timing duration of daisychain;
-  compute_duration_daisychain_ms();
-  duration_daisychain=6;
+  //compute_duration_daisychain_ms();
+  duration_daisychain=5;
   
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
@@ -81,7 +81,8 @@ void setup() {
 
   //twitch_record_wrapper();
 
-  harcoded_tegotae();
+  record_harcoded_tegotae(20);
+  //hardcoded_tegotae();
 }
 
 
@@ -90,6 +91,6 @@ void loop() {
 
 
   //pose_stance();
-  //show_value_DC(50);
+  //show_value_DC(15);
   //serial_read_test_twitch();
 }

@@ -1,13 +1,75 @@
-void harcoded_tegotae(){
+
+void init_recording_locomotion(){
+  switch_frame_recording_mode();
+  SerialUSB.println("Waiting for any input from Serial USB console to start recording...");
+  while (!SerialUSB.available());  
+  SerialUSB.flush();
+}
+
+void record_harcoded_trot(int recording_duration){
+  init_recording_locomotion();
   initialize_hardcoded_limbs();
+
+  init_phi_trot();
+  send_command_limb_oscillators();
+
+  unsigned long t_start_recording = millis();
+  while (millis()-t_start_recording<recording_duration*1000){
+    unsigned long t_start_update_loop = millis();
+    send_phi_and_pos_Serial3();
+    //this frame is not needed for trot, but I use it to capture load infos.
+    send_frame_and_update_sensors(1,0);
+    update_phi_trot();
+    send_command_limb_oscillators();
+    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
+  }
+  SerialUSB.println("Trot recording over");
+  SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
+  SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);
+}
+
+void record_harcoded_tegotae(int recording_duration){
+  init_recording_locomotion();
+  initialize_hardcoded_limbs();
+
   init_phi_tegotae();
-  while (true){
+  send_command_limb_oscillators();
+
+  unsigned long t_start_recording = millis();
+
+  while (millis()-t_start_recording<recording_duration*1000){
+    unsigned long t_start_update_loop = millis();
+    send_phi_and_pos_Serial3();
+    send_frame_and_update_sensors(1,0);
     update_phi_tegotae();
     send_command_limb_oscillators();
+    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
+  }
+  SerialUSB.println("Tegotae recording over");
+  SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
+  SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);  
+}
+
+
+void send_phi_and_pos_Serial3(){
+  send_phi_Serial3();
+  simple_send_pos_Serial3();
+}
+
+void hardcoded_tegotae(){
+  initialize_hardcoded_limbs();
+  init_phi_tegotae();
+  send_command_limb_oscillators();
+  while (true){
+    unsigned long t_start_update_loop = millis();
+    send_frame_and_update_sensors(1,0);
+    update_phi_tegotae();
+    send_command_limb_oscillators();
+    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
   }
 }
 
-void harcoded_trot(){
+void hardcoded_trot(){
   initialize_hardcoded_limbs();
   init_phi_trot();
   while (true){
@@ -82,9 +144,9 @@ uint16_t phase2pos_hipknee_wrapper(float phase, boolean isHip, boolean changeDir
 ///Tegotae
 
 void init_phi_tegotae(){
-  update_load_pos_values();
+  //
   for (int i=0; i<n_limb; i++){
-    phi[i] = pi/2;
+    phi[i] = 0;
   }
   t_offset_oscillators = millis();
 }
@@ -92,13 +154,12 @@ void init_phi_tegotae(){
 
 void update_phi_tegotae()
 {
-  unsigned long t_current = millis() - t_offset_oscillators;
-  send_frame_and_update_sensors(0); //to update last_loadcell_data_float
   for (int i=0; i<n_limb; i++){
     N_s[i] = ser_rx_buf.last_loadcell_data_float[2 + i * 3];   
   }
+  unsigned long t_current = millis() - t_offset_oscillators;
   for (int i=0; i<n_limb; i++){
-    phi_dot[i] = advanced_tegotae_rule(i);
+    phi_dot[i] = simple_tegotae_rule(phi[i],N_s[i]);
     //actual update
     phi[i] = phi[i] + phi_dot[i] * (t_current - t_last_phi_update) / 1000;
   }
@@ -125,21 +186,36 @@ float advanced_tegotae_rule(uint8_t i_limb){
 
 void init_phi_trot(){
   for (int i : {1,3}){
-    //phi[i] = pi;
-    phi[i] = pi*((double) rand() / (RAND_MAX));
+    phi[i] = pi;
   }
+  t_offset_oscillators = millis();
 }
 
 void update_phi_trot()
 {
-  float trot_frequency = 2;
   unsigned long t_current = millis() - t_offset_oscillators;
   for (int i=0; i<n_limb; i++){
-    phi[i] = phi[i] + 2*pi*trot_frequency * (t_current - t_last_phi_update) / 1000;
+    phi[i] = phi[i] + 2*pi*frequency * (t_current - t_last_phi_update) / 1000;
   }
   t_last_phi_update = t_current;
 }
 
+void send_phi_Serial3(){
+  for (int i=0; i<n_limb; i++){
+    Serial3.println(phi[i]);
+  }  
+  Serial3.println(t_last_phi_update);
+}
+
+void simple_send_pos_Serial3(){
+  for (int i = 0; i < n_servos; i++)
+  {
+    last_motor_pos[i] = read_present_position(id[i]);
+    last_motor_timestamp[i] = millis();
+    Serial3.println(last_motor_pos[i]);
+    Serial3.println(last_motor_timestamp[i]);
+  }  
+}
 
 /// Printing
 

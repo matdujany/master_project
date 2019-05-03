@@ -7,7 +7,7 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 //printing loadcell and IMU values adds some delay between the updates
 void show_value_DC(unsigned long delay_updates){
-  send_frame_and_update_sensors(0);
+  send_frame_and_update_sensors(1,1);
   print_loadcell_values();
   show_total_z_load();
   show_load_info_hardcoded();
@@ -26,19 +26,15 @@ void show_total_z_load(){
 
 //update the values of the LC and prints their latest values.
 void show_value_LC(unsigned long delay_updates){
-  send_frame_and_update_sensors(0);
+  send_frame_and_update_sensors(1,1);
   print_loadcell_values();
   delay(delay_updates);
 }
 
-void send_frame_and_update_sensors(int flagVerbose){
+void send_frame_and_update_sensors(bool flagPrintFrameFail, bool flagPrintFrameFoundTime){
   frame_found = false; //set to false because we want to update it
   while (!frame_found){
-    try_capture_1_frame(flagVerbose);
-  
-    if (flagVerbose){
-      SerialUSB.println("Updating sensor values");
-    }
+    try_capture_1_frame(flagPrintFrameFail, flagPrintFrameFoundTime);
   }
   wrapper_parser(flagVerbose);
   // Start of HEX to DEC conversion
@@ -58,7 +54,7 @@ void measure_mean_values_LC(uint8_t nb_values_mean, unsigned long delay_frames){
   }
   //measuring a mean value
   while (nb_captured_values<nb_values_mean){
-    send_frame_and_update_sensors(0);
+    send_frame_and_update_sensors(0,0);
     for (int i=0; i<3*n_ard; i++){
       mean_values_LC[i] += ser_rx_buf.last_loadcell_data_float[i]/(float)nb_values_mean;
     }
@@ -86,7 +82,7 @@ void measure_mean_values_IMU(uint8_t nb_values_mean, unsigned long delay_frames)
   }
   //measuring a mean value
   while (nb_captured_values<nb_values_mean){
-    send_frame_and_update_sensors(0);
+    send_frame_and_update_sensors(0,0);
     for (int i=0; i<3; i++){
       mean_values_IMU[i] += ser_rx_buf.last_IMU_acc_corrected[i]/(float)nb_values_mean;
       mean_values_IMU[3+i] += ser_rx_buf.last_IMU_gyro_corrected[i]/(float)nb_values_mean;
@@ -162,6 +158,11 @@ void switch_frame_IMU_recalib_mode(){
   slow_dc_mode = true;
 }
 
+void switch_frame_IMU_update_off_mode(){
+  frame_buf.buffer[3]  = FRAME_TYPE_IMU_UPDATE_OFF;
+  slow_dc_mode = false;
+}
+
 void switch_frame_recording_mode(){
   frame_buf.buffer[3]  = FRAME_TYPE_RECORDING;
   slow_dc_mode = false;
@@ -180,7 +181,7 @@ void measure_offset_accelerometers(int nb_values_mean, unsigned long delay_frame
   }
   //measuring a mean value
   while (nb_captured_values<nb_values_mean){
-    send_frame_and_update_sensors(0);
+    send_frame_and_update_sensors(0,0);
     for (int i=0; i<3; i++){
       offset_acc[i] += ser_rx_buf.last_IMU_data_float[i]/(float)nb_values_mean;
       offset_gyro[i] += ser_rx_buf.last_IMU_data_float[3+i]/(float)nb_values_mean;      
@@ -221,13 +222,13 @@ void reinitalize_dc_state(){
 }
 
 void time_daisychain_run_init(){
-  SerialUSB.println(try_capture_1_frame(0));
+  SerialUSB.println(try_capture_1_frame(0,0));
   delay(100);
 }
 
 
 
-unsigned long try_capture_1_frame(int flagVerbose){
+unsigned long try_capture_1_frame(bool flagPrintFrameFail, bool flagPrintFrameFoundTime){
   reinitalize_dc_state();
   unsigned long time_start_trial = millis();
   while(!bool_end_byte_sent){
@@ -238,14 +239,13 @@ unsigned long try_capture_1_frame(int flagVerbose){
       get_dc_byte_wrapper();
   }
   unsigned long time_stop = millis()-time_start_trial;
-  if (flagVerbose){
-    if  (!frame_found) {
-      SerialUSB.println("no frame found !");
-    }
-    else{
-      SerialUSB.print("frame found in "); SerialUSB.print(time_stop);
-      SerialUSB.println(" ms");
-    }
+  if (flagPrintFrameFail & !frame_found){
+    SerialUSB.println("no frame found !");
+  }
+  if (flagPrintFrameFoundTime & frame_found)
+  {
+    SerialUSB.print("frame found in "); SerialUSB.print(time_stop);
+    SerialUSB.println(" ms");
   }
   return time_stop;
 }

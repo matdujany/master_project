@@ -132,7 +132,7 @@ void count_arduinos_wrapper(int flagVerbose)
   // Keep sending bytes until whole frame is found
   while (!frame_found)
   {
-    try_capture_1_frame(1);
+    try_capture_1_frame(1,1);
     i++;
     // If no full frame has been received after 1000 loops, throw error and break out of the loop
     // Most likely the frame bytes are not received properly (suggestion: check baud rate, wiring or code of the loadcells/IMU)

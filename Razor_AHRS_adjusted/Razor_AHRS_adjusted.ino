@@ -336,6 +336,21 @@ void det_num_loadcell_arduinos(uint8_t frame_data_length){
 
 // # END OF DAISY CHAIN CODE ##########################################################################################################
 
+//03/05 the average i obtained was 4.2 ms, i leave the function for future use but it's not called here
+void timing_check_update_sensors(){
+  int n_reps = 10000;
+  unsigned long time_start = millis();
+  for (int i=0; i<n_reps; i++){
+    check_and_update_IMU();
+  }
+  unsigned long time_elapsed = millis() - time_start;
+  float average_duration = float(time_elapsed)/float(n_reps);
+  Serial.print("Duration check_update_sensors of IMU (average in ms over ");
+  Serial.print(n_reps);
+  Serial.print(" repetitions) : ");
+  Serial.println(average_duration);
+}
+
 
 void setup()
 {
@@ -369,17 +384,18 @@ void setup()
   output_format = OUTPUT__FORMAT_TEXT;
 
   // Init output
-#if (OUTPUT__HAS_RN_BLUETOOTH == true) || (OUTPUT__STARTUP_STREAM_ON == false)
+  #if (OUTPUT__HAS_RN_BLUETOOTH == true) || (OUTPUT__STARTUP_STREAM_ON == false)
   turn_output_stream_off();
-#else
+  #else
   turn_output_stream_on();
-#endif
+  #endif
+
 }
 
 int iLoop = 0;
 int testMode = 0;
 int sendThrough = 0;
-
+boolean stop_IMU_computation = false;
 
 // Main loop
 void loop(){
@@ -455,7 +471,7 @@ else{
       // INSERT READINGS FROM IMU SENSOR only if FRAME_TYPE_RECORDING or FRAME_TYPE_IMU_RECALIB or FRAME_TYPE_NORMAL
       if ((frame_type==FRAME_TYPE_RECORDING) || (frame_type==FRAME_TYPE_IMU_RECALIB) || (frame_type==FRAME_TYPE_NORMAL) )
       {
-
+        stop_IMU_computation = false; 
         uint8_t place_holder_arduino_no = 1 + (uint8_t) (frame_location_counter - 5) / SENSOR_DATA_LENGTH;
         uint8_t byte_no= frame_location_counter - n_loadcell_arduinos * SENSOR_DATA_LENGTH - 5;
         
@@ -470,6 +486,11 @@ else{
             outByte = imu_data[byte_no];
         }
         //else  If place_holder_arduino_no <= loadcell arduinos, then it is not the IMU and do nothing.       
+      }
+
+      //if frame type imu off, dont insert IMU readings and stop IMU update
+      if (frame_type==FRAME_TYPE_IMU_UPDATE_OFF){
+        stop_IMU_computation = true;
       }
       
       cc_byte_new+=outByte;
@@ -531,7 +552,7 @@ else{
     Serial.write(outByte);
     last_byte=inByte;
 
-    if (enable_reading==1)
+    if (enable_reading==1 && !stop_IMU_computation)
     {
       check_and_update_IMU();
     }
