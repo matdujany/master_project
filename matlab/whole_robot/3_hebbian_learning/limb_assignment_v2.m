@@ -9,7 +9,7 @@ addpath('hinton_plot_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 79;
+recordID = 84;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);

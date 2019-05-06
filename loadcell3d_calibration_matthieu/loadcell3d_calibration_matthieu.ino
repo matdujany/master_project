@@ -30,7 +30,7 @@ using namespace Ad7124;
 
 // Set which channel to calibrate:
 
-#define I_LOADCELL 6
+#define I_LOADCELL 5
 #define I_AXIS     1
 #define BAUD_RATE  500000
 

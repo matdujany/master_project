@@ -4,7 +4,7 @@ function pos = phase2pos_hipknee_wrapper(phase,isHip,changeDir,params)
 if isHip
     pos = zeros(1,length(phase));
     for i=1:length(phase)
-        if cos(phase(i))>0
+        if sin(phase(i))>0
             pos(i) = phase2pos_oscillator(phase(i), params.amplitude_hip_deg, changeDir);
         else
             pos(i) = phase2pos_oscillator(phase(i), params.alpha*params.amplitude_hip_deg, changeDir);

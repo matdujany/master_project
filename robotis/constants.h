@@ -35,7 +35,7 @@
 #define SLOPE_LEARNING              2       
 #define LEARNING_RATE               10     // Learning rate for the update rule
 #define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
-#define DURATION_PART1              400    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
+#define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
 #define DURATION_PART2              500    // Duration of part 2 in ms; part 2: begins at the action of going back to initial position;   servo goes from step position to initial position
 #define N_TWITCHES                  5
 
@@ -126,13 +126,13 @@
 #define SOFT_COMPLIANCE_SLOPE           128     //uint8_t value
 #define SOFT_PUNCH                      1       //uint16_t value
 #define RECENTERING_COMPLIANCE_MARGIN         1
-#define RECENTERING_COMPLIANCE_SLOPE          16           
-#define RECENTERING_PUNCH                     40
+#define RECENTERING_COMPLIANCE_SLOPE          32           
+#define RECENTERING_PUNCH                     50
 #define STIFF_COMPLIANCE_MARGIN         1
 #define STIFF_COMPLIANCE_SLOPE          16  //16           
 #define STIFF_PUNCH                     100  //150
 #define MOV_LEARNING_COMPLIANCE_MARGIN         1
-#define MOV_LEARNING_COMPLIANCE_SLOPE          16  //16           
+#define MOV_LEARNING_COMPLIANCE_SLOPE          32  //16           
 #define MOV_LEARNING_PUNCH                     50  //150
 
 

@@ -15,7 +15,7 @@ addpath('hinton_plot_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 79;
+recordID = 82;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 % parms.n_useful_ch_IMU    = 6;

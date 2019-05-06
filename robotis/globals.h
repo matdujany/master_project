@@ -45,7 +45,9 @@ float amplitude_hip_deg = 20;
 
 float alpha = 0.2; //reduction of amplitude during stance for hip
 float sigma_s         = 0.3;       // Sigma S; see Fukuhara 2018 article
-float sigma_advanced  = 2;       // Sigma for rescaling the map*GRF term 
+float sigma_advanced  = 0.3;       // Sigma for rescaling the map*GRF term 
+bool tegotae_advanced = true;
+bool flagTurning = false;   //to turn on spot instead of forward
 
 //for limb oscillators
 unsigned long t_last_phi_update      = 0;

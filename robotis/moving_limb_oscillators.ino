@@ -1,8 +1,9 @@
 
 void init_recording_locomotion(){
   switch_frame_recording_mode();
-  SerialUSB.println("Waiting for any input from Serial USB console to start recording...");
+  SerialUSB.print("Waiting for any input from Serial USB console to start recording...");
   while (!SerialUSB.available());  
+  SerialUSB.println("recording started !");
   SerialUSB.flush();
 }
 
@@ -29,6 +30,7 @@ void record_harcoded_trot(int recording_duration){
 }
 
 void record_harcoded_tegotae(int recording_duration){
+  print_recording_parameters();
   init_recording_locomotion();
   initialize_hardcoded_limbs();
 
@@ -99,8 +101,22 @@ void initialize_hardcoded_limbs(){
   limbs[3][0] = 13; limbs[3][1] = 14;
   changeDirs[3][0] = false; changeDirs[3][1] = false;
 
-  for (int i=0; i<n_limb; i++){
-    offset_knee_to_hip[i]=pi/2;
+  init_offset_knee_to_hip();
+}
+
+void init_offset_knee_to_hip(){
+  if (flagTurning){
+    for (int i : {1, 2}){
+      offset_knee_to_hip[i] = -pi/2;
+    }
+    for (int i : {0, 3}){
+      offset_knee_to_hip[i] = pi/2;
+    }
+  }
+  else {
+    for (int i=0; i<n_limb; i++){
+      offset_knee_to_hip[i]=pi/2;
+    }   
   }
 }
 
@@ -122,15 +138,15 @@ void send_command_limb_oscillators(){
 uint16_t phase2pos_oscillator(float phase, float amp_deg, boolean changeDir){
   uint16_t pos;
   if (changeDir)
-    pos = (uint16_t)(512 - (float)(3.413*amp_deg*cos(phase)));
+    pos = (uint16_t)(512 - (float)(3.413*amp_deg*sin(phase)));
   else
-    pos = (uint16_t)(512 + (float)(3.413*amp_deg*cos(phase)));
+    pos = (uint16_t)(512 + (float)(3.413*amp_deg*sin(phase)));
   return pos;
 }
 
 uint16_t phase2pos_hipknee_wrapper(float phase, boolean isHip, boolean changeDir){
   if (isHip){
-    if (cos(phase) > 0) // hip swing
+    if (sin(phase) > 0) // hip swing
       return phase2pos_oscillator(phase, amplitude_hip_deg, changeDir);
     else // hip stance
       return phase2pos_oscillator(phase, alpha*amplitude_hip_deg, changeDir);
@@ -159,7 +175,14 @@ void update_phi_tegotae()
   }
   unsigned long t_current = millis() - t_offset_oscillators;
   for (int i=0; i<n_limb; i++){
-    phi_dot[i] = simple_tegotae_rule(phi[i],N_s[i]);
+
+    if (tegotae_advanced){
+      phi_dot[i] = advanced_tegotae_rule(i);
+    }
+    else
+    {
+      phi_dot[i] = simple_tegotae_rule(phi[i],N_s[i]);
+    }
     //actual update
     phi[i] = phi[i] + phi_dot[i] * (t_current - t_last_phi_update) / 1000;
   }
@@ -174,11 +197,11 @@ float simple_tegotae_rule(float phase, float ground_reaction_force){
 }
 
 float advanced_tegotae_rule(uint8_t i_limb){
-  float GRF_term = 0;
+  float GRF_advanced_term = 0;
   for (int j=0; j<n_limb; j++){
-    GRF_term += inverse_map[i_limb][j]*N_s[j];
+    GRF_advanced_term += inverse_map[i_limb][j]*N_s[j];
   }
-  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_term * cos(phi[i_limb]);
+  float phi_dot = 2 * pi * frequency - sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
   return phi_dot;
 }
 
@@ -202,7 +225,7 @@ void update_phi_trot()
 
 void send_phi_Serial3(){
   for (int i=0; i<n_limb; i++){
-    Serial3.println(phi[i]);
+    Serial3.println(phi[i],4); //to show 4 digits after decimal point
   }  
   Serial3.println(t_last_phi_update);
 }
@@ -247,3 +270,32 @@ void print_GRF(){
   }
   SerialUSB.println();
 }
+
+void print_inverse_map(){
+  SerialUSB.println("Inverse map for advanced tegotae :");
+  for (int i=0; i<n_limb; i++){ 
+    for (int j=0; j<n_limb; j++){ 
+      SerialUSB.print(inverse_map[i][j]);
+      SerialUSB.print("\t");
+    }
+  SerialUSB.println();
+  }
+  SerialUSB.println();
+}
+
+void print_recording_parameters(){
+  SerialUSB.print("Frequency (in Hertz) : ");SerialUSB.println(frequency);
+  SerialUSB.print("Amplitude knee (in degrees) : ");SerialUSB.println(amplitude_knee_deg);  
+  SerialUSB.print("Amplitude hip (in degrees) : ");SerialUSB.println(amplitude_hip_deg);  
+  SerialUSB.print("Alpha factor for hip movement amplitude reduction in stance  : ");SerialUSB.println(alpha);    
+  if (tegotae_advanced){
+    SerialUSB.print("Sigma for advanced tegotae  : ");SerialUSB.println(sigma_advanced);
+    print_inverse_map();
+  }
+  else
+  {
+    SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
+  }
+  SerialUSB.print("Turning mode activated ? (1:Yes/2:No) : ");SerialUSB.println(flagTurning);
+}
+
