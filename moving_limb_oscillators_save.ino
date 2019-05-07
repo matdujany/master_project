@@ -8,7 +8,6 @@ void init_recording_locomotion(){
 }
 
 void record_harcoded_trot(int recording_duration){
-  print_locomotion_parameters();
   init_recording_locomotion();
   initialize_hardcoded_limbs();
 
@@ -31,7 +30,7 @@ void record_harcoded_trot(int recording_duration){
 }
 
 void record_harcoded_tegotae(int recording_duration){
-  print_locomotion_parameters();
+  print_recording_parameters();
   init_recording_locomotion();
   initialize_hardcoded_limbs();
 
@@ -60,7 +59,6 @@ void send_phi_and_pos_Serial3(){
 }
 
 void hardcoded_tegotae(){
-  print_locomotion_parameters();
   initialize_hardcoded_limbs();
   init_phi_tegotae();
   send_command_limb_oscillators();
@@ -87,51 +85,37 @@ void hardcoded_trot(){
 
 //hip first, knee after, in loadcell order
 void initialize_hardcoded_limbs(){
-  if (direction_X){
-    //Limb 1
-    limbs[0][0] = 5; limbs[0][1] = 4;
-    changeDirs[0][0] = false; changeDirs[0][1] = false;
-    //Limb 2 :
-    limbs[1][0] = 7; limbs[1][1] = 6;
-    changeDirs[1][0] = true; changeDirs[1][1] = true;
-    //Limb 3 :
-    limbs[2][0] = 1; limbs[2][1] = 0;
-    changeDirs[2][0] = true; changeDirs[2][1] = true;
-    //Limb 4 :
-    limbs[3][0] = 3; limbs[3][1] = 2;
-    changeDirs[3][0] = false; changeDirs[3][1] = false;
-  }
-  else{
-    //Limb 1
-    limbs[0][0] = 4; limbs[0][1] = 5;
-    changeDirs[0][0] = true; changeDirs[0][1] = true;
-    //Limb 2 :
-    limbs[1][0] = 6; limbs[1][1] = 7;
-    changeDirs[1][0] = true; changeDirs[1][1] = false;
-    //Limb 3 :
-    limbs[2][0] = 0; limbs[2][1] = 1;
-    changeDirs[2][0] = true; changeDirs[2][1] = true;
-    //Limb 4 :
-    limbs[3][0] = 2; limbs[3][1] = 3;
-    changeDirs[3][0] = true; changeDirs[3][1] = false;
-  }
 
+  //Limb 1, Loadcell 1, Hip 15, Knee 16
+  limbs[0][0] = 15; limbs[0][1] = 16;
+  changeDirs[0][0] = false; changeDirs[0][1] = false;
+  //Limb 2 :
+  limbs[1][0] = 17; limbs[1][1] = 18;
+  changeDirs[1][0] = true; changeDirs[1][1] = true;
 
-  init_offset_class1();
+  //Limb 3 :
+  limbs[2][0] = 2; limbs[2][1] = 3;
+  changeDirs[2][0] = true; changeDirs[2][1] = true;
+ 
+  //Limb 4 :
+  limbs[3][0] = 13; limbs[3][1] = 14;
+  changeDirs[3][0] = false; changeDirs[3][1] = false;
+
+  init_offset_knee_to_hip();
 }
 
-void init_offset_class1(){
+void init_offset_knee_to_hip(){
   if (flagTurning){
     for (int i : {1, 2}){
-      offset_class1[i] = -pi/2;
+      offset_knee_to_hip[i] = -pi/2;
     }
     for (int i : {0, 3}){
-      offset_class1[i] = pi/2;
+      offset_knee_to_hip[i] = pi/2;
     }
   }
   else {
     for (int i=0; i<n_limb; i++){
-      offset_class1[i]=pi/2;
+      offset_knee_to_hip[i]=pi/2;
     }   
   }
 }
@@ -141,12 +125,11 @@ void init_offset_class1(){
 void send_command_limb_oscillators(){
   uint8_t  servo_id_list[n_servos];
   for (int i=0; i<n_limb; i++){
-    //class 1 first : doing movement
-    servo_id_list[2*i] = id[limbs[i][0]];
-    goal_positions_tegotae[2*i] = phase2pos_hipknee_wrapper(phi[i]+offset_class1[i], 0, changeDirs[i][0]);
-    //class 2 : stance swing
-    servo_id_list[2*i+1] = id[limbs[i][1]];
-    goal_positions_tegotae[2*i+1] = phase2pos_hipknee_wrapper(phi[i], 1, changeDirs[i][1]);
+    //Hip first
+    servo_id_list[2*i] = limbs[i][0];
+    goal_positions_tegotae[2*i] = phase2pos_hipknee_wrapper(phi[i], 1, changeDirs[i][0]);
+    servo_id_list[2*i+1] = limbs[i][1];
+    goal_positions_tegotae[2*i+1] = phase2pos_hipknee_wrapper(phi[i]+offset_knee_to_hip[i], 0, changeDirs[i][1]);
   }
   syncWrite_position_n_servos(n_servos, servo_id_list, goal_positions_tegotae);
 }
@@ -161,15 +144,15 @@ uint16_t phase2pos_oscillator(float phase, float amp_deg, boolean changeDir){
   return pos;
 }
 
-uint16_t phase2pos_hipknee_wrapper(float phase, boolean isClass2, boolean changeDir){
-  if (isClass2){
-    if (sin(phase) > 0) // swing
-      return phase2pos_oscillator(phase, amplitude_class2, changeDir);
-    else // reduced amplitude in stance for class 2
-      return phase2pos_oscillator(phase, alpha*amplitude_class2, changeDir);
+uint16_t phase2pos_hipknee_wrapper(float phase, boolean isHip, boolean changeDir){
+  if (isHip){
+    if (sin(phase) > 0) // hip swing
+      return phase2pos_oscillator(phase, amplitude_hip_deg, changeDir);
+    else // hip stance
+      return phase2pos_oscillator(phase, alpha*amplitude_hip_deg, changeDir);
   }
   else{
-    return phase2pos_oscillator(phase, amplitude_class1, changeDir);
+    return phase2pos_oscillator(phase, amplitude_knee_deg, changeDir);
   }
 }
 
@@ -215,15 +198,10 @@ float simple_tegotae_rule(float phase, float ground_reaction_force){
 
 float advanced_tegotae_rule(uint8_t i_limb){
   float GRF_advanced_term = 0;
-  float sigma_advanced;
-  (direction_X) ? sigma_advanced=sigma_advanced_X : sigma_advanced=sigma_advanced_Y;
   for (int j=0; j<n_limb; j++){
-    if (direction_X)
-      GRF_advanced_term += inverse_map_X[i_limb][j]*N_s[j];
-    else
-      GRF_advanced_term += inverse_map_Y[i_limb][j]*N_s[j];
+    GRF_advanced_term += inverse_map[i_limb][j]*N_s[j];
   }
-  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
+  float phi_dot = 2 * pi * frequency - sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
   return phi_dot;
 }
 
@@ -297,10 +275,7 @@ void print_inverse_map(){
   SerialUSB.println("Inverse map for advanced tegotae :");
   for (int i=0; i<n_limb; i++){ 
     for (int j=0; j<n_limb; j++){ 
-      if (direction_X)
-        SerialUSB.print(inverse_map_X[i][j],3);
-      else
-        SerialUSB.print(inverse_map_Y[i][j],3);
+      SerialUSB.print(inverse_map[i][j]);
       SerialUSB.print("\t");
     }
   SerialUSB.println();
@@ -308,22 +283,19 @@ void print_inverse_map(){
   SerialUSB.println();
 }
 
-void print_locomotion_parameters(){
+void print_recording_parameters(){
   SerialUSB.print("Frequency (in Hertz) : ");SerialUSB.println(frequency);
-  SerialUSB.print("Amplitude class 1 (motors producing the movement) (in degrees) : ");SerialUSB.println(amplitude_class1);  
-  SerialUSB.print("Amplitude class 2 (motors doing swing/stance cycle) (in degrees) : ");SerialUSB.println(amplitude_class2);  
+  SerialUSB.print("Amplitude knee (in degrees) : ");SerialUSB.println(amplitude_knee_deg);  
+  SerialUSB.print("Amplitude hip (in degrees) : ");SerialUSB.println(amplitude_hip_deg);  
   SerialUSB.print("Alpha factor for hip movement amplitude reduction in stance  : ");SerialUSB.println(alpha);    
-  SerialUSB.print("Locomotion in direction : "); (direction_X) ? SerialUSB.println("X") : SerialUSB.println("Y");
   if (tegotae_advanced){
-    SerialUSB.print("Sigma for advanced tegotae  : ");
-    (direction_X) ? SerialUSB.println(sigma_advanced_X) : SerialUSB.println(sigma_advanced_Y);
+    SerialUSB.print("Sigma for advanced tegotae  : ");SerialUSB.println(sigma_advanced);
     print_inverse_map();
   }
   else
   {
     SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
   }
-  if (flagTurning)
-    SerialUSB.print("Turning mode activated");
+  SerialUSB.print("Turning mode activated ? (1:Yes/2:No) : ");SerialUSB.println(flagTurning);
 }
 

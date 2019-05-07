@@ -9,7 +9,7 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 84;
+recordID = 86;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights = read_weights_robotis(recordID,parms);
@@ -48,7 +48,7 @@ threshold_factor = 0.2;
 
 %%
 i_lc_part_plot = 3; %6;
-i_motor_part_plot = 8;%5;
+i_motor_part_plot = 6;%5;
 i_dir = 1;
 figure;
 count = 1;

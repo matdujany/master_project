@@ -3,15 +3,15 @@ clear; clc; close all;
 %% Parameters
 
 set_parms;
-parms_locomotion.recordingDuration = 45;
+parms_locomotion.recordingDuration = 30;
 parms_locomotion.frequency = 0.5;
-parms_locomotion.amplitude_hip_deg = 20;
-parms_locomotion.amplitude_knee_deg = 20;
+parms_locomotion.amplitude_class1_deg = 15;
+parms_locomotion.amplitude_class2_deg = 15;
 parms_locomotion.alpha = 0.2;
 parms_locomotion.sigma_s = 0.3;
-parms_locomotion.sigma_advanced = 0.3;
+parms_locomotion.sigma_advanced = 0.14;
 parms_locomotion.turning = false;
-parms_locomotion.categoryName = "tegotae_advanced";
+parms_locomotion.categoryName = "tegotae_advanced_Y";
 
 %% Main
 time_vec   = clock;

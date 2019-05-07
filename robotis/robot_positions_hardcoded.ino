@@ -227,7 +227,7 @@ void serial_read_test_twitch(){
         int n_frames_prog_lift = DURATION_PART1/TIME_INTERVAL_TWITCH;
         for (int i=0; i<n_frames_prog_lift; i++){
           unsigned long time_start = millis();
-          twitch_part1_moving_ramp(idx_servo, dir_sign, n_frames_prog_lift);
+          twitch_part1_moving_ramp(idx_servo, dir_sign, i);
           show_value_DC(0);
           if (millis()-time_start>TIME_INTERVAL_TWITCH)
             SerialUSB.println("Not fast enough");

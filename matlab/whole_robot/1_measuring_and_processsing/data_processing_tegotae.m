@@ -6,7 +6,7 @@ addpath('functions');
 addpath('../2_load_data_code');
 
 %% loading
-recordID = 9;
+recordID = 10;
 n_limb = 4;
 
 fprintf("data_processing\n");

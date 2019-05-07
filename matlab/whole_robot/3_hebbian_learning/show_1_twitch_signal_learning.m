@@ -8,7 +8,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 79;
+recordID = 86;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
@@ -24,8 +24,8 @@ lpdata = compute_filtered_signal_lpdata(lpdata,parms);
 %%
 good_closest_LC = get_good_closest_LC(parms,recordID);
 n_iter = 1;
-index_motor_plot = 2;
-index_loadcell_plot = 3;
+index_motor_plot = 7;
+index_loadcell_plot = 2;
 index_channel_plot = 3;
 i_dir = 1;
 

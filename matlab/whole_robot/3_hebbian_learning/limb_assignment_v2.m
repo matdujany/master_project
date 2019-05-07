@@ -9,7 +9,7 @@ addpath('hinton_plot_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 84;
+recordID = 86;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
@@ -29,31 +29,11 @@ weights_lc = 100*weights_lc_read/renorm_factor;
 
 hinton_LC(weights_lc,parms,1);
 
-%%
-[motor_ids_dropoff,sign_direction_dropoff]= get_hardcoded_dropoff_results(parms);
-
 %% fusing the weights for direction
-%each row is 1 sensor, each column is 1 motor
-%removing the corrupted directions for the hips
-direction_slips = [-1  1 -1 1];
-weights_fused = zeros(size(weights_lc,1),parms.n_m);
-for i=1:parms.n_m
-    idx = find(motor_ids_dropoff == i);
-    if ~isempty(idx)
-        direction_corrupted = sign_direction_dropoff(idx(1));
-            
-    else
-        i/2
-        direction_corrupted = direction_slips(i/2);
-    end
-    switch direction_corrupted
-        case 1
-            weights_fused(:,i) = weights_lc(:,2*i-1);
-        case -1
-            weights_fused(:,i) = weights_lc(:,2*i);
-    end
-end
-hinton_LC_weights_fused(weights_fused,parms,1)
+% weights_fused = fuse_weights_without_corrupted_direction(weights_lc,parms);
+weights_fused = fuse_weights_sym_direction(weights_lc,parms);
+
+hinton_LC_weights_fused(weights_fused,parms,1);
  
 %% fusing the weights over loadcell channels
 weights_fused_sumc = zeros(size(weights_fused,1)/3,parms.n_m);
@@ -86,3 +66,7 @@ score_LC = sum(closest_LC' == good_closest_LC);
 if sum(abs(good_closest_LC'-closest_LC))~=0
     disp('Problem with closest LCs found');
 end
+
+
+%%
+

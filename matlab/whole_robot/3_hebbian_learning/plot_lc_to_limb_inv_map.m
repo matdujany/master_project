@@ -1,4 +1,9 @@
-function plot_lc_to_limb_inv_map(inv_map,parms)
+function plot_lc_to_limb_inv_map(inv_map,parms,titleString)
+
+
+if nargin == 2
+    titleString = '';
+end
 
 fontSize=16;
 [h,fig_parms] = hinton_raw(inv_map);
@@ -24,9 +29,12 @@ for i_limb=1:parms.n_lc
         else
             color = 'w';
         end
-        text(i_lc-0.5,parms.n_lc-i_limb+0.5,num2str(value,'%.2f'),'FontSize',fontSize,'HorizontalAlignment','center','Color',color);
+        text(i_lc-0.5,parms.n_lc-i_limb+0.5,num2str(value,'%.3f'),'FontSize',fontSize-2,'HorizontalAlignment','center','Color',color);
     end
 end
+
+xlabel(titleString, 'FontSize',fontSize);
+
 h.Color = 'w';
 set(h,'Position',[10 10 700 700]);
 set(h,'PaperOrientation','landscape');

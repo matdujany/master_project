@@ -1,7 +1,7 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 9;
+recordID = 10;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 [limbs,limb_ids,changeDir,offset_knee_to_hip] = get_hardcoded_limb_values(parms_locomotion);

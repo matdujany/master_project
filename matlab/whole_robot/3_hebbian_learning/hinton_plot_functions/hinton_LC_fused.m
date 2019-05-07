@@ -1,4 +1,4 @@
-function h = hinton_LC_weights_fused(weights_fused,parms,writeValues)
+function h = hinton_LC_fused(weights_fused,parms,writeValues)
 %HINTON_LC Summary of this function goes here
 %   Detailed explanation goes here
 

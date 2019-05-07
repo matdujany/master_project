@@ -79,10 +79,10 @@ void setup() {
   //update_IMU_offsets();
   //pose_stance_soft();
 
-  twitch_record_wrapper();
+  //twitch_record_wrapper();
 
   //record_harcoded_tegotae(45);
-  //hardcoded_tegotae();
+  record_harcoded_tegotae(30);
 }
 
 

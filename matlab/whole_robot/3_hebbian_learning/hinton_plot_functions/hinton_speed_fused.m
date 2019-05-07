@@ -1,4 +1,4 @@
-function h = hinton_speed(weights_speed,parms,writeValues)
+function h = hinton_speed_fused(weights_speed,parms,writeValues)
 %HINTON_LC Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -14,7 +14,7 @@ x_min = fig_parms.xmin-0.2;
 x_max = fig_parms.xmax+0.2;
 y_min = fig_parms.ymin-0.2;
 y_max = fig_parms.ymax+0.2;
-fontSize = 15;
+fontSize = 16;
 
 %line labels
 x_shift = 0.5;
@@ -26,16 +26,12 @@ end
 %column labels
 y_shift = 0.3;
 for i=1:parms.n_m
-    text(2*i-1.5,y_max+y_shift,['M' num2str(i) '-'],'FontSize',fontSize,'HorizontalAlignment','center');
-    text(2*i-0.5,y_max+y_shift,['M' num2str(i) '+'],'FontSize',fontSize,'HorizontalAlignment','center');
-    if i<parms.n_m
-        plot([2*i 2*i],[y_min y_max],'k--')
-    end
+    text(i-0.5,y_max+y_shift,['M' num2str(i)],'FontSize',fontSize,'HorizontalAlignment','center');
 end
 
 fontSize_values = 12;
 if writeValues
-for i_motor=1:size(weights_speed,2)
+for i_motor=1:parms.n_m
     for i_speed_channel=1:3
         value = weights_speed(i_speed_channel,i_motor);
         if value<0
@@ -52,9 +48,9 @@ end
 
 
 h.Color = 'w';
-h.Position = [10 10 1000 250];
+h.Position = [10 10 600 300];
 hold off;
 
-xlabel('Speed weights, integrated from IMU','FontSize',fontSize);
+xlabel('Speed (integrated from IMU) weights fused','FontSize',fontSize);
 end
 
