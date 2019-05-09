@@ -1,42 +1,16 @@
-
-void init_recording_locomotion(){
-  switch_frame_recording_mode();
-  SerialUSB.print("Waiting for any input from Serial USB console to start recording...");
-  while (!SerialUSB.available());  
-  SerialUSB.println("recording started !");
-  SerialUSB.flush();
-}
-
-void record_harcoded_trot(int recording_duration){
-  print_locomotion_parameters();
-  init_recording_locomotion();
+void init_tegotae(){
   initialize_hardcoded_limbs();
-
-  init_phi_trot();
-  send_command_limb_oscillators();
-
-  unsigned long t_start_recording = millis();
-  while (millis()-t_start_recording<recording_duration*1000){
-    unsigned long t_start_update_loop = millis();
-    send_phi_and_pos_Serial3();
-    //this frame is not needed for trot, but I use it to capture load infos.
-    send_frame_and_update_sensors(1,0);
-    update_phi_trot();
-    send_command_limb_oscillators();
-    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
-  }
-  SerialUSB.println("Trot recording over");
-  SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
-  SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);
+  if (tegotae_advanced)
+    initialize_inverse_map_advanced_tegotae();
+  print_locomotion_parameters();
+  init_phi_tegotae();
+  send_command_limb_oscillators(); 
 }
+
 
 void record_harcoded_tegotae(int recording_duration){
-  print_locomotion_parameters();
   init_recording_locomotion();
-  initialize_hardcoded_limbs();
-
-  init_phi_tegotae();
-  send_command_limb_oscillators();
+  init_tegotae();
 
   unsigned long t_start_recording = millis();
 
@@ -54,31 +28,17 @@ void record_harcoded_tegotae(int recording_duration){
 }
 
 
-void send_phi_and_pos_Serial3(){
-  send_phi_Serial3();
-  simple_send_pos_Serial3();
-}
-
 void hardcoded_tegotae(){
-  print_locomotion_parameters();
   initialize_hardcoded_limbs();
-  init_phi_tegotae();
-  send_command_limb_oscillators();
+  init_tegotae();
+  print_phi_info();
   while (true){
     unsigned long t_start_update_loop = millis();
     send_frame_and_update_sensors(1,0);
     update_phi_tegotae();
     send_command_limb_oscillators();
+    print_phi_info();
     while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
-  }
-}
-
-void hardcoded_trot(){
-  initialize_hardcoded_limbs();
-  init_phi_trot();
-  while (true){
-    update_phi_trot();
-    send_command_limb_oscillators();
   }
 }
 
@@ -86,38 +46,113 @@ void hardcoded_trot(){
 //change dir is set to true for knees if - knee direction pushes backwards
 
 //hip first, knee after, in loadcell order
+
+void fill_limbs_array( std::vector<std::vector<uint8_t>> limbs_hardcoded) {
+  limbs.resize(n_limb);
+  for (int i=0; i<n_limb; i++){
+    limbs[i].resize(2);
+    for (int j=0; j<2; j++){
+      limbs[i][j] = limbs_hardcoded[i][j];
+    }
+  }
+}
+
+void fill_changeDirs_array( std::vector<std::vector<bool>> changeDirs_hardcoded){
+  changeDirs.resize(n_limb);
+  for (int i=0; i<n_limb; i++){
+    for (int j=0; j<2; j++){
+      changeDirs[i].resize(2);
+      changeDirs[i][j] = changeDirs_hardcoded[i][j];
+    }
+  }
+}
+
+void fill_inverse_map_array( std::vector<std::vector<float>> inverse_map_hardcoded){
+  inverse_map.resize(n_limb);
+  for (int i=0; i<n_limb; i++){
+    inverse_map[i].resize(n_limb);
+    for (int j=0; j<n_limb; j++){
+      inverse_map[i][j] = inverse_map_hardcoded[i][j];
+    }
+  }
+}
+
 void initialize_hardcoded_limbs(){
-  if (direction_X){
-    //Limb 1
-    limbs[0][0] = 5; limbs[0][1] = 4;
-    changeDirs[0][0] = false; changeDirs[0][1] = false;
-    //Limb 2 :
-    limbs[1][0] = 7; limbs[1][1] = 6;
-    changeDirs[1][0] = true; changeDirs[1][1] = true;
-    //Limb 3 :
-    limbs[2][0] = 1; limbs[2][1] = 0;
-    changeDirs[2][0] = true; changeDirs[2][1] = true;
-    //Limb 4 :
-    limbs[3][0] = 3; limbs[3][1] = 2;
-    changeDirs[3][0] = false; changeDirs[3][1] = false;
-  }
-  else{
-    //Limb 1
-    limbs[0][0] = 4; limbs[0][1] = 5;
-    changeDirs[0][0] = true; changeDirs[0][1] = true;
-    //Limb 2 :
-    limbs[1][0] = 6; limbs[1][1] = 7;
-    changeDirs[1][0] = true; changeDirs[1][1] = false;
-    //Limb 3 :
-    limbs[2][0] = 0; limbs[2][1] = 1;
-    changeDirs[2][0] = true; changeDirs[2][1] = true;
-    //Limb 4 :
-    limbs[3][0] = 2; limbs[3][1] = 3;
-    changeDirs[3][0] = true; changeDirs[3][1] = false;
-  }
+  SerialUSB.println("Entering Initialize hardcoded limbs");
 
-
+  if (MAP_USED < 89) {
+    n_limb = 4;
+    if (direction_X){
+      fill_limbs_array(limbs_X);
+      fill_changeDirs_array(changeDirs_X);
+    }
+    if (direction_Y){
+      fill_limbs_array(limbs_Y);
+      fill_changeDirs_array(changeDirs_Y);   
+    }
+    if (direction_Yaw){
+      fill_limbs_array(limbs_Yaw);
+      fill_changeDirs_array(changeDirs_Yaw);    
+    }
+  }
+  if(MAP_USED == 89){
+    n_limb = 6;
+    if (direction_X){
+      fill_limbs_array(limbs_X_6legs);
+      fill_changeDirs_array(changeDirs_X_6legs);
+    }
+  }
+  
   init_offset_class1();
+
+  SerialUSB.println("Initialize hardcoded limbs success !");
+}
+
+void initialize_inverse_map_advanced_tegotae(){
+  if (MAP_USED==86)
+  {
+    if (direction_X){
+      sigma_advanced = sigma_advanced_X_86;
+      fill_inverse_map_array(inverse_map_X_86);
+    }
+    if (direction_Y){
+      sigma_advanced = sigma_advanced_Y_86;
+      fill_inverse_map_array(inverse_map_Y_86);
+    }
+  }
+  if (MAP_USED==87)
+  {
+    if (direction_X){
+      sigma_advanced = sigma_advanced_X_87;
+      fill_inverse_map_array(inverse_map_X_87);
+    }
+    if (direction_Y){
+      sigma_advanced = sigma_advanced_Y_87;
+      fill_inverse_map_array(inverse_map_Y_87);
+    }
+  }
+  if (MAP_USED==88)
+  {
+    if (direction_X){
+      sigma_advanced = sigma_advanced_X_88;
+      fill_inverse_map_array(inverse_map_X_88);
+    }
+    if (direction_Y){
+      sigma_advanced = sigma_advanced_Y_88;
+      fill_inverse_map_array(inverse_map_Y_88);
+    }
+    if (direction_Yaw){
+      sigma_advanced = sigma_advanced_Yaw_88;
+      fill_inverse_map_array(inverse_map_Yaw_88);
+    }
+  }
+  if (MAP_USED==89)
+  {
+    if (direction_X){
+      sigma_advanced = sigma_advanced_X_89;
+      fill_inverse_map_array(inverse_map_X_89);
+    }
+  }     
 }
 
 void init_offset_class1(){
@@ -144,6 +179,7 @@ void send_command_limb_oscillators(){
     //class 1 first : doing movement
     servo_id_list[2*i] = id[limbs[i][0]];
     goal_positions_tegotae[2*i] = phase2pos_hipknee_wrapper(phi[i]+offset_class1[i], 0, changeDirs[i][0]);
+
     //class 2 : stance swing
     servo_id_list[2*i+1] = id[limbs[i][1]];
     goal_positions_tegotae[2*i+1] = phase2pos_hipknee_wrapper(phi[i], 1, changeDirs[i][1]);
@@ -202,10 +238,13 @@ void update_phi_tegotae()
     }
     //actual update
     phi[i] = phi[i] + phi_dot[i] * (t_current - t_last_phi_update) / 1000;
+    
+    if (phi[i]>2*pi)
+      phi[i] = phi[i] - 2*pi;
+    
   }
   t_last_phi_update = t_current;
 }
-
 
 
 float simple_tegotae_rule(float phase, float ground_reaction_force){
@@ -215,13 +254,8 @@ float simple_tegotae_rule(float phase, float ground_reaction_force){
 
 float advanced_tegotae_rule(uint8_t i_limb){
   float GRF_advanced_term = 0;
-  float sigma_advanced;
-  (direction_X) ? sigma_advanced=sigma_advanced_X : sigma_advanced=sigma_advanced_Y;
   for (int j=0; j<n_limb; j++){
-    if (direction_X)
-      GRF_advanced_term += inverse_map_X[i_limb][j]*N_s[j];
-    else
-      GRF_advanced_term += inverse_map_Y[i_limb][j]*N_s[j];
+      GRF_advanced_term += inverse_map[i_limb][j]*N_s[j];
   }
   float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
   return phi_dot;
@@ -245,6 +279,54 @@ void update_phi_trot()
   t_last_phi_update = t_current;
 }
 
+void hardcoded_trot(){
+  initialize_hardcoded_limbs();
+  init_phi_trot();
+  while (true){
+    update_phi_trot();
+    send_command_limb_oscillators();
+  }
+}
+
+
+void record_hardcoded_trot(int recording_duration){
+  print_locomotion_parameters();
+  init_recording_locomotion();
+  initialize_hardcoded_limbs();
+
+  init_phi_trot();
+  send_command_limb_oscillators();
+
+  unsigned long t_start_recording = millis();
+  while (millis()-t_start_recording<recording_duration*1000){
+    unsigned long t_start_update_loop = millis();
+    send_phi_and_pos_Serial3();
+    //this frame is not needed for trot, but I use it to capture load infos.
+    send_frame_and_update_sensors(1,0);
+    update_phi_trot();
+    send_command_limb_oscillators();
+    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
+  }
+  SerialUSB.println("Trot recording over");
+  SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
+  SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);
+}
+
+// For Recordings
+
+void init_recording_locomotion(){
+  switch_frame_recording_mode();
+  SerialUSB.print("Waiting for any input from Serial USB console to start recording...");
+  while (!SerialUSB.available());  
+  SerialUSB.println("recording started !");
+  SerialUSB.flush();
+}
+
+void send_phi_and_pos_Serial3(){
+  send_phi_Serial3();
+  simple_send_pos_Serial3();
+}
+
 void send_phi_Serial3(){
   for (int i=0; i<n_limb; i++){
     Serial3.println(phi[i],4); //to show 4 digits after decimal point
@@ -262,7 +344,7 @@ void simple_send_pos_Serial3(){
   }  
 }
 
-/// Printing
+/// Printing on Console
 
 void print_phi_info(){
   SerialUSB.print("Phase of the limbs :" );
@@ -285,7 +367,7 @@ void print_goal_positions_tegotae(){
 }
 
 void print_GRF(){
-  SerialUSB.print("GRFs (in limb order) :" );
+  SerialUSB.print("GRFs (in LC=limb order) :" );
   for (int i=0; i<n_limb; i++){ 
     SerialUSB.print(N_s[i]);
     SerialUSB.print("\t");
@@ -297,10 +379,31 @@ void print_inverse_map(){
   SerialUSB.println("Inverse map for advanced tegotae :");
   for (int i=0; i<n_limb; i++){ 
     for (int j=0; j<n_limb; j++){ 
-      if (direction_X)
-        SerialUSB.print(inverse_map_X[i][j],3);
-      else
-        SerialUSB.print(inverse_map_Y[i][j],3);
+      SerialUSB.print(inverse_map[i][j],3);
+      SerialUSB.print("\t");
+    }
+  SerialUSB.println();
+  }
+  SerialUSB.println();
+}
+
+void print_limbs(){
+  SerialUSB.println("Limbs for advanced tegotae :");
+  for (int i=0; i<n_limb; i++){ 
+    for (int j=0; j<2; j++){ 
+      SerialUSB.print(limbs[i][j]);
+      SerialUSB.print("\t");
+    }
+  SerialUSB.println();
+  }
+  SerialUSB.println();
+}
+
+void print_changeDirs(){
+  SerialUSB.println("changeDirs for advanced tegotae :");
+  for (int i=0; i<n_limb; i++){ 
+    for (int j=0; j<2; j++){ 
+      SerialUSB.print(changeDirs[i][j]);
       SerialUSB.print("\t");
     }
   SerialUSB.println();
@@ -313,11 +416,16 @@ void print_locomotion_parameters(){
   SerialUSB.print("Amplitude class 1 (motors producing the movement) (in degrees) : ");SerialUSB.println(amplitude_class1);  
   SerialUSB.print("Amplitude class 2 (motors doing swing/stance cycle) (in degrees) : ");SerialUSB.println(amplitude_class2);  
   SerialUSB.print("Alpha factor for hip movement amplitude reduction in stance  : ");SerialUSB.println(alpha);    
-  SerialUSB.print("Locomotion in direction : "); (direction_X) ? SerialUSB.println("X") : SerialUSB.println("Y");
+  SerialUSB.print("Locomotion in direction : "); 
+  (direction_X) ? SerialUSB.println("X") : 0;
+  (direction_Y) ? SerialUSB.println("Y") : 0;
+  (direction_Yaw) ? SerialUSB.println("Yaw"): 0;
   if (tegotae_advanced){
-    SerialUSB.print("Sigma for advanced tegotae  : ");
-    (direction_X) ? SerialUSB.println(sigma_advanced_X) : SerialUSB.println(sigma_advanced_Y);
+    SerialUSB.print("Parameters learned from twitching record ID "); SerialUSB.println(MAP_USED);
+    SerialUSB.print("Sigma for advanced tegotae  : "); SerialUSB.println(sigma_advanced);
     print_inverse_map();
+    print_limbs();
+    print_changeDirs();
   }
   else
   {

@@ -1,4 +1,4 @@
-function h = hinton_speed_limb(weights_speed_limb_order,limb,writeValues)
+function h = hinton_gyro_limb(weights_gyro_fused_limb_order,limb,writeValues)
 %HINTON_LC Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -8,7 +8,7 @@ if nargin ==2
 end
 
 
-[h,fig_parms] = hinton_raw(weights_speed_limb_order);
+[h,fig_parms] = hinton_raw(weights_gyro_fused_limb_order);
 
 hold on;
 x_min = fig_parms.xmin-0.2;
@@ -18,10 +18,10 @@ y_max = fig_parms.ymax+0.2;
 fontSize = 16;
 
 %line labels
-x_shift = 1;
-txt_list2 = {'X','Y','Z'};
+x_shift = 0.2;
+txt_list2 = {'Roll','Pitch','Yaw'};
 for i=1:3
-    text(x_min-x_shift,i-0.5,['Speed ' txt_list2{4-i}],'FontSize',fontSize,'HorizontalAlignment','left');
+    text(x_min-x_shift,i-0.5,[txt_list2{4-i}],'FontSize',fontSize,'HorizontalAlignment','right');
 end
 
 %column labels
@@ -40,9 +40,9 @@ end
 
 fontSize_values = 12;
 if writeValues
-for i_motor=1:size(weights_speed_limb_order,2)
+for i_motor=1:size(weights_gyro_fused_limb_order,2)
     for i_speed_channel=1:3
-        value = weights_speed_limb_order(i_speed_channel,i_motor);
+        value = weights_gyro_fused_limb_order(i_speed_channel,i_motor);
         if value<0
             color = 'w';
         else
@@ -61,6 +61,6 @@ h.Color = 'w';
 h.Position = [10 10 800 400];
 hold off;
 
-xlabel('Speed (integrated from IMU) weights averaged over the 2 directions','FontSize',fontSize);
+xlabel('Gyroscope weights averaged over the 2 directions','FontSize',fontSize);
 end
 

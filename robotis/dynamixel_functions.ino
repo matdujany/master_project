@@ -112,11 +112,11 @@ float pos2rad(uint16_t pos)
 
 uint16_t check_goal_position(uint16_t goal_position){
   uint16_t pos = goal_position;
-  uint16_t saturation = 200;
+  uint16_t saturation = 150;
   if (abs(pos-512)>saturation){
     SerialUSB.print("Warning position value ");
-    SerialUSB.println(pos);
-    SerialUSB.print(" is higher than saturation");
+    SerialUSB.print(pos);
+    SerialUSB.println(" is higher than saturation");
     if (pos>512)
       pos = 512 + saturation;
     else

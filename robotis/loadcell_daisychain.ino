@@ -10,7 +10,7 @@ void show_value_DC(unsigned long delay_updates){
   send_frame_and_update_sensors(1,1);
   print_loadcell_values();
   show_total_z_load();
-  show_load_info_hardcoded();
+  //show_load_info_hardcoded();
   print_IMU_values();
   delay(delay_updates);
 }

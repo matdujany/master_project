@@ -10,12 +10,11 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 80;
+recordID = 89;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
 %% compare motor to motor actual movement.
-
 
 idx_twitch = 1;
 i_motor = 2;
@@ -52,9 +51,8 @@ for i=1:n_frames_theo.part2
         512 + floor((last_motor_pos-512)*(1-i/n_frames_theo.part2));
 end
 
-%%
-idx_motor_plot = 7;
-
+%% just 1 motor
+idx_motor_plot = 4;
 figure;
 hold on;
 for k=1:parms.n_twitches
@@ -64,6 +62,39 @@ plot(theoretical_traj);
 ylabel('Position');
 xlabel('Sample index');
 title(['M' num2str(idx_motor_plot)]);
+
+%% all motors in subplots
+figure;
+n_rows = parms.n_m/4;
+indexes_plot = reshape(1:parms.n_m, 4, n_rows).';
+for i_motor=1:parms.n_m
+    subplot(n_rows,4,indexes_plot(i_motor));
+    hold on;
+    plot(theoretical_traj,'k--');
+    for k=1:parms.n_twitches
+        plot(motor_move(:,i_motor,k));
+    end
+    ylabel('Position');
+    xlabel('Sample index');
+    title(['M' num2str(i_motor)]);
+    ylim(512+60*[-1 1]);
+end
+
+%% all motors average on one plot
+figure;
+hold on;
+legend_list = cell(parms.n_m,1);
+for i_motor=1:parms.n_m
+    hold on;
+    plot(mean(motor_move(:,i_motor,:),3));
+    ylabel('Position');
+    xlabel('Sample index');
+    legend_list{i_motor}=(['M' num2str(i_motor)]);
+    ylim(512+60*[-1 1]);
+end
+plot(theoretical_traj,'k--');
+legend_list{end+1} = 'Theoretical trajectory';
+legend(legend_list);
 
 %%
 recentering_own_movement = zeros(2*parms.n_m,parms.n_twitches);

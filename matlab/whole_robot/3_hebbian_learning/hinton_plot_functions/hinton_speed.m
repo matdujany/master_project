@@ -14,6 +14,8 @@ x_min = fig_parms.xmin-0.2;
 x_max = fig_parms.xmax+0.2;
 y_min = fig_parms.ymin-0.2;
 y_max = fig_parms.ymax+0.2;
+xlim([x_min x_max]);
+ylim([y_min y_max]);
 fontSize = 15;
 
 %line labels
@@ -43,7 +45,7 @@ for i_motor=1:size(weights_speed,2)
         else
             color = 'k';
         end
-        stringnum = num2str(value,'%.1f');
+        stringnum = num2str(value,'%.2f');
 %         stringnum = num2str(value,3);
         text(i_motor-0.5,3-i_speed_channel+0.5,stringnum,'FontSize',fontSize_values,'HorizontalAlignment','center','Color',color);
     end

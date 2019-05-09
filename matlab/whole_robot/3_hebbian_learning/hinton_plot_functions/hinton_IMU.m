@@ -1,4 +1,4 @@
-function h = hinton_IMU(weights,parms)
+function h = hinton_IMU(weights,parms,writeValues)
 %HINTON_IMU Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -50,8 +50,25 @@ xlim([x_min x_max]);
 ylim([y_min y_max]);
 h.Color = 'w';
 
-ax=gca();
-% ax.Position = [0.01 0.01 1 0.9];
+fontSize_values = 12;
+if writeValues
+for i_motor=1:2*parms.n_m
+    for i_channel=1:6
+        value = weights_IMU(i_channel,i_motor);
+        if value<0
+            color = 'w';
+        else
+            color = 'k';
+        end
+        stringnum = num2str(value,'%.1f');
+%         stringnum = num2str(value,3);
+        text(i_motor-0.5,6-i_channel+0.5,stringnum,'FontSize',fontSize_values,'HorizontalAlignment','center','Color',color);
+    end
+end
+end
+
+h.Position = [20 20 900 400];
+
 
 end
 

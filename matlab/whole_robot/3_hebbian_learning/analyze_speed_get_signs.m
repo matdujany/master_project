@@ -10,12 +10,14 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 86;
+recordID = 89;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
+hinton_IMU(weights_robotis{parms.n_twitches},parms,1);
+hinton_LC_dissymmetry(weights_robotis{parms.n_twitches},parms,1);
 
-
+%% computing speed (integration of IMU data)
 weights_speed_all = compute_weights_speed(data,lpdata,parms);
 weights_speed = weights_speed_all{parms.n_twitches};
 weights_speed = 100 * weights_speed/max(max(abs(weights_speed))) ;
@@ -24,7 +26,7 @@ hinton_speed(weights_speed,parms,1);
 weights_speed_fused = fuse_weights_sym_direction(weights_speed,parms);
 hinton_speed_fused(weights_speed_fused,parms,1);
 
-%%
+%% reorganizing in limbs
 [limb,~,~] = get_good_limb(parms,recordID);
 n_limb = size(limb,1);
 weights_speed_fused_limb_order = zeros(size(weights_speed_fused));
@@ -36,7 +38,7 @@ end
 
 hinton_speed_limb(weights_speed_fused_limb_order,limb,1);
 
-%%
+%% finding the motors and directions to produce movement in X and Y direction
 [motors_movement_effectors_X,dir_oscillations_X] = get_motors_and_signs(1, limb, weights_speed_fused);
 [motors_movement_effectors_Y,dir_oscillations_Y] = get_motors_and_signs(2, limb, weights_speed_fused);
 

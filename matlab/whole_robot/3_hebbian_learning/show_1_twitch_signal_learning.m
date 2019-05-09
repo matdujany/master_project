@@ -21,13 +21,15 @@ hinton_LC(weights_robotis{parms.n_twitches},parms,1);
 data = compute_filtered_signal_data(data,parms);
 lpdata = compute_filtered_signal_lpdata(lpdata,parms);
 
-%%
 good_closest_LC = get_good_closest_LC(parms,recordID);
+%%
 n_iter = 1;
-index_motor_plot = 7;
-index_loadcell_plot = 2;
-index_channel_plot = 3;
-i_dir = 1;
+index_motor_plot = 2;
+index_loadcell_plot = 1;
+index_channel_plot = 1;
+
+%%
+for i_dir = 1 : 2
 
 % index_loadcell_plot = good_closest_LC(index_motor_plot);
 index_sensor = index_channel_plot+3*(index_loadcell_plot-1);
@@ -79,6 +81,8 @@ plot(weights_det_filtered);
 scatter(0,weights_init);
 scatter(n_frames_theo.part1,weights_read{n_iter}(index_sensor,i_dir+2*(index_motor_plot-1)));
 title('Learning with filtered signals');
+
+end
 
 %%
 function subplot_time_signals(data,lpdata,index_start,index_end,index_motor_plot,index_loadcell_plot,index_channel_plot,i_dir,parms,n_frames_theo)

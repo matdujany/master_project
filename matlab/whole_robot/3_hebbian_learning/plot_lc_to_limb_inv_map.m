@@ -1,5 +1,4 @@
-function plot_lc_to_limb_inv_map(inv_map,parms,titleString)
-
+function h=plot_lc_to_limb_inv_map(inv_map,parms,titleString)
 
 if nargin == 2
     titleString = '';

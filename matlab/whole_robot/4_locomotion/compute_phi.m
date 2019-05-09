@@ -6,7 +6,7 @@ simulated_limb_phi(:,1) = pos_phi_data.limb_phi(:,1);
 for i=2:size(simulated_limb_phi,2)
     for i_limb = 1:size(simulated_limb_phi,1)
         earlier_phase = simulated_limb_phi(i_limb,i-1);
-        if strcmp(parms_locomotion.categoryName,"tegotae_advanced")
+        if strfind(parms_locomotion.categoryName,"tegotae_advanced")>0
             phi_dot = advanced_tegotae_rule(i_limb,earlier_phase,GRF(i-1,:),parms_locomotion);
         else
             phi_dot = simple_tegotae_rule(earlier_phase,GRF(i-1,i_limb),parms_locomotion);

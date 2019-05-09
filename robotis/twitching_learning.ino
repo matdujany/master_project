@@ -635,13 +635,24 @@ void calculate_s_dot_filtered()
 }
 
 void manual_recenter_robot_delay_twitch(){
-  SerialUSB.print(DURATION_MANUAL_RECENTERING);
-  SerialUSB.println(" s delay starting, recenter robot on rugs if needed");
+  //SerialUSB.print(DURATION_MANUAL_RECENTERING);
+  SerialUSB.println("Infinite delay starting, recenter robot on rugs if needed, interrupt with any serial input.");
   switch_frame_normal_mode();
-  unsigned long time_start = millis();
-  while (millis()-time_start<DURATION_MANUAL_RECENTERING*1000){
-    show_value_DC(TIME_INTERVAL_MANUAL_RECENTERING);
+  //unsigned long time_start = millis();
+  //while (millis()-time_start<DURATION_MANUAL_RECENTERING*1000)
+  while(!SerialUSB.available())
+  {
+    unsigned long time_start_iter = millis();
+    show_value_DC(0);
+    update_load_pos_values();
+    SerialUSB.print("Motor positions, ");
+    print_motor_positions();
+    SerialUSB.println("Interrupt this recentering delay with any serial input.");
+    while(millis()-time_start_iter<TIME_INTERVAL_MANUAL_RECENTERING);
   }
+  while(SerialUSB.available())
+    SerialUSB.read();
+  
   switch_frame_recording_mode();
   SerialUSB.println("Delay over");
 }

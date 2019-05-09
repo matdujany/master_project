@@ -75,22 +75,28 @@ void setup() {
   pose_stance();
   delay(1000);
 
+  //initialize_hardcoded_limbs();
   //updating IMU offsets (recalibration)
   //update_IMU_offsets();
+
   //pose_stance_soft();
 
   //twitch_record_wrapper();
 
-  //record_harcoded_tegotae(45);
-  record_harcoded_tegotae(30);
+  //record_harcoded_tegotae(30);
+  //record_harcoded_tegotae(90);
+  
+  hardcoded_tegotae();
 }
 
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
 
-
   //pose_stance();
+  //update_load_pos_values();
+  //SerialUSB.print("Motor positions, ");
+  //print_motor_positions();
   //show_value_DC(50);
   //serial_read_test_twitch();
 }

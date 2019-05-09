@@ -1,7 +1,7 @@
-function pos = phase2pos_hipknee_wrapper(phase,isHip,changeDir,params)
+function pos = phase2pos_hipknee_wrapper(phase,isClass2,changeDir,params)
 %PHASE2POS_HIPKNEE_WRAPPER Summary of this function goes here
 %   Detailed explanation goes here
-if isHip
+if isClass2
     pos = zeros(1,length(phase));
     for i=1:length(phase)
         if sin(phase(i))>0

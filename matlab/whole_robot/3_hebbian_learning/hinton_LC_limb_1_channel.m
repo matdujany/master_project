@@ -65,14 +65,14 @@ for i_motor=1:parms.n_m
         else
             color = 'k';
         end
-        stringnum = num2str(value,'%.1f');
+        stringnum = num2str(value,'%.2f');
 %         stringnum = num2str(value,3);
         text(i_motor-0.5,n_sensors-i_channel+0.5,stringnum,'FontSize',fontSize_values,'HorizontalAlignment','center','Color',color);
     end
 end
 end
 
-xlabel('weights fused over directions','FontSize',16)
+xlabel('Weights averaged over the 2 directions','FontSize',16)
 
 end
 

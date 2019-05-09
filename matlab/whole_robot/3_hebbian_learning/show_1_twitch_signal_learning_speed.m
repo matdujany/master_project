@@ -7,7 +7,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 86;
+recordID = 87;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
@@ -17,14 +17,16 @@ hinton_IMU(weights_robotis{parms.n_twitches},parms);
 
 integrated_speed = compute_integrated_speed(data,lpdata,parms);
 weights_speed = compute_weights_speed(data,lpdata,parms);
-hinton_speed(weights_speed{parms.n_twitches},parms);
+hinton_speed(weights_speed{parms.n_twitches},parms,1);
 plot_weight_evolution_speed(weights_speed,parms);
 %%
-n_iter = 2;
-index_motor_plot = 6;
-i_dir = 2;
+n_iter = 5;
+index_motor_plot = 7;
 index_channel_speed = 1;
-bool_plot_lc_signal = true;
+bool_plot_lc_signal = false;
+
+%%
+for i_dir = 1:2
 
 good_closest_LC = get_good_closest_LC(parms,recordID);
 [motor_ids_dropoff,sign_direction_dropoff]= get_hardcoded_dropoff_results(parms);
@@ -54,6 +56,7 @@ if bool_plot_lc_signal
 end
 
 figure;
+sgtitle(['iteration ' num2str(n_iter)]);
 %% time signals
 subplot(2,2,1);
 hold on;
@@ -79,17 +82,18 @@ xlim([0 n_frames_theo.part1+1]);
 title('Time Signals in Learning Window');
 %% dot time signals
 subplot(2,2,3);
-if i_dir == 1
-    sign_learning = -1;
-else
-     sign_learning = 1;
-end  
+sign_learning = 1;
+% if i_dir == 1
+%     sign_learning = -1;
+% else
+%      sign_learning = 1;
+% end  
 hold on;
 plot(sign_learning*lpdata.m_s_dot_pos(index_motor_plot,index_start:index_end),'b-');
 plot(sign_learning*lpdata.m_s_dot_posfiltered(index_motor_plot,index_start:index_end),'b--');
 xlabel('Frame index');
 ylabel(['Learning Signal (+/- Motor ' num2str(index_motor_plot) ' speed)']);
-ylim([0 0.2]);
+ylim(0.2 * [-1 1]);
 yyaxis right;
 plot(integrated_speed(index_start:index_end,index_channel_speed),'r-');
 plot([0 n_frames_theo.part1+1],[0 0],'Color',[1,0,0,0.2]);
@@ -134,3 +138,5 @@ plot(weights_det_filtered);
 scatter(0,weights_init);
 scatter(n_frames_theo.part1,weights_speed{n_iter}(index_channel_speed,i_dir+2*(index_motor_plot-1)));
 title('Learning with filtered signals');
+
+end

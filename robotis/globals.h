@@ -21,8 +21,8 @@
 
 // Include header files
 #include "constants.h"
+#include "hardcoded_parameters.h"
 #include <DynamixelSDK.h>
-
 
 /* ===================================================================================================================================== */
 
@@ -34,59 +34,37 @@
 
 // General settings:
 float pi               = float(3.1415926535);
-//int start_at_location  = 1;       // 1: start at given positions, 0: start at 0 angle
 int flagVerbose        = 0;       // Default mode: print no information
-//bool bool_walk      = false;   // Boolean to turn servo's on/off
+
 
 // CPG/Tegotae Locomotion related:
 float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
-float amplitude_class1 = 15; //class 1 are motors producing the movement in the direction asked
-float amplitude_class2 = 15; //class 2 are motors doing the loading/unloading (stance/swing) cycle
-
+float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
+float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
 float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
 float sigma_s         = 0.3;       // Sigma S; see Fukuhara 2018 article
+
 bool tegotae_advanced = true;
+bool direction_X      = true;   //to go in X
+bool direction_Y      = false;   //to go in Y 
+bool direction_Yaw    = false;   //to go in Yaw
 bool flagTurning      = false;   //to turn on spot instead of forward
-bool direction_X      = false;   //to go in X (goes in Y otherwise)
 
 //for limb oscillators
 unsigned long t_last_phi_update      = 0;
 unsigned long t_offset_oscillators  = 0;
 float phi[MAX_N_LIMB]           = {0};
 float phi_dot[MAX_N_LIMB]       = {0};
-float N_s[MAX_N_LIMB] = {0};
+float N_s[MAX_NR_ARDUINO] = {0};
 uint16_t goal_positions_tegotae[MAX_NR_SERVOS];
-
-
-//hardcoded in initialize_hardcoded_limbs()
-int n_limb = 4; // to change with number of detected limbs
-uint8_t limbs[MAX_N_LIMB][2];  //2 motors per limb
-boolean changeDirs[MAX_N_LIMB][2];  //2 motors per limb
-float offset_knee_to_hip[MAX_N_LIMB] = {0};
 float offset_class1[MAX_N_LIMB] = {0};
 
-/*  //recordID 79
-float sigma_advanced  = 0.3;       // Sigma for rescaling the map*GRF term 
-float inverse_map[4][4] = { { 0.3606,-0.3424, 0.2946,-0.2940} ,
-                            {-0.2401, 0.3333,-0.2977, 0.3155} ,
-                            { 0.3170,-0.3175, 0.3229,-0.2866} ,
-                            {-0.2127, 0.2447,-0.2821, 0.2984} };
-
-*/
-
-
-float sigma_advanced_X  = 0.15;
-float inverse_map_X[4][4] = {{-0.703, 0.959,-0.713, 0.738} ,
-                             { 1.000,-0.727, 0.858,-0.858} ,
-                             {-0.481, 0.506,-0.566, 0.603} ,
-                             { 0.543,-0.552, 0.781,-0.631} };
-
-float sigma_advanced_Y  = 0.14;
-float inverse_map_Y[4][4] = { {-0.446, 0.643,-0.674, 0.463} ,
-                              { 0.907,-0.849, 0.814,-0.895} ,
-                              {-0.977, 1.000,-0.952, 0.943} ,
-                              { 0.464,-0.619, 0.657,-0.537} };
-
+//To be learned
+int n_limb;
+float sigma_advanced;
+std::vector<std::vector<uint8_t>>  limbs;
+std::vector<std::vector<bool>>  changeDirs; 
+std::vector<std::vector<float>> inverse_map; 
 
 /* ===================================================================================================================================== */
 

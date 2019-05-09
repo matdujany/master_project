@@ -1,4 +1,4 @@
-function plot_limb_to_lc_effect(weights_limb_summed,parms,titleString)
+function h=plot_limb_to_lc_effect(weights_limb_summed,parms,titleString)
 
 if nargin == 2
     titleString = '';
@@ -28,7 +28,7 @@ for i_limb=1:parms.n_lc
         else
             color = 'w';
         end
-        text(i_lc-0.5,parms.n_lc-i_limb+0.5,num2str(value,'%.1f'),'Color',color,'FontSize',fontSize,'HorizontalAlignment','center');
+        text(i_lc-0.5,parms.n_lc-i_limb+0.5,num2str(value,'%.3f'),'Color',color,'FontSize',fontSize,'HorizontalAlignment','center');
     end
 end
 h.Color = 'w';

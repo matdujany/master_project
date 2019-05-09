@@ -9,7 +9,7 @@ addpath('hinton_plot_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 86;
+recordID = 87;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
@@ -33,7 +33,7 @@ hinton_LC(weights_lc,parms,1);
 % weights_fused = fuse_weights_without_corrupted_direction(weights_lc,parms);
 weights_fused = fuse_weights_sym_direction(weights_lc,parms);
 
-hinton_LC_weights_fused(weights_fused,parms,1);
+hinton_LC_fused(weights_fused,parms,1);
  
 %% fusing the weights over loadcell channels
 weights_fused_sumc = zeros(size(weights_fused,1)/3,parms.n_m);

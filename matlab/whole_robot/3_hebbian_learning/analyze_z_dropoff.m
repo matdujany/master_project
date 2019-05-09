@@ -9,13 +9,15 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 86;
+recordID = 89;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights = read_weights_robotis(recordID,parms);
 weights_pos = read_weights_pos_robotis(recordID,parms);
 
 %%
+hinton_LC_dissymmetry(weights{parms.n_twitches},parms,1);
+
 % hinton_pos(weights_pos{parms.n_twitches},parms,0);
 hinton_LC(weights{parms.n_twitches},parms);
 % hinton_IMU(weights{parms.n_twitches},parms);
@@ -47,15 +49,18 @@ threshold_factor = 0.2;
 [totalcounts, min_dropoffs] = count_dropoffs(threshold_factor,data,parms,flagPlot);
 
 %%
-i_lc_part_plot = 3; %6;
-i_motor_part_plot = 6;%5;
-i_dir = 1;
+i_lc_part_plot = 2; %6;
+i_motor_part_plot = 3;%5;
+index_channel_lc= 1;
+
+for i_dir = 1:2
 figure;
 count = 1;
 for i_twitch_part_plot=[1 3 5]
     subplot(1,3,count);
-    plot_lc_motor_part(i_lc_part_plot,i_motor_part_plot,i_dir,i_twitch_part_plot,s_lc,lpdata,threshold_factor,parms);
+    plot_lc_motor_part(i_lc_part_plot,i_motor_part_plot,i_dir,i_twitch_part_plot,s_lc,lpdata,threshold_factor,index_channel_lc,parms);
     count = count+1;
+end
 end
 
 %%
@@ -68,7 +73,7 @@ for i=1:parms.n_lc
     direction_dropoff(i,1) = -2*mod(idx_raw,2)+1;
 end
 
-function plot_lc_motor_part(i_lc,i_motor,i_dir,i_twitch,s_lc,lpdata,threshold_factor,parms)
+function plot_lc_motor_part(i_lc,i_motor,i_dir,i_twitch,s_lc,lpdata,threshold_factor,index_channel_lc,parms)
 % figure;
 lineWidth = 1.2;
 y_min = -2;
@@ -80,7 +85,7 @@ x_patch_learning = [n_frames_theo.part0+1 n_frames_theo.part0+n_frames_theo.part
 
 index_start = index_start_twitch+2*n_frames_theo.per_action*(i_motor-1)+n_frames_theo.per_action*(i_dir-1);
 index_end = index_start + n_frames_theo.per_action-1;
-data_loadz = s_lc(index_start:index_end,3*i_lc);
+data_loadz = s_lc(index_start:index_end,3*(i_lc-1) + index_channel_lc);
 
 hold on;
 plot(data_loadz,'b-','LineWidth',lineWidth);
@@ -89,7 +94,8 @@ patch(x_patch_learning,y_patch_learning,'blue','FaceAlpha',0.1,'EdgeColor','none
 plot([0 n_frames_theo.per_action-1],[0 0]);
 xlim([n_frames_theo.part0-10 n_frames_theo.part0+n_frames_theo.part1+10]);
 ylim([y_min y_max]);
-ylabel(['LC ' num2str(i_lc) ' Z load']);
+channel_list = {' X',' Y',' Z'};
+ylabel(['LC ' num2str(i_lc) channel_list{index_channel_lc} ' Z load']);
 
 mean_load_p0 = mean(data_loadz(1:n_frames_theo.part0));
 total_count = 0;

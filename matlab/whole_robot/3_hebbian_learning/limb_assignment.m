@@ -7,19 +7,20 @@ addpath('hinton_plot_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 86;
+recordID = 89;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
 weights_pos_robotis  = read_weights_pos_robotis(recordID,parms);
-parms_sim = parms;
-parms_sim.eta = 10;
-weights_sim = compute_weights_wrapper(data,lpdata,parms,1,0,0,0);
+% parms_sim = parms;
+% parms_sim.eta = 10;
+% weights_sim = compute_weights_wrapper(data,lpdata,parms,1,0,0,0);
 
 weights_chosen = weights_robotis; %sim or robotis
 
 %%
 hinton_LC(weights_chosen{parms.n_twitches},parms,1);
+hinton_LC_dissymmetry(weights_chosen{parms.n_twitches},parms,1);
 
 weights_lc_read=weights_chosen{parms.n_twitches}(1:parms.n_lc*3,:);
 

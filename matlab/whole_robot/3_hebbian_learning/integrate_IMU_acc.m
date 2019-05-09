@@ -4,9 +4,10 @@ close all; clc;
 addpath('../2_load_data_code');
 
 %% Load data
-recordID = 14;
+recordID = 86;
 [data, lpdata, parms] =  load_data_processed(recordID);
-add_parms;
+% add_parms;
+parms.nr_arduino = 4;
 weights_robotis = read_weights_robotis(recordID,parms);
 weights_pos_robotis = read_weights_pos_robotis(recordID,parms);
 
