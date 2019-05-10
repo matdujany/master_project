@@ -14,7 +14,7 @@ parms.n_m         = 12;
 parms.n_dir       = 2;
 
 % learning parameters
-parms.rampe_slope    = 2;         %position increment per frame
+parms.rampe_slope    = 1;         %position increment per frame
 parms.eta            = 10;        %learning rate
 parms.duration_part0 = 500; % in ms
 parms.duration_part1 = 500; % in ms

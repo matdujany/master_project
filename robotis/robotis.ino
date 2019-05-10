@@ -81,12 +81,12 @@ void setup() {
 
   //pose_stance_soft();
 
-  //twitch_record_wrapper();
+  twitch_record_wrapper();
 
   //record_harcoded_tegotae(30);
   //record_harcoded_tegotae(90);
   
-  hardcoded_tegotae();
+  //hardcoded_tegotae();
 }
 
 

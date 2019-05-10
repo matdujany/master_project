@@ -739,6 +739,11 @@ void print_weights()
   delay(1000);
 }
 
+void print_weights_pos(){
+  
+}
+
+/*
 void print_weights_pos()
 {
   static int counter_pos = 1;
@@ -760,6 +765,7 @@ void print_weights_pos()
   counter_pos++;
   delay(1000);
 }
+*/
 
 /*
 void print_sdot_oja(){

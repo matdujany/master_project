@@ -9,14 +9,14 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 89;
+recordID = 90;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights = read_weights_robotis(recordID,parms);
 weights_pos = read_weights_pos_robotis(recordID,parms);
 
 %%
-hinton_LC_dissymmetry(weights{parms.n_twitches},parms,1);
+hinton_LC_asymmetry(weights{parms.n_twitches},parms,1);
 
 % hinton_pos(weights_pos{parms.n_twitches},parms,0);
 hinton_LC(weights{parms.n_twitches},parms);
@@ -49,8 +49,8 @@ threshold_factor = 0.2;
 [totalcounts, min_dropoffs] = count_dropoffs(threshold_factor,data,parms,flagPlot);
 
 %%
-i_lc_part_plot = 2; %6;
-i_motor_part_plot = 3;%5;
+i_lc_part_plot = 5; %6;
+i_motor_part_plot = 7;%5;
 index_channel_lc= 1;
 
 for i_dir = 1:2
@@ -95,7 +95,7 @@ plot([0 n_frames_theo.per_action-1],[0 0]);
 xlim([n_frames_theo.part0-10 n_frames_theo.part0+n_frames_theo.part1+10]);
 ylim([y_min y_max]);
 channel_list = {' X',' Y',' Z'};
-ylabel(['LC ' num2str(i_lc) channel_list{index_channel_lc} ' Z load']);
+ylabel(['LC ' num2str(i_lc) channel_list{index_channel_lc} ' load']);
 
 mean_load_p0 = mean(data_loadz(1:n_frames_theo.part0));
 total_count = 0;

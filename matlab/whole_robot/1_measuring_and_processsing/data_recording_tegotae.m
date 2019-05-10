@@ -9,9 +9,15 @@ parms_locomotion.amplitude_class1_deg = 20;
 parms_locomotion.amplitude_class2_deg = 20;
 parms_locomotion.alpha = 0.2;
 parms_locomotion.sigma_s = 0.3;
-parms_locomotion.sigma_advanced = 0.12;
+
+parms_locomotion.id_map_used = 88;
 parms_locomotion.turning = false;
-parms_locomotion.categoryName = "tegotae_advanced_X";
+parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
+
+parms_locomotion.use_filter = 1;
+parms_locomotion.filter_size = 4;
+
+parms_locomotion.categoryName = strcat("tegotae_advanced_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
 
 %% Main
 time_vec   = clock;

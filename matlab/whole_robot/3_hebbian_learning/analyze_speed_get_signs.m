@@ -10,15 +10,17 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 89;
+recordID = 91;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
 hinton_IMU(weights_robotis{parms.n_twitches},parms,1);
-hinton_LC_dissymmetry(weights_robotis{parms.n_twitches},parms,1);
+hinton_LC_asymmetry(weights_robotis{parms.n_twitches},parms,1);
 
 %% computing speed (integration of IMU data)
 weights_speed_all = compute_weights_speed(data,lpdata,parms);
+plot_weight_evolution_speed(weights_speed_all,parms);
+
 weights_speed = weights_speed_all{parms.n_twitches};
 weights_speed = 100 * weights_speed/max(max(abs(weights_speed))) ;
 hinton_speed(weights_speed,parms,1);

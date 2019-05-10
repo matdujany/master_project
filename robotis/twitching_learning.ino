@@ -355,7 +355,7 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
     twitch_part2_allrecentering(n_frames_tmp, n_frames_this_part);
   }
 
-  if (USE_FILTER){
+  if (USE_FILTER_LEARNING){
     calculate_m_dot_filtered();
     calculate_s_dot_filtered();
   }
@@ -488,13 +488,16 @@ void twitch_learning_prog(int i_action, float m_learning)
   }
 
   //Learning for Motor Positions
+  /*
   for (int j_motor_sensor = 0; j_motor_sensor < n_servos; j_motor_sensor++){
-    s_dot_select = m_dot_pos[j_motor_sensor];
-    weight = learning.weights_pos[j_motor_sensor][i_action];
-    weight_delta = oja_diff_learning_rule(m_learning, s_dot_select, weight);
-    learning.weights_pos[j_motor_sensor][i_action] = weight + alpha * weight_delta;
+      s_dot_select = m_dot_pos[j_motor_sensor];
+      weight = learning.weights_pos[j_motor_sensor][i_action];
+      weight_delta = oja_diff_learning_rule(m_learning, s_dot_select, weight);
+      learning.weights_pos[j_motor_sensor][i_action] = weight + alpha * weight_delta;
 
   }
+  */
+
 
 
 }
@@ -524,7 +527,7 @@ void calculate_m_dot_filtered(){
   for (int i = 0; i < n_servos; i++)
   {
     //the actual size of the filter is FILTER_ADD_SIZE+1 because we store last_mpos, old_mpos, and the values contained in the filter.
-    float num_filtered = float(last_motor_pos[i] - buf_filter.motor_pos[buf_filter.head][i])/float(FILTER_ADD_SIZE+1); 
+    float num_filtered = float(last_motor_pos[i] - buf_filter.motor_pos[buf_filter.head][i])/float(FILTER_ADD_SIZE_LEARNING+1); 
     m_dot_pos[i] = num_filtered / float(last_motor_timestamp[i] - old_motor_timestamp[i]);
   }
 
@@ -583,12 +586,11 @@ void calculate_s_dot_filtered()
   float val_new;
   float timestamp_new;
   float t_delta;
-  //uint8_t oldestvalue_index_filter = (buf_filter.head + FILTER_ADD_SIZE-1) % (FILTER_ADD_SIZE);
 
   // differentiation needed for the loadcells
   for (int i_tmp = 0; i_tmp < n_ard * 3; i_tmp++)
   {
-    float num_filtered = (ser_rx_buf.last_loadcell_data_float[i_tmp]-buf_filter.val_lc[buf_filter.head][i_tmp])/float(FILTER_ADD_SIZE+1);
+    float num_filtered = (ser_rx_buf.last_loadcell_data_float[i_tmp]-buf_filter.val_lc[buf_filter.head][i_tmp])/float(FILTER_ADD_SIZE_LEARNING+1);
 
     // Define new timestamp
     timestamp_new = (int)ser_rx_buf.timestamp_loadcell[i_tmp / 3];
@@ -616,20 +618,20 @@ void calculate_s_dot_filtered()
   for (int i=0; i<3; i++)
   {
     s_dot_last[n_ard * 3+i] = ser_rx_buf.last_IMU_acc_corrected[i] + val_old_IMU_acc_corrected[i];
-    for (int k=0; k<FILTER_ADD_SIZE; k++){
+    for (int k=0; k<FILTER_ADD_SIZE_LEARNING; k++){
       s_dot_last[n_ard * 3+i] += buf_filter.val_IMU[k][i];
     }
-    s_dot_last[n_ard * 3+i] = s_dot_last[n_ard * 3+i]/float(2+FILTER_ADD_SIZE);
+    s_dot_last[n_ard * 3+i] = s_dot_last[n_ard * 3+i]/float(2+FILTER_ADD_SIZE_LEARNING);
   }
 
   //gyroscope after (roll, pitch, yaw)
   for (int i=0; i<3; i++)
   {
     s_dot_last[n_ard*3+ 3+i] = ser_rx_buf.last_IMU_gyro_corrected[i] + val_old_IMU_gyro_corrected[i];
-    for (int k=0; k<FILTER_ADD_SIZE; k++){
+    for (int k=0; k<FILTER_ADD_SIZE_LEARNING; k++){
       s_dot_last[n_ard*3+ 3+i] += buf_filter.val_IMU[k][3+i];
     }
-    s_dot_last[n_ard*3+ 3+i] = s_dot_last[n_ard*3+ 3+i]/float(2+FILTER_ADD_SIZE);
+    s_dot_last[n_ard*3+ 3+i] = s_dot_last[n_ard*3+ 3+i]/float(2+FILTER_ADD_SIZE_LEARNING);
   }
   
 }
@@ -689,7 +691,7 @@ void print_buf_filter(){
   SerialUSB.print("Head value ");SerialUSB.println(buf_filter.head);
   for (int i_ard=0;i_ard<n_ard;i_ard++){
     SerialUSB.print("Loadcell "); SerialUSB.print(i_ard+1);SerialUSB.print(" values \t");
-    for (int k=0; k<FILTER_ADD_SIZE; k++){
+    for (int k=0; k<FILTER_ADD_SIZE_LEARNING; k++){
       for (int i_channel=0; i_channel<3;i_channel++){
         SerialUSB.print(buf_filter.val_lc[k][i_ard*3+i_channel],3);
         SerialUSB.print("\t");
@@ -700,7 +702,7 @@ void print_buf_filter(){
   }
 
   SerialUSB.print("Accelerometer values ");
-  for (int k=0; k<FILTER_ADD_SIZE; k++){
+  for (int k=0; k<FILTER_ADD_SIZE_LEARNING; k++){
     for (int i_acc_imu=0;i_acc_imu<3;i_acc_imu++){
       SerialUSB.print(buf_filter.val_IMU[k][i_acc_imu],3);
       SerialUSB.print("\t");
@@ -710,7 +712,7 @@ void print_buf_filter(){
   SerialUSB.println();
 
   SerialUSB.print("Gyro values ");
-  for (int k=0; k<FILTER_ADD_SIZE; k++){
+  for (int k=0; k<FILTER_ADD_SIZE_LEARNING; k++){
     for (int i_gyro_imu=0;i_gyro_imu<3;i_gyro_imu++){
       SerialUSB.print(buf_filter.val_IMU[k][3+i_gyro_imu],3);
       SerialUSB.print("\t");
@@ -719,7 +721,7 @@ void print_buf_filter(){
     }
   SerialUSB.println();
 
-  for (int k=0; k<FILTER_ADD_SIZE; k++){
+  for (int k=0; k<FILTER_ADD_SIZE_LEARNING; k++){
   SerialUSB.print("Motor position values ");
     for (int i_motor=0;i_motor<n_servos;i_motor++){
       SerialUSB.print(buf_filter.motor_pos[k][i_motor]);
@@ -745,12 +747,12 @@ void update_buf_filter(){
   for (int i_motor=0;i_motor<n_servos;i_motor++){
     buf_filter.motor_pos[buf_filter.head][i_motor]=old_motor_pos[i_motor];
   }
-  buf_filter.head = (buf_filter.head+1)%(FILTER_ADD_SIZE);
+  buf_filter.head = (buf_filter.head+1)%(FILTER_ADD_SIZE_LEARNING);
 }
 
 void init_buf_filter(){
   buf_filter.head = 0;
-  for (int k=0;k<FILTER_ADD_SIZE; k++){
+  for (int k=0;k<FILTER_ADD_SIZE_LEARNING; k++){
     for (int i_ard=0;i_ard<MAX_NR_ARDUINO*3;i_ard++){
       buf_filter.val_lc[k][i_ard]=0;
     }
@@ -764,6 +766,7 @@ void init_buf_filter(){
 }
 
 void print_twitching_parameters(){
+  SerialUSB.print("Slope of the ramp used for learning : "); SerialUSB.println(SLOPE_LEARNING);
   SerialUSB.print("Step Amplitude : "); SerialUSB.println(STEP_AMPL);
   SerialUSB.print("Learning rate : "); SerialUSB.println(LEARNING_RATE);
   SerialUSB.print("Duration part 0 : "); SerialUSB.println(DURATION_PART0);
@@ -772,8 +775,8 @@ void print_twitching_parameters(){
   SerialUSB.print("Time interval twitch : "); SerialUSB.println(TIME_INTERVAL_TWITCH);
   
   SerialUSB.print("Use filter (1:Yes/0:No) : "); SerialUSB.println(1);
-  if (USE_FILTER)
-    SerialUSB.print("Filter Size : "); SerialUSB.println(FILTER_ADD_SIZE);
+  if (USE_FILTER_LEARNING)
+    SerialUSB.print("Filter Size : "); SerialUSB.println(FILTER_ADD_SIZE_LEARNING);
   SerialUSB.print("Compliant Mode : "); SerialUSB.println(COMPLIANT_MODE);
   SerialUSB.print("Soft compliance margin : "); SerialUSB.println(SOFT_COMPLIANCE_MARGIN); 
   SerialUSB.print("Soft compliance slope : "); SerialUSB.println(SOFT_COMPLIANCE_SLOPE); 

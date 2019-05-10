@@ -1,7 +1,7 @@
 #include <vector> //takes a lot of space,
 //could be improved with pointers
 
-#define MAP_USED 88
+#define MAP_USED 89
 
 //with recordID 86
 float sigma_advanced_X_86  = 0.12;
@@ -65,7 +65,7 @@ std::vector<std::vector<float>> inverse_map_X_89{
 {-0.930, 0.606, 0.125, -0.544, 0.259, 0.541} ,
 {0.633, -0.563, 0.389, 0.303, -0.494, -0.050} ,
 {-0.103, 0.363, -0.586, 0.322, -0.007, 0.133} ,
-{-0.491, 0.121, 0.655, -0.834, 0.543, 0.024} ,
+{-0.465, 0.271, 0.603, -0.978, 0.705, 0.028} ,
 {0.227, -0.408, 0.071, 0.492, -0.560, 0.322} ,
 {0.440, 0.034, 0.191, -0.087, 0.599, -1.000}
  };
@@ -118,7 +118,7 @@ std::vector<std::vector<uint8_t>> limbs_X_6legs{
     {9,8},
     {11,10},
     {3,2},
-    {0,1}, //that one is actually bad
+    {1,0}, //that one is actually bad, it should be {1,0}
     {7,6},
     {5,4}
 };

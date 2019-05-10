@@ -39,8 +39,8 @@ int flagVerbose        = 0;       // Default mode: print no information
 
 // CPG/Tegotae Locomotion related:
 float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
-float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
-float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
+float amplitude_class1 = 15; //class 1 are motors producing the movement in the direction asked
+float amplitude_class2 = 15; //class 2 are motors doing the loading/unloading (stance/swing) cycle
 float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
 float sigma_s         = 0.3;       // Sigma S; see Fukuhara 2018 article
 
@@ -52,9 +52,9 @@ bool flagTurning      = false;   //to turn on spot instead of forward
 
 //for limb oscillators
 unsigned long t_last_phi_update      = 0;
-unsigned long t_offset_oscillators  = 0;
-float phi[MAX_N_LIMB]           = {0};
-float phi_dot[MAX_N_LIMB]       = {0};
+unsigned long t_offset_oscillators   = 0;
+float phi[MAX_N_LIMB]             = {0};
+float phi_dot[MAX_N_LIMB]         = {0};
 float N_s[MAX_NR_ARDUINO] = {0};
 uint16_t goal_positions_tegotae[MAX_NR_SERVOS];
 float offset_class1[MAX_N_LIMB] = {0};
@@ -65,6 +65,16 @@ float sigma_advanced;
 std::vector<std::vector<uint8_t>>  limbs;
 std::vector<std::vector<bool>>  changeDirs; 
 std::vector<std::vector<float>> inverse_map; 
+
+
+//filtering
+typedef struct buffer_Ns_filter
+{
+  uint8_t head;  //the head is the index of the oldest values in the filter
+  float N_s[FILTER_SIZE_TEGOTAE][MAX_N_LIMB];        // Old values of loadcell data used for filtering
+}
+buffer_Ns_filter;
+buffer_Ns_filter buffer_filter_tegotae;
 
 /* ===================================================================================================================================== */
 
@@ -90,7 +100,6 @@ typedef struct rbuffer
   char timestamp_IMU; //contains the timestamp from the last loadcells measures
   float last_IMU_acc_corrected[3]; //contains last acceleration corrected with the offset stored in offset_acc
   float last_IMU_gyro_corrected[3]; //contains last gyro corrected with the offset stored in offset_gyro
-
 }
 rbuffer;
 
@@ -146,14 +155,9 @@ uint8_t    initial_frame_blue[9];
 dynamixel::PortHandler *portHandler;     //for communication with Dynamixels (SDK)
 dynamixel::PacketHandler *packetHandler; //for communication with Dynamixels (SDK)
 
-//unsigned long t_offset       = 0;
-
-//int currentPosition          = 0;
-//int model                    = 0;
 
 uint8_t n_servos                    = 0;
 uint8_t id[MAX_NR_SERVOS];         // 
-//uint16_t pos[MAX_NR_SERVOS]        = {512};
 
 /* ===================================================================================================================================== */
 
@@ -189,9 +193,9 @@ float m_dot_pos[MAX_NR_SERVOS];           // Most recent values of m_dot
 typedef struct buffer_filter
 {
   uint8_t head;  //the head is the index of the oldest values in the filter
-  float val_lc[FILTER_ADD_SIZE][MAX_NR_ARDUINO * 3];        // Old values of loadcell data used for filtering
-  float val_IMU[FILTER_ADD_SIZE][IMU_USEFUL_CHANNELS];        // Old values of loadcell data used for filtering
-  uint16_t motor_pos[FILTER_ADD_SIZE][MAX_NR_SERVOS];        // Old values of loadcell data used for filtering
+  float val_lc[FILTER_ADD_SIZE_LEARNING][MAX_NR_ARDUINO * 3];        // Old values of loadcell data used for filtering
+  float val_IMU[FILTER_ADD_SIZE_LEARNING][IMU_USEFUL_CHANNELS];        // Old values of loadcell data used for filtering
+  uint16_t motor_pos[FILTER_ADD_SIZE_LEARNING][MAX_NR_SERVOS];        // Old values of loadcell data used for filtering
 }
 buffer_filter;
 buffer_filter buf_filter;
@@ -201,7 +205,7 @@ typedef struct learning_struct
 {
   //double s_dot_oja[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];     //last s_dot sent to Oja, useful for comparing with Matlab
   float weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
-  float weights_pos[MAX_NR_SERVOS][MAX_NR_SERVOS * 2]; 
+  //int weights_pos[MAX_NR_SERVOS][MAX_NR_SERVOS * 2];
 }
 learning_struct;
 

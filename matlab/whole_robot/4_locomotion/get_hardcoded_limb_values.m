@@ -3,13 +3,16 @@ function [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(pa
 %   Detailed explanation goes here
 
 
-switch parms_locomotion.categoryName{1}(end)
+switch parms_locomotion.direction
     case 'X'
         limb_ids = [6 5; 8 7; 2 1; 4 3];
         changeDir = [0 0; 1 1; 1 1; 0 0];
     case 'Y'
         limb_ids = [5 6; 7 8; 1 2; 3 4]; %same as limbs but motor IDs are rescaled to 1:n_motors
-        changeDir = [1 1; 1 0; 1 1; 1 0]; 
+        changeDir = [1 1; 1 0; 1 1; 1 0];
+    case 'Yaw'
+        limb_ids = [5 6; 7 8; 1 2; 3 4]; %same as limbs but motor IDs are rescaled to 1:n_motors
+        changeDir = [1 1; 1 0; 0 1; 0 0];        
     otherwise
         disp('unrecognized locomotion direction');
 end

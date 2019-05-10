@@ -2,18 +2,19 @@ void init_tegotae(){
   initialize_hardcoded_limbs();
   if (tegotae_advanced)
     initialize_inverse_map_advanced_tegotae();
+  if (USE_FILTER_TEGOTAE)
+    init_filter_tegotae();
   print_locomotion_parameters();
-  init_phi_tegotae();
-  send_command_limb_oscillators(); 
 }
 
 
 void record_harcoded_tegotae(int recording_duration){
-  init_recording_locomotion();
   init_tegotae();
+  init_recording_locomotion();
 
+  init_phi_tegotae();
+  send_command_limb_oscillators(); 
   unsigned long t_start_recording = millis();
-
   while (millis()-t_start_recording<recording_duration*1000){
     unsigned long t_start_update_loop = millis();
     send_phi_and_pos_Serial3();
@@ -29,8 +30,9 @@ void record_harcoded_tegotae(int recording_duration){
 
 
 void hardcoded_tegotae(){
-  initialize_hardcoded_limbs();
   init_tegotae();
+  init_phi_tegotae();
+  send_command_limb_oscillators(); 
   print_phi_info();
   while (true){
     unsigned long t_start_update_loop = millis();
@@ -220,9 +222,28 @@ void init_phi_tegotae(){
   t_offset_oscillators = millis();
 }
 
+void init_filter_tegotae(){
+  buffer_filter_tegotae.head = 0;
+  for (int k=0; k<FILTER_SIZE_TEGOTAE; k++){
+    for (int i=0; i<n_limb; i++){
+      buffer_filter_tegotae.N_s[k][i] = 0;
+    }
+  }
+}
+
+void update_filter_tegotae(){
+  for (int i=0;i<n_limb;i++){
+    buffer_filter_tegotae.N_s[buffer_filter_tegotae.head][i]=N_s[i];
+  }
+  buffer_filter_tegotae.head = (buffer_filter_tegotae.head+1)%(FILTER_SIZE_TEGOTAE);
+}
+
+
 
 void update_phi_tegotae()
 {
+  if (USE_FILTER_TEGOTAE)
+    update_filter_tegotae();
   for (int i=0; i<n_limb; i++){
     N_s[i] = ser_rx_buf.last_loadcell_data_float[2 + i * 3];   
   }
@@ -255,7 +276,20 @@ float simple_tegotae_rule(float phase, float ground_reaction_force){
 float advanced_tegotae_rule(uint8_t i_limb){
   float GRF_advanced_term = 0;
   for (int j=0; j<n_limb; j++){
-      GRF_advanced_term += inverse_map[i_limb][j]*N_s[j];
+
+    float grf_under_limb = N_s[j];
+
+    if (USE_FILTER_TEGOTAE){
+      for (int k=0; k<FILTER_SIZE_TEGOTAE; k++)
+      {
+        grf_under_limb += buffer_filter_tegotae.N_s[k][j];
+      }
+      grf_under_limb = grf_under_limb/(FILTER_SIZE_TEGOTAE+1);
+    }
+    //SerialUSB.print("Limb ");SerialUSB.print(j);
+    //SerialUSB.print(" grf filtered :"); SerialUSB.println(grf_under_limb,4);
+
+    GRF_advanced_term += inverse_map[i_limb][j]*grf_under_limb;
   }
   float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
   return phi_dot;
@@ -421,6 +455,10 @@ void print_locomotion_parameters(){
   (direction_Y) ? SerialUSB.println("Y") : 0;
   (direction_Yaw) ? SerialUSB.println("Yaw"): 0;
   if (tegotae_advanced){
+    if (USE_FILTER_TEGOTAE){
+      SerialUSB.print("Using filter of size ");
+      SerialUSB.print(FILTER_SIZE_TEGOTAE); SerialUSB.println(" for Tegotae.");
+    }
     SerialUSB.print("Parameters learned from twitching record ID "); SerialUSB.println(MAP_USED);
     SerialUSB.print("Sigma for advanced tegotae  : "); SerialUSB.println(sigma_advanced);
     print_inverse_map();
@@ -432,6 +470,6 @@ void print_locomotion_parameters(){
     SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
   }
   if (flagTurning)
-    SerialUSB.print("Turning mode activated");
+    SerialUSB.println("Turning mode activated");
 }
 

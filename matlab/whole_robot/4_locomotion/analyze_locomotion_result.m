@@ -1,14 +1,14 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 11;
+recordID = 20;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion);
 n_limb = size(limbs,1);
 n_samples = size(pos_phi_data.limb_phi,2);
 
-GRF = zeros(n_samples,n_limb);
+% GRF = zeros(n_samples,n_limb);
 for i=1:n_limb
     GRF(:,i) = data.float_value_time{1,i}(:,3);
 end
@@ -25,6 +25,24 @@ i_limb_stance_patch=3;
 plot_stance_patches(pos_phi_data.limb_phi(i_limb_stance_patch,:),gca(),(data.time(:,i_limb_stance_patch)-data.time(1,i_limb_stance_patch))/10^3);
 legend(legend_list);
 ylabel('Loadcell Z Channel [N]');
+ylim([-2 12]);
+xlabel('Time [s]');
+title(['Patches : limb ' num2str(i_limb_stance_patch) ' in stance according to its phase']);
+
+%filtered version:
+size_mv_average = 5;
+filter_coeffs = 1/size_mv_average*ones(size_mv_average,1);
+figure;
+hold on;
+for i=1:n_limb
+    time = (data.time(:,i)-data.time(1,i))/10^3;
+    plot(time, filter(filter_coeffs,1,GRF(:,i)));
+    legend_list{i} = ['LC ' num2str(i)];
+end
+i_limb_stance_patch=3;
+plot_stance_patches(pos_phi_data.limb_phi(i_limb_stance_patch,:),gca(),(data.time(:,i_limb_stance_patch)-data.time(1,i_limb_stance_patch))/10^3);
+legend(legend_list);
+ylabel('Loadcell Z Channel Filtered[N]');
 ylim([-2 12]);
 xlabel('Time [s]');
 title(['Patches : limb ' num2str(i_limb_stance_patch) ' in stance according to its phase']);
@@ -52,7 +70,7 @@ end
 
 
 %%
-simulated_limb_phi = compute_phi(pos_phi_data,GRF,parms_locomotion);
+simulated_limb_phi = compute_phi_wrapper(pos_phi_data,GRF,parms_locomotion);
 
 %%
 i_limb_stance_patch=3;

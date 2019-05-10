@@ -10,7 +10,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 89;
+recordID = 91;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -23,6 +23,12 @@ weights_speed = weights_speed/max(max(abs(weights_speed))) ;
 
 weights_speed_fused = fuse_weights_sym_direction(weights_speed,parms);
 % hinton_speed_fused(weights_speed_fused,parms,1);
+
+%%
+if recordID == 90
+    weights_speed_fused(1,2) = -0.18;
+    disp('Warning, i have hardcoded M2 speed X effect to -0.18!');
+end
 
 %%
 [limb,~,~] = get_good_limb(parms,recordID);

@@ -19,8 +19,9 @@
 #define BUFFER_SIZE                 512    // Should use power of 2...
 
 // SERVO'S
-#define MAX_NR_SERVOS               12
-#define MAX_N_LIMB                   6
+#define MAX_NR_SERVOS               16
+#define MAX_N_LIMB                   8
+//#define LEARN_WEIGHT_POS
 
 // DAISYCHAIN
 // Sampling Settings
@@ -32,7 +33,7 @@
 
 // LEARNING
 #define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
-#define SLOPE_LEARNING              2       
+#define SLOPE_LEARNING              1       
 #define LEARNING_RATE               10     // Learning rate for the update rule
 #define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
 #define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
@@ -53,8 +54,11 @@
 #define TIME_INTERVAL_MANUAL_RECENTERING    200    //in ms, delay between frames during manual recentering (the frames are just sent to update the LC values to print on console)
 
 //FILTERS
-#define USE_FILTER                1
-#define FILTER_ADD_SIZE           4  //number of additional values stored, used for filtering during the learning.
+#define USE_FILTER_LEARNING              1
+#define FILTER_ADD_SIZE_LEARNING         4  //number of additional values stored, used for filtering all sensor values during the learning.
+
+#define USE_FILTER_TEGOTAE               1
+#define FILTER_SIZE_TEGOTAE              4  //number of additional values stored, used for filtering only the GRF from LCs during the tegotae walking.
 
 /* ===================================================================================================================================== */
 

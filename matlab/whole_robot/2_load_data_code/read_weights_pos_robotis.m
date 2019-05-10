@@ -18,6 +18,12 @@ for k=1:n_twitches
     tline = fgetl(fileID);
     while ~strcmp(tline,['weights_pos{' num2str(k) '} = [ ...'])
         tline = fgetl(fileID);
+        if feof(fileID)
+            disp('End of file reached - Returning');
+            fclose(fileID);
+            cd(currentFolder);
+            return;
+        end
     end
     A = textscan(fileID,FormatString,'delimiter','\n');
     weights_pos_robotis{k}=zeros(n_lines,n_col);

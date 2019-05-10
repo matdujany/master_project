@@ -1,3 +1,20 @@
+function simulated_limb_phi = compute_phi_wrapper(pos_phi_data,GRF,parms_locomotion)
+%COMPUTE_PHI Summary of this function goes here
+%   Detailed explanation goes here
+if isfield(parms_locomotion,'use_filter') && parms_locomotion.use_filter
+    size_mv_average = parms_locomotion.filter_size+1;
+    filter_coeffs = 1/size_mv_average*ones(size_mv_average,1);
+    GRF_filtered = zeros(size(GRF));
+    for i=1:size(GRF_filtered,2)
+        GRF_filtered(:,i) =  filter(filter_coeffs,1,GRF(:,i));
+    end 
+    simulated_limb_phi = compute_phi(pos_phi_data,GRF_filtered,parms_locomotion);
+else
+    simulated_limb_phi = compute_phi(pos_phi_data,GRF,parms_locomotion);
+end
+end
+
+
 function simulated_limb_phi = compute_phi(pos_phi_data,GRF,parms_locomotion)
 %COMPUTE_PHI Summary of this function goes here
 %   Detailed explanation goes here
