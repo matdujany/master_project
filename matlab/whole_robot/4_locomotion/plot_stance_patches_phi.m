@@ -1,4 +1,4 @@
-function plot_stance_patches(phi,ax,time)
+function plot_stance_patches_phi(phi,ax,time)
 %PLOT_STANCE_PATCHES Summary of this function goes here
 %   Detailed explanation goes here
 

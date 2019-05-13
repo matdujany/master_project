@@ -6,8 +6,8 @@ addpath('functions');
 addpath('../2_load_data_code');
 
 %% loading
-recordID = 20;
-n_limb = 4;
+recordID = 25;
+n_limb = 8;
 
 fprintf("data_processing\n");
 filename = get_record_name_locomotion(recordID);
@@ -66,7 +66,7 @@ pos_phi_data = parsing_pos_phi_data_locomotion(phi_position_data,parms);
 
 %%
 if data.count_frames ~= size(pos_phi_data.phi_update_timestamp,2)
-    disp('Warning ! The number of frames from the loadcells and from the motor positions do not match');
+     disp('Warning ! The number of frames from the loadcells and from the motor positions do not match');
 end
 
 %%

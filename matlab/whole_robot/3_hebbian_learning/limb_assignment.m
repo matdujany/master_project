@@ -16,6 +16,7 @@ weights_pos_robotis  = read_weights_pos_robotis(recordID,parms);
 % parms_sim.eta = 10;
 % weights_sim = compute_weights_wrapper(data,lpdata,parms,1,0,0,0);
 
+weights_check = compute_weights_wrapper(data,lpdata,parms,0,0,0,0);
 weights_chosen = weights_robotis; %sim or robotis
 
 %%

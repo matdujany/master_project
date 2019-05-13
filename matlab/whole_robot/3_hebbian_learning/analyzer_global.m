@@ -18,8 +18,9 @@ weights_robotis = read_weights_robotis(recordID,parms);
 
 weights_speed_all = compute_weights_speed(data,lpdata,parms);
 weights_speed = weights_speed_all{parms.n_twitches};
-weights_speed = weights_speed/max(max(abs(weights_speed))) ;
+weights_speed = weights_speed/max(max(abs(weights_speed)));
 % hinton_speed(weights_speed,parms,1);
+
 
 weights_speed_fused = fuse_weights_sym_direction(weights_speed,parms);
 % hinton_speed_fused(weights_speed_fused,parms,1);
@@ -29,6 +30,11 @@ if recordID == 90
     weights_speed_fused(1,2) = -0.18;
     disp('Warning, i have hardcoded M2 speed X effect to -0.18!');
 end
+
+if recordID == 94
+    weights_speed_fused(1,[3 12 16]) = weights_speed_fused(1,[3 12 16])*5;
+    disp('Warning, i have hardcoded M3 M12 and M16 speed X effect to *5!');
+end    
 
 %%
 [limb,~,~] = get_good_limb(parms,recordID);
@@ -44,8 +50,11 @@ h_speed = hinton_speed_limb(weights_speed_fused_limb_order,limb,1);
 
 
 %%
+weights_check = compute_weights_wrapper(data,lpdata,parms,0,0,0,0);
+weights_check_last = weights_check{parms.n_twitches};
 weights_robotis_last = weights_robotis{parms.n_twitches};
-weights_lc = weights_robotis_last(1:3*parms.n_lc,:);
+
+weights_lc = weights_check_last(1:3*parms.n_lc,:);
 weights_lc = weights_lc/max(max(abs(weights_lc))) ;
 % hinton_LC(weights_lc,parms,1);
 
@@ -108,7 +117,14 @@ h_invmap = plot_lc_to_limb_inv_map(z_effect_lc_to_limb,parms,['Inverse map for m
 
 %% scaling sigma
 frequency = 0.5;
-total_load = 16;
+switch parms.n_m
+    case 8
+        total_load = 16;
+     case 12
+        total_load = 22.5;
+    case 16
+        total_load = 29;
+end
 GRF_term = mean(diag(z_effect_lc_to_limb))*total_load;
 sigma_advanced = -0.5 * 2*pi*frequency/GRF_term;
 
@@ -118,8 +134,12 @@ disp('changeDirs array '); disp(dir_oscillations == -1);
 disp('sigma_advanced'); disp(sigma_advanced);
 if parms.n_m == 8
     disp ('Inverse map :'); fprintf('{%.3f, %.3f, %.3f, %.3f} ,\n',z_effect_lc_to_limb');
-else
+end
+if parms.n_m == 12
     disp ('Inverse map :'); fprintf('{%.3f, %.3f, %.3f, %.3f, %.3f, %.3f} ,\n',z_effect_lc_to_limb');
+end
+if parms.n_m == 16
+    disp ('Inverse map :'); fprintf('{%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f} ,\n',z_effect_lc_to_limb');
 end
 
 

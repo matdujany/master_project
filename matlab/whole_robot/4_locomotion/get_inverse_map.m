@@ -1,4 +1,4 @@
-function [inverse_map,sigma_advanced] = get_inverse_map(parms_locomotion)
+function [inverse_map,sigma_advanced] = get_inverse_map(direction,id_map_used)
 %GET_INVERSE_MAP Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -63,7 +63,7 @@ inverse_map_Yaw_88 = [
 [0.685, -0.877, 0.872, -0.755]
 ];
 
-sigma_advanced_X_89  = 0.13;
+sigma_advanced_X_89  = 0.073;
 inverse_map_X_89 = [
 [-0.930, 0.606, 0.125, -0.544, 0.259, 0.541] ,
 [0.633, -0.563, 0.389, 0.303, -0.494, -0.050] ,
@@ -72,17 +72,29 @@ inverse_map_X_89 = [
 [0.227, -0.408, 0.071, 0.492, -0.560, 0.322] ,
 [0.440, 0.034, 0.191, -0.087, 0.599, -1.000]
  ];
+
+sigma_advanced_X_94  = 0.10;
+inverse_map_X_94 = [
+[-0.498, 0.107, 0.143, 0.018, -0.240, 0.041, 0.069, 0.462] ,
+[0.172, -0.539, 0.425, -0.013, 0.086, -0.235, -0.036, 0.199] ,
+[0.040, 0.561, -0.800, 0.215, 0.116, -0.129, 0.204, -0.082] ,
+[-0.107, 0.067, 0.209, -0.352, 0.172, 0.058, 0.103, 0.031] ,
+[-0.193, 0.089, 0.077, 0.100, -0.349, 0.165, 0.224, -0.061] ,
+[0.155, -0.137, -0.164, 0.195, 0.179, -0.316, 0.219, -0.026] ,
+[0.109, -0.129, 0.070, 0.050, 0.041, 0.341, -0.672, 0.232] ,
+[0.539, 0.054, -0.068, 0.198, -0.133, 0.076, 0.336, -1.000]
+ ];
              
-switch parms_locomotion.direction
+switch direction
     case "X"
-        sigma_advanced = eval(strcat("sigma_advanced_X_",num2str(parms_locomotion.id_map_used)));
-        inverse_map = eval(strcat("inverse_map_X_",num2str(parms_locomotion.id_map_used)));
+        sigma_advanced = eval(strcat("sigma_advanced_X_",num2str(id_map_used)));
+        inverse_map = eval(strcat("inverse_map_X_",num2str(id_map_used)));
     case "Y"
-        sigma_advanced = eval(strcat("sigma_advanced_Y_",num2str(parms_locomotion.id_map_used)));
-        inverse_map = eval(strcat("inverse_map_Y_",num2str(parms_locomotion.id_map_used)));
+        sigma_advanced = eval(strcat("sigma_advanced_Y_",num2str(id_map_used)));
+        inverse_map = eval(strcat("inverse_map_Y_",num2str(id_map_used)));
     case "Yaw"
-        sigma_advanced = eval(strcat("sigma_advanced_Yaw_",num2str(parms_locomotion.id_map_used)));
-        inverse_map = eval(strcat("inverse_map_Yaw_",num2str(parms_locomotion.id_map_used)));
+        sigma_advanced = eval(strcat("sigma_advanced_Yaw_",num2str(id_map_used)));
+        inverse_map = eval(strcat("inverse_map_Yaw_",num2str(id_map_used)));
     otherwise
         disp('unknown direction for inverse map');
 end

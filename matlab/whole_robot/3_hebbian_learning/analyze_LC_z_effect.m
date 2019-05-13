@@ -10,7 +10,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 89;
+recordID = 93;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -19,6 +19,7 @@ weights = weights_robotis{parms.n_twitches};
 weights_lc = weights(1:3*parms.n_lc,:);
 weights_lc = 100 * weights_lc/max(max(abs(weights_lc))) ;
 hinton_LC(weights_lc,parms,1);
+hinton_LC_asymmetry(weights_lc,parms,1);
 
 %%
 weights_lc_fused = fuse_weights_sym_direction(weights_lc,parms);

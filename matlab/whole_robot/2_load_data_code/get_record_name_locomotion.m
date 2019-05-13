@@ -42,6 +42,16 @@ switch recordId
         record_name = 'tegotae_advanced_88_X_2019-5-10-13_42_16';
     case 20
         record_name = 'tegotae_advanced_88_X_2019-5-10-13_47_46';
+    case 21
+        record_name = 'tegotae_advanced_94_X_2019-5-13-13_24_5';
+    case 22
+        record_name = 'tegotae_advanced_94_X_2019-5-13-16_43_50';
+    case 23
+        record_name = 'tegotae_simple_94_X_2019-5-13-17_2_56';
+    case 24
+        record_name = 'tegotae_simple_X_2019-5-13-17_34_9';
+    case 25
+        record_name = 'tegotae_advanced_94_X_2019-5-13-17_51_36';
     otherwise
         disp('unknown recordID for locomotion');
 end

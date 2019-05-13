@@ -3,21 +3,24 @@ clear; clc; close all;
 %% Parameters
 
 set_parms;
-parms_locomotion.recordingDuration = 30;
-parms_locomotion.frequency = 0.5;
+parms_locomotion.recordingDuration = 60;
+parms_locomotion.frequency = 0.5; 
 parms_locomotion.amplitude_class1_deg = 20;
 parms_locomotion.amplitude_class2_deg = 20;
 parms_locomotion.alpha = 0.2;
-parms_locomotion.sigma_s = 0.3;
+% parms_locomotion.sigma_s = 0.11;
+parms_locomotion.sigma_advanced = 0.19;
+parms_locomotion.phi_init = [6.03, 2.14, 3.68, 1.41, 4.72, 1.60, 3.18, 4.39];
 
-parms_locomotion.id_map_used = 88;
+parms_locomotion.id_map_used = 94;
 parms_locomotion.turning = false;
 parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
 
-parms_locomotion.use_filter = 1;
+parms_locomotion.use_filter = 0;
 parms_locomotion.filter_size = 4;
 
 parms_locomotion.categoryName = strcat("tegotae_advanced_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
+% parms_locomotion.categoryName = strcat("tegotae_simple_",parms_locomotion.direction);
 
 %% Main
 time_vec   = clock;
@@ -39,7 +42,7 @@ spmd(2)
     end
     s=serial(strcat('COM',num2str(COMportID)),'BaudRate',BaudRate);
     s.InputBufferSize = bufferSize;
-    s.Timeout = parms_locomotion.recordingDuration+30; %in seconds
+    s.Timeout = parms_locomotion.recordingDuration+60; %in seconds
     flushinput(s);
     fprintf("\nGathering data...\n");
     fopen(s);

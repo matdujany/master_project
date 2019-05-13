@@ -1,7 +1,7 @@
 #include <vector> //takes a lot of space,
 //could be improved with pointers
 
-#define MAP_USED 89
+#define MAP_USED 94
 
 //with recordID 86
 float sigma_advanced_X_86  = 0.12;
@@ -60,7 +60,8 @@ std::vector<std::vector<float>> inverse_map_Yaw_88{
 };
 
 //with recordID 89
-float sigma_advanced_X_89  = 0.13;
+//float sigma_advanced_X_89  = 0.13;
+float sigma_advanced_X_89  = 0.073;
 std::vector<std::vector<float>> inverse_map_X_89{
 {-0.930, 0.606, 0.125, -0.544, 0.259, 0.541} ,
 {0.633, -0.563, 0.389, 0.303, -0.494, -0.050} ,
@@ -70,6 +71,38 @@ std::vector<std::vector<float>> inverse_map_X_89{
 {0.440, 0.034, 0.191, -0.087, 0.599, -1.000}
  };
 
+ //with recordID 94
+ 
+//float sigma_advanced_X_94  = 0.17;
+//float sigma_advanced_X_94  = 0.10;
+float sigma_advanced_X_94  = 0.19;
+
+std::vector<std::vector<float>> inverse_map_X_94{
+{-0.498, 0.107, 0.143, 0.018, -0.240, 0.041, 0.069, 0.462} ,
+{0.172, -0.539, 0.425, -0.013, 0.086, -0.235, -0.036, 0.199} ,
+{0.040, 0.561, -0.800, 0.215, 0.116, -0.129, 0.204, -0.082} ,
+{-0.107, 0.067, 0.209, -0.352, 0.172, 0.058, 0.103, 0.031} ,
+{-0.193, 0.089, 0.077, 0.100, -0.349, 0.165, 0.224, -0.061} ,
+{0.155, -0.137, -0.164, 0.195, 0.179, -0.316, 0.219, -0.026} ,
+{0.109, -0.129, 0.070, 0.050, 0.041, 0.341, -0.672, 0.232} ,
+{0.539, 0.054, -0.068, 0.198, -0.133, 0.076, 0.336, -1.000}
+ };
+ 
+
+ /*
+ //float sigma_advanced_X_94  = 0.10;
+float sigma_advanced_X_94  = 0.054;
+std::vector<std::vector<float>> inverse_map_X_94{
+{-1.000, -0.000, -0.000, -0.000, -0.000, -0.000, -0.000, -0.000} ,
+{-0.000, -1.000, -0.000, -0.000, -0.000, -0.000, -0.000, -0.000} ,
+{-0.000, -0.000, -1.000, -0.000, -0.000, -0.000, -0.000, -0.000} ,
+{-0.000, -0.000, -0.000, -1.000, -0.000, -0.000, -0.000, -0.000} ,
+{-0.000, -0.000, -0.000, -0.000, -1.000, -0.000, -0.000, -0.000} ,
+{-0.000, -0.000, -0.000, -0.000, -0.000, -1.000, -0.000, -0.000} ,
+{-0.000, -0.000, -0.000, -0.000, -0.000, -0.000, -1.000, -0.000} ,
+{-0.000, -0.000, -0.000, -0.000, -0.000, -0.000, -0.000, -1.000} 
+ };
+ */
 
 std::vector<std::vector<uint8_t>> limbs_X{
     {5,4},
@@ -128,6 +161,28 @@ std::vector<std::vector<bool>> changeDirs_X_6legs{
     {true,true},
     {true,true},
     {true,true},
+    {false,false},
+    {false,false}
+};
+
+std::vector<std::vector<uint8_t>> limbs_X_8legs{
+    {0,8},
+    {9,7},
+    {4,3},
+    {2,1},
+    {13,12}, 
+    {15,14},
+    {11,10},
+    {6,5},
+};
+
+std::vector<std::vector<bool>> changeDirs_X_8legs{
+    {false,true},
+    {true,false},
+    {true,true},
+    {true,true},
+    {true,false},
+    {false,true},
     {false,false},
     {false,false}
 };

@@ -16,7 +16,7 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
 // RING BUFFER
-#define BUFFER_SIZE                 512    // Should use power of 2...
+#define BUFFER_SIZE                 256    // Should use power of 2...
 
 // SERVO'S
 #define MAX_NR_SERVOS               16
@@ -27,13 +27,13 @@
 // Sampling Settings
 // It will sample at the frequency given by 1000/TIME_INTERVAL_TWITCH
 
-#define    MAX_NR_ARDUINO           6      // Maximum number of load cell arduino's in the daisychain
+#define    MAX_NR_ARDUINO           8      // Maximum number of load cell arduino's in the daisychain
 #define    BAUD_RATE                500000  // Baud rate for load cell daisychain
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
 // LEARNING
 #define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
-#define SLOPE_LEARNING              1       
+#define SLOPE_LEARNING              1.5f      //1.5f 
 #define LEARNING_RATE               10     // Learning rate for the update rule
 #define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
 #define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
@@ -46,8 +46,8 @@
 #define RECENTERING_BETWEEN_ACTION  1   // (1) : servos are recentered at 512 after each twitching in the 2 directions.
 #define RECENTERING_DELAY           1500 
 
-#define TIME_INTERVAL_TWITCH        21     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
-#define DELAY_UPDATE_TEGOTAE        21     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
+#define TIME_INTERVAL_TWITCH        22     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
+#define DELAY_UPDATE_TEGOTAE        22     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
 
 
 #define DURATION_MANUAL_RECENTERING         15     //in s, manual recentering between twitch cycles
@@ -57,7 +57,7 @@
 #define USE_FILTER_LEARNING              1
 #define FILTER_ADD_SIZE_LEARNING         4  //number of additional values stored, used for filtering all sensor values during the learning.
 
-#define USE_FILTER_TEGOTAE               1
+#define USE_FILTER_TEGOTAE               0
 #define FILTER_SIZE_TEGOTAE              4  //number of additional values stored, used for filtering only the GRF from LCs during the tegotae walking.
 
 /* ===================================================================================================================================== */
@@ -131,7 +131,7 @@
 #define SOFT_PUNCH                      1       //uint16_t value
 #define RECENTERING_COMPLIANCE_MARGIN         1
 #define RECENTERING_COMPLIANCE_SLOPE          32           
-#define RECENTERING_PUNCH                     50
+#define RECENTERING_PUNCH                     30
 #define STIFF_COMPLIANCE_MARGIN         1
 #define STIFF_COMPLIANCE_SLOPE          16  //16           
 #define STIFF_PUNCH                     100  //150

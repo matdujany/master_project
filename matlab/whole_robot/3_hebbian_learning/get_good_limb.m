@@ -15,6 +15,13 @@ switch parms.n_m
         sign_direction_dropoff= [1    -1    -1     -1     1    1];
         sign_direction_knee = [1   -1   -1   -1  1  1];
         end
+    case 16
+        limb =  [13    14;   15    16;    4     5;     2     3;     9     1;     8     10; 11 12; 6 7];   
+        sign_direction_dropoff= 0;
+        sign_direction_knee = 0;
+        if recordID == 94
+            limb =  [9    1;   8    10;    4     5;     2     3;     13     14;     15     16; 11 12; 6 7];   
+        end
     otherwise
         disp ('unrecognized number of motors');
 en

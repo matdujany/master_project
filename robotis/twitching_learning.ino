@@ -21,6 +21,7 @@ void twitch_record_wrapper(){
     manual_recenter_robot_delay_twitch();
     update_IMU_offsets();
     init_buf_filter();
+    init_weight_matrix();
 
     // EXECUTE TWITCHING PROCESS
     twitch_main();
@@ -228,110 +229,6 @@ void compute_max_gap_stance(uint16_t &max_pos_gap, uint8_t &index_servo_max, uin
   count_max_idx[index_servo_max]++;
 }
 
-void pose_stance_soft(){
-
-  restaure_default_parameters_all_motors_syncWrite();
-  pose_stance();
-  sleep_while_moving();
-  update_load_pos_values();  
-
-  uint16_t max_pos_gap = 0;
-  uint16_t pos_gaps[n_servos];
-  uint16_t count_max_idx[n_servos];
-  for (int i=0; i<n_servos; i++)
-    count_max_idx[i] = 0;
-  uint8_t index_servo_max = 1;
-  uint8_t index_servo_max_old = 1;
-  compute_max_gap_stance(max_pos_gap, index_servo_max, pos_gaps, count_max_idx);
-
-  uint8_t count_iterations = 0;
-  while (max_pos_gap>3 & count_iterations<20){
-    get_closer_to_stance(max_pos_gap, index_servo_max, pos_gaps, count_max_idx);
-    sleep_while_moving();
-    compute_max_gap_stance(max_pos_gap, index_servo_max, pos_gaps, count_max_idx);
-    SerialUSB.print(index_servo_max);
-    SerialUSB.print("\t");
-    SerialUSB.println(max_pos_gap);
-    count_iterations++;
-  }
-}
-
-void get_closer_to_stance(uint16_t max_pos_gap, uint8_t index_servo_max, uint16_t *pos_gaps, uint16_t *count_max_idx){
-  /*
-  uint8_t new_compliance_margin[n_servos];
-  uint16_t new_punch[n_servos];
-  uint8_t new_compliance_slope[n_servos];
-  for (int i = 0; i < n_servos; i++){
-    new_compliance_margin[i] = std::max(1, max_pos_gap - pos_gaps[i]);
-    new_punch[i] = std::min(1023,32 + pos_gaps[i] * count_max_idx[i]);
-    new_compliance_slope[i] = std::max(1,32 + pos_gaps[i] * count_max_idx[i]);
-  }
-  
-  syncWrite_compliance_margins(n_servos, id, new_compliance_margin);
-  syncWrite_compliance_slopes(n_servos, id, new_compliance_slope);
-  syncWrite_punchs(n_servos, id, new_punch);
-  */
- make_all_servos_stiff_syncWrite();
- pose_stance();
- sleep_while_moving();
-
-}
-
-/*
-void pose_stance_soft(){
-  uint16_t max_pos_gap = 0;
-  uint8_t index_servo_max = 1;
-  compute_max_gap_stance(max_pos_gap, index_servo_max);
-  uint8_t count_iterations = 0;
-  while (max_pos_gap>3 & count_iterations<20){
-    uint8_t new_compliance_margin = max_pos_gap-2;
-    for (int i = 0; i < n_servos; i++){
-      if (i==index_servo_max)
-        set_compliance_margin(id[i],3);
-      else
-        set_compliance_margin(id[i],new_compliance_margin);
-    }
-    set_goal_position(id[index_servo_max],512);
-    delay(1000);
-    //sleep_while_moving();
-    compute_max_gap_stance(max_pos_gap, index_servo_max);
-    SerialUSB.print(index_servo_max);
-    SerialUSB.print("\t");
-    SerialUSB.println(max_pos_gap);
-    count_iterations++;    
-  }
-
-  //to put things back to normal
-  restaure_default_parameters_all_motors_syncWrite();
-  pose_stance();
-  update_load_pos_values();
-}
-*/
-
-/*
-void pose_stance_soft(){
-  uint16_t max_pos_gap = 0;
-  uint8_t index_servo_max = 1;
-  compute_max_gap_stance(max_pos_gap, index_servo_max);
-  uint8_t new_compliance_margin = 1;
-  uint8_t count_iterations = 0;
-  SerialUSB.println("Max pos gap");
-  while (max_pos_gap>3 & count_iterations<20){
-    new_compliance_margin = max_pos_gap - 2;
-    syncWrite_compliance_margin_all_servo(new_compliance_margin);
-    syncWrite_same_punch_all_servos(10);
-    syncWrite_compliance_slope_all_servo(200);
-    pose_stance();
-    sleep_while_moving();
-    compute_max_gap_stance(max_pos_gap, index_servo_max);
-    SerialUSB.print(index_servo_max);
-    SerialUSB.print("\t");
-    SerialUSB.println(max_pos_gap);
-    count_iterations++;
-  }
-}
-*/
-
 
 void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign, int i_action, uint16_t ampl_step_pos, int n_frames_tmp, int n_frames_this_part){
   unsigned long start_time_computation;
@@ -466,8 +363,10 @@ void twitch_learning_prog(int i_action, float m_learning)
   // Initialisation of local variables
   float alpha = LEARNING_RATE; // Learning rate is set by constant LEARNING_RATE
   float weight_delta;
+  int16_t weight_temp;
   float s_dot_select;
-  float weight;
+  float weight_float;
+  float weight_float_updated;
   int i_dir;
 
   // Learning for Loadcells and IMU
@@ -478,14 +377,27 @@ void twitch_learning_prog(int i_action, float m_learning)
     s_dot_select = s_dot_last[j_sensor];
     //SerialUSB.println(s_dot_select,3);
     // Select weight from array
-    weight = learning.weights[j_sensor][i_action];
-
+    weight_temp = learning.weights[j_sensor][i_action];
+    //SerialUSB.println(weight_temp);
+    weight_float = (float)(weight_temp)/100.0;
+    //SerialUSB.println(weight_float);
     // Apply Oja's differential learning rule
-    weight_delta = oja_diff_learning_rule(m_learning, s_dot_select, weight);
+    weight_delta = oja_diff_learning_rule(m_learning, s_dot_select, weight_float);
 
     // Apply weight update rule
-    learning.weights[j_sensor][i_action] = weight + alpha * weight_delta;
+    weight_float_updated = weight_float + alpha * weight_delta;
+    //SerialUSB.println(weight_float_updated);
+    if (100*abs(weight_float_updated)>32766){
+      SerialUSB.println("int16 overflow !!!!");
+      learning.weights[j_sensor][i_action] = get_sign(weight_float_updated)*32766;
+    }
+    else{
+      learning.weights[j_sensor][i_action] = (int16_t)(100*weight_float_updated);
+    }
+    //SerialUSB.println(learning.weights[j_sensor][i_action]);
+
   }
+
 
   //Learning for Motor Positions
   /*
@@ -640,9 +552,8 @@ void manual_recenter_robot_delay_twitch(){
   //SerialUSB.print(DURATION_MANUAL_RECENTERING);
   SerialUSB.println("Infinite delay starting, recenter robot on rugs if needed, interrupt with any serial input.");
   switch_frame_normal_mode();
-  //unsigned long time_start = millis();
-  //while (millis()-time_start<DURATION_MANUAL_RECENTERING*1000)
-  while(!SerialUSB.available())
+  unsigned long time_start = millis();
+  while(!SerialUSB.available() && millis()-time_start<DURATION_MANUAL_RECENTERING*1000)
   {
     unsigned long time_start_iter = millis();
     show_value_DC(0);
@@ -652,6 +563,7 @@ void manual_recenter_robot_delay_twitch(){
     SerialUSB.println("Interrupt this recentering delay with any serial input.");
     while(millis()-time_start_iter<TIME_INTERVAL_MANUAL_RECENTERING);
   }
+
   while(SerialUSB.available())
     SerialUSB.read();
   
@@ -764,6 +676,17 @@ void init_buf_filter(){
     }
   }
 }
+
+void init_weight_matrix(){
+  for (int j_tmp = 0; j_tmp < n_ard * 3 + IMU_USEFUL_CHANNELS; j_tmp++)
+  {
+    for (int i_action = 0; i_action < n_servos * 2; i_action++)
+    {
+      learning.weights[j_tmp][i_action] = 0;
+    }
+  }
+}
+
 
 void print_twitching_parameters(){
   SerialUSB.print("Slope of the ramp used for learning : "); SerialUSB.println(SLOPE_LEARNING);

@@ -7,15 +7,20 @@ void init_tegotae(){
   print_locomotion_parameters();
 }
 
-
-void record_harcoded_tegotae(int recording_duration){
+void record_harcoded_tegotae_change_phi_init(){
   init_tegotae();
   init_recording_locomotion();
 
   init_phi_tegotae();
+  for (int i=0; i<n_limb; i++){
+    phi[i] = phi_init[i];
+  }
+  int recording_duration = 60;
   send_command_limb_oscillators(); 
   unsigned long t_start_recording = millis();
-  while (millis()-t_start_recording<recording_duration*1000){
+
+  while (millis()-t_start_recording<recording_duration*1000)
+  {
     unsigned long t_start_update_loop = millis();
     send_phi_and_pos_Serial3();
     send_frame_and_update_sensors(1,0);
@@ -23,6 +28,46 @@ void record_harcoded_tegotae(int recording_duration){
     send_command_limb_oscillators();
     while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
   }
+
+  SerialUSB.println("Tegotae recording over");
+  SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
+  SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);  
+}
+
+
+void record_harcoded_tegotae_changes(){
+  init_tegotae();
+  init_recording_locomotion();
+
+  init_phi_tegotae();
+  frequency = frequency_recording[0];
+  sigma_advanced = sigma_advanced_recording[0];
+  sigma_s = sigma_simple_recording[0];
+  int recording_duration = time_changes[n_changes_recording];
+  send_command_limb_oscillators(); 
+  unsigned long t_start_recording = millis();
+
+  while (millis()-t_start_recording<recording_duration*1000)
+  {
+    unsigned long t_start_update_loop = millis();
+    send_phi_and_pos_Serial3();
+    send_frame_and_update_sensors(1,0);
+    update_phi_tegotae();
+    send_command_limb_oscillators();
+    for (int i=0;i<n_changes_recording;i++)
+    {
+      if (!changes_done[i] && millis()-t_start_recording>time_changes[i]*1000){
+        frequency = frequency_recording[i+1];
+        sigma_advanced = sigma_advanced_recording[i+1];
+        sigma_s = sigma_simple_recording[i+1];
+        changes_done[i] = true;
+        SerialUSB.print("Change done at t=");
+        SerialUSB.println((millis()-t_start_recording)/1000);
+      }
+    }
+    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
+  }
+
   SerialUSB.println("Tegotae recording over");
   SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
   SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);  
@@ -104,6 +149,13 @@ void initialize_hardcoded_limbs(){
       fill_changeDirs_array(changeDirs_X_6legs);
     }
   }
+  if(MAP_USED == 94){
+    n_limb = 8;
+    if (direction_X){
+      fill_limbs_array(limbs_X_8legs);
+      fill_changeDirs_array(changeDirs_X_8legs);
+    }
+  }
   
   init_offset_class1();
 
@@ -154,15 +206,22 @@ void initialize_inverse_map_advanced_tegotae(){
       sigma_advanced = sigma_advanced_X_89;
       fill_inverse_map_array(inverse_map_X_89);
     }
-  }     
+  }
+  if (MAP_USED==94)
+  {
+    if (direction_X){
+      sigma_advanced = sigma_advanced_X_94;
+      fill_inverse_map_array(inverse_map_X_94);
+    }
+  }      
 }
 
 void init_offset_class1(){
   if (flagTurning){
-    for (int i : {1, 2}){
+    for (int i : {1, 2, 3, 4}){
       offset_class1[i] = -pi/2;
     }
-    for (int i : {0, 3}){
+    for (int i : {0, 5, 6, 7}){
       offset_class1[i] = pi/2;
     }
   }

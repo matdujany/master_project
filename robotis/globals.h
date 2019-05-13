@@ -39,16 +39,27 @@ int flagVerbose        = 0;       // Default mode: print no information
 
 // CPG/Tegotae Locomotion related:
 float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
-float amplitude_class1 = 15; //class 1 are motors producing the movement in the direction asked
-float amplitude_class2 = 15; //class 2 are motors doing the loading/unloading (stance/swing) cycle
+float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
+float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
 float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
-float sigma_s         = 0.3;       // Sigma S; see Fukuhara 2018 article
+float sigma_s         = 0.11;       // Sigma S; see Fukuhara 2018 article
 
 bool tegotae_advanced = true;
 bool direction_X      = true;   //to go in X
 bool direction_Y      = false;   //to go in Y 
 bool direction_Yaw    = false;   //to go in Yaw
 bool flagTurning      = false;   //to turn on spot instead of forward
+
+//recordings
+float frequency_recording[4] = {0.25, 0.5, 1, 1.5 };
+float sigma_advanced_recording[4] = {0.10, 0.19, 0.38, 0.57};
+float sigma_simple_recording[4] = {0.054,-0.11,-0.22, 0.32};
+
+int n_changes_recording = 3;
+int time_changes[4] = {60, 90, 120,150}; //the last value is the end of the recoding
+bool changes_done [3] = {false,false,false};
+
+float phi_init[8] = {6.03, 2.14, 3.68, 1.41, 4.72, 1.60, 3.18, 4.39} ;
 
 //for limb oscillators
 unsigned long t_last_phi_update      = 0;
@@ -204,7 +215,9 @@ buffer_filter buf_filter;
 typedef struct learning_struct
 {
   //double s_dot_oja[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];     //last s_dot sent to Oja, useful for comparing with Matlab
-  float weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
+  //loat weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
+  int16_t weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
+
   //int weights_pos[MAX_NR_SERVOS][MAX_NR_SERVOS * 2];
 }
 learning_struct;

@@ -68,7 +68,7 @@ void setup() {
 
   //timing duration of daisychain;
   //compute_duration_daisychain_ms();
-  duration_daisychain=5;
+  duration_daisychain=7;
   
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
@@ -81,10 +81,12 @@ void setup() {
 
   //pose_stance_soft();
 
-  twitch_record_wrapper();
-
+  //twitch_record_wrapper();
+  //SerialUSB.println(-512);
+  //SerialUSB.println(512);
   //record_harcoded_tegotae(30);
-  //record_harcoded_tegotae(90);
+  
+  record_harcoded_tegotae_change_phi_init();
   
   //hardcoded_tegotae();
 }
@@ -97,6 +99,6 @@ void loop() {
   //update_load_pos_values();
   //SerialUSB.print("Motor positions, ");
   //print_motor_positions();
-  //show_value_DC(50);
+  //show_value_DC(20);
   //serial_read_test_twitch();
 }
