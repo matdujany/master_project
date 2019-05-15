@@ -86,9 +86,9 @@ void setup() {
   //SerialUSB.println(512);
   //record_harcoded_tegotae(30);
   
-  record_harcoded_tegotae_change_phi_init();
+  //record_harcoded_tegotae_change_phi_init();
   
-  //hardcoded_tegotae();
+  hardcoded_tegotae();
 }
 
 

@@ -166,44 +166,44 @@ void initialize_inverse_map_advanced_tegotae(){
   if (MAP_USED==86)
   {
     if (direction_X){
-      sigma_advanced = sigma_advanced_X_86;
+      //sigma_advanced = sigma_advanced_X_86;
       fill_inverse_map_array(inverse_map_X_86);
     }
     if (direction_Y){
-      sigma_advanced = sigma_advanced_Y_86;
+      //sigma_advanced = sigma_advanced_Y_86;
       fill_inverse_map_array(inverse_map_Y_86);
     }
   }
   if (MAP_USED==87)
   {
     if (direction_X){
-      sigma_advanced = sigma_advanced_X_87;
+      //sigma_advanced = sigma_advanced_X_87;
       fill_inverse_map_array(inverse_map_X_87);
     }
     if (direction_Y){
-      sigma_advanced = sigma_advanced_Y_87;
+      //sigma_advanced = sigma_advanced_Y_87;
       fill_inverse_map_array(inverse_map_Y_87);
     }
   }
   if (MAP_USED==88)
   {
     if (direction_X){
-      sigma_advanced = sigma_advanced_X_88;
+      //sigma_advanced = sigma_advanced_X_88;
       fill_inverse_map_array(inverse_map_X_88);
     }
     if (direction_Y){
-      sigma_advanced = sigma_advanced_Y_88;
+      //sigma_advanced = sigma_advanced_Y_88;
       fill_inverse_map_array(inverse_map_Y_88);
     }
     if (direction_Yaw){
-      sigma_advanced = sigma_advanced_Yaw_88;
+      //sigma_advanced = sigma_advanced_Yaw_88;
       fill_inverse_map_array(inverse_map_Yaw_88);
     }
   }
   if (MAP_USED==89)
   {
     if (direction_X){
-      sigma_advanced = sigma_advanced_X_89;
+      //sigma_advanced = sigma_advanced_X_89;
       fill_inverse_map_array(inverse_map_X_89);
     }
   }
