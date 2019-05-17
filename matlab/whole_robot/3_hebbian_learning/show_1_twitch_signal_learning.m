@@ -26,7 +26,7 @@ good_closest_LC = get_good_closest_LC(parms,recordID);
 n_iter = 1;
 index_motor_plot = 2;
 index_loadcell_plot = 3;
-index_channel_plot = 2;
+index_channel_plot = 1;
 
 %%
 for i_dir = 1 : 2
@@ -90,7 +90,7 @@ theoretical_traj = compute_theoretical_traj_wrapper(i_dir,parms);
 hold on;
 plot(lpdata.motor_position(index_motor_plot,index_start:index_end),'b-');
 plot(lpdata.motor_positionfiltered(index_motor_plot,index_start:index_end),'b--');
-plot(theoretical_traj(n_frames_theo.part0 + 1:n_frames_theo.part0 + n_frames_theo.part1),'k-');
+% plot(theoretical_traj(n_frames_theo.part0 + 1:n_frames_theo.part0 + n_frames_theo.part1),'k-');
 xlabel('Frame index');
 ylabel(['Motor ' num2str(index_motor_plot) ' Position']);
 %     for i=1:parms.n_m
@@ -98,6 +98,7 @@ ylabel(['Motor ' num2str(index_motor_plot) ' Position']);
 %     end
 yyaxis right;
 %plot(data.float_value_dot_time{1,index_loadcell_plot}(index_start:index_end,channel),'--');
+% plot(data.float_value_time{1,index_loadcell_plot}(index_start:index_end,3),'k-');
 plot(data.float_value_time{1,index_loadcell_plot}(index_start:index_end,index_channel_plot),'r-');
 plot(data.s_lc_filtered(index_start:index_end,index_channel_plot+3*(index_loadcell_plot-1)),'r--');
 ylabel(['Loadcell ' num2str(index_loadcell_plot) ' channel ' num2str(index_channel_plot) ' value [N]']);

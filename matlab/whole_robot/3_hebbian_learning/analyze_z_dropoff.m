@@ -9,7 +9,7 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 84;
+recordID = 81;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights = read_weights_robotis(recordID,parms);
@@ -65,20 +65,36 @@ f.Color = 'w';
 f.Position = [20 50 2000 400];
 end
 
-%% figure report
+%% figure report 
+
+%with 84, no rugs
+% f=figure;
+% count = 1;
+% for i_twitch_part_plot=[1 2 3]
+%     subplot(2,3,count);
+%     plot_lc_motor_part(1,5,2,i_twitch_part_plot,s_lc,lpdata,threshold_factor,index_channel_lc,parms);
+%     subplot(2,3,count+3);
+%     plot_lc_motor_part(3,5,2,i_twitch_part_plot,s_lc,lpdata,threshold_factor,index_channel_lc,parms);
+%     count = count+1;
+% end
+% f.Color = 'w';
+% f.Position = [20 50 1800 900];
+% set(f,'PaperOrientation','landscape');
+% print(f, '-dpdf','-bestfit', 'figures_report/z_dropoff_distinguish_84.pdf');
+
+
+
 f=figure;
 count = 1;
 for i_twitch_part_plot=[1 2 3]
-    subplot(2,3,count);
+    subplot(1,3,i_twitch_part_plot);
     plot_lc_motor_part(1,5,2,i_twitch_part_plot,s_lc,lpdata,threshold_factor,index_channel_lc,parms);
-    subplot(2,3,count+3);
-    plot_lc_motor_part(3,5,2,i_twitch_part_plot,s_lc,lpdata,threshold_factor,index_channel_lc,parms);
-    count = count+1;
+    ylim([-1 16]);
 end
 f.Color = 'w';
-f.Position = [20 50 1800 900];
+f.Position = [20 50 1800 500];
 set(f,'PaperOrientation','landscape');
-print(f, '-dpdf','-bestfit', 'figures_report/z_dropoff_distinguish.pdf');
+print(f, '-dpdf','-bestfit', 'figures_report/z_dropoff_rugs_81.pdf');
 
 %%
 dropoffs_summed = sum(totalcounts,3);

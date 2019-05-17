@@ -81,7 +81,7 @@ void setup() {
 
   //pose_stance_soft();
 
-  //twitch_record_wrapper();
+  twitch_record_wrapper();
   //SerialUSB.println(-512);
   //SerialUSB.println(512);
   //record_harcoded_tegotae(30);

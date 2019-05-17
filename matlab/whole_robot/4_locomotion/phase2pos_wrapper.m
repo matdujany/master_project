@@ -1,4 +1,4 @@
-function pos = phase2pos_hipknee_wrapper(phase,isClass2,changeDir,params)
+function pos = phase2pos_wrapper(phase,isClass2,changeDir,params)
 %PHASE2POS_HIPKNEE_WRAPPER Summary of this function goes here
 %   Detailed explanation goes here
 if isClass2
