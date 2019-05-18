@@ -19,15 +19,15 @@
 #define BUFFER_SIZE                 256    // Should use power of 2...
 
 // SERVO'S
-#define MAX_NR_SERVOS               16
-#define MAX_N_LIMB                   8
+#define MAX_NR_SERVOS               20
+#define MAX_N_LIMB                   10
 //#define LEARN_WEIGHT_POS
 
 // DAISYCHAIN
 // Sampling Settings
 // It will sample at the frequency given by 1000/TIME_INTERVAL_TWITCH
 
-#define    MAX_NR_ARDUINO           8      // Maximum number of load cell arduino's in the daisychain
+#define    MAX_NR_ARDUINO           10      // Maximum number of load cell arduino's in the daisychain
 #define    BAUD_RATE                500000  // Baud rate for load cell daisychain
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
@@ -54,11 +54,11 @@
 #define TIME_INTERVAL_MANUAL_RECENTERING    200    //in ms, delay between frames during manual recentering (the frames are just sent to update the LC values to print on console)
 
 //FILTERS
-#define USE_FILTER_LEARNING              1
-#define FILTER_ADD_SIZE_LEARNING         4  //number of additional values stored, used for filtering all sensor values during the learning.
+#define USE_FILTER_LEARNING              1 
+#define FILTER_ADD_SIZE_LEARNING         2  //4 //number of additional values stored, used for filtering all sensor values during the learning.
 
 #define USE_FILTER_TEGOTAE               0
-#define FILTER_SIZE_TEGOTAE              4  //number of additional values stored, used for filtering only the GRF from LCs during the tegotae walking.
+#define FILTER_SIZE_TEGOTAE              0  //number of additional values stored, used for filtering only the GRF from LCs during the tegotae walking.
 
 /* ===================================================================================================================================== */
 

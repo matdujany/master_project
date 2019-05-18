@@ -22,7 +22,8 @@ end
 
 %%
 if flagPlot
-    plot_data_image(sum(totalcounts,3),parms,['Total counts of value below threshold (' num2str(threshold_factor) ' of static load)']);
+    plot_data_image(sum(totalcounts,3),parms,['Total counts of samples below threshold (' num2str(threshold_factor) ' of static load)']);
+%     export_fig figures_report/counts_dropoffs_bool_81.pdf;
     plot_data_image(-mean(min_dropoffs,3),parms,['Average (over ' num2str(parms.n_twitches) ' twitch cycles) of max load dropoff']);
 
 end

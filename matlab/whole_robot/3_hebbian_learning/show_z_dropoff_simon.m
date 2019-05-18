@@ -10,7 +10,7 @@ lineWidth = 1.4;
 %% Load data
 recordID = 17; %17 is good (high twitching amplitude).
 [data, lpdata, parms] =  load_data_processed(recordID);
-add_parms;
+parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
 
 hinton_LC(weights_robotis{parms.n_twitches},parms);
@@ -100,7 +100,7 @@ set(f,'PaperOrientation','landscape');
 set(f,'Position',[10 10 1000 300]);
 
 %%
-%print(f, '-dpdf', 'figures_simon/z_dropoff.pdf');
+print(f, '-dpdf', 'figures_report/z_dropoff.pdf');
 
 
 

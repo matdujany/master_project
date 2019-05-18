@@ -36,7 +36,7 @@ end
 txt_loadcell = {' X',' Y',' Z'};
 x_shift=0.25;
 for i=1:3*n_sensors
-    text(x_min-x_shift,3*n_sensors+0.5-i,['Loadcell ' num2str(ceil(i/3)) txt_loadcell{mod(i-1,3)+1}],'FontSize',fontSize_lines,'HorizontalAlignment','right');
+    text(x_min-x_shift,3*n_sensors+0.5-i,['LC ' num2str(ceil(i/3)) txt_loadcell{mod(i-1,3)+1}],'FontSize',fontSize_lines,'HorizontalAlignment','right');
 end
 
 %column labels

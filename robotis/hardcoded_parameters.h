@@ -4,7 +4,7 @@
 #define MAP_USED 94
 
 //with recordID 86
-float sigma_advanced_X_86  = 0.12;
+float sigma_advanced_X_86  = 0.150;  //16N, 0.5 Hz, scale 0.5 (GRF_term)
 std::vector<std::vector<float>> inverse_map_X_86{
 {-0.703, 0.959,-0.713, 0.738} ,
 { 1.000,-0.727, 0.858,-0.858} ,
@@ -12,7 +12,7 @@ std::vector<std::vector<float>> inverse_map_X_86{
 { 0.543,-0.552, 0.781,-0.631}
  };
 
-float sigma_advanced_Y_86  = 0.12;
+float sigma_advanced_Y_86  = 0.141; //16N, 0.5 Hz, scale 0.5 (GRF_term)
 std::vector<std::vector<float>> inverse_map_Y_86{ 
 {-0.446, 0.643,-0.674, 0.463} ,
 { 0.907,-0.849, 0.814,-0.895} ,
@@ -22,14 +22,14 @@ std::vector<std::vector<float>> inverse_map_Y_86{
 
 
 //with recordID 87
-float sigma_advanced_X_87  = 0.12;
+float sigma_advanced_X_87  = 0.136; //16N, 0.5 Hz, scale 0.5 (GRF_term)
 std::vector<std::vector<float>> inverse_map_X_87{
 {-0.722, 0.790, -0.589, 0.628} ,
 {0.858, -0.668, 0.801, -0.749} ,
 {-0.801, 0.752, -0.734, 0.976} ,
 {0.779, -0.784, 1.000, -0.771} 
  };
-float sigma_advanced_Y_87  = 0.12;
+float sigma_advanced_Y_87  = 0.131; //16N, 0.5 Hz, scale 0.5 (GRF_term)
 std::vector<std::vector<float>> inverse_map_Y_87{ 
 {-0.635, 0.825,-0.779, 0.590} ,
 { 0.941,-0.844, 0.853,-0.970} ,
@@ -37,21 +37,21 @@ std::vector<std::vector<float>> inverse_map_Y_87{
 { 0.678,-1.000, 0.926,-0.763} };
 
 //with recordID 88
-float sigma_advanced_X_88  = 0.11;
+float sigma_advanced_X_88  = 0.114; //16N, 0.5 Hz, scale 0.5 (GRF_term)
 std::vector<std::vector<float>> inverse_map_X_88{
 {-0.836, 0.832, -0.647, 0.701} ,
 {0.877, -0.797, 0.879, -0.890} ,
 {-0.820, 0.823, -0.868, 0.896} ,
 {0.786, -0.789, 1.000, -0.948}
  };
-float sigma_advanced_Y_88  = 0.13;
+float sigma_advanced_Y_88  = 0.132; //16N, 0.5 Hz, scale 0.5 (GRF_term)
 std::vector<std::vector<float>> inverse_map_Y_88{ 
 {-0.558, 0.806, -0.790, 0.609} ,
 {0.914, -0.783, 0.736, -0.854} ,
 {-1.000, 0.891, -0.889, 0.927} ,
 {0.685, -0.877, 0.872, -0.755}
 };
-float sigma_advanced_Yaw_88  = 0.13;
+float sigma_advanced_Yaw_88  = 0.132; //16N, 0.5 Hz, scale 0.5 (GRF_term)
 std::vector<std::vector<float>> inverse_map_Yaw_88{ 
 {-0.558, 0.806, -0.790, 0.609} ,
 {0.914, -0.783, 0.736, -0.854} ,
@@ -60,8 +60,7 @@ std::vector<std::vector<float>> inverse_map_Yaw_88{
 };
 
 //with recordID 89
-//float sigma_advanced_X_89  = 0.13;
-float sigma_advanced_X_89  = 0.073;
+float sigma_advanced_X_89  = 0.187;  //22.5N, 0.5 Hz, scale 1 (GRF_term)
 std::vector<std::vector<float>> inverse_map_X_89{
 {-0.930, 0.606, 0.125, -0.544, 0.259, 0.541} ,
 {0.633, -0.563, 0.389, 0.303, -0.494, -0.050} ,
@@ -72,11 +71,7 @@ std::vector<std::vector<float>> inverse_map_X_89{
  };
 
  //with recordID 94
- 
-//float sigma_advanced_X_94  = 0.17;
-//float sigma_advanced_X_94  = 0.10;
-float sigma_advanced_X_94  = 0.19;
-
+float sigma_advanced_X_94  = 0.192; //29N, 0.5 Hz, scale 1 (GRF_term)
 std::vector<std::vector<float>> inverse_map_X_94{
 {-0.498, 0.107, 0.143, 0.018, -0.240, 0.041, 0.069, 0.462} ,
 {0.172, -0.539, 0.425, -0.013, 0.086, -0.235, -0.036, 0.199} ,

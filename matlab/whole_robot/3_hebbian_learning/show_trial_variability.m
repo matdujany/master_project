@@ -1,13 +1,13 @@
 clear; 
 close all; clc;
 
-addpath('../2_get_data_code');
-addpath('../plotting_functions');
+% addpath('../2_get_data_code');
+% addpath('../plotting_functions');
 
 %% Load data
-recordID = 1;
+recordID = 84;
 [data, lpdata, parms] =  load_data_processed(recordID);
-add_parms;
+parms = add_parms(parms);
 
 %%
 [lpdata,data,idx_start,idx_end] = compute_avg_cycles(lpdata,data,parms);

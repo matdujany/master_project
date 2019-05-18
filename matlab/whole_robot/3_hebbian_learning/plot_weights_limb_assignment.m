@@ -19,7 +19,7 @@ h.Color = 'w';
 
 for i_motor=1:parms.n_m
     for i_lc=1:parms.n_lc
-        text(i_motor-0.5,parms.n_lc-i_lc+0.5,num2str(weights_fused_limbass(i_lc,i_motor),'%.2f'),'FontSize',fontSize-2,'HorizontalAlignment','center');
+        text(i_motor-0.5,parms.n_lc-i_lc+0.5,num2str(weights_fused_limbass(i_lc,i_motor),'%.3f'),'FontSize',fontSize-2,'HorizontalAlignment','center');
     end
 end
 

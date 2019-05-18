@@ -166,44 +166,44 @@ void initialize_inverse_map_advanced_tegotae(){
   if (MAP_USED==86)
   {
     if (direction_X){
-      sigma_advanced = sigma_advanced_X_86;
+      //sigma_advanced = sigma_advanced_X_86;
       fill_inverse_map_array(inverse_map_X_86);
     }
     if (direction_Y){
-      sigma_advanced = sigma_advanced_Y_86;
+      //sigma_advanced = sigma_advanced_Y_86;
       fill_inverse_map_array(inverse_map_Y_86);
     }
   }
   if (MAP_USED==87)
   {
     if (direction_X){
-      sigma_advanced = sigma_advanced_X_87;
+      //sigma_advanced = sigma_advanced_X_87;
       fill_inverse_map_array(inverse_map_X_87);
     }
     if (direction_Y){
-      sigma_advanced = sigma_advanced_Y_87;
+      //sigma_advanced = sigma_advanced_Y_87;
       fill_inverse_map_array(inverse_map_Y_87);
     }
   }
   if (MAP_USED==88)
   {
     if (direction_X){
-      sigma_advanced = sigma_advanced_X_88;
+      //sigma_advanced = sigma_advanced_X_88;
       fill_inverse_map_array(inverse_map_X_88);
     }
     if (direction_Y){
-      sigma_advanced = sigma_advanced_Y_88;
+      //sigma_advanced = sigma_advanced_Y_88;
       fill_inverse_map_array(inverse_map_Y_88);
     }
     if (direction_Yaw){
-      sigma_advanced = sigma_advanced_Yaw_88;
+      //sigma_advanced = sigma_advanced_Yaw_88;
       fill_inverse_map_array(inverse_map_Yaw_88);
     }
   }
   if (MAP_USED==89)
   {
     if (direction_X){
-      sigma_advanced = sigma_advanced_X_89;
+      //sigma_advanced = sigma_advanced_X_89;
       fill_inverse_map_array(inverse_map_X_89);
     }
   }
@@ -239,11 +239,11 @@ void send_command_limb_oscillators(){
   for (int i=0; i<n_limb; i++){
     //class 1 first : doing movement
     servo_id_list[2*i] = id[limbs[i][0]];
-    goal_positions_tegotae[2*i] = phase2pos_hipknee_wrapper(phi[i]+offset_class1[i], 0, changeDirs[i][0]);
+    goal_positions_tegotae[2*i] = phase2pos_wrapper(phi[i]+offset_class1[i], 0, changeDirs[i][0]);
 
     //class 2 : stance swing
     servo_id_list[2*i+1] = id[limbs[i][1]];
-    goal_positions_tegotae[2*i+1] = phase2pos_hipknee_wrapper(phi[i], 1, changeDirs[i][1]);
+    goal_positions_tegotae[2*i+1] = phase2pos_wrapper(phi[i], 1, changeDirs[i][1]);
   }
   syncWrite_position_n_servos(n_servos, servo_id_list, goal_positions_tegotae);
 }
@@ -258,7 +258,7 @@ uint16_t phase2pos_oscillator(float phase, float amp_deg, boolean changeDir){
   return pos;
 }
 
-uint16_t phase2pos_hipknee_wrapper(float phase, boolean isClass2, boolean changeDir){
+uint16_t phase2pos_wrapper(float phase, boolean isClass2, boolean changeDir){
   if (isClass2){
     if (sin(phase) > 0) // swing
       return phase2pos_oscillator(phase, amplitude_class2, changeDir);
