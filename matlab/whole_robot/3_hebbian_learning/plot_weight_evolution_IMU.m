@@ -1,9 +1,14 @@
-function plot_weight_evolution_IMU(weights,parms)
+function f_gyro=plot_weight_evolution_IMU(weights,parms,opt_parms)
 %PLOT_WEIGHT_EVOLUTION_IMU Summary of this function goes here
 %   Detailed explanation goes here
 
 fontsize=14;
 linewidth=1.3;
+
+if nargin == 2
+    opt_parms.motor_list = 1:2*parms.n_m;
+end
+
 
 colorlist = lines(parms.n_m);
 legend_list = cell(parms.n_m*2,1);
@@ -15,31 +20,33 @@ if parms.n_useful_ch_IMU == 4
     end
 else
     if parms.n_useful_ch_IMU ==6
-        txt_list_channels = {'X','Y','Z','Roll','Pitch','Yaw'};
-        figure;
+         txt_list_channels = {'X','Y','Z','Roll','Pitch','Yaw'};
+%         figure;
+%         for i=1:3
+%             subplot(1,4,i)
+%             legend_list = plot_IMU(weights,parms,i,colorlist,['Accelerometer channel ' txt_list_channels{i}],fontsize,linewidth,0,opt_parms);
+%         end
+%         plot_legend_hack(parms,colorlist,legend_list,fontsize);
+        f_gyro = figure;
         for i=1:3
-            subplot(2,2,i)
-            legend_list = plot_IMU(weights,parms,i,colorlist,['IMU Accelerometer channel ' txt_list_channels{i}],fontsize,linewidth,0);
+            subplot(1,4,i)
+            legend_list = plot_IMU(weights,parms,i+3,colorlist,['Gyroscope channel ' txt_list_channels{3+i}],fontsize,linewidth,0,opt_parms);
         end
-        plot_legend_hack(parms,colorlist,legend_list,fontsize);
-        figure;
-        for i=1:3
-            subplot(2,2,i)
-            legend_list = plot_IMU(weights,parms,i+3,colorlist,['IMU Gyroscope channel ' txt_list_channels{3+i}],fontsize,linewidth,0);
-        end
-        plot_legend_hack(parms,colorlist,legend_list,fontsize);
+        plot_legend_hack(parms,colorlist,legend_list,fontsize,opt_parms);
+        f_gyro.Color = 'w';
     end
 end
 
 end
 
-function plot_legend_hack(parms,colorlist,legend_list,fontsize)
-subplot(2,2,4)
+function plot_legend_hack(parms,colorlist,legend_list,fontsize,opt_parms)
+subplot(1,4,4)
 %just a workaround/hack to plot the legend in a separate subplot
 %matlab wants as many series as legend entries to show the legend
 %so i plot series of (0,0)
 hold on;
-for j = 1:parms.n_m*2
+for j_sub=1:length(opt_parms.motor_list)
+    j = opt_parms.motor_list(j_sub);
     if mod(j,2) == 1
         linestyle = '--';
     else
@@ -50,18 +57,20 @@ end
 axis off
 l=legend(legend_list{:});
 l.FontSize = fontsize;
+l.Position = [0.759436060557064,0.07459388574413,0.138467575728145,0.872946029537721];
 end
 
-function legend_list = plot_IMU(weights,parms,channel,colorlist,titleString,fontsize,linewidth,flagShowLegend)
-legend_list = cell(parms.n_m*2,1);
+function legend_list = plot_IMU(weights,parms,channel,colorlist,titleString,fontsize,linewidth,flagShowLegend,opt_parms)
+legend_list = cell(length(opt_parms.motor_list),1);
 hold on
-for j=1:parms.n_m*2
+for j_sub=1:length(opt_parms.motor_list)
+    j = opt_parms.motor_list(j_sub);
     if mod(j,2) == 1
         linestyle = '--';
-        legend_list{j} = ['Motor ' num2str(ceil(j/2)) ', direction -'];
+        legend_list{j_sub} = ['Motor ' num2str(ceil(j/2)) ', direction -'];
     else
         linestyle = '-';
-        legend_list{j} = ['Motor ' num2str(ceil(j/2)) ', direction +'];
+        legend_list{j_sub} = ['Motor ' num2str(ceil(j/2)) ', direction +'];
     end
     for k=1:parms.n_twitches
         data_for_plot(k) = weights{k}(3*parms.nr_arduino+channel,j);
@@ -69,14 +78,21 @@ for j=1:parms.n_m*2
     x_data = 0:parms.n_twitches;
     plot(x_data,[0;data_for_plot'],'LineStyle',linestyle,'Color',colorlist(ceil(j/2),:),'LineWidth',linewidth);
 end
+grid on;
 hold off
 title(titleString,'FontSize',fontsize);
 xlabel('Twitch iteration number','FontSize',fontsize);
+ylabel('Weight value','FontSize',fontsize);
+
 xticks(x_data);
 xlim([0 parms.n_twitches+0.5]);
 if flagShowLegend
     l=legend(legend_list{:});
     l.FontSize = fontsize;
 end
+ax=gca();
+ax.FontSize = fontsize-2;
+lims = max(abs(ax.YLim));
+ylim(lims*[-1 1]);
 end
 

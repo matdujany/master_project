@@ -1,7 +1,8 @@
-function plot_weight_evolution_LC_both(weights,parms,flagDetailed,weights_detailed,opt_parms)
+function f=plot_weight_evolution_LC_both(weights,parms,flagDetailed,weights_detailed,opt_parms)
 
 fontsize=14;
 linewidth=1.3;
+fontsizeticks = 12;
 
 if nargin == 4
     opt_parms.motor_list = 1:2*parms.n_m;
@@ -15,12 +16,13 @@ colorlist = lines(ceil(length(opt_parms.motor_list)/2));
 
 legend_list = cell(length(opt_parms.motor_list),1);
 linestyle_list = cell(length(opt_parms.motor_list),1);
+txt_lc_channel = {'X', 'Y', 'Z'};
 
 for i_lc=1:length(opt_parms.lc_list)
     index_lc = opt_parms.lc_list(i_lc);
-    figure;
+    f=figure;
     for i=1:parms.n_ch_lc
-        subplot(2,2,i)
+        subplot(1,4,i)
         hold on
         for j=1:length(opt_parms.motor_list)
             index_motor = opt_parms.motor_list(j);
@@ -48,16 +50,25 @@ for i_lc=1:length(opt_parms.lc_list)
             end
         end
         hold off
-        title(['Loadcell ' num2str(index_lc) ', channel ' num2str(i)],'FontSize',fontsize);
+        title(['Loadcell ' num2str(index_lc) ', channel ' txt_lc_channel{i}],'FontSize',fontsize);
         if flagDetailed
             xlabel('Learning sample number','FontSize',fontsize);
         else
             xlabel('Twitch iteration number','FontSize',fontsize);
         end
+        ylabel('Weight value');
         xticks(x_data);
         xlim([0 max(x_data)+0.5]);
+        if isfield(opt_parms,'ylims')
+            ylim(opt_parms.ylims);
+        end
+        grid on;
+        ax=gca();
+        ax.FontSize = fontsizeticks;
+
     end
-    subplot(2,2,4)
+    f.Color='w';
+    subplot(1,4,4)
     %just a workaround/hack to plot the legend in a separate subplot
     %matlab wants as many series as legend entries to show the legend
     %so i plot series of (0,0)
@@ -66,7 +77,8 @@ for i_lc=1:length(opt_parms.lc_list)
         plot(0,0,'LineStyle',linestyle_list{j},'Color',colorlist(ceil(j/2),:))
     end
     axis off
-    l=legend(legend_list{:});   
+    l=legend(legend_list{:}); 
+    l.Position = [0.759436060557064,0.07459388574413,0.138467575728145,0.872946029537721];
     l.FontSize = fontsize;
 end
 end

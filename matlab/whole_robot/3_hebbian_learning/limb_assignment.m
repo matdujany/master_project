@@ -7,7 +7,7 @@ addpath('hinton_plot_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 84;
+recordID = 88;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
@@ -25,8 +25,10 @@ hinton_LC_asymmetry(weights_chosen{parms.n_twitches},parms,1);
 
 weights_lc_read=weights_chosen{parms.n_twitches}(1:parms.n_lc*3,:);
 
+%%
 renorm_factor = max(max(abs(weights_lc_read)));
-weights_lc = weights_lc_read/renorm_factor; 
+weights_lc = 100*weights_lc_read/renorm_factor; 
+hinton_LC(weights_lc,parms,1);
 
 %% fusing the weights for direction
 %each row is 1 sensor, each column is 1 motor
@@ -46,7 +48,8 @@ for j=1:size(weights_fused,1)/3
 end
 
 weights_fused_limbass = weights_fused_sumc;
-plot_weights_limb_assignment(weights_fused_limbass,parms);
+plot_weights_limb_assignment(6*weights_fused_limbass,parms);
+export_fig 'figures_report/limb_assignment_88.pdf'
 
 %%
 [~,closest_LC] = max(weights_fused_sumc,[],1);

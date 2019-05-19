@@ -6,7 +6,7 @@ addpath('computing_functions');
 
 fontSize = 14;
 fontSizeTicks = 12;
-lineWidth = 1.4;
+lineWidth = 1.5;
 
 %% Load data
 recordID = 88; %15
@@ -118,7 +118,7 @@ f=figure;
 % %patch(x_patch_learning1,y_patch_learning_pos,'blue','FaceAlpha',0.1,'EdgeColor','none','HandleVisibility','off');
 % %patch(x_patch_learning2,y_patch_learning_pos,'blue','FaceAlpha',0.1,'EdgeColor','none','HandleVisibility','off');
 % yyaxis right;
-% plot(time_plot,data_lc_plot_rescaled,'Color',color_list(3,:),'LineStyle', '--','LineWidth',lineWidth);
+% plot(time_plot,data_lc_plot_rescaled,'Color',color_list(2,:),'LineStyle', '--','LineWidth',lineWidth);
 % plot(time_plot,data_acc_rescaled,'Color',color_list(4,:),'LineStyle','--','LineWidth',lineWidth);
 % plot(time_plot,data_gyro_rescaled,'Color',color_list(5,:),'LineStyle','--','LineWidth',lineWidth);
 % ylabel('Sensor values rescaled','Color','k','FontSize',fontSize);
@@ -144,7 +144,7 @@ patch(x_patch_learning1,y_patch_learning_speed,'blue','FaceAlpha',0.1,'EdgeColor
 patch(x_patch_learning2,y_patch_learning_speed,'blue','FaceAlpha',0.1,'EdgeColor','none','HandleVisibility','off');
 ylim([speed_min speed_max]);
 yyaxis right;
-plot(time_plot_diff,diff_data_lc_filtered_rescaled,'Color',color_list(3,:),'LineStyle', '--','LineWidth',lineWidth);
+plot(time_plot_diff,diff_data_lc_filtered_rescaled,'Color',color_list(2,:),'LineStyle', '--','LineWidth',lineWidth);
 plot(time_plot_diff,speed_rescaled(2:end),'Color',color_list(4,:),'LineStyle','--','LineWidth',lineWidth);
 plot(time_plot_diff,data_gyro_filtered_rescaled(2:end),'Color',color_list(5,:),'LineStyle','--','LineWidth',lineWidth);
 ylabel('sensor values rescaled','Color','k','FontSize',fontSize);
@@ -171,8 +171,9 @@ addpath('../../export_fig');
 
 set(f,'PaperPositionMode','auto');         
 set(f,'PaperOrientation','landscape');
-set(f,'Position',[10 10 1300 500]);
-print(f, '-dpdf', 'figures_report/figure_twitch_raw.pdf');
+set(f,'Position',[10 10 1200 500]);
+% print(f, '-dpdf', 'figures_report/figure_twitch_raw_88.pdf');
+print(f, '-dpdf', 'figures_report/figure_twitch_learning_88.pdf');
 
 %%
 %hinton_LC(weights_robotis{5},parms);
