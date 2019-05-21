@@ -2,9 +2,15 @@ function [limb,sign_direction_dropoff,sign_direction_knee] = get_good_limb(parms
 %GOOD_limb HARDCODED
 switch parms.n_m
     case 8
-        limb = [5     6;     7     8;     1     2;     3     4];
-        sign_direction_dropoff= [1    -1    -1     1];
-        sign_direction_knee = [1    -1    -1     1];
+        if recordID < 67
+            limb = [5     6;     7     8;     1     2;     3     4];
+            sign_direction_dropoff= [1    -1    -1     1];
+            sign_direction_knee = [1    -1    -1     1];
+        else
+            limb = [1    5;     4     6;     2     3;     7     8];
+            sign_direction_dropoff=0;
+            sign_direction_knee = 0;
+        end
     case 12
         if recordID < 67
         limb =  [9    10;   11    12;    1     2;     7     8;     5     6;     3     4];

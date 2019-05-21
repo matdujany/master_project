@@ -3,12 +3,23 @@ void pose_stance()
   uint16_t  goal_positions_stance[n_servos];
   for (int i = 0; i < n_servos; i++)
   {
+    goal_positions_stance[i]= neutral_pos[i];
+  } 
+  syncWrite_position_n_servos(n_servos, id, goal_positions_stance); 
+}
+
+void pose_stance_512()
+{
+  uint16_t  goal_positions_stance[n_servos];
+  for (int i = 0; i < n_servos; i++)
+  {
     goal_positions_stance[i]= 512;
   } 
   syncWrite_position_n_servos(n_servos, id, goal_positions_stance); 
 }
 
 //syncWrite takes approximately 0.36 msec to write the goal positions.
+/*
 void progressive_pose_stance(int total_delay,int number_of_steps){
   uint16_t  goal_positions_stance[n_servos];
   int delay_steps = total_delay/number_of_steps;
@@ -22,6 +33,7 @@ void progressive_pose_stance(int total_delay,int number_of_steps){
     while (millis()-timestart<delay_steps);
   }
 }
+*/
 
 
 
@@ -127,7 +139,6 @@ void hardcoded_progressive_lift_limb_4legs(int idx_limb_lift){
     make_all_servos_compliant_syncWrite();
     make_servo_stiff(id[i_servo]);
   }
-  uint16_t ampl_step_pos = STEP_AMPL * 3.413;
   int n_frames_prog_lift = DURATION_PART1/TIME_INTERVAL_TWITCH;
   for (int i=0; i<n_frames_prog_lift; i++){
     unsigned long time_start = millis();

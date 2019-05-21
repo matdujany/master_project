@@ -17,10 +17,10 @@ y_max = fig_parms.ymax+0.2;
 fontSize = 16;
 
 %line labels
-x_shift = 0.5;
+x_shift = 0.2;
 txt_list2 = {'X','Y','Z'};
 for i=1:3
-    text(x_min-x_shift,i-0.5,txt_list2{4-i},'FontSize',fontSize,'HorizontalAlignment','left');
+    text(x_min-x_shift,i-0.5,txt_list2{4-i},'FontSize',fontSize,'HorizontalAlignment','right');
 end
 
 %column labels

@@ -167,8 +167,10 @@ dynamixel::PortHandler *portHandler;     //for communication with Dynamixels (SD
 dynamixel::PacketHandler *packetHandler; //for communication with Dynamixels (SDK)
 
 
-uint8_t n_servos                    = 0;
+uint8_t n_servos  = 0;
 uint8_t id[MAX_NR_SERVOS];         // 
+
+uint16_t neutral_pos[MAX_NR_SERVOS]; 
 
 /* ===================================================================================================================================== */
 
@@ -179,7 +181,7 @@ uint8_t id[MAX_NR_SERVOS];         //
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
 // s
-float val_old_lc[MAX_NR_ARDUINO * 3];        // Old values of loadcell data, needed for calculating s_dot
+float val_old_lc[MAX_NR_ARDUINO * 3];          // old values of loadcell data, needed for calculating s_dot
 int timestamp_lc_old[MAX_NR_ARDUINO] = {0};    // old values of timestamps, used to compute s_dots
 
 // S_dot
@@ -216,7 +218,7 @@ typedef struct learning_struct
 {
   //double s_dot_oja[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];     //last s_dot sent to Oja, useful for comparing with Matlab
   //loat weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
-  int16_t weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
+  float weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
 
   //int weights_pos[MAX_NR_SERVOS][MAX_NR_SERVOS * 2];
 }
@@ -236,4 +238,4 @@ float mean_time_computation_part=0; //in ms
 float offset_acc[3] = {0.0};
 float offset_gyro[3] = {0.0};
 bool slow_dc_mode = false; // to put a time delay when sending bytes in the daisychain during IMU calibration.
-int count_sent_byte = 0;
+int count_sent_byte = 0; //counter bytes sent for IMU delay

@@ -9,7 +9,7 @@ addpath('computing_functions');
 
 %% Load data
 
-record_list = 91;
+record_list = 100;
 max_dif_norm = zeros(1,length(record_list));
 n_iter = 5;
 
@@ -19,7 +19,7 @@ flagFiltersim = 0;
 for idx=1:length(record_list)
     recordID = record_list(idx);
     [data, lpdata, parms] =  load_data_processed(recordID);
-    parms=add_parms(parms);
+%     parms=add_parms(parms);
     weights_check = compute_weights_wrapper(data,lpdata,parms,0,flagPlot,0,0);
     weights_read = read_weights_robotis(recordID,parms);
     max_dif_norm(1,idx) = check_weights_diff(weights_check,weights_read,n_iter);

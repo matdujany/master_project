@@ -38,12 +38,10 @@ void setup() {
   // Setup:  Serial2: load cells and IMU; Serial3: Bluetooth
   // Pins:   Serial2 => 4 (tx), 5 (rx); Serial3 => 24 (tx), 25 (rx)
   Serial2.begin(BAUD_RATE);       // Tested up to 57600
-  //Serial3.begin(BAUD_RATE_BLUE);  // 9600 default for the HC-06
+  
   Serial3.begin(2000000);   //for fast Matlab writing 
+  //setup_serial_bluetooth();
 
-  // Flush the pipes
-  Serial2.flush();
-  Serial3.flush();
   //empyting the the usb console from a message that VScode writes
   while (SerialUSB.available()){
     SerialUSB.read();
@@ -68,27 +66,23 @@ void setup() {
 
   //timing duration of daisychain;
   //compute_duration_daisychain_ms();
-  duration_daisychain=7;
+  duration_daisychain=6;
   
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
-  pose_stance();
+  //pose_stance();
   delay(1000);
 
   //initialize_hardcoded_limbs();
   //updating IMU offsets (recalibration)
   //update_IMU_offsets();
 
-  //pose_stance_soft();
 
   twitch_record_wrapper();
-  //SerialUSB.println(-512);
-  //SerialUSB.println(512);
+
   //record_harcoded_tegotae(30);
-  
   //record_harcoded_tegotae_change_phi_init();
-  
-  hardcoded_tegotae();
+  //hardcoded_tegotae();
 }
 
 
@@ -100,5 +94,8 @@ void loop() {
   //SerialUSB.print("Motor positions, ");
   //print_motor_positions();
   //show_value_DC(20);
+  //serial_read_neutral_pos();
+  
   //serial_read_test_twitch();
+  //serial_read_bluetooth_main();
 }

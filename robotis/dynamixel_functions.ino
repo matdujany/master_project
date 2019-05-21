@@ -41,6 +41,13 @@ void init_dynamixel()
   init_port_and_packet_handler();
   count_dynamixels();
   SerialUSB.println("setup of Dynamixel complete");
+  update_neutral_pos();
+}
+
+void update_neutral_pos(){
+  for (int i=0; i < n_servos; i++){
+    neutral_pos[i] = read_present_position(id[i]);
+  }  
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
@@ -388,4 +395,26 @@ void syncWrite_compliance_slopes(uint8_t n_servos_write, uint8_t *servo_ids, uin
 
 void syncWrite_punchs(uint8_t n_servos_write, uint8_t *servo_ids, uint16_t *punchs_array){
   syncWrite_2bytes_n_servos(n_servos_write,servo_ids,punchs_array,ADDR_PUNCH);
+}
+
+void syncWrite_disable_torque_all_servos(){
+  syncWrite_1_byte_all_servos(24,0);
+}
+
+void serial_read_neutral_pos(){
+  if(SerialUSB.available()){
+    char char_read = SerialUSB.read();
+    if (char_read == 's'){
+      pose_stance();
+    }
+    if (char_read == '5'){
+      pose_stance_512();
+    }
+    if (char_read == 'u'){
+      update_neutral_pos();
+    }    
+    if (char_read == 'd'){
+      syncWrite_disable_torque_all_servos();
+    } 
+  }
 }

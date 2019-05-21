@@ -1,4 +1,4 @@
-function h = hinton_speed_limb(weights_speed_limb_order,limb,writeValues)
+function h = hinton_speed_yaw_limb(weights_speed_limb_order,weights_yaw_limb_order,limb,writeValues)
 %HINTON_LC Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -7,8 +7,8 @@ if nargin ==2
     writeValues = 0;
 end
 
-
-[h,fig_parms] = hinton_raw(weights_speed_limb_order);
+weights_grouped = [weights_speed_limb_order;weights_yaw_limb_order];
+[h,fig_parms] = hinton_raw(weights_grouped);
 
 hold on;
 x_min = fig_parms.xmin-0.2;
@@ -21,8 +21,9 @@ fontSize = 16;
 x_shift = 0.1;
 txt_list2 = {'X','Y','Z'};
 for i=1:3
-    text(x_min-x_shift,i-0.5,['Speed ' txt_list2{4-i}],'FontSize',fontSize,'HorizontalAlignment','right');
+    text(x_min-x_shift,i+0.5,['Speed ' txt_list2{4-i}],'FontSize',fontSize,'HorizontalAlignment','right');
 end
+text(x_min-x_shift,0.5,'Gyro Yaw','FontSize',fontSize,'HorizontalAlignment','right');
 
 %column labels
 y_shift_up = 0.6;
@@ -41,8 +42,8 @@ end
 fontSize_values = 12;
 if writeValues
 for i_motor=1:size(weights_speed_limb_order,2)
-    for i_speed_channel=1:3
-        value = weights_speed_limb_order(i_speed_channel,i_motor);
+    for i_speed_channel=1:4
+        value = weights_grouped(i_speed_channel,i_motor);
         if value<0
             color = 'w';
         else
@@ -50,7 +51,7 @@ for i_motor=1:size(weights_speed_limb_order,2)
         end
         stringnum = num2str(value,'%.2f');
 %         stringnum = num2str(value,3);
-        text(i_motor-0.5,3-i_speed_channel+0.5,stringnum,'FontSize',fontSize_values,'HorizontalAlignment','center','Color',color);
+        text(i_motor-0.5,4-i_speed_channel+0.5,stringnum,'FontSize',fontSize_values,'HorizontalAlignment','center','Color',color);
     end
 end
 end

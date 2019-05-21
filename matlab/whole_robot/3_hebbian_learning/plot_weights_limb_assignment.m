@@ -1,4 +1,4 @@
-function plot_weights_limb_assignment(weights_fused_limbass,parms)
+function h=plot_weights_limb_assignment(weights_fused_limbass,parms)
 fontSize=16;
 [h,fig_parms] = hinton_raw(weights_fused_limbass);
 x_min = fig_parms.xmin-0.2;
@@ -14,6 +14,7 @@ for i=1:parms.n_lc
 end
 for i=1:parms.n_m
     text(i-0.5,y_max+0.1,['M' num2str(i)],'FontSize',fontSize,'HorizontalAlignment','center','VerticalAlignment','bottom');
+    plot([i i],[y_min y_max],'k--');    
 end
 h.Color = 'w';
 

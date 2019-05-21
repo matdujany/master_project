@@ -239,34 +239,34 @@ void send_command_limb_oscillators(){
   for (int i=0; i<n_limb; i++){
     //class 1 first : doing movement
     servo_id_list[2*i] = id[limbs[i][0]];
-    goal_positions_tegotae[2*i] = phase2pos_wrapper(phi[i]+offset_class1[i], 0, changeDirs[i][0]);
+    goal_positions_tegotae[2*i] = phase2pos_wrapper(phi[i]+offset_class1[i], 0, changeDirs[i][0], neutral_pos[limbs[i][0]]);
 
     //class 2 : stance swing
     servo_id_list[2*i+1] = id[limbs[i][1]];
-    goal_positions_tegotae[2*i+1] = phase2pos_wrapper(phi[i], 1, changeDirs[i][1]);
+    goal_positions_tegotae[2*i+1] = phase2pos_wrapper(phi[i], 1, changeDirs[i][1], neutral_pos[limbs[i][1]]);
   }
   syncWrite_position_n_servos(n_servos, servo_id_list, goal_positions_tegotae);
 }
 
 
-uint16_t phase2pos_oscillator(float phase, float amp_deg, boolean changeDir){
+uint16_t phase2pos_oscillator(float phase, float amp_deg, boolean changeDir, uint16_t neutral_position){
   uint16_t pos;
   if (changeDir)
-    pos = (uint16_t)(512 - (float)(3.413*amp_deg*sin(phase)));
+    pos = (uint16_t)(neutral_position - (float)(3.413*amp_deg*sin(phase)));
   else
-    pos = (uint16_t)(512 + (float)(3.413*amp_deg*sin(phase)));
+    pos = (uint16_t)(neutral_position + (float)(3.413*amp_deg*sin(phase)));
   return pos;
 }
 
-uint16_t phase2pos_wrapper(float phase, boolean isClass2, boolean changeDir){
+uint16_t phase2pos_wrapper(float phase, boolean isClass2, boolean changeDir, uint16_t neutral_position){
   if (isClass2){
     if (sin(phase) > 0) // swing
-      return phase2pos_oscillator(phase, amplitude_class2, changeDir);
+      return phase2pos_oscillator(phase, amplitude_class2, changeDir, neutral_position);
     else // reduced amplitude in stance for class 2
-      return phase2pos_oscillator(phase, alpha*amplitude_class2, changeDir);
+      return phase2pos_oscillator(phase, alpha*amplitude_class2, changeDir, neutral_position);
   }
   else{
-    return phase2pos_oscillator(phase, amplitude_class1, changeDir);
+    return phase2pos_oscillator(phase, amplitude_class1, changeDir, neutral_position);
   }
 }
 

@@ -13,7 +13,7 @@ else
     data_for_msdotpos = lpdata.motor_position;
 end
 
-%m s dot pos is created by differemtiation
+%m s dot pos is created by differentiation
 m_s_dot_pos = zeros(data.count_frames,parms.n_m);
 for m=1:parms.n_m
     for i=2:data.count_frames

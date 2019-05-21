@@ -10,7 +10,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 93;
+recordID = 88;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -35,4 +35,7 @@ for i=1:n_limb
 end
 
 hinton_LC_limb(weights_lc_fused_limb_order,parms,limb,1);
+
+%%
 hinton_LC_limb_1_channel(3,weights_lc_fused_limb_order,parms,limb,1);
+export_fig 'figures_report/weights_lcz_limb_88.pdf'

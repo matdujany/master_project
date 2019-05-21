@@ -729,8 +729,10 @@ void print_weights()
   {
     for (int i_action = 0; i_action < n_servos * 2; i_action++)
     {
-      //SerialUSB.print(learning.weights[j_tmp][i_action], 5);
-      SerialUSB.print(learning.weights[j_tmp][i_action]);
+      if (LEARN_IN_INT16_T)
+        SerialUSB.print(learning.weights[j_tmp][i_action]);
+      else
+        SerialUSB.print(learning.weights[j_tmp][i_action], 5);
       SerialUSB.print("   \t  ");
     }
     SerialUSB.print("; ... \n");

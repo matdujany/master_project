@@ -72,7 +72,7 @@ for i_motor=1:parms.n_m
 end
 end
 
-xlabel('Weights averaged over the 2 directions','FontSize',16)
+% xlabel('Weights averaged over the 2 directions','FontSize',16)
 
 end
 

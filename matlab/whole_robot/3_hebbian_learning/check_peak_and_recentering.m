@@ -10,9 +10,11 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 89;
+recordID = 100;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
+
+neutral_pos = read_neutral_pos(recordID,parms.n_m);
 
 %% compare motor to motor actual movement.
 
