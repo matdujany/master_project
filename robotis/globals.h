@@ -45,10 +45,10 @@ float alpha           = 0.2;  //reduction of amplitude during stance for class 2
 float sigma_s         = 0.11;       // Sigma S; see Fukuhara 2018 article
 
 bool tegotae_advanced = true;
-bool direction_X      = true;   //to go in X
+bool direction_X      = true;    //to go in X
 bool direction_Y      = false;   //to go in Y 
-bool direction_Yaw    = false;   //to go in Yaw
-bool flagTurning      = false;   //to turn on spot instead of forward
+float weight_straight = 0.8;
+float weight_yaw = 0.2;
 
 //recordings
 float frequency_recording[4] = {0.25, 0.5, 1, 1.5 };
@@ -75,6 +75,7 @@ int n_limb;
 float sigma_advanced;
 std::vector<std::vector<uint8_t>>  limbs;
 std::vector<std::vector<bool>>  changeDirs; 
+std::vector<bool>  changeDirs_Yaw; 
 std::vector<std::vector<float>> inverse_map; 
 
 

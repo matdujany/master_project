@@ -14,7 +14,9 @@ for i=1:parms.n_lc
 end
 for i=1:parms.n_m
     text(i-0.5,y_max+0.1,['M' num2str(i)],'FontSize',fontSize,'HorizontalAlignment','center','VerticalAlignment','bottom');
-    plot([i i],[y_min y_max],'k--');    
+    if i <parms.n_m
+        plot([i i],[y_min y_max],'k--');  
+    end
 end
 h.Color = 'w';
 

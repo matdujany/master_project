@@ -57,7 +57,7 @@ end
 
 h_speed_yaw_limb = hinton_speed_yaw_limb(weights_speed_fused_limb_order,weights_yaw_fused_limb_order,limb,1);
 h_speed_yaw_limb.Position = [126   178   970   600];
-export_fig 'figures_report/weights_speed_yaw_limb_88.pdf'
+% export_fig 'figures_report/weights_speed_yaw_limb_88.pdf'
 
 %% finding the motors and directions to produce movement in X and Y direction
 [motors_movement_effectors_X,dir_oscillations_X] = get_motors_and_signs(1, limb, weights_speed_fused);

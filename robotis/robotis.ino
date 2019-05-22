@@ -35,12 +35,9 @@ void setup() {
   // LOADCELLS + BLUETOOTH       //
   /////////////////////////////////
 
-  // Setup:  Serial2: load cells and IMU; Serial3: Bluetooth
+  // Setup:  Serial2: load cells and IMU; Serial3: Bluetooth or Matlab
   // Pins:   Serial2 => 4 (tx), 5 (rx); Serial3 => 24 (tx), 25 (rx)
-  Serial2.begin(BAUD_RATE);       // Tested up to 57600
-  
-  Serial3.begin(2000000);   //for fast Matlab writing 
-  //setup_serial_bluetooth();
+  Serial2.begin(BAUD_RATE);
 
   //empyting the the usb console from a message that VScode writes
   while (SerialUSB.available()){
@@ -78,16 +75,20 @@ void setup() {
   //update_IMU_offsets();
 
 
-  twitch_record_wrapper();
+  //twitch_record_wrapper();
 
   //record_harcoded_tegotae(30);
   //record_harcoded_tegotae_change_phi_init();
-  //hardcoded_tegotae();
+
+  hardcoded_tegotae_bluetooth();
+  //test_dc();
+  //setup_serial_bluetooth();
 }
 
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
+  //serial_read_bluetooth_main();
 
   //pose_stance();
   //update_load_pos_values();
@@ -98,4 +99,13 @@ void loop() {
   
   //serial_read_test_twitch();
   //serial_read_bluetooth_main();
+
+}
+
+void test_dc(){
+  while (true){
+    unsigned long t_start_update_loop = millis();
+    send_frame_and_update_sensors(1,1);
+    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
+  }
 }

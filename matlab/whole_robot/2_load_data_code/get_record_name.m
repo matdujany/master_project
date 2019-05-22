@@ -39,6 +39,10 @@ switch recordId
         record_name = '2019-5-12-19_33_24';
     case 100
         record_name = '2019-5-21-18_24_14';
+    case 101
+        record_name = '2019-5-22-13_28_51';
+    case 102
+        record_name = '2019-5-22-16_43_55';
     otherwise
         disp('unknown recordId');
 end

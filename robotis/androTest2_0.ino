@@ -16,13 +16,17 @@ byte cmd[8] = {0, 0, 0, 0, 0, 0, 0, 0};                 // bytes received
 byte buttonStatus = 0;                                  // first Byte sent to Android device
 long previousMillis = 0;                                // will store last time Buttons status was updated
 long sendInterval = SLOW;                               // interval between Buttons status transmission (milliseconds)
-String displayStatus = "xxxx";                          // message to Android device
+String displayStatus = "Walking";                          // message to Android device
+unsigned long last_update_joystick = 0;
+
 int8_t joyX; //
 int8_t joyY;
 
 void setup_serial_bluetooth()  {
- Serial3.begin(BAUD_RATE_BLUE);
- while(Serial3.available())  Serial3.read();         // empty RX buffer
+  Serial3.begin(BAUD_RATE_BLUE);
+  delay(1000);
+  while(Serial3.available())  Serial3.read();         // empty RX buffer
+  delay(1000);
 }
 
 void serial_read_bluetooth_main() {
@@ -58,7 +62,8 @@ void sendBlueToothData()  {
    Serial3.print((char)STX);                                             // Start of Transmission
    Serial3.print(getButtonStatusString());  Serial3.print((char)0x1);   // buttons status feedback
    Serial3.print(GetdataInt1());            Serial3.print((char)0x4);   // datafield #1
-   Serial3.print(GetdataFloat2());          Serial3.print((char)0x5);   // datafield #2
+   //Serial3.print(GetdataFloat2());                Serial3.print((char)0x5);   // datafield #2
+   Serial3.print(frequency);                Serial3.print((char)0x5);   // datafield #2
    Serial3.print(displayStatus);                                         // datafield #3
    Serial3.print((char)ETX);                                             // End of Transmission
  }  
@@ -95,11 +100,15 @@ void getJoystickState(byte data[8])    {
 
  if(joyX<-100 || joyX>100 || joyY<-100 || joyY>100)     return;      // commmunication error
  
-// Your code here ...
-   Serial.print("Joystick position:  ");
-   Serial.print(joyX);  
-   Serial.print(", ");  
-   Serial.println(joyY);
+  update_locomotion_weights(joyX,joyY);
+  last_update_joystick = millis();
+  SerialUSB.print("Joystick position:  ");
+  SerialUSB.print(joyX);  
+  SerialUSB.print(", ");  
+  SerialUSB.print(joyY);
+  SerialUSB.print(", Timestamp : ");  
+  SerialUSB.println(last_update_joystick);
+
 }
 
 void getButtonState(int bStatus)  {
@@ -107,70 +116,59 @@ void getButtonState(int bStatus)  {
 // -----------------  BUTTON #1  -----------------------
    case 'A':
      buttonStatus |= B000001;        // ON
-     Serial.println("\n** Learn Button : ON **");
+     SerialUSB.println("\n** Learn Button : ON **");
      // your code...      
      displayStatus = "Learning";
-     Serial.println(displayStatus);
+     SerialUSB.println(displayStatus);
      break;
    case 'B':
      buttonStatus &= B111110;        // OFF
-     Serial.println("\n** Learn Button: OFF **");
+     SerialUSB.println("\n** Learn Button: OFF **");
      // your code...      
      displayStatus = "Idle";
-     Serial.println(displayStatus);
+     SerialUSB.println(displayStatus);
      break;
 
 // -----------------  BUTTON #2  -----------------------
    case 'C':
      buttonStatus |= B000010;        // ON
-     Serial.println("\n** Walk button: ON **");
+     SerialUSB.println("\n** Walk button: ON **");
      // your code...      
      displayStatus = "Walking";
-     Serial.println(displayStatus);
+     SerialUSB.println(displayStatus);
      break;
    case 'D':
      buttonStatus &= B111101;        // OFF
-     Serial.println("\n** Walk button: OFF **");
+     SerialUSB.println("\n** Walk button: OFF **");
      // your code...      
      displayStatus = "Idle";
-     Serial.println(displayStatus);
+     SerialUSB.println(displayStatus);
      break;
 
-    /*
+    
 
 // -----------------  BUTTON #3  -----------------------
    case 'E':
      buttonStatus |= B000100;        // ON
-     Serial.println("\n** Button_3: ON **");
-     // your code...      
-     displayStatus = "Motor #1 enabled"; // Demo text message
-     Serial.println(displayStatus);
+     SerialUSB.println("Increasing frequency");
+     increase_freq_bluetooth();     
      break;
    case 'F':
      buttonStatus &= B111011;      // OFF
-     Serial.println("\n** Button_3: OFF **");
-     // your code...      
-     displayStatus = "Motor #1 stopped";
-     Serial.println(displayStatus);
      break;
 
+    
 // -----------------  BUTTON #4  -----------------------
    case 'G':
      buttonStatus |= B001000;       // ON
-     Serial.println("\n** Button_4: ON **");
-     // your code...      
-     displayStatus = "Datafield update <FAST>";
-     Serial.println(displayStatus);
-     sendInterval = FAST;
+     SerialUSB.println("Decreasing frequency");
+     decrease_freq_bluetooth();    
      break;
    case 'H':
      buttonStatus &= B110111;    // OFF
-     Serial.println("\n** Button_4: OFF **");
-     // your code...      
-     displayStatus = "Datafield update <SLOW>";
-     Serial.println(displayStatus);
-     sendInterval = SLOW;
     break;
+
+    /*
 
 // -----------------  BUTTON #5  -----------------------
    case 'I':           // configured as momentary button

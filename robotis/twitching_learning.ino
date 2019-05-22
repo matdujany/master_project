@@ -10,6 +10,7 @@
 
 void twitch_record_wrapper(){
   print_twitching_parameters();
+  Serial3.begin(2000000);   //for fast writing to Matlab of load and pos data via Serial3
   init_weight_matrix();
 
   // Execute twitching procedure n_twitch times.

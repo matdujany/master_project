@@ -30,6 +30,6 @@ function theoretical_traj = compute_theoretical_traj_ramp(i_dir,slope,n_frames_p
 theoretical_traj = 512*ones(1,n_frames_part0);
 signs = [-1;1];
 for i=1:n_frames_part1
-    theoretical_traj(1,n_frames_part0+i) = 512 +signs(i_dir)*slope*i;
+    theoretical_traj(1,n_frames_part0+i) = 512 +floor(signs(i_dir)*slope*i);
 end
 end

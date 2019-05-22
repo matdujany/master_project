@@ -10,7 +10,7 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 100;
+recordID = 102;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
@@ -35,9 +35,10 @@ for k = 1:parms.n_twitches
     for i_motor = 1:parms.n_m
         index_start_motor = index_start_twitch+n_frames_theo.per_action*2*(i_motor-1);
         index_end_motor = index_start_motor+2*n_frames_theo.per_action-1;
-        motor_move(:,i_motor,k) = lpdata.motor_position(i_motor,index_start_motor:index_end_motor);
+        motor_move(:,i_motor,k) = lpdata.motor_position(i_motor,index_start_motor:index_end_motor)-neutral_pos(i_motor);
     end
 end
+
 
 
 theoretical_traj = compute_theoretical_traj_wrapper(1,parms);
@@ -52,6 +53,7 @@ for i=1:n_frames_theo.part2
     theoretical_traj(1,n_frames_theo.per_action+n_frames_theo.part0+n_frames_theo.part1+i) = ...
         512 + floor((last_motor_pos-512)*(1-i/n_frames_theo.part2));
 end
+theoretical_traj = theoretical_traj -512;
 
 %% just 1 motor
 idx_motor_plot = 4;
@@ -79,7 +81,7 @@ for i_motor=1:parms.n_m
     ylabel('Position');
     xlabel('Sample index');
     title(['M' num2str(i_motor)]);
-    ylim(512+60*[-1 1]);
+    ylim(60*[-1 1]);
 end
 
 %% all motors average on one plot
@@ -92,7 +94,7 @@ for i_motor=1:parms.n_m
     ylabel('Position');
     xlabel('Sample index');
     legend_list{i_motor}=(['M' num2str(i_motor)]);
-    ylim(512+60*[-1 1]);
+    ylim(60*[-1 1]);
 end
 plot(theoretical_traj,'k--');
 legend_list{end+1} = 'Theoretical trajectory';
@@ -112,7 +114,7 @@ end
 
 
 %%
-plot_erorrbar_static_mean(mean(recentering_own_movement,2),std(recentering_own_movement,[],2),512,parms,'Recentering after own movement static mean')
+plot_erorrbar_static_mean(mean(recentering_own_movement,2),std(recentering_own_movement,[],2),0,parms,'Recentering after own movement static mean')
 plot_erorrbar_peaks(mean(peak_neg,2),std(peak_neg,[],2),min(theoretical_traj),parms,'Negative peak (learning)')
 plot_erorrbar_peaks(mean(peak_pos,2),std(peak_pos,[],2),max(theoretical_traj),parms,'Positive peak (learning)')
 

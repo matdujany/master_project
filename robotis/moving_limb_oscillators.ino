@@ -89,8 +89,71 @@ void hardcoded_tegotae(){
   }
 }
 
-//change dir is set to true for hips if - hip direction produces lift off
-//change dir is set to true for knees if - knee direction pushes backwards
+void hardcoded_tegotae_bluetooth(){
+  init_tegotae();
+  init_phi_tegotae();
+  setup_serial_bluetooth();
+  weight_straight = 0;
+  weight_yaw = 0;
+  print_phi_info();
+  send_command_limb_oscillators();
+  SerialUSB.println("waiting for bluetooth connection ...");
+  while (!Serial3.available());
+  SerialUSB.println("Bluetooth connection found !");
+  init_t_offset_oscillators();
+  while (true){
+    unsigned long t_start_update_loop = millis();
+    
+    serial_read_bluetooth_main();
+    send_frame_and_update_sensors(1,0);
+    //update_phi_tegotae();
+    //send_command_limb_oscillators();
+    //print_phi_info();
+    
+
+    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
+  }
+}
+
+//joyX and joyY are between -100 and 100
+void update_locomotion_weights(int8_t joyX, int8_t joyY){
+  float joyXf = float(joyX)/100.0;
+  float joyYf = float(joyY)/100.0;
+  float norm = sqrt(joyXf*joyXf + joyYf*joyYf);
+  //the joystick in the app is a square and not a circle, we add a saturation if outside of the cercle
+  if (norm > 1){
+    joyXf = joyXf/norm;
+    joyYf = joyYf/norm;
+  }
+  float weight_straight_new = joyYf;
+  float weight_yaw_new = joyXf;
+  //smoothing
+  float threshold_max_variation = 0.05;
+  if (abs(weight_straight_new - weight_straight)>threshold_max_variation){
+    weight_straight_new = weight_straight + threshold_max_variation*get_sign(weight_straight_new - weight_straight);
+  }
+  if (abs(weight_yaw_new - weight_yaw)>threshold_max_variation){
+    weight_yaw_new = weight_yaw + threshold_max_variation*get_sign(weight_yaw_new - weight_yaw);
+  }
+
+  weight_straight = weight_straight_new;
+  weight_yaw = weight_yaw_new;
+}
+
+void increase_freq_bluetooth() {
+  frequency = frequency + 0.1;
+  if (frequency > 1)
+    frequency = 1;
+}
+
+void decrease_freq_bluetooth() {
+  frequency = frequency - 0.1;
+  if (frequency < 0.1)
+    frequency = 0.1;
+}
+
+//change dir is set to true for class 2 if - hip direction produces lift off
+//change dir is set to true for class 1 if - knee direction pushes backwards
 
 //hip first, knee after, in loadcell order
 
@@ -114,6 +177,13 @@ void fill_changeDirs_array( std::vector<std::vector<bool>> changeDirs_hardcoded)
   }
 }
 
+void fill_changeDirs_Yaw_array( std::vector<bool> changeDirs_Yaw_hardcoded){
+  changeDirs_Yaw.resize(n_limb);
+  for (int i=0; i<n_limb; i++){
+    changeDirs_Yaw[i] = changeDirs_Yaw_hardcoded[i];
+  }
+}
+
 void fill_inverse_map_array( std::vector<std::vector<float>> inverse_map_hardcoded){
   inverse_map.resize(n_limb);
   for (int i=0; i<n_limb; i++){
@@ -124,6 +194,37 @@ void fill_inverse_map_array( std::vector<std::vector<float>> inverse_map_hardcod
   }
 }
 
+void initialize_hardcoded_limbs(){
+  SerialUSB.println("Entering Initialize hardcoded limbs");
+
+  if (MAP_USED == 101) {
+    n_limb = 4;
+    if (direction_X){
+      fill_limbs_array(limbs_X);
+      fill_changeDirs_array(changeDirs_X);
+      fill_changeDirs_Yaw_array(changeDirs_X_Yaw);
+    }
+  }
+
+  
+  init_offset_class1();
+  recenter_neutral_pos();
+
+  SerialUSB.println("Initialize hardcoded limbs success !");
+}
+
+void initialize_inverse_map_advanced_tegotae(){
+  if (MAP_USED==101)
+  {
+    if (direction_X){
+      sigma_advanced = sigma_advanced_X_101;
+      fill_inverse_map_array(inverse_map_X_101);
+    }
+  }
+
+}
+
+/*
 void initialize_hardcoded_limbs(){
   SerialUSB.println("Entering Initialize hardcoded limbs");
 
@@ -215,58 +316,62 @@ void initialize_inverse_map_advanced_tegotae(){
     }
   }      
 }
+*/
 
 void init_offset_class1(){
-  if (flagTurning){
-    for (int i : {1, 2, 3, 4}){
-      offset_class1[i] = -pi/2;
-    }
-    for (int i : {0, 5, 6, 7}){
-      offset_class1[i] = pi/2;
-    }
-  }
-  else {
-    for (int i=0; i<n_limb; i++){
-      offset_class1[i]=pi/2;
-    }   
-  }
+  for (int i=0; i<n_limb; i++){
+    offset_class1[i]=pi/2;
+  }   
+}
+
+void recenter_neutral_pos(){
+  for (int i=0; i<n_servos; i++){
+    neutral_pos[i]=512;
+  } 
 }
 
 ///Oscillators
 
 void send_command_limb_oscillators(){
   uint8_t  servo_id_list[n_servos];
+  int16_t goal_position_straight;
+  int16_t goal_position_yaw;
+
   for (int i=0; i<n_limb; i++){
     //class 1 first : doing movement
     servo_id_list[2*i] = id[limbs[i][0]];
-    goal_positions_tegotae[2*i] = phase2pos_wrapper(phi[i]+offset_class1[i], 0, changeDirs[i][0], neutral_pos[limbs[i][0]]);
+    goal_position_straight = phase2pos_wrapper(phi[i]+offset_class1[i], 0, changeDirs[i][0]);
+    goal_position_yaw = phase2pos_wrapper(phi[i]+offset_class1[i], 0, changeDirs_Yaw[i]);
 
+    goal_positions_tegotae[2*i] = neutral_pos[limbs[i][0]] + (weight_straight * goal_position_straight + weight_yaw * goal_position_yaw);
+    
     //class 2 : stance swing
     servo_id_list[2*i+1] = id[limbs[i][1]];
-    goal_positions_tegotae[2*i+1] = phase2pos_wrapper(phi[i], 1, changeDirs[i][1], neutral_pos[limbs[i][1]]);
+    goal_positions_tegotae[2*i+1] = neutral_pos[limbs[i][1]] + phase2pos_wrapper(phi[i], 1, changeDirs[i][1]);
   }
+  //print_goal_positions_tegotae();
   syncWrite_position_n_servos(n_servos, servo_id_list, goal_positions_tegotae);
 }
 
 
-uint16_t phase2pos_oscillator(float phase, float amp_deg, boolean changeDir, uint16_t neutral_position){
-  uint16_t pos;
+int16_t phase2pos_oscillator(float phase, float amp_deg, boolean changeDir){
+  int16_t pos;
   if (changeDir)
-    pos = (uint16_t)(neutral_position - (float)(3.413*amp_deg*sin(phase)));
+    pos = (int16_t)( -1 * (float)(3.413*amp_deg*sin(phase)));
   else
-    pos = (uint16_t)(neutral_position + (float)(3.413*amp_deg*sin(phase)));
+    pos = (int16_t)((float)(3.413*amp_deg*sin(phase)));
   return pos;
 }
 
-uint16_t phase2pos_wrapper(float phase, boolean isClass2, boolean changeDir, uint16_t neutral_position){
+int16_t phase2pos_wrapper(float phase, boolean isClass2, boolean changeDir){
   if (isClass2){
     if (sin(phase) > 0) // swing
-      return phase2pos_oscillator(phase, amplitude_class2, changeDir, neutral_position);
+      return phase2pos_oscillator(phase, amplitude_class2, changeDir);
     else // reduced amplitude in stance for class 2
-      return phase2pos_oscillator(phase, alpha*amplitude_class2, changeDir, neutral_position);
+      return phase2pos_oscillator(phase, alpha*amplitude_class2, changeDir);
   }
   else{
-    return phase2pos_oscillator(phase, amplitude_class1, changeDir, neutral_position);
+    return phase2pos_oscillator(phase, amplitude_class1, changeDir);
   }
 }
 
@@ -278,7 +383,11 @@ void init_phi_tegotae(){
   for (int i=0; i<n_limb; i++){
     phi[i] = 0;
   }
-  t_offset_oscillators = millis();
+  init_t_offset_oscillators();
+}
+
+void init_t_offset_oscillators(){
+    t_offset_oscillators = millis();
 }
 
 void init_filter_tegotae(){
@@ -316,8 +425,11 @@ void update_phi_tegotae()
     {
       phi_dot[i] = simple_tegotae_rule(phi[i],N_s[i]);
     }
-    //actual update
-    phi[i] = phi[i] + phi_dot[i] * (t_current - t_last_phi_update) / 1000;
+
+    //actual update only if the locomotion weights are non 0.
+    if(weight_straight*weight_straight + weight_yaw*weight_yaw > 0){
+      phi[i] = phi[i] + phi_dot[i] * (t_current - t_last_phi_update) / 1000;
+    }
     
     if (phi[i]>2*pi)
       phi[i] = phi[i] - 2*pi;
@@ -408,6 +520,7 @@ void record_hardcoded_trot(int recording_duration){
 // For Recordings
 
 void init_recording_locomotion(){
+  Serial3.begin(2000000);   //for fast Matlab writing 
   switch_frame_recording_mode();
   SerialUSB.print("Waiting for any input from Serial USB console to start recording...");
   while (!SerialUSB.available());  
@@ -512,7 +625,6 @@ void print_locomotion_parameters(){
   SerialUSB.print("Locomotion in direction : "); 
   (direction_X) ? SerialUSB.println("X") : 0;
   (direction_Y) ? SerialUSB.println("Y") : 0;
-  (direction_Yaw) ? SerialUSB.println("Yaw"): 0;
   if (tegotae_advanced){
     if (USE_FILTER_TEGOTAE){
       SerialUSB.print("Using filter of size ");
@@ -528,7 +640,5 @@ void print_locomotion_parameters(){
   {
     SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
   }
-  if (flagTurning)
-    SerialUSB.println("Turning mode activated");
 }
 

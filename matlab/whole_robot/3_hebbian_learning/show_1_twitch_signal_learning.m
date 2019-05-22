@@ -15,6 +15,7 @@ parms=add_parms(parms);
 %%
 weights_robotis  = read_weights_robotis(recordID,parms);
 hinton_LC(weights_robotis{parms.n_twitches},parms,1);
+hinton_LC_asymmetry(weights_robotis{parms.n_twitches},parms,1);
 
 
 %%
@@ -23,10 +24,10 @@ lpdata = compute_filtered_signal_lpdata(lpdata,parms);
 
 good_closest_LC = get_good_closest_LC(parms,recordID);
 %%
-n_iter = 5;
-index_motor_plot = 8;
-index_loadcell_plot = 2;
-index_channel_plot = 2;
+n_iter = 3;
+index_motor_plot = 2;
+index_loadcell_plot = 1;
+index_channel_plot = 3;
 
 %%
 for i_dir = 1 : 2
