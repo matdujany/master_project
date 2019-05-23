@@ -47,17 +47,16 @@ float sigma_s         = 0.11;       // Sigma S; see Fukuhara 2018 article
 bool tegotae_advanced = true;
 bool direction_X      = true;    //to go in X
 bool direction_Y      = false;   //to go in Y 
-float weight_straight = 0.8;
-float weight_yaw = 0.2;
+float weight_straight = 1;
+float weight_yaw = 0;
 
 //recordings
-float frequency_recording[4] = {0.25, 0.5, 1, 1.5 };
-float sigma_advanced_recording[4] = {0.10, 0.19, 0.38, 0.57};
+float frequency_recording[3] = {0.15, 0.5, 1};
+float sigma_advanced_recording[3] = {0.0147,0.0490,0.0979};
 float sigma_simple_recording[4] = {0.054,-0.11,-0.22, 0.32};
 
-int n_changes_recording = 3;
-int time_changes[4] = {60, 90, 120,150}; //the last value is the end of the recoding
-bool changes_done [3] = {false,false,false};
+int n_changes_recording = 2;
+int time_changes[3] = {120, 180, 240}; //the last value is the end of the recoding
 
 float phi_init[8] = {6.03, 2.14, 3.68, 1.41, 4.72, 1.60, 3.18, 4.39} ;
 

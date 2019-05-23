@@ -3,11 +3,11 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 24;
+recordID = 26;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
-n_limb = 8;
-[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb);
+n_limb = 4;
+[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
 n_limb = size(limbs,1);
 
 % GRF = zeros(n_samples,n_limb);
@@ -18,8 +18,15 @@ end
 %% plotting GRFs
 xlims = [0 60]; %% in secs
 figure;
-limb_list_ordered = [5; 4; 3; 2; 6; 7; 8 ;1];
-limb_names_ordered= {'L1','L2','L3','L4','R1','R2','R3','R4'};
+
+switch n_limb
+    case 4
+        limb_list_ordered = [3; 4; 2 ;1];
+        limb_names_ordered= {'L1','L2','R1','R2'};      
+    case 8
+        limb_list_ordered = [5; 4; 3; 2; 6; 7; 8 ;1];
+        limb_names_ordered= {'L1','L2','L3','L4','R1','R2','R3','R4'};
+end
 
 index = reshape(1:n_limb, 2, n_limb/2).';
 for i=1:n_limb
@@ -37,9 +44,18 @@ end
 
 %% gait diagramm
 xlims  = [0 60];
-threshold_unloading = 0.5;
-limb_list_gait_diagram = flip([6; 7; 8; 1; 5; 4; 3; 2]);
-limb_names_gait_diagram = flip({'R1','R2','R3','R4','L1','L2','L3','L4'});
+threshold_unloading = 1; %in Newton
+
+
+switch n_limb
+    case 4
+        limb_list_gait_diagram = flip([2; 1; 3 ;4]);
+        limb_names_gait_diagram= flip({'R1','R2','L1','L2'});      
+    case 8
+        limb_list_gait_diagram = flip([6; 7; 8; 1; 5; 4; 3; 2]);
+        limb_names_gait_diagram = flip({'R1','R2','R3','R4','L1','L2','L3','L4'});
+end
+
 color_list = ['r','g','b','k'];
 figure;
 for i=1:n_limb

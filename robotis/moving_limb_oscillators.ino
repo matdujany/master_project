@@ -7,7 +7,7 @@ void init_tegotae(){
   print_locomotion_parameters();
 }
 
-void record_harcoded_tegotae_change_phi_init(){
+void record_tegotae_change_phi_init(){
   init_tegotae();
   init_recording_locomotion();
 
@@ -17,16 +17,15 @@ void record_harcoded_tegotae_change_phi_init(){
   }
   int recording_duration = 60;
   send_command_limb_oscillators(); 
+  send_phi_and_pos_Serial3();
   unsigned long t_start_recording = millis();
 
   while (millis()-t_start_recording<recording_duration*1000)
   {
-    unsigned long t_start_update_loop = millis();
-    send_phi_and_pos_Serial3();
-    send_frame_and_update_sensors(1,0);
+    unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);
     update_phi_tegotae();
     send_command_limb_oscillators();
-    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
+    while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
   }
 
   SerialUSB.println("Tegotae recording over");
@@ -35,7 +34,12 @@ void record_harcoded_tegotae_change_phi_init(){
 }
 
 
-void record_harcoded_tegotae_changes(){
+void record_tegotae_changes(){
+  bool changes_done[n_changes_recording];
+  for (int i=0; i<n_changes_recording; i++){
+    changes_done[i] = false;
+  }
+
   init_tegotae();
   init_recording_locomotion();
 
@@ -49,9 +53,8 @@ void record_harcoded_tegotae_changes(){
 
   while (millis()-t_start_recording<recording_duration*1000)
   {
-    unsigned long t_start_update_loop = millis();
+    unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);
     send_phi_and_pos_Serial3();
-    send_frame_and_update_sensors(1,0);
     update_phi_tegotae();
     send_command_limb_oscillators();
     for (int i=0;i<n_changes_recording;i++)
@@ -65,7 +68,7 @@ void record_harcoded_tegotae_changes(){
         SerialUSB.println((millis()-t_start_recording)/1000);
       }
     }
-    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
+    while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
   }
 
   SerialUSB.println("Tegotae recording over");
@@ -74,22 +77,21 @@ void record_harcoded_tegotae_changes(){
 }
 
 
-void hardcoded_tegotae(){
+void tegotae(){
   init_tegotae();
   init_phi_tegotae();
   send_command_limb_oscillators(); 
   print_phi_info();
   while (true){
-    unsigned long t_start_update_loop = millis();
-    send_frame_and_update_sensors(1,0);
+    unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);
     update_phi_tegotae();
     send_command_limb_oscillators();
     print_phi_info();
-    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
+    while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
   }
 }
 
-void hardcoded_tegotae_bluetooth(){
+void tegotae_bluetooth(){
   init_tegotae();
   init_phi_tegotae();
   setup_serial_bluetooth();
@@ -102,16 +104,14 @@ void hardcoded_tegotae_bluetooth(){
   SerialUSB.println("Bluetooth connection found !");
   init_t_offset_oscillators();
   while (true){
-    unsigned long t_start_update_loop = millis();
-    
+    unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);  //the order of the 2 lines here matter a locomotion
     serial_read_bluetooth_main();
-    send_frame_and_update_sensors(1,0);
-    //update_phi_tegotae();
-    //send_command_limb_oscillators();
-    //print_phi_info();
+    update_phi_tegotae();
+    send_command_limb_oscillators();
+    print_phi_info();
     
 
-    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
+    while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
   }
 }
 
@@ -141,9 +141,13 @@ void update_locomotion_weights(int8_t joyX, int8_t joyY){
 }
 
 void increase_freq_bluetooth() {
-  frequency = frequency + 0.1;
-  if (frequency > 1)
-    frequency = 1;
+  float frequency_new = frequency + 0.1;
+  if (frequency_new > 1)
+    frequency_new = 1;
+  float sigma_advanced_new = frequency_new*sigma_advanced/frequency;
+
+  frequency = frequency_new;
+  sigma_advanced = sigma_advanced_new;
 }
 
 void decrease_freq_bluetooth() {
@@ -194,11 +198,28 @@ void fill_inverse_map_array( std::vector<std::vector<float>> inverse_map_hardcod
   }
 }
 
+void fill_neutral_pos(uint16_t neutral_pos_hardcoded[]){
+  
+  for (int i=0; i<n_servos; i++){
+    neutral_pos[i] = neutral_pos_hardcoded[i];
+  }
+}
+
+void recenter_neutral_pos(){
+  for (int i=0; i<n_servos; i++){
+    neutral_pos[i] = 512;
+  }
+}
+
+
+
 void initialize_hardcoded_limbs(){
   SerialUSB.println("Entering Initialize hardcoded limbs");
 
-  if (MAP_USED == 101) {
+  if (MAP_USED == 104) {
     n_limb = 4;
+    //recenter_neutral_pos();
+    fill_neutral_pos(neutral_pos_104);
     if (direction_X){
       fill_limbs_array(limbs_X);
       fill_changeDirs_array(changeDirs_X);
@@ -206,22 +227,38 @@ void initialize_hardcoded_limbs(){
     }
   }
 
+  if (MAP_USED == 105) {
+    n_limb = 4;
+    //recenter_neutral_pos();
+    fill_neutral_pos(neutral_pos_105);
+    if (direction_X){
+      fill_limbs_array(limbs_X);
+      fill_changeDirs_array(changeDirs_X);
+      fill_changeDirs_Yaw_array(changeDirs_X_Yaw);
+    }
+  }
   
   init_offset_class1();
-  recenter_neutral_pos();
 
   SerialUSB.println("Initialize hardcoded limbs success !");
 }
 
 void initialize_inverse_map_advanced_tegotae(){
-  if (MAP_USED==101)
+  if (MAP_USED==104)
   {
     if (direction_X){
-      sigma_advanced = sigma_advanced_X_101;
-      fill_inverse_map_array(inverse_map_X_101);
+      sigma_advanced = sigma_advanced_X_104;
+      fill_inverse_map_array(inverse_map_X_104);
     }
   }
 
+  if (MAP_USED==105)
+  {
+    if (direction_X){
+      sigma_advanced = sigma_advanced_X_105;
+      fill_inverse_map_array(inverse_map_X_105);
+    }
+  }
 }
 
 /*
@@ -322,12 +359,6 @@ void init_offset_class1(){
   for (int i=0; i<n_limb; i++){
     offset_class1[i]=pi/2;
   }   
-}
-
-void recenter_neutral_pos(){
-  for (int i=0; i<n_servos; i++){
-    neutral_pos[i]=512;
-  } 
 }
 
 ///Oscillators
@@ -504,13 +535,11 @@ void record_hardcoded_trot(int recording_duration){
 
   unsigned long t_start_recording = millis();
   while (millis()-t_start_recording<recording_duration*1000){
-    unsigned long t_start_update_loop = millis();
+    unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);
     send_phi_and_pos_Serial3();
-    //this frame is not needed for trot, but I use it to capture load infos.
-    send_frame_and_update_sensors(1,0);
     update_phi_trot();
     send_command_limb_oscillators();
-    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
+    while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
   }
   SerialUSB.println("Trot recording over");
   SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
@@ -558,8 +587,7 @@ void print_phi_info(){
     SerialUSB.print(phi[i]);
     SerialUSB.print("\t");
   }
-  SerialUSB.println();
-  SerialUSB.print("Time update "); SerialUSB.println(t_last_phi_update);
+  SerialUSB.print(", Timestamp update "); SerialUSB.println(t_last_phi_update);
 }
 
 void print_goal_positions_tegotae(){

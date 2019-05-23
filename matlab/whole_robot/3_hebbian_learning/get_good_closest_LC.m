@@ -1,11 +1,17 @@
 function good_closest_LC = get_good_closest_LC(parms,recordID)
 %GOOD_CLOSEST_LC HARDCODED
 switch parms.n_m
+    case 6
+        good_closest_LC = [3;3;1;1;2;2];      
     case 8
         if recordID < 100
             good_closest_LC = [3;3;4;4;1;1;2;2];
         else
-            good_closest_LC = [1;3;3;2;1;2;4;4];
+            if recordID < 103
+                good_closest_LC = [1;3;3;2;1;2;4;4];
+            else
+                good_closest_LC = [3;3;2;2;1;1;4;4];
+            end
         end
     case 12
         if recordID < 67

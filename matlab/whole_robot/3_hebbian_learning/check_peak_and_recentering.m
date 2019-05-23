@@ -10,7 +10,7 @@ addpath('../../tight_subplot');
 
 
 %% Load data
-recordID = 102;
+recordID = 103;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 

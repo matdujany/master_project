@@ -9,7 +9,7 @@ addpath('computing_functions');
 
 %% Load data
 
-record_list = 100;
+record_list = 104;
 max_dif_norm = zeros(1,length(record_list));
 n_iter = 5;
 

@@ -1,15 +1,25 @@
 function [limb,sign_direction_dropoff,sign_direction_knee] = get_good_limb(parms,recordID)
 %GOOD_limb HARDCODED
 switch parms.n_m
+    case 6
+            limb = [5     6;     3      4;     1     2];
+            sign_direction_dropoff= 0;
+            sign_direction_knee = 0;
     case 8
         if recordID < 67
             limb = [5     6;     7     8;     1     2;     3     4];
             sign_direction_dropoff= [1    -1    -1     1];
             sign_direction_knee = [1    -1    -1     1];
         else
-            limb = [1    5;     4     6;     2     3;     7     8];
-            sign_direction_dropoff=0;
-            sign_direction_knee = 0;
+            if recordID < 103
+                limb = [1    5;     4     6;     2     3;     7     8];
+                sign_direction_dropoff=0;
+                sign_direction_knee = 0;
+            else
+                limb = [5    6;     3       4;     1     2;     7     8];
+                sign_direction_dropoff=0;
+                sign_direction_knee = 0;
+            end
         end
     case 12
         if recordID < 67
@@ -30,6 +40,5 @@ switch parms.n_m
         end
     otherwise
         disp ('unrecognized number of motors');
-en
 end
 

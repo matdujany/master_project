@@ -6,8 +6,8 @@ addpath('functions');
 addpath('../2_load_data_code');
 
 %% loading
-recordID = 25;
-n_limb = 8;
+recordID = 26;
+n_limb = 4;
 
 fprintf("data_processing\n");
 filename = get_record_name_locomotion(recordID);

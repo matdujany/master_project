@@ -10,7 +10,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 102;
+recordID = 105;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -140,7 +140,11 @@ h_invmap = plot_lc_to_limb_inv_map(z_effect_lc_to_limb,parms,['Inverse map for m
 frequency = 0.5;
 switch parms.n_m
     case 8
-        total_load = 16;
+        if recordID < 103
+            total_load = 16;
+        else 
+            total_load = 14; %cables removed
+        end
      case 12
         total_load = 22.5;
     case 16
@@ -157,6 +161,7 @@ disp('changeDirsYaw array '); disp(dir_oscillations_yaw == -1);
 disp('sigma_advanced'); disp(sigma_advanced);
 if parms.n_m == 8
     disp ('Inverse map :'); fprintf('{%.3f, %.3f, %.3f, %.3f} ,\n',z_effect_lc_to_limb');
+    disp('Neutral pos :'); fprintf('{%i, %i, %i, %i, %i, %i, %i, %i} ,\n',read_neutral_pos(recordID, parms.n_m));
 end
 if parms.n_m == 12
     disp ('Inverse map :'); fprintf('{%.3f, %.3f, %.3f, %.3f, %.3f, %.3f} ,\n',z_effect_lc_to_limb');

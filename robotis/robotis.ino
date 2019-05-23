@@ -63,7 +63,7 @@ void setup() {
 
   //timing duration of daisychain;
   //compute_duration_daisychain_ms();
-  duration_daisychain=6;
+  duration_daisychain=5;
   
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
@@ -75,37 +75,29 @@ void setup() {
   //update_IMU_offsets();
 
 
-  //twitch_record_wrapper();
+  twitch_record_wrapper();
 
   //record_harcoded_tegotae(30);
   //record_harcoded_tegotae_change_phi_init();
 
-  hardcoded_tegotae_bluetooth();
-  //test_dc();
-  //setup_serial_bluetooth();
+  //tegotae_bluetooth();
+
+  //record_tegotae_changes();
+
+  //tegotae();
 }
 
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
-  //serial_read_bluetooth_main();
 
-  //pose_stance();
+  
   //update_load_pos_values();
   //SerialUSB.print("Motor positions, ");
-  //print_motor_positions();
+ // print_motor_positions();
   //show_value_DC(20);
   //serial_read_neutral_pos();
   
   //serial_read_test_twitch();
-  //serial_read_bluetooth_main();
 
-}
-
-void test_dc(){
-  while (true){
-    unsigned long t_start_update_loop = millis();
-    send_frame_and_update_sensors(1,1);
-    while(millis()-t_start_update_loop<DELAY_UPDATE_TEGOTAE);
-  }
 }

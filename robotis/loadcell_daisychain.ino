@@ -15,6 +15,14 @@ void show_value_DC(unsigned long delay_updates){
   delay(delay_updates);
 }
 
+//to test limit delay
+void test_dc(){
+  while (true){
+    unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,1);
+    while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
+  }
+}
+
 void show_total_z_load(){
   float totalz_load = 0;
   for (int i=0; i<n_ard ; i++){
@@ -31,7 +39,8 @@ void show_value_LC(unsigned long delay_updates){
   delay(delay_updates);
 }
 
-void send_frame_and_update_sensors(bool flagPrintFrameFail, bool flagPrintFrameFoundTime){
+unsigned long send_frame_and_update_sensors(bool flagPrintFrameFail, bool flagPrintFrameFoundTime){
+  unsigned long t_start_update_dc = millis();
   frame_found = false; //set to false because we want to update it
   while (!frame_found){
     try_capture_1_frame(flagPrintFrameFail, flagPrintFrameFoundTime);
@@ -41,7 +50,8 @@ void send_frame_and_update_sensors(bool flagPrintFrameFail, bool flagPrintFrameF
   // Mode 1: loadcell mode, Mode 2: IMU mode
   hex_to_float(flagVerbose, 1);
   hex_to_float(flagVerbose, 2);
-  correct_IMU_data(); 
+  correct_IMU_data();
+  return  t_start_update_dc;
 }
 
 

@@ -2,8 +2,6 @@
 // Version nAndroTest V2.0 - @kas2014\ndemo for V5.x App
 //I have made a few modifications to adapt it to the robot
 
-// V2.0  changed to pure ASCII Communication Protocol ** not backward compatible **
-
 // make sure your BT board is set @BAUD_RATE_BLUE bps
 
 
@@ -30,23 +28,33 @@ void setup_serial_bluetooth()  {
 }
 
 void serial_read_bluetooth_main() {
- if(Serial3.available())  {                           // data received from smartphone
-   delay(2);
-   cmd[0] =  Serial3.read();  
-   if(cmd[0] == STX)  {
-     int i=1;      
-     while(Serial3.available())  {
-       delay(1);
-       cmd[i] = Serial3.read();
-       if(cmd[i]>127 || i>7)                 break;     // Communication error
-       if((cmd[i]==ETX) && (i==2 || i==7))   break;     // Button or Joystick data
-       i++;
-     }
-     if     (i==2)          getButtonState(cmd[1]);    // 3 Bytes  ex: < STX "C" ETX >
-     else if(i==7)          getJoystickState(cmd);     // 6 Bytes  ex: < STX "200" "180" ETX >
-   }
- }
- sendBlueToothData();
+  if(Serial3.available())  {                           // data received from smartphone
+  //delay(2);
+  delayMicroseconds(1500);
+  cmd[0] =  Serial3.read();  
+
+  /*
+  SerialUSB.print("First byte received at t=");
+  SerialUSB.print(millis());
+  SerialUSB.print(", byte :");
+  SerialUSB.println(cmd[0]);
+  */
+
+  if(cmd[0] == STX)  {
+    int i=1;      
+    while(Serial3.available())  {
+      //delay(1);
+      delayMicroseconds(1500); //the original delay of 1 ms was not enought for my phone/application
+      cmd[i] = Serial3.read();
+      if(cmd[i]>127 || i>7)                 break;     // Communication error
+      if((cmd[i]==ETX) && (i==2 || i==7))   break;     // Button or Joystick data
+      i++;
+    }
+    if     (i==2)          getButtonState(cmd[1]);    // 3 Bytes  ex: < STX "C" ETX >
+    else if(i==7)          getJoystickState(cmd);     // 6 Bytes  ex: < STX "200" "180" ETX >
+  }
+  }
+  sendBlueToothData();
 }
 
 void sendBlueToothData()  {

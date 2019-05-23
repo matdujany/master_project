@@ -212,6 +212,7 @@ void serial_read_progressive_lift(){
   }
 }
 
+//works only with less than 10 servos
 void serial_read_test_twitch(){
   if(SerialUSB.available()){
     char char_read = SerialUSB.read();
