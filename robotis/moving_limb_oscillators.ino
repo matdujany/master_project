@@ -444,7 +444,8 @@ void update_phi_tegotae()
   if (USE_FILTER_TEGOTAE)
     update_filter_tegotae();
   for (int i=0; i<n_limb; i++){
-    N_s[i] = ser_rx_buf.last_loadcell_data_float[2 + i * 3];   
+    N_s[i] = ser_rx_buf.last_loadcell_data_float[2 + i * 3]; //support is 3rd channel of loadcells
+    N_p[i] = ser_rx_buf.last_loadcell_data_float[1 + i * 3]; //propulsion is Y channel of loadcells, (could be determined with the loadcell connection weights) 
   }
   unsigned long t_current = millis() - t_offset_oscillators;
   for (int i=0; i<n_limb; i++){
@@ -454,7 +455,7 @@ void update_phi_tegotae()
     }
     else
     {
-      phi_dot[i] = simple_tegotae_rule(phi[i],N_s[i]);
+      phi_dot[i] = simple_tegotae_rule(phi[i],N_s[i],N_p[i]);
     }
 
     //actual update only if the locomotion weights are non 0.
@@ -470,8 +471,13 @@ void update_phi_tegotae()
 }
 
 
-float simple_tegotae_rule(float phase, float ground_reaction_force){
+float simple_tegotae_rule(float phase, float ground_reaction_force, float propulsion_force){
   float phi_dot = 2 * pi * frequency - sigma_s * ground_reaction_force * cos(phase);
+  if (tegotae_propulsion)
+  {
+    float phi_dot += - sigma_p * propulsion_force * cos(phase);
+  }
+
   return phi_dot;
 }
 
@@ -493,7 +499,13 @@ float advanced_tegotae_rule(uint8_t i_limb){
 
     GRF_advanced_term += inverse_map[i_limb][j]*grf_under_limb;
   }
+
   float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
+  if (tegotae_propulsion)
+  {
+    float phi_dot += - sigma_p * N_p[i_limb] * cos(phi[i_limb]);
+  }
+
   return phi_dot;
 }
 
@@ -667,6 +679,9 @@ void print_locomotion_parameters(){
   else
   {
     SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
+  }
+  if (tegotae_propulsion){
+    SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p :"); SerialUSB.println(sigma_p);
   }
 }
 

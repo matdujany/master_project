@@ -1,4 +1,4 @@
-function add_stance_patches_GRF(GRF_limb,ax,time,color)
+function add_stance_patches_GRF(GRF_limb,threshold_unloading,ax,time,color)
 %PLOT_STANCE_PATCHES Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -13,8 +13,6 @@ if nargin == 3
     color = 'b';
 end
 
-
-threshold_unloading = 0.5;
 [idx_start_stance,idx_stop_stance] = determine_start_stop_stance(GRF_limb,threshold_unloading);
 
 for i=1:length(idx_start_stance)

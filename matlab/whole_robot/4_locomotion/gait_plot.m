@@ -15,10 +15,10 @@ for i=1:n_limb
     GRF(:,i) = data.float_value_time{1,i}(:,3);
 end
 
-%% plotting GRFs
-xlims = [0 60]; %% in secs
-figure;
+%%
+threshold_unloading = 1; %in Newton
 
+%% plotting GRFs
 switch n_limb
     case 4
         limb_list_ordered = [3; 4; 2 ;1];
@@ -28,9 +28,13 @@ switch n_limb
         limb_names_ordered= {'L1','L2','L3','L4','R1','R2','R3','R4'};
 end
 
+xlims = [0 60]; %% in secs
+f=figure;
+f.Color = 'w';
 index = reshape(1:n_limb, 2, n_limb/2).';
+ax_grf = zeros(n_limb,1);
 for i=1:n_limb
-    subplot(n_limb/2,2,index(i));
+    ax_grf(i,1) = subplot(n_limb/2,2,index(i));
     i_limb_plot = limb_list_ordered(i);
     time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
     plot(time, GRF(:,i_limb_plot));
@@ -38,15 +42,14 @@ for i=1:n_limb
     ylim([-2 15]);
     xlim(xlims);
     xlabel('Time [s]');
-    add_stance_patches_GRF(GRF(:,i_limb_plot),gca(),time,'b');
+    add_stance_patches_GRF(GRF(:,i_limb_plot),threshold_unloading,gca(),time,'b');
     title([limb_names_ordered{i} '  (LC ' num2str(i_limb_plot) ')']);
 end
+linkaxes(ax_grf,'x');
+f.Position = [1.8        362.6       1175.2          420];
 
 %% gait diagramm
 xlims  = [0 60];
-threshold_unloading = 1; %in Newton
-
-
 switch n_limb
     case 4
         limb_list_gait_diagram = flip([2; 1; 3 ;4]);
@@ -57,7 +60,8 @@ switch n_limb
 end
 
 color_list = ['r','g','b','k'];
-figure;
+f2=figure;
+f2.Color = 'w';
 for i=1:n_limb
     i_limb_plot = limb_list_gait_diagram(i);
     [idx_start_stance,idx_stop_stance] = determine_start_stop_stance(GRF(:,i_limb_plot),threshold_unloading);
@@ -68,10 +72,17 @@ for i=1:n_limb
         patch(time(x_patch),y_patch,color_list(mod(i,4)+1),'FaceAlpha',0.8,'EdgeColor','none','HandleVisibility','off');
     end
 end
-ax=gca();
-ax.XGrid = 'on';
-ax.XMinorGrid = 'on';
+ax_gait=gca();
+ax_gait.XGrid = 'on';
+ax_gait.XMinorGrid = 'on';
 yticks([1:n_limb]);
 yticklabels(limb_names_gait_diagram);
 xlim(xlims);
 xlabel('Time [s]');
+f2.Position = [7.4         44.2         1184        302.4];
+
+%%
+linkaxes([ax_grf;ax_gait],'x');
+
+%%
+xlim([80 100]);

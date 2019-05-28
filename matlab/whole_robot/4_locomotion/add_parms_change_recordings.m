@@ -8,6 +8,11 @@ switch recordID
         parms_locomotion.time_change = [60, 90, 120];
         parms_locomotion.frequencies = [0.25, 0.5, 1, 1.5];
         parms_locomotion.sigma_advanced = [0.10, 0.19, 0.38, 0.57];
+   case 26
+        parms_locomotion.n_change = 3;
+        parms_locomotion.time_change = [60, 90, 120];
+        parms_locomotion.frequencies = [0.25, 0.5, 1, 1.5];
+        parms_locomotion.sigma_advanced = [0.10, 0.19, 0.38, 0.57];
 end
 
 end

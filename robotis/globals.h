@@ -42,11 +42,13 @@ float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
 float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
 float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
 float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
-float sigma_s         = 0.11;       // Sigma S; see Fukuhara 2018 article
+float sigma_s         = 0.11;       // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
+float sigma_p         = 0.1; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 
-bool tegotae_advanced = true;
-bool direction_X      = true;    //to go in X
-bool direction_Y      = false;   //to go in Y 
+bool tegotae_advanced   = true;     //to use advanced tegotae rule
+bool direction_X        = true;    //to go in X
+bool direction_Y        = false;   //to go in Y 
+bool tegotae_propulsion = false;    //adds the body propulsion term in the tegotae rule.
 float weight_straight = 1;
 float weight_yaw = 0;
 
@@ -65,7 +67,8 @@ unsigned long t_last_phi_update      = 0;
 unsigned long t_offset_oscillators   = 0;
 float phi[MAX_N_LIMB]             = {0};
 float phi_dot[MAX_N_LIMB]         = {0};
-float N_s[MAX_NR_ARDUINO] = {0};
+float N_s[MAX_NR_ARDUINO] = {0}; //body support term for Tegotae
+float N_p[MAX_NR_ARDUINO] = {0}; //body propulsion term for Tegotae.
 uint16_t goal_positions_tegotae[MAX_NR_SERVOS];
 float offset_class1[MAX_N_LIMB] = {0};
 
