@@ -26,7 +26,7 @@
 // Sampling Settings
 // It will sample at the frequency given by 1000/TIME_INTERVAL_TWITCH
 
-#define    MAX_NR_ARDUINO           6      // Maximum number of load cell arduino's in the daisychain
+#define    MAX_NR_ARDUINO           8      // Maximum number of load cell arduino's in the daisychain
 #define    BAUD_RATE                500000  // Baud rate for load cell daisychain
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
@@ -79,7 +79,7 @@
 #define FRAME_SYNC_0                    0xFF                                                           // Start frame byte 1
 #define FRAME_SYNC_1                    0xAA                                                           // Start frame byte 2
 #define END_FRAME                       0x55                                                           // End frame byte
-#define FRAME_TYPE_RECORDING            0x01     //default frametype, using during learning, Matlab will record these frames only
+#define FRAME_TYPE_RECORDING            0x01    //default frametype, using during learning, Matlab will record these frames only
 #define FRAME_TYPE_IMU_RECALIB          0x02    //frametype where only the IMU writes data, to recalibrate it
 #define FRAME_TYPE_NORMAL               0x03    //frametype where IMU and LCs write data, but frames are not used for learning
 #define FRAME_TYPE_IMU_UPDATE_OFF       0x04    //frametype where IMU stops to update its sensors and write its values, it is 'off' but still checks the bytes and can be turned on again to add values again.
@@ -106,8 +106,9 @@
 #define DEVICE_NAME                     "1"                 //DEVICENAME "1" -> Serial1(OpenCM9.04 DXL TTL Ports)
                                                             //DEVICENAME "2" -> Serial2
                                                             //DEVICENAME "3" -> Serial3(OpenCM 485 EXP)
-#define BAUDRATE_DXL    1000000
-#define PROTOCOL_VERSION 1.0                // AX supports only Protocol Version 1.0 --> syncWrite OK but no syncRead
+#define BAUDRATE_DXL        1000000
+#define PROTOCOL_VERSION    1.0                // AX supports only Protocol Version 1.0 --> syncWrite OK but no syncRead
+
 
 // Control table adresses
 #define ADDR_GOAL_POSITION              30        

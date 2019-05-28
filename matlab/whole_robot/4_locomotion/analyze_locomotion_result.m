@@ -1,11 +1,11 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 20;
+recordID = 28;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 n_limb = 4;
-[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb);
+[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
 n_limb = size(limbs,1);
 n_samples = size(pos_phi_data.limb_phi,2);
 
@@ -76,10 +76,11 @@ end
 
 
 %%
+parms_locomotion.sigma_advanced = 0.1224;
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 simulated_limb_phi = compute_phi_wrapper(pos_phi_data,GRF,parms_locomotion);
 
-%%
+%% Phases
 i_limb_stance_patch=3;
 
 figure;
@@ -94,7 +95,7 @@ for i_limb = 1:n_limb
 end
 legend(legend_list);
 % plot_stance_patches_phi(pos_phi_data.limb_phi(i_limb_stance_patch,:),gca(),pos_phi_data.phi_update_timestamp(1,:)/10^3);
-add_stance_patches_GRF(GRF(:,i_limb_stance_patch),gca(),(data.time(:,i_limb)-data.time(1,i_limb))/10^3,'b');
+% add_stance_patches_GRF(GRF(:,i_limb_stance_patch),gca(),(data.time(:,i_limb)-data.time(1,i_limb))/10^3,'b');
 
 for i_limb = 1:n_limb
     if mod(i_limb-1,4) == 0

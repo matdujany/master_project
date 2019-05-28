@@ -13,26 +13,25 @@ void init_port_and_packet_handler()
   // Open port
   if (portHandler->openPort())
   {
-    Serial.print("Succeeded to open the port!\n");
+    SerialUSB.println("Succeeded to open the port!");
   }
   else
   {
-    Serial.print("Failed to open the port!\n");
-    Serial.print("Press any key to terminate...\n");
+    SerialUSB.println("Failed to open the port!");
     return;
   }
 
   // Set port baudrate
   if (portHandler->setBaudRate(BAUDRATE_DXL))
   {
-    Serial.print("Succeeded to change the baudrate!\n");
+    SerialUSB.println("Succeeded to change the baudrate!");
   }
   else
   {
-    Serial.print("Failed to change the baudrate!\n");
-    Serial.print("Press any key to terminate...\n");
+    SerialUSB.print("Failed to change the baudrate!");
     return;
   }
+
 }
 
 void init_dynamixel()

@@ -3,8 +3,9 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 26;
+recordID = 27;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
+parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 
 n_limb = 4;
 [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
@@ -15,9 +16,18 @@ for i=1:n_limb
     GRF(:,i) = data.float_value_time{1,i}(:,3);
 end
 
-%%
-threshold_unloading = 1; %in Newton
+%filtered version:
+size_mv_average = 5;
+filter_coeffs = 1/size_mv_average*ones(size_mv_average,1);
+GRF_filtered = zeros(size(GRF));
+for i=1:n_limb
+    GRF_filtered(:,i) = filter(filter_coeffs,1,GRF(:,i));
+end
 
+GRF = GRF_filtered;
+
+%%
+threshold_unloading = 0.2; %Fukuhuara, figure 6, stance if more than 20% of maximal value
 %% plotting GRFs
 switch n_limb
     case 4
@@ -80,9 +90,20 @@ yticklabels(limb_names_gait_diagram);
 xlim(xlims);
 xlabel('Time [s]');
 f2.Position = [7.4         44.2         1184        302.4];
-
+set(zoom(f2),'Motion','horizontal')
 %%
 linkaxes([ax_grf;ax_gait],'x');
 
 %%
 xlim([80 100]);
+
+%%
+if recordID == 26
+    t_start_0_15 = 84.4;
+    t_stop_0_15 = 112.3;
+    duty_factor_0_15 = compute_duty_factor(GRF,data,t_start_0_15,t_stop_0_15,threshold_unloading);
+    
+    t_start_0_5 = 160.3;
+    t_stop_0_5 = 174.6;
+    duty_factor_0_5 = compute_duty_factor(GRF,data,t_start_0_5,t_stop_0_5,threshold_unloading);
+end

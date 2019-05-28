@@ -6,8 +6,9 @@ addpath('functions');
 addpath('../2_load_data_code');
 
 %% loading
-recordID = 26;
+recordID = 28;
 n_limb = 4;
+phi_only = false;
 
 fprintf("data_processing\n");
 filename = get_record_name_locomotion(recordID);
@@ -62,7 +63,11 @@ end
 
 %% pos and phi data 
 parms.n_limb = n_limb;
-pos_phi_data = parsing_pos_phi_data_locomotion(phi_position_data,parms);
+if phi_only == true
+    pos_phi_data = parsing_phi_data_locomotion(phi_position_data,parms);
+else
+    pos_phi_data = parsing_pos_phi_data_locomotion(phi_position_data,parms);
+end
 
 %%
 if data.count_frames ~= size(pos_phi_data.phi_update_timestamp,2)

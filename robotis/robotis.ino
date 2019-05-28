@@ -4,10 +4,6 @@
 // LEARNING TO WALK: CONTROL OF ARBITRARY STRUCTURES IN MODULAR ROBOTICS //
 ///////////////////////////////////////////////////////////////////////////
 // 
-// The code consist of mainly 3 parts:
-// 1. INITIALISATION  : initialise the system
-// 2. LEARNING PART   : Construct weight matrix and create mapping from load cells to servo's (/ legs)
-// 3. MOVING PART     : Move the structure using Tegotae for interlimb coordination
 // 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -39,7 +35,7 @@ void setup() {
   // Pins:   Serial2 => 4 (tx), 5 (rx); Serial3 => 24 (tx), 25 (rx)
   Serial2.begin(BAUD_RATE);
 
-  //empyting the the usb console from a message that VScode writes
+  //empyting the the USB console from a message that VScode writes
   while (SerialUSB.available()){
     SerialUSB.read();
   }
@@ -72,10 +68,10 @@ void setup() {
 
   //initialize_hardcoded_limbs();
   //updating IMU offsets (recalibration)
-  //update_IMU_offsets();
+  update_IMU_offsets();
 
 
-  twitch_record_wrapper();
+  //twitch_record_wrapper();
 
   //record_harcoded_tegotae(30);
   //record_harcoded_tegotae_change_phi_init();
@@ -83,18 +79,18 @@ void setup() {
   //tegotae_bluetooth();
 
   //record_tegotae_changes();
-
-  //tegotae();
+  
+  //record_tegotae_leg_amputated_programmed();
+  record_tegotae_custom_phi_init(60*1000);
 }
 
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
-
   
   //update_load_pos_values();
   //SerialUSB.print("Motor positions, ");
- // print_motor_positions();
+  //print_motor_positions();
   //show_value_DC(20);
   //serial_read_neutral_pos();
   
