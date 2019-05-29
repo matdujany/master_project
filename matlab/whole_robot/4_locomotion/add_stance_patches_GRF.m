@@ -1,8 +1,8 @@
-function add_stance_patches_GRF(GRF_limb,threshold_unloading,ax,time,color)
+function add_stance_patches_GRF(GRF_limb,threshold_unloading,ylims,time,color)
 %PLOT_STANCE_PATCHES Summary of this function goes here
 %   Detailed explanation goes here
 
-ylims = ax.YLim;
+% ylims = ax.YLim;
 boolSwitchTime = true;
 if nargin == 2
     boolSwitchTime = false;

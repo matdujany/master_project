@@ -1,23 +1,60 @@
 #include <vector> //takes a lot of space,
 //could be improved with pointers
 
-#define MAP_USED 105
 
-std::vector<std::vector<uint8_t>> limbs_X{
+//104 : 4 legs, all rigid feet (50 sh)
+//105 : 4 legs, 2 more compliant foot (27 sh and 40sh)
+//108 : 6 legs, all rigid feet (50 sh)
+
+#define MAP_USED 108
+
+std::vector<std::vector<uint8_t>> limbs_X_6{
+    {9,8},
+    {0,6},
+    {4,3},
+    {2,1},
+    {7,5},
+    {11,10},
+};
+
+std::vector<std::vector<bool>>  changeDirs_X_6{
+    {false,false},
+    {false,true},
+    {false,false},
+    {true,true},
+    {true,false},
+    {true,true},
+};
+
+std::vector<bool>  changeDirs_X_Yaw_6{true,true,true,true,true,true};
+
+float sigma_advanced_X_108 = 0.1187;// scaled for 50% of 0.5Hz
+std::vector<std::vector<float>> inverse_map_X_108{
+{-0.495, 0.093, 0.245, -0.274, 0.029, 0.274} ,
+{0.396, -1.000, 0.546, -0.037, -0.044, 0.110} ,
+{0.105, 0.461, -0.750, 0.316, 0.221, -0.400} ,
+{-0.415, 0.018, 0.369, -0.720, 0.644, 0.060} ,
+{0.086, -0.052, -0.102, 0.486, -0.821, 0.340} ,
+{0.175, 0.070, -0.311, 0.108, 0.260, -0.350}
+};
+uint16_t neutral_pos_108[12] = {512,   513,   510,   510,   513,   508,  514,   510,   509,   510,   513,   512};
+
+
+std::vector<std::vector<uint8_t>> limbs_X_4{
     {5,4},
     {3,2},
     {1,0},
     {7,6}
 };
 
-std::vector<std::vector<bool>>  changeDirs_X{
+std::vector<std::vector<bool>>  changeDirs_X_4{
     {false,false},
     {false,false},
     {true,true},
     {true,true}
 };
 
-std::vector<bool>  changeDirs_X_Yaw{true,true,true,true};
+std::vector<bool>  changeDirs_X_Yaw_4{true,true,true,true};
 
 float sigma_advanced_X_104 = 0.1239;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_104{
@@ -38,32 +75,3 @@ std::vector<std::vector<float>> inverse_map_X_105{
 };
 uint16_t neutral_pos_105[8]=
 {519, 512, 508, 514, 503, 506, 521, 518};
-
-/*
-#define MAP_USED 101
-
-std::vector<std::vector<uint8_t>> limbs_X{
-    {0,4},
-    {5,3},
-    {2,1},
-    {6,7}
-};
-
-std::vector<std::vector<bool>>  changeDirs_X{
-    {false,true},
-    {true,false},
-    {true,true},
-    {false,false}
-};
-
-std::vector<bool>  changeDirs_X_Yaw{true,true,true,true};
-
-float sigma_advanced_X_101 = 0.1462;
-
-std::vector<std::vector<float>> inverse_map_X_101{
-{-0.799, 1.000, -0.784, 0.743} ,
-{0.884, -0.669, 0.667, -0.748} ,
-{-0.524, 0.512, -0.522, 0.597} ,
-{0.604, -0.608, 0.808, -0.697} ,
-};
-*/

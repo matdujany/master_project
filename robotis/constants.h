@@ -45,8 +45,11 @@
 #define RECENTERING_BETWEEN_ACTION  1   // (1) : servos are recentered at 512 after each twitching in the 2 directions.
 #define RECENTERING_DELAY           1500 
 
-#define TIME_INTERVAL_TWITCH        20     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
-#define DELAY_UPDATE_DC_TEGOTAE        20     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH). For the quadruped structure, this is the lowest sampling time for which there were (close to) zero errors.
+
+//these two times are the delay between updates on the daisychian
+// 20 ms for 4 lcs, 21 ms for 6 lcs, 22 ms for 8 lcs : almost 0 erros
+#define TIME_INTERVAL_TWITCH        21     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
+#define DELAY_UPDATE_DC_TEGOTAE     21     //
 
 
 #define DURATION_MANUAL_RECENTERING         15     //in s, manual recentering between twitch cycles

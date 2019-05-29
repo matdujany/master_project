@@ -3,11 +3,11 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 27;
+recordID = 31;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 
-n_limb = 4;
+n_limb = 6;
 [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
 n_limb = size(limbs,1);
 
@@ -33,6 +33,9 @@ switch n_limb
     case 4
         limb_list_ordered = [3; 4; 2 ;1];
         limb_names_ordered= {'L1','L2','R1','R2'};      
+    case 6
+        limb_list_ordered = [4; 5; 6; 3; 2; 1];
+        limb_names_ordered= {'L1','L2','L3','R1','R2','R3'};           
     case 8
         limb_list_ordered = [5; 4; 3; 2; 6; 7; 8 ;1];
         limb_names_ordered= {'L1','L2','L3','L4','R1','R2','R3','R4'};
@@ -52,7 +55,8 @@ for i=1:n_limb
     ylim([-2 15]);
     xlim(xlims);
     xlabel('Time [s]');
-    add_stance_patches_GRF(GRF(:,i_limb_plot),threshold_unloading,gca(),time,'b');
+    ax=gca();
+    add_stance_patches_GRF(GRF(:,i_limb_plot),threshold_unloading,ax.YLim,time,'b');
     title([limb_names_ordered{i} '  (LC ' num2str(i_limb_plot) ')']);
 end
 linkaxes(ax_grf,'x');
@@ -64,6 +68,9 @@ switch n_limb
     case 4
         limb_list_gait_diagram = flip([2; 1; 3 ;4]);
         limb_names_gait_diagram= flip({'R1','R2','L1','L2'});      
+    case 6
+        limb_list_gait_diagram = flip([3; 2; 1; 4; 5; 6]);
+        limb_names_gait_diagram= flip({'R1','R2','R3','L1','L2','L3'});   
     case 8
         limb_list_gait_diagram = flip([6; 7; 8; 1; 5; 4; 3; 2]);
         limb_names_gait_diagram = flip({'R1','R2','R3','R4','L1','L2','L3','L4'});
@@ -95,7 +102,7 @@ set(zoom(f2),'Motion','horizontal')
 linkaxes([ax_grf;ax_gait],'x');
 
 %%
-xlim([80 100]);
+xlim([0 60]);
 
 %%
 if recordID == 26

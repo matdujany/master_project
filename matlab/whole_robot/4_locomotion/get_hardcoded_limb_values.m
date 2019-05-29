@@ -35,6 +35,19 @@ switch n_limb
         if isfield(parms_locomotion,'turning') && parms_locomotion.turning
            offset_class1 = [pi/2; -pi/2; -pi/2; pi/2];
         end
+        
+   case 6
+         switch parms_locomotion.direction
+            case 'X'
+                limb_ids = 1+[9 8; 0 6; 4 3; 2 1; 7 5; 11 10];
+                changeDir = [0 0; 0 1; 0 0; 1 1; 1 0; 1 1];
+            otherwise
+                disp('unrecognized locomotion direction');
+         end
+        
+        real_servo_ids = [1 4:10  15:18];
+        limbs = real_servo_ids(limb_ids);   
+        offset_class1 = pi/2*ones(n_limb,1);
        
     case 8
          switch parms_locomotion.direction

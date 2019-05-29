@@ -27,9 +27,11 @@ void read_Serial3_leg_changes(){
 }
 
 void programmed_leg_amputations(unsigned long t_start_recording){
-  if (millis()-t_start_recording>time_changes_amputation[n_lc_amputated]*1000){
+  while (millis()-t_start_recording>=time_changes_amputation[n_lc_amputated]*1000){
     idx_lc_amputated.push_back(idx_lc_amputated_programmed[n_lc_amputated]);
-    SerialUSB.print("Amputation done at t=");
+    SerialUSB.print("Amputation of idx lc ");
+    SerialUSB.print(idx_lc_amputated_programmed[n_lc_amputated]);
+    SerialUSB.print(" done at t=");
     SerialUSB.println((millis()-t_start_recording)/1000);
     n_lc_amputated++;
   }
@@ -42,7 +44,7 @@ void record_tegotae_leg_amputated_programmed(){
 
   unsigned long recording_duration = time_changes_amputation[n_amputations_programmed]*1000;
   unsigned long t_start_recording = millis();
-
+  programmed_leg_amputations(t_start_recording);
   while (millis()-t_start_recording<recording_duration)
   {
     unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);
@@ -97,17 +99,14 @@ void record_tegotae_custom_phi_init(unsigned long recording_duration){
   for (int i=0; i<n_limb; i++){
     phi[i] = phi_init[i];
   }
-  send_command_limb_oscillators(); 
-  send_phi_and_pos_Serial3();
   unsigned long t_start_recording = millis();
-
   while (millis()-t_start_recording<recording_duration)
   {
     unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);
     send_phi_and_pos_Serial3();
     update_phi_tegotae();
     send_command_limb_oscillators();
-    SerialUSB.print("Time elapsed for all operations of tegotae loop (in ms): ");SerialUSB.println(millis()-t_start_update_dc);
+    //SerialUSB.print("Time elapsed for all operations of tegotae loop (in ms): ");SerialUSB.println(millis()-t_start_update_dc);
     while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
   }
 
@@ -289,12 +288,11 @@ void initialize_hardcoded_limbs(){
 
   if (MAP_USED == 104) {
     n_limb = 4;
-    //recenter_neutral_pos();
     fill_neutral_pos(neutral_pos_104);
     if (direction_X){
-      fill_limbs_array(limbs_X);
-      fill_changeDirs_array(changeDirs_X);
-      fill_changeDirs_Yaw_array(changeDirs_X_Yaw);
+      fill_limbs_array(limbs_X_4);
+      fill_changeDirs_array(changeDirs_X_4);
+      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4);
     }
   }
 
@@ -302,12 +300,23 @@ void initialize_hardcoded_limbs(){
     n_limb = 4;
     fill_neutral_pos(neutral_pos_105);
     if (direction_X){
-      fill_limbs_array(limbs_X);
-      fill_changeDirs_array(changeDirs_X);
-      fill_changeDirs_Yaw_array(changeDirs_X_Yaw);
+      fill_limbs_array(limbs_X_4);
+      fill_changeDirs_array(changeDirs_X_4);
+      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4);
     }
   }
   
+    if (MAP_USED == 108) {
+    n_limb = 6;
+    fill_neutral_pos(neutral_pos_108);
+    if (direction_X){
+      fill_limbs_array(limbs_X_6);
+      fill_changeDirs_array(changeDirs_X_6);
+      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_6);
+    }
+  }
+  
+
   init_offset_class1();
 
   SerialUSB.println("Initialize hardcoded limbs success !");
@@ -327,6 +336,13 @@ void initialize_inverse_map_advanced_tegotae(){
     if (direction_X){
       sigma_advanced = sigma_advanced_X_105;
       fill_inverse_map_array(inverse_map_X_105);
+    }
+  }
+  if (MAP_USED==108)
+  {
+    if (direction_X){
+      sigma_advanced = sigma_advanced_X_108;
+      fill_inverse_map_array(inverse_map_X_108);
     }
   }
 }

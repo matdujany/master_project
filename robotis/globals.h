@@ -45,7 +45,7 @@ float alpha           = 0.2;  //reduction of amplitude during stance for class 2
 float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 
-bool tegotae_advanced   = false;     //to use advanced tegotae rule
+bool tegotae_advanced   = true;     //to use advanced tegotae rule
 bool direction_X        = true;    //to go in X
 bool direction_Y        = false;   //to go in Y 
 bool tegotae_propulsion = false;    //adds the body propulsion term in the tegotae rule.
@@ -60,13 +60,14 @@ uint8_t n_changes_recording = 2;
 //frequency_recording, sigma_advanced_recording and time_changes should have the same size 
 //n_changes_recording should be equal to their size - 1 
 
-float phi_init[4] = {3.14, 3.14, 3.14, 3.14};
+//float phi_init[4] = {3.14, 3.14, 3.14, 3.14};
+float phi_init[6] = {3.14, 3.14, 3.14, 3.14, 3.14, 3.14};
 
 uint8_t n_lc_amputated = 0;
 std::vector<uint8_t>  idx_lc_amputated;
 
 int idx_lc_amputated_programmed[4] = {0, 2, 1, 3}; //at time_changes_amputation[j] loadcell idx_lc_amputated_programmed[j] is removed
-int time_changes_amputation[5] = {1, 2, 3, 100, 150}; //the last value is the end of the recording
+int time_changes_amputation[5] = {0, 0, 0, 0, 60}; //the last value is the end of the recording
 uint8_t n_amputations_programmed = 4;
 //idx_lc_amputated_programmed should be of size n_amputations_programmed
 //time_changes_amputation should be of size n_amputations_programmed+1

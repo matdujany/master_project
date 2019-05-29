@@ -59,7 +59,7 @@ void setup() {
 
   //timing duration of daisychain;
   //compute_duration_daisychain_ms();
-  duration_daisychain=5;
+  duration_daisychain=6;
   
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
@@ -76,12 +76,14 @@ void setup() {
   //record_harcoded_tegotae(30);
   //record_harcoded_tegotae_change_phi_init();
 
+  record_tegotae_custom_phi_init(60*1000);
+  
   //tegotae_bluetooth();
 
   //record_tegotae_changes();
   
   //record_tegotae_leg_amputated_programmed();
-  record_tegotae_custom_phi_init(60*1000);
+  //record_tegotae_custom_phi_init(60*1000);
 }
 
 
@@ -94,6 +96,7 @@ void loop() {
   //show_value_DC(20);
   //serial_read_neutral_pos();
   
+
   //serial_read_test_twitch();
 
 }

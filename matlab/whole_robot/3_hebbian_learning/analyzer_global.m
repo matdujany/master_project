@@ -10,7 +10,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 105;
+recordID = 108;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -146,7 +146,11 @@ switch parms.n_m
             total_load = 14; %cables removed
         end
      case 12
-        total_load = 22.5;
+        if recordID < 107
+            total_load = 22.5;
+        else 
+            total_load = 19.2; %cables removed
+        end
     case 16
         total_load = 29;
 end
@@ -170,6 +174,7 @@ if parms.n_m == 16
     disp ('Inverse map :'); fprintf('{%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f} ,\n',z_effect_lc_to_limb');
 end
 
+neutral_pos = read_neutral_pos(recordID,parms.n_m);
 
 %% exporting stuff
 % addpath('../../export_fig');
