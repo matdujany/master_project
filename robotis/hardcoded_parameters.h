@@ -6,7 +6,7 @@
 //105 : 4 legs, 2 more compliant foot (27 sh and 40sh)
 //108 : 6 legs, all rigid feet (50 sh)
 
-#define MAP_USED 108
+#define MAP_USED 110
 
 std::vector<std::vector<uint8_t>> limbs_X_6{
     {9,8},
@@ -38,6 +38,19 @@ std::vector<std::vector<float>> inverse_map_X_108{
 {0.175, 0.070, -0.311, 0.108, 0.260, -0.350}
 };
 uint16_t neutral_pos_108[12] = {512,   513,   510,   510,   513,   508,  514,   510,   509,   510,   513,   512};
+
+
+float sigma_advanced_X_110 = 0.1206;// scaled for 50% of 0.5Hz
+std::vector<std::vector<float>> inverse_map_X_110{
+{-0.490, 0.100, 0.227, -0.308, 0.074, 0.287} ,
+{0.428, -1.000, 0.550, -0.051, -0.002, 0.088} ,
+{0.134, 0.391, -0.697, 0.280, 0.264, -0.437} ,
+{-0.449, 0.061, 0.343, -0.719, 0.579, 0.089} ,
+{0.036, 0.007, -0.097, 0.456, -0.786, 0.329} ,
+{0.214, 0.039, -0.294, 0.156, 0.209, -0.377} ,
+};
+uint16_t neutral_pos_110[12] = {510,   514,   512,   508,   510,   509,   513,   511,   509,   511,   514,   510};
+
 
 
 std::vector<std::vector<uint8_t>> limbs_X_4{

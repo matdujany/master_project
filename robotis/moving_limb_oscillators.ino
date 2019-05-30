@@ -306,7 +306,7 @@ void initialize_hardcoded_limbs(){
     }
   }
   
-    if (MAP_USED == 108) {
+  if (MAP_USED == 108) {
     n_limb = 6;
     fill_neutral_pos(neutral_pos_108);
     if (direction_X){
@@ -315,7 +315,16 @@ void initialize_hardcoded_limbs(){
       fill_changeDirs_Yaw_array(changeDirs_X_Yaw_6);
     }
   }
-  
+
+  if (MAP_USED == 110) {
+    n_limb = 6;
+    fill_neutral_pos(neutral_pos_110);
+    if (direction_X){
+      fill_limbs_array(limbs_X_6);
+      fill_changeDirs_array(changeDirs_X_6);
+      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_6);
+    }
+  } 
 
   init_offset_class1();
 
@@ -338,11 +347,20 @@ void initialize_inverse_map_advanced_tegotae(){
       fill_inverse_map_array(inverse_map_X_105);
     }
   }
+
   if (MAP_USED==108)
   {
     if (direction_X){
       sigma_advanced = sigma_advanced_X_108;
       fill_inverse_map_array(inverse_map_X_108);
+    }
+  }
+
+  if (MAP_USED==110)
+  {
+    if (direction_X){
+      sigma_advanced = sigma_advanced_X_110;
+      fill_inverse_map_array(inverse_map_X_110);
     }
   }
 }

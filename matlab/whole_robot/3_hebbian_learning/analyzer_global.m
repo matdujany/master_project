@@ -10,7 +10,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 108;
+recordID = 110;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -174,7 +174,7 @@ if parms.n_m == 16
     disp ('Inverse map :'); fprintf('{%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f} ,\n',z_effect_lc_to_limb');
 end
 
-neutral_pos = read_neutral_pos(recordID,parms.n_m);
+neutral_pos = read_neutral_pos(recordID,parms.n_m)
 
 %% exporting stuff
 % addpath('../../export_fig');

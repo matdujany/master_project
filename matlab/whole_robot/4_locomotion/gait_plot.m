@@ -3,7 +3,7 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 31;
+recordID = 47;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 
@@ -76,9 +76,10 @@ switch n_limb
         limb_names_gait_diagram = flip({'R1','R2','R3','R4','L1','L2','L3','L4'});
 end
 
-color_list = ['r','g','b','k'];
-f2=figure;
-f2.Color = 'w';
+% color_list = ['r','g','b','k'];
+color_list = lines(n_limb);
+f_gait=figure;
+f_gait.Color = 'w';
 for i=1:n_limb
     i_limb_plot = limb_list_gait_diagram(i);
     [idx_start_stance,idx_stop_stance] = determine_start_stop_stance(GRF(:,i_limb_plot),threshold_unloading);
@@ -86,7 +87,9 @@ for i=1:n_limb
     for k=1:length(idx_start_stance)
         y_patch = i + 0.25*[-1 -1 1 1]; 
         x_patch = [idx_start_stance(k) idx_stop_stance(k) idx_stop_stance(k) idx_start_stance(k)];
-        patch(time(x_patch),y_patch,color_list(mod(i,4)+1),'FaceAlpha',0.8,'EdgeColor','none','HandleVisibility','off');
+        color_patch = color_list(mod(i,4)+1);
+        color_patch = color_list(i,:);
+        patch(time(x_patch),y_patch,color_patch,'FaceAlpha',0.8,'EdgeColor','none','HandleVisibility','off');
     end
 end
 ax_gait=gca();
@@ -96,13 +99,52 @@ yticks([1:n_limb]);
 yticklabels(limb_names_gait_diagram);
 xlim(xlims);
 xlabel('Time [s]');
-f2.Position = [7.4         44.2         1184        302.4];
-set(zoom(f2),'Motion','horizontal')
+f_gait.Position = [7.4         44.2         1184        302.4];
+set(zoom(f_gait),'Motion','horizontal')
+
+%% phases
+switch n_limb
+    case 4
+        limb_list_phase = [2; 1; 3 ;4];
+        limb_names_phase= {'R1','R2','L1','L2'};      
+    case 6
+        limb_list_phase = [3; 2; 1; 4; 5; 6];
+        limb_names_phase= {'R1','R2','R3','L1','L2','L3'}   ;
+    case 8
+        limb_list_gait_diagram = [6; 7; 8; 1; 5; 4; 3; 2];
+        limb_names_phase = {'R1','R2','R3','R4','L1','L2','L3','L4'};
+end
+
+f_phase=figure;
+title('Phases computed by robotis');
+for i_limb = 1:n_limb
+    hold on;
+    time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
+    plot(time,mod(pos_phi_data.limb_phi(limb_list_phase(i_limb),:),2*pi),'LineWidth',1.5,'Color',color_list(i_limb,:));
+    ylabel('Phase [rad]');
+    xlabel('Time [s]');
+    legend_list{i_limb} = [limb_names_phase{i_limb} ' - Limb ' num2str(limb_list_phase(i_limb))];
+end
+ax_phase=gca();
+legend(legend_list);
+f_phase.Position = [57.4         94.2         1184        302.4];
+set(zoom(f_phase),'Motion','horizontal');
+
+%% total load;
+f_total_load = figure;
+time = (data.time(:,1)-data.time(1,1))/10^3;
+plot(time,sum(GRF_filtered,2));
+f_total_load.Position = [57.4         94.2         1184        302.4];
+ax_total_load =gca();
+
+set(zoom(f_total_load),'Motion','horizontal');
+
 %%
-linkaxes([ax_grf;ax_gait],'x');
+linkaxes([ax_grf;ax_gait;ax_phase;ax_total_load],'x');
 
 %%
 xlim([0 60]);
+
 
 %%
 if recordID == 26

@@ -66,24 +66,19 @@ void setup() {
   //pose_stance();
   delay(1000);
 
-  //initialize_hardcoded_limbs();
   //updating IMU offsets (recalibration)
   update_IMU_offsets();
 
 
   //twitch_record_wrapper();
 
-  //record_harcoded_tegotae(30);
-  //record_harcoded_tegotae_change_phi_init();
+  //record_tegotae_changes();
 
-  record_tegotae_custom_phi_init(60*1000);
+  record_tegotae_custom_phi_init(120*1000);
   
   //tegotae_bluetooth();
-
-  //record_tegotae_changes();
   
   //record_tegotae_leg_amputated_programmed();
-  //record_tegotae_custom_phi_init(60*1000);
 }
 
 

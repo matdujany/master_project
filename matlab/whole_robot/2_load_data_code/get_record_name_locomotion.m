@@ -64,6 +64,26 @@ switch recordId
         record_name = 'leg_amp_tegotae_advanced_105_X_2019-5-29-11_32_6';
     case 31
         record_name = 'tegotae_advanced_108_X_2019-5-29-18_43_57';
+    case 32
+        record_name = 'tegotae_simple_X_2019-5-30-15_0_32';
+    case 33
+        record_name = 'tegotae_simple_X_2019-5-30-15_10_55';
+    case 34
+        record_name = 'tegotae_advanced_110_X_2019-5-30-15_35_41';
+    case 35
+        record_name = 'tegotae_advanced_freq_changes_110_X_2019-5-30-16_9_36';
+    case 36
+        record_name = 'tegotae_advanced_freq_changes_110_X_2019-5-30-16_43_20';
+    case 37
+        record_name = 'tegotae_advanced_mass_added_110_X_2019-5-30-17_20_47';
+    case 38
+        record_name = 'tegotae_advanced_mass_added_110_X_2019-5-30-17_45_31';
+    case 39
+        record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_22_0';
+    case 47
+        record_name = 'tegotae_advanced_110_X_2019-5-30-19_22_38';
+    case 48
+        record_name = 'tegotae_advanced_110_X_2019-5-30-19_26_24';
     otherwise
         disp('unknown recordID for locomotion');
 end

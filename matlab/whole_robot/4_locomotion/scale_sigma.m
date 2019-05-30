@@ -1,9 +1,9 @@
 
 frequency = [0.15, 0.5, 1];
-scaling = [0.5, 0.5, 0.5];
+scaling = [0.2, 0.2, 0.2];
 % frequency = 0.5;
 direction = "X";
-recordid_map_used = 105;
+recordid_map_used = 110;
 [inverse_map,sigma_advanced_coded] = get_inverse_map(direction,recordid_map_used);
 n_limbs = size(inverse_map,1);
  
@@ -15,7 +15,11 @@ switch 2*n_limbs
             total_load = 14; %cables removed
         end
      case 12
-        total_load = 22.5;
+        if recordid_map_used < 107
+            total_load = 22.5;
+        else
+            total_load = 19.2;%cables removed
+        end
     case 16
         total_load = 29;
 end

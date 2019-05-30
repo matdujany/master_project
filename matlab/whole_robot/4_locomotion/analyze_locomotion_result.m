@@ -1,7 +1,7 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 31;
+recordID = 36;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 n_limb = 6;
@@ -92,17 +92,22 @@ simulated_limb_phi = compute_phi_wrapper(pos_phi_data,GRF,parms_locomotion);
 %% Phases
 i_limb_stance_patch=3;
 
-figure;
-title('Computed by robotis');
-for i_limb = 1:n_limb
-    hold on;
-    time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
-    plot(time,mod(pos_phi_data.limb_phi(i_limb,:),2*pi),'LineWidth',1.5);
-    ylabel('Phase [rad]');
-    xlabel('Time [s]');
-    legend_list{i_limb} = ['Limb ' num2str(i_limb)];
+f=figure;
+set(zoom(f),'Motion','horizontal')
+sgtitle('Computed by robotis');
+for i_subplot =1:2
+    subplot(2,1,i_subplot);
+    for i_limb = 1:n_limb
+        hold on;
+        time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
+        plot(time,mod(pos_phi_data.limb_phi(i_limb,:),2*pi),'LineWidth',1.5);
+        ylabel('Phase [rad]');
+        xlabel('Time [s]');
+        legend_list{i_limb} = ['Limb ' num2str(i_limb)];
+    end
+    legend(legend_list);
 end
-legend(legend_list);
+
 % plot_stance_patches_phi(pos_phi_data.limb_phi(i_limb_stance_patch,:),gca(),pos_phi_data.phi_update_timestamp(1,:)/10^3);
 % add_stance_patches_GRF(GRF(:,i_limb_stance_patch),gca(),(data.time(:,i_limb)-data.time(1,i_limb))/10^3,'b');
 
