@@ -80,6 +80,20 @@ switch recordId
         record_name = 'tegotae_advanced_mass_added_110_X_2019-5-30-17_45_31';
     case 39
         record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_22_0';
+    case 40
+        record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_37_18';
+    case 41
+        record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_42_36';
+    case 42
+        record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_46_37';                
+    case 43
+        record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_50_52';
+    case 44
+        record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_55_47';             
+    case 45
+        record_name = 'tegotae_simple_X_2019-5-30-19_11_33';        
+    case 46
+        record_name = 'tegotae_simple_X_2019-5-30-19_16_1';      
     case 47
         record_name = 'tegotae_advanced_110_X_2019-5-30-19_22_38';
     case 48

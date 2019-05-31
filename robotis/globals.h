@@ -63,7 +63,8 @@ uint8_t n_changes_recording = 2;
 //n_changes_recording should be equal to their size - 1 
 
 //float phi_init[4] = {3.14, 3.14, 3.14, 3.14};
-float phi_init[6] = {0, 0, 0, 3.14, 3.14, 3.14};
+//float phi_init[6] = {0, 0, 0, 3.14, 3.14, 3.14};
+float phi_init[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 uint8_t n_lc_amputated = 0;
 std::vector<uint8_t>  idx_lc_amputated;
@@ -231,10 +232,7 @@ buffer_filter buf_filter;
 // Learning struct
 typedef struct learning_struct
 {
-  //double s_dot_oja[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];     //last s_dot sent to Oja, useful for comparing with Matlab
-  //loat weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
-  float weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
-
+  int16_t weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
   //int weights_pos[MAX_NR_SERVOS][MAX_NR_SERVOS * 2];
 }
 learning_struct;

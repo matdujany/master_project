@@ -32,6 +32,13 @@ for k=1:n_twitches
             weights_robotis{k}(i,j)=A{1,j}(i);
         end
     end
+    
+    %learning done in int16_t for these records (*100 for more precision,
+    %floats were too big).
+    if ismember(recordId,[111:115])
+        weights_robotis{k} = weights_robotis{k}/100;
+    end
+    
 end
 
 fclose(fileID);

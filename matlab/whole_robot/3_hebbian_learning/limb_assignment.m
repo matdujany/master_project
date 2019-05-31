@@ -7,7 +7,7 @@ addpath('hinton_plot_functions');
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 110;
+recordID = 115;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
@@ -71,10 +71,10 @@ if sum(abs(good_closest_LC'-closest_LC))~=0
     disp('Problem with closest LCs found');
 end
 
-% limb=zeros(parms.n_lc,2);
-% for i=1:parms.n_lc
-%     limb(i,:) = find(closest_LC == i);
-% end
+limb=zeros(parms.n_lc,2);
+for i=1:parms.n_lc
+    limb(i,:) = find(closest_LC == i);
+end
 
 %%
 h=plot_weights_limb_assignment(6*weights_fused_limbass,parms);

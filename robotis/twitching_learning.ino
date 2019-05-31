@@ -138,7 +138,7 @@ void twitch_main()
             SerialUSB.print("), servo ");SerialUSB.print(i_servo);
             SerialUSB.print(", direction ");SerialUSB.print(2*i_dir-1);
             SerialUSB.print(", part ");SerialUSB.println(i_part);
-            delay(10);
+            delay(15);
             count_missed_frames_row ++;
             if (count_missed_frames_row>=10){
               delay(1000);
@@ -319,6 +319,7 @@ void update_lc_IMU_values(){
   // First argument: flagVerbose, second argument: conversion mode
   // Mode 1: loadcell mode, Mode 2: IMU mode
   hex_to_float(flagVerbose, 1);
+  saturation_lc_values_learning();
   hex_to_float(flagVerbose, 2);
   correct_IMU_data();
 }
@@ -386,7 +387,8 @@ void twitch_learning_prog(int i_action, float m_learning)
     
     if (LEARN_IN_INT16_T){
       if (100*abs(weight_float_updated)>32766){
-        SerialUSB.println("int16 overflow !!!!");
+        SerialUSB.print("int16 overflow !!!! for sensor (row) ");SerialUSB.print(j_sensor);
+        SerialUSB.print(" and action (column) ");SerialUSB.println(i_action);
         learning.weights[j_sensor][i_action] = get_sign(weight_float_updated)*32766;
       }
       else{
@@ -599,6 +601,16 @@ void printing_serial3_lpdata(uint8_t i_part){
   Serial3.println(i_part);  
 }
 
+void saturation_lc_values_learning(){
+  for (int i_channel = 0; i_channel < n_ard * 3; i_channel++) {
+    if (abs(ser_rx_buf.last_loadcell_data_float[i_channel])>LIMIT_VAL_LC_LEARNING){
+      SerialUSB.print("Warning, loadcell channel "); SerialUSB.print(i_channel);
+      SerialUSB.print(" has returned ");SerialUSB.println(ser_rx_buf.last_loadcell_data_float[i_channel]);
+      SerialUSB.println("This value is put at the previous value ");SerialUSB.println(val_old_lc[i_channel]);
+      ser_rx_buf.last_loadcell_data_float[i_channel] = val_old_lc[i_channel];
+    }
+  }
+}
 
 /// Filter used during learning
 

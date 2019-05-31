@@ -6,7 +6,47 @@
 //105 : 4 legs, 2 more compliant foot (27 sh and 40sh)
 //108 : 6 legs, all rigid feet (50 sh)
 
-#define MAP_USED 110
+#define MAP_USED 115
+
+
+std::vector<std::vector<uint8_t>> limbs_X_8{
+    {13,12},
+    {0,8},
+    {6,5},
+    {10,11},
+    {2,1},
+    {4,3},
+    {9,7},
+    {15,14},
+};
+
+std::vector<std::vector<bool>>  changeDirs_X_8{
+    {false,false},
+    {false,true},
+    {false,false},
+    {false,false},
+    {true,true},
+    {true,true},
+    {true,false},
+    {true,true},
+};
+
+std::vector<bool>  changeDirs_X_Yaw_8{true,true,true,true,true,true,true,true};
+
+
+float sigma_advanced_X_115 = 0.0981;// scaled for 50% of 0.5Hz
+std::vector<std::vector<float>> inverse_map_X_115{
+{-0.318, 0.176, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} ,
+{0.400, -0.896, 0.474, 0.040, -0.187, 0.148, -0.006, 0.218} ,
+{0.029, 0.345, -0.853, 0.464, 0.129, -0.033, 0.221, -0.113} ,
+{0.025, 0.038, 0.376, -0.452, 0.215, 0.162, -0.076, -0.144} ,
+{-0.185, -0.134, 0.266, 0.098, -0.571, 0.566, 0.023, -0.006} ,
+{-0.168, 0.170, -0.023, 0.073, 0.587, -1.000, 0.563, -0.025} ,
+{0.179, -0.107, 0.158, -0.166, 0.075, 0.331, -0.649, 0.332} ,
+{0.200, 0.077, -0.088, -0.124, 0.095, -0.031, 0.335, -0.346} ,
+};
+uint16_t neutral_pos_115[16] = {510,   506,   512,   498,   512,   519,   515,   519,   503,   512,  511,   513,   515,   508,   503,   510};
+
 
 std::vector<std::vector<uint8_t>> limbs_X_6{
     {9,8},

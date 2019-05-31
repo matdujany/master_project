@@ -326,6 +326,16 @@ void initialize_hardcoded_limbs(){
     }
   } 
 
+  if (MAP_USED == 115) {
+    n_limb = 8;
+    fill_neutral_pos(neutral_pos_115);
+    if (direction_X){
+      fill_limbs_array(limbs_X_8);
+      fill_changeDirs_array(changeDirs_X_8);
+      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_8);
+    }
+  } 
+
   init_offset_class1();
 
   SerialUSB.println("Initialize hardcoded limbs success !");
@@ -361,6 +371,14 @@ void initialize_inverse_map_advanced_tegotae(){
     if (direction_X){
       sigma_advanced = sigma_advanced_X_110;
       fill_inverse_map_array(inverse_map_X_110);
+    }
+  }
+
+  if (MAP_USED==115)
+  {
+    if (direction_X){
+      sigma_advanced = sigma_advanced_X_115;
+      fill_inverse_map_array(inverse_map_X_115);
     }
   }
 }

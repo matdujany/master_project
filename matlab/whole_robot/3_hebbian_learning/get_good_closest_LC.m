@@ -28,6 +28,9 @@ switch parms.n_m
         if recordID == 94
             good_closest_LC = [1;4;4;3;3;8;8;2;1;2;7;7;5;5;6;6];
         end
+        if recordID >= 111
+           good_closest_LC = [2;5;5;6;6;3;3;7;2;7;4;4;1;1;8;8];
+        end
     otherwise
         disp('unrecognized number of motors');
 end

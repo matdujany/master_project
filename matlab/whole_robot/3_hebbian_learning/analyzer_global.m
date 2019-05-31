@@ -10,7 +10,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 110;
+recordID = 115;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -34,7 +34,12 @@ end
 if recordID == 94
     weights_speed_fused(1,[3 12 16]) = weights_speed_fused(1,[3 12 16])*5;
     disp('Warning, i have hardcoded M3 M12 and M16 speed X effect to *5!');
-end    
+end  
+
+if recordID == 111
+    weights_speed_fused(1,[7 14]) = weights_speed_fused(1,[7 14])*5;
+    disp('Warning, i have hardcoded M7 and M14 speed X effect to *5!');
+end
 
 %%
 [limb,~,~] = get_good_limb(parms,recordID);
@@ -152,7 +157,11 @@ switch parms.n_m
             total_load = 19.2; %cables removed
         end
     case 16
-        total_load = 29;
+        if recordID < 111
+            total_load = 29;
+        else 
+            total_load = 25.2; %cables removed
+        end        
 end
 GRF_term = mean(diag(z_effect_lc_to_limb))*total_load;
 sigma_advanced = -0.5 * 2*pi*frequency/GRF_term;

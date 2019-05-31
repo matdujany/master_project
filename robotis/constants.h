@@ -19,8 +19,8 @@
 #define BUFFER_SIZE                 256
 
 // SERVO'S
-#define MAX_NR_SERVOS               12
-#define MAX_N_LIMB                   6
+#define MAX_NR_SERVOS               16
+#define MAX_N_LIMB                   8
 
 // DAISYCHAIN
 // Sampling Settings
@@ -48,12 +48,16 @@
 
 //these two times are the delay between updates on the daisychian
 // 20 ms for 4 lcs, 21 ms for 6 lcs, 22 ms for 8 lcs : almost 0 erros
-#define TIME_INTERVAL_TWITCH        21     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
-#define DELAY_UPDATE_DC_TEGOTAE     21     //
+#define TIME_INTERVAL_TWITCH        22     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
+#define DELAY_UPDATE_DC_TEGOTAE     22     //
 
 
 #define DURATION_MANUAL_RECENTERING         15     //in s, manual recentering between twitch cycles
 #define TIME_INTERVAL_MANUAL_RECENTERING    200    //in ms, delay between frames during manual recentering (the frames are just sent to update the LC values to print on console)
+
+#define LIMIT_VAL_LC_LEARNING           50 //if a LC reports a value > LIMIT_VAL_LC_LEARNING, it is discarded and the previous value is taken
+//This is to make sure that the learning is not compromised by a communication error in the daisychain.
+
 
 //FILTERS
 #define USE_FILTER_LEARNING              1 
@@ -142,7 +146,7 @@
 #define MOV_LEARNING_COMPLIANCE_SLOPE          32  //16           
 #define MOV_LEARNING_PUNCH                     50  //150
 
-#define LEARN_IN_INT16_T 0 // 0 normal learning in float, 1 learning in in16_t
+#define LEARN_IN_INT16_T        1   // 0 normal learning in float, 1 learning in in16_t
 
 ///////////////////////////////
 // IMU                     //

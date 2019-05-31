@@ -44,6 +44,9 @@ switch parms.n_m
         if recordID == 94
             limb =  [9    1;   8    10;    4     5;     2     3;     13     14;     15     16; 11 12; 6 7];   
         end
+        if recordID >= 111
+            limb =  [13    14;     9     1;     6     7;    12    11;     2     3;     4     5;     8    10;    15    16];
+        end
     otherwise
         disp ('unrecognized number of motors');
 end
