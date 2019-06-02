@@ -322,6 +322,7 @@ void update_lc_IMU_values(){
   saturation_lc_values_learning();
   hex_to_float(flagVerbose, 2);
   correct_IMU_data();
+  saturation_acc_values_learning();
 }
 
 //takes takes 0.25 ms per read per motor, so 0.5 ms per motor (load and pos) so 4 ms if 8 motors.
@@ -387,7 +388,7 @@ void twitch_learning_prog(int i_action, float m_learning)
     
     if (LEARN_IN_INT16_T){
       if (100*abs(weight_float_updated)>32766){
-        SerialUSB.print("int16 overflow !!!! for sensor (row) ");SerialUSB.print(j_sensor);
+        SerialUSB.print("Warning, int16 overflow !!!! for sensor (row) ");SerialUSB.print(j_sensor);
         SerialUSB.print(" and action (column) ");SerialUSB.println(i_action);
         learning.weights[j_sensor][i_action] = get_sign(weight_float_updated)*32766;
       }
@@ -608,6 +609,16 @@ void saturation_lc_values_learning(){
       SerialUSB.print(" has returned ");SerialUSB.println(ser_rx_buf.last_loadcell_data_float[i_channel]);
       SerialUSB.println("This value is put at the previous value ");SerialUSB.println(val_old_lc[i_channel]);
       ser_rx_buf.last_loadcell_data_float[i_channel] = val_old_lc[i_channel];
+    }
+  }
+}
+void saturation_acc_values_learning(){
+  for (int i_channel = 0; i_channel < 3; i_channel++) {
+    if (abs(ser_rx_buf.last_IMU_acc_corrected[i_channel])>LIMIT_VAL_ACC_LEARNING){
+      SerialUSB.print("Warning, Accelerometer channel "); SerialUSB.print(i_channel);
+      SerialUSB.print(" has returned (after correction)"); SerialUSB.println(ser_rx_buf.last_IMU_acc_corrected[i_channel]);
+      SerialUSB.println("This value is put at the previous value ");SerialUSB.println(val_old_IMU_acc_corrected[i_channel]);
+      ser_rx_buf.last_IMU_acc_corrected[i_channel] = val_old_IMU_acc_corrected[i_channel];
     }
   }
 }

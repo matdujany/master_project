@@ -11,14 +11,17 @@ switch parms.n_m
             sign_direction_dropoff= [1    -1    -1     1];
             sign_direction_knee = [1    -1    -1     1];
         else
+            sign_direction_dropoff=0;
+            sign_direction_knee = 0;
             if recordID < 103
                 limb = [1    5;     4     6;     2     3;     7     8];
-                sign_direction_dropoff=0;
-                sign_direction_knee = 0;
+
             else
-                limb = [5    6;     3       4;     1     2;     7     8];
-                sign_direction_dropoff=0;
-                sign_direction_knee = 0;
+                if recordID < 115
+                    limb = [5    6;     3       4;     1     2;     7     8];
+                else
+                    limb = [3    1;    5    6;   2       4;    7     8];
+                end
             end
         end
     case 12

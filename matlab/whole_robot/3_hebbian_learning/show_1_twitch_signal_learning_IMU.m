@@ -7,7 +7,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 86;
+recordID = 116;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
@@ -19,11 +19,11 @@ weights_speed = compute_weights_speed(data,lpdata,parms);
 hinton_IMU(weights_robotis{parms.n_twitches},parms);
 
 %%
-n_iter = 2;
+n_iter = 4;
 index_motor_plot = 5;
 i_dir = 2;
-index_channel_IMU = 6;
-bool_plot_lc_signal = true;
+index_channel_IMU = 2;
+bool_plot_lc_signal = false;
 
 good_closest_LC = get_good_closest_LC(parms,recordID);
 [motor_ids_dropoff,sign_direction_dropoff]= get_hardcoded_dropoff_results(parms);

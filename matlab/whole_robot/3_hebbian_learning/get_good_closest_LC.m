@@ -10,7 +10,11 @@ switch parms.n_m
             if recordID < 103
                 good_closest_LC = [1;3;3;2;1;2;4;4];
             else
-                good_closest_LC = [3;3;2;2;1;1;4;4];
+                if recordID < 115
+                    good_closest_LC = [3;3;2;2;1;1;4;4];
+                else
+                    good_closest_LC = [1;3;1;3;2;2;4;4];
+                end
             end
         end
     case 12

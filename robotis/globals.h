@@ -42,8 +42,8 @@ float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
 float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
 float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
 float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
-float sigma_s         = 0.08;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
-//0.11 for quadruped, 0.08 for hexapoed.
+float sigma_s         = 0.06;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
+//0.11 for quadruped, 0.08 for hexapode, 0.06 for octopod
 
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 
@@ -56,7 +56,7 @@ float weight_yaw = 0;
 
 //recordings and experiments
 float frequency_recording[3] = {0.15, 0.5, 1};
-float sigma_advanced_recording[3] = {0.0145,0.0483,0.0965}; // at time_changes[i]
+float sigma_advanced_recording[3] = {0.0118,0.0392,0.0785}; // at time_changes[i]
 int time_changes[3] = {180, 270, 360}; //the last value is the end of the recoding
 uint8_t n_changes_recording = 2;
 //frequency_recording, sigma_advanced_recording and time_changes should have the same size 
@@ -69,9 +69,9 @@ float phi_init[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 uint8_t n_lc_amputated = 0;
 std::vector<uint8_t>  idx_lc_amputated;
 
-int idx_lc_amputated_programmed[5] = {0, 1, 2, 3, 5}; //at time_changes_amputation[j] loadcell idx_lc_amputated_programmed[j] is removed
-int time_changes_amputation[6] = {0, 0, 0, 0, 0, 120}; //the last value is the end of the recording
-uint8_t n_amputations_programmed = 5;
+int idx_lc_amputated_programmed[7] = {1, 2, 3, 4, 5, 6, 7}; //at time_changes_amputation[j] loadcell idx_lc_amputated_programmed[j] is removed
+int time_changes_amputation[8] = {0, 0, 0, 0, 0, 0, 0, 150}; //the last value is the end of the recording
+uint8_t n_amputations_programmed = 7;
 //idx_lc_amputated_programmed should be of size n_amputations_programmed
 //time_changes_amputation should be of size n_amputations_programmed+1
 
@@ -232,7 +232,9 @@ buffer_filter buf_filter;
 // Learning struct
 typedef struct learning_struct
 {
-  int16_t weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
+  float weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
+  //int16_t weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
+  
   //int weights_pos[MAX_NR_SERVOS][MAX_NR_SERVOS * 2];
 }
 learning_struct;

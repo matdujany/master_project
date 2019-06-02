@@ -6,7 +6,7 @@
 //105 : 4 legs, 2 more compliant foot (27 sh and 40sh)
 //108 : 6 legs, all rigid feet (50 sh)
 
-#define MAP_USED 115
+#define MAP_USED 105
 
 
 std::vector<std::vector<uint8_t>> limbs_X_8{
@@ -32,7 +32,7 @@ std::vector<std::vector<bool>>  changeDirs_X_8{
 };
 
 std::vector<bool>  changeDirs_X_Yaw_8{true,true,true,true,true,true,true,true};
-
+//these are the good values, the learned ones are wrong for 4 limbs.
 
 float sigma_advanced_X_115 = 0.0981;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_115{

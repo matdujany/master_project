@@ -9,8 +9,8 @@
 
 parms = struct();
 
-parms.nr_arduino  = 8;
-parms.n_m         = 16;
+parms.nr_arduino  = 4;
+parms.n_m         = 8;
 parms.n_dir       = 2;
 
 % learning parameters
@@ -23,7 +23,7 @@ parms.n_twitches     = 5;
 parms.compliant_mode = 1;
 parms.recentering    = 1;
 parms.recentering_delay    = 1500; % in ms
-parms.time_interval_twitch = 22; % in ms
+parms.time_interval_twitch = 20; % in ms
 
 %filter
 parms.use_filter = 1;

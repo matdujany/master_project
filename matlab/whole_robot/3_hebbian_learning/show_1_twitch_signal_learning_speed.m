@@ -7,7 +7,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 87;
+recordID = 116;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
@@ -20,9 +20,9 @@ weights_speed = compute_weights_speed(data,lpdata,parms);
 hinton_speed(weights_speed{parms.n_twitches},parms,1);
 plot_weight_evolution_speed(weights_speed,parms);
 %%
-n_iter = 5;
-index_motor_plot = 7;
-index_channel_speed = 1;
+n_iter = 2;
+index_motor_plot = 5;
+index_channel_speed = 2;
 bool_plot_lc_signal = false;
 
 %%

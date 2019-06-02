@@ -19,8 +19,8 @@
 #define BUFFER_SIZE                 256
 
 // SERVO'S
-#define MAX_NR_SERVOS               16
-#define MAX_N_LIMB                   8
+#define MAX_NR_SERVOS               12
+#define MAX_N_LIMB                   6
 
 // DAISYCHAIN
 // Sampling Settings
@@ -48,8 +48,8 @@
 
 //these two times are the delay between updates on the daisychian
 // 20 ms for 4 lcs, 21 ms for 6 lcs, 22 ms for 8 lcs : almost 0 erros
-#define TIME_INTERVAL_TWITCH        22     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
-#define DELAY_UPDATE_DC_TEGOTAE     22     //
+#define TIME_INTERVAL_TWITCH        20     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
+#define DELAY_UPDATE_DC_TEGOTAE     20     //
 
 
 #define DURATION_MANUAL_RECENTERING         15     //in s, manual recentering between twitch cycles
@@ -57,7 +57,11 @@
 
 #define LIMIT_VAL_LC_LEARNING           50 //if a LC reports a value > LIMIT_VAL_LC_LEARNING, it is discarded and the previous value is taken
 //This is to make sure that the learning is not compromised by a communication error in the daisychain.
-
+//the max value that the loadcells can handle is 50 N anyway.
+#define LIMIT_VAL_ACC_LEARNING           35
+//the accelerometer values are integrated, one huge value is enough to ruin the learning
+//i have determined this value just by looking at the accelerometer signals.
+//in the accelerometer scaling, 256 = 1g (9.81 m/s^2) so 35 = 1.34 m/(s^2).
 
 //FILTERS
 #define USE_FILTER_LEARNING              1 
@@ -146,7 +150,7 @@
 #define MOV_LEARNING_COMPLIANCE_SLOPE          32  //16           
 #define MOV_LEARNING_PUNCH                     50  //150
 
-#define LEARN_IN_INT16_T        1   // 0 normal learning in float, 1 learning in in16_t
+#define LEARN_IN_INT16_T        0   // 0 normal learning in float, 1 learning in in16_t
 
 ///////////////////////////////
 // IMU                     //
