@@ -5,9 +5,11 @@ close all; clc;
 addpath('computing_functions');
 addpath('hinton_plot_functions');
 
+export_plots = true; 
+
 %% Load data
 addpath('../2_load_data_code');
-recordID = 117;
+recordID = 110;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
@@ -86,8 +88,10 @@ for i=1:parms.n_m
         patches.CData(parms.n_lc*i -  good_closest_LC(i) + 1) = 4;
     end
 end
-% export_fig 'figures_report/limb_assignment_88.pdf'
 
+if export_plots == true
+    export_fig(['figures_report/limb_assignment_' num2str(recordID) '.pdf']);
+end
 %%
 
 limb=zeros(parms.n_lc,2);
