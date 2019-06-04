@@ -6,8 +6,42 @@
 //105 : 4 legs, 2 more compliant foot (27 sh and 40sh)
 //108 : 6 legs, all rigid feet (50 sh)
 
-#define MAP_USED 105
+//good maps :
+//105 for quaduped
+//110 for hexapod
+//115 for octopod
+//123 for weird quadruped
 
+
+#define MAP_USED 123
+
+std::vector<std::vector<uint8_t>> limbs_X_4_weird{
+    {0,2},
+    {5,4},
+    {3,1},
+    {7,6}
+};
+
+std::vector<std::vector<bool>>  changeDirs_X_4_weird{
+    {false,true},
+    {true,false},
+    {true,false},
+    {false,true},
+};
+
+std::vector<bool>  changeDirs_X_Yaw_4_weird{true,true,true,true};
+
+float sigma_advanced_X_123 = 0.1574;// scaled for 50% of 0.5Hz
+std::vector<std::vector<float>> inverse_map_X_123{
+{-1.000, 0.929, -0.923, 0.975} ,
+{0.559, -0.744, 0.564, -0.472} ,
+{-0.486, 0.632, -0.632, 0.631} ,
+{0.577, -0.578, 0.582, -0.475}
+};
+
+uint16_t neutral_pos_123[8] = {510, 497, 501, 511, 508, 532, 509, 502};
+
+float scaling_amp_class1_123[4] = {0.855, 0.023, 1, 0.153};
 
 std::vector<std::vector<uint8_t>> limbs_X_8{
     {13,12},

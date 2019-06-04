@@ -69,14 +69,13 @@ void setup() {
   //updating IMU offsets (recalibration)
   update_IMU_offsets();
 
-
-  twitch_record_wrapper();
+  //twitch_record_wrapper();
 
   //record_tegotae_changes();
 
   //record_tegotae_custom_phi_init(300*1000);
   
-  //tegotae_bluetooth();
+  tegotae_bluetooth();
   
   //record_tegotae_leg_amputated_programmed();
 }   

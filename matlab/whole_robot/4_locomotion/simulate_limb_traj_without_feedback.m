@@ -10,10 +10,16 @@ phi_init = [pi/2; pi/2; pi/2; pi/2];
 params.amplitude_class2_deg = 20;
 params.amplitude_class1_deg = 10;
 params.alpha=1;
+
+%change dir class 1 = 0 if positive correlation between desired speed
+%effect and motor movement
+%change dir class 2 = 0 if negative correlation between limb load
+%effect and motor movement
+
 change_dir_class2 = 1;
-change_dir_class1 = 0;
-% change_dir_class2 = 0;
-% change_dir_class1 = 1;
+change_dir_class1 = 1;
+
+
 offset_class1 = pi/2;
 
 shiftplot = 0.15;
@@ -44,7 +50,7 @@ for i=0:1
     patch(i*2*pi+x_patch_loading,y_patch_loading,'b','FaceAlpha',0.1,'EdgeColor','none','HandleVisibility','off');
     patch(i*2*pi+x_patch_stance,y_patch_stance,'r','FaceAlpha',0.1,'EdgeColor','none','HandleVisibility','off');
 end
- lgd=legend({'Class 1, positive correlation between motor movement and robot speed in desired direction',...
+ lgd=legend({'Class 1, negative correlation between motor movement and robot speed in desired direction',...
      'Class 2, positive correlation between motor movement and load under limb','Class 2, with reduction of amplitude'},'FontSize',fontSize);
 % lgd=legend({'Class 1, negative correlation between motor movement and robot speed in desired direction',...
 %     'Class 2, negative correlation between motor movement and load under limb','Class 2, with reduction of amplitude'},'FontSize',fontSize);
@@ -61,9 +67,10 @@ set(gca,'YTickLabelRotation',90);
 ax=gca();
 ax.FontSize = fontSizeTicks;
 
+%%
 f.Color = 'w';
 f.Position = [596   390   985   588];
 lgd.Position = [0.1379    0.8577    0.8142    0.1310];
 set(f,'PaperOrientation','landscape');
 % print(f, '-dpdf','-bestfit', 'figures_report/limb_oscillator_theory_pos_corr.pdf');
-% print(f, '-dpdf','-bestfit', 'figures_report/limb_oscillator_theory_neg_corr.pdf');
+% print(f, '-dpdf','-bestfit', 'figures_report/limb_oscillator_theory_neg_pos_corr.pdf');

@@ -8,9 +8,10 @@ addpath('../2_load_data_code');
 addpath('../../tight_subplot');
 addpath('hinton_plot_functions');
 addpath('computing_functions');
+addpath('class_detection_function');
 
 %% Load data
-recordID = 115;
+recordID = 123;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -77,7 +78,7 @@ h_speed_yaw_limb.Position = [126   178   970   600];
 weights_robotis_last = weights_robotis{parms.n_twitches};
 
 weights_lc = weights_robotis_last(1:3*parms.n_lc,:);
-weights_lc = weights_lc/max(max(abs(weights_lc))) ;
+weights_lc = 100*weights_lc/max(max(abs(weights_lc))) ;
 % hinton_LC(weights_lc,parms,1);
 
 weights_lc_fused = fuse_weights_sym_direction(weights_lc,parms);
@@ -96,34 +97,18 @@ end
 h_lcz = hinton_LC_limb_1_channel(3,weights_lc_fused_limb_order,parms,limb,1);
 
 
-%%
+%% class detection
+desired_movement_speed_channel = 1; %1 for X, 2 for Y
 direction_list = {'X','Y','Z'};
-desired_movement_speed_channel = 1;
-n_limb=size(limb,1);
-motors_classes = zeros(n_limb,2); %class 1 are the movement effectors, class2 is the stance/swing effector
-likelihood_class1 = zeros(n_limb,1);
-dir_oscillations = ones(n_limb,2);
-dir_oscillations_yaw = ones(n_limb,1); %only class 1 for yaw.
-for i=1:n_limb
-    limb_motor_list = limb(i,:);
-    [values_c1, idx_c1 ] = maxk(abs(weights_speed_fused(desired_movement_speed_channel,limb_motor_list)),2);
-    motors_classes(i,1) = limb_motor_list(idx_c1(1));
-    likelihood_class1(i,1) = values_c1(1)/values_c1(2);
-    limb_motor_list(idx_c1(1)) = [];
-    [~, idx2 ] = max(abs(weights_lc_fused(3*i,limb_motor_list)));
-    motors_classes(i,2) = limb_motor_list(idx2);
-    
-    if weights_speed_fused(desired_movement_speed_channel,motors_classes(i,1))<0
-        dir_oscillations(i,1)=-1;
-    end 
-    if weights_yaw_fused(1,motors_classes(i,1))<0
-        dir_oscillations_yaw(i,1)=-1;
-    end
-    if weights_lc_fused(3*i,motors_classes(i,2))>0
-        dir_oscillations(i,2)=-1;
-    end
-end
+% [motors_classes,likelihood_class1,dir_oscillations,dir_oscillations_yaw] = get_class_c1_before_c2(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
+[motors_classes,likelihood_class2,dir_oscillations,dir_oscillations_yaw] = get_class_c2_before_c1(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
 
+%% scaling amplitudes of class 1
+weights_speed_class1 = zeros(n_limb,1);
+for i=1:n_limb
+    weights_speed_class1(i) = weights_speed_fused(desired_movement_speed_channel,motors_classes(i,1));
+end
+scaling_amp_class1 = abs(weights_speed_class1)/max(abs(weights_speed_class1));
 %% z effect
 z_effect_limb_to_lc = zeros(parms.n_lc,n_limb);
 for i_limb=1:n_limb
@@ -148,7 +133,11 @@ switch parms.n_m
         if recordID < 103
             total_load = 16;
         else 
-            total_load = 14; %cables removed
+            if recordID < 116
+                total_load = 14; %cables removed
+            else
+                total_load = 12;%cables removed and weird configurations
+            end
         end
      case 12
         if recordID < 107
@@ -186,10 +175,10 @@ end
 neutral_pos = read_neutral_pos(recordID,parms.n_m)
 
 %% exporting stuff
-% addpath('../../export_fig');
-% if false
-%     export_fig('figures_simon_2/hinton_speed.pdf',h_speed);
+addpath('../../export_fig');
+if false
+%     export_fig('figures_report/hinton_speed.pdf',h_speed);
 %     export_fig('figures_simon_2/hinton_lcz.pdf',h_lcz);
-%     export_fig('figures_simon_2/direct_map.pdf',h_directmap);
-%     export_fig('figures_simon_2/inv_map_tegotae.pdf',h_invmap);
-% end
+%     export_fig(['figures_report/direct_map_' num2str(recordID) '.pdf'],h_directmap);
+    export_fig(['figures_report/inv_map_tegotae_' num2str(recordID) '.pdf'],h_invmap);
+end

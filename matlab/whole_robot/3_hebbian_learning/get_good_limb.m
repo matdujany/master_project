@@ -35,7 +35,7 @@ switch parms.n_m
                 sign_direction_dropoff= [1    -1    -1     -1     1    1];
                 sign_direction_knee = [1   -1   -1   -1  1  1];
             else
-                limb =  [9    10;   1    7;    4     5;     2     3;     6     8;     11     12];
+                limb =  [9    10;   7    1;    4     5;     2     3;     6     8;     11     12];
                 sign_direction_dropoff= 0;
                 sign_direction_knee =0   ;
             end

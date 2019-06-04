@@ -9,10 +9,10 @@ addpath('../../tight_subplot');
 addpath('hinton_plot_functions');
 addpath('computing_functions');
 
-export_plots = true;
+export_plots = false;
 
 %% Load data
-recordID = 105;
+recordID = 117;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -42,9 +42,11 @@ end
 
 h_speed_limb = hinton_speed_limb(weights_speed_fused_limb_order,limb,1);
 h_speed_limb.Position = [929 327 899 437];
-if export_plots == true
-    export_fig(['figures_report/weights_speed_limb_' num2str(recordID) '.pdf']);
-end
+
+% if export_plots == true
+%     export_fig(['figures_report/weights_speed_limb_' num2str(recordID) '.pdf']);
+% end
+
 %%
 weights_yaw = weights_robotis{parms.n_twitches}(end,:);
 weights_gyro = weights_robotis{parms.n_twitches}(end-2:end,:);

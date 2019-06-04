@@ -277,6 +277,23 @@ void fill_inverse_map_array( std::vector<std::vector<float>> inverse_map_hardcod
   }
 }
 
+void fill_scaling_amp_class1(float scaling_amp_class1_hardcoded[]){
+  scaling_amp_class1.resize(n_limb);
+  for (int i=0; i<n_limb; i++){
+    scaling_amp_class1[i] = scaling_amp_class1_hardcoded[i];
+  } 
+}
+
+void initialize_scaling_amp_class1(){
+  scaling_amp_class1.resize(n_limb);
+  for (int i=0; i<n_limb; i++){
+    scaling_amp_class1[i] = 1;
+  }
+  if (MAP_USED == 123){
+    fill_scaling_amp_class1(scaling_amp_class1_123);
+  }
+}
+
 void fill_neutral_pos(uint16_t neutral_pos_hardcoded[]){
   
   for (int i=0; i<n_servos; i++){
@@ -336,7 +353,18 @@ void initialize_hardcoded_limbs(){
     }
   } 
 
+  if (MAP_USED == 123) {
+    n_limb = 4;
+    fill_neutral_pos(neutral_pos_123);
+    if (direction_X){
+      fill_limbs_array(limbs_X_4_weird);
+      fill_changeDirs_array(changeDirs_X_4_weird);
+      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4_weird);
+    }
+  } 
+
   init_offset_class1();
+  initialize_scaling_amp_class1();
 
   SerialUSB.println("Initialize hardcoded limbs success !");
 }
@@ -379,6 +407,14 @@ void initialize_inverse_map_advanced_tegotae(){
     if (direction_X){
       sigma_advanced = sigma_advanced_X_115;
       fill_inverse_map_array(inverse_map_X_115);
+    }
+  }
+
+  if (MAP_USED==123)
+  {
+    if (direction_X){
+      sigma_advanced = sigma_advanced_X_123;
+      fill_inverse_map_array(inverse_map_X_123);
     }
   }
 }
@@ -495,14 +531,14 @@ void send_command_limb_oscillators(){
   for (int i=0; i<n_limb; i++){
     //class 1 first : doing movement
     servo_id_list[2*i] = id[limbs[i][0]];
-    goal_position_straight = phase2pos_wrapper(phi[i]+offset_class1[i], 0, changeDirs[i][0]);
-    goal_position_yaw = phase2pos_wrapper(phi[i]+offset_class1[i], 0, changeDirs_Yaw[i]);
+    goal_position_straight = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs[i][0], scaling_amp_class1[i]);
+    goal_position_yaw = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs_Yaw[i], scaling_amp_class1[i]);
 
     goal_positions_tegotae[2*i] = neutral_pos[limbs[i][0]] + (weight_straight * goal_position_straight + weight_yaw * goal_position_yaw);
     
     //class 2 : stance swing
     servo_id_list[2*i+1] = id[limbs[i][1]];
-    goal_positions_tegotae[2*i+1] = neutral_pos[limbs[i][1]] + phase2pos_wrapper(phi[i], 1, changeDirs[i][1]);
+    goal_positions_tegotae[2*i+1] = neutral_pos[limbs[i][1]] + phase2pos_Class2(phi[i], changeDirs[i][1]);
   }
   //print_goal_positions_tegotae();
   syncWrite_position_n_servos(n_servos, servo_id_list, goal_positions_tegotae);
@@ -518,7 +554,8 @@ int16_t phase2pos_oscillator(float phase, float amp_deg, boolean changeDir){
   return pos;
 }
 
-int16_t phase2pos_wrapper(float phase, boolean isClass2, boolean changeDir){
+/*
+int16_t phase2pos_wrapper(float phase, boolean isClass2, boolean changeDir, float scaling_amp_class1){
   if (isClass2){
     if (sin(phase) > 0) // swing
       return phase2pos_oscillator(phase, amplitude_class2, changeDir);
@@ -526,8 +563,20 @@ int16_t phase2pos_wrapper(float phase, boolean isClass2, boolean changeDir){
       return phase2pos_oscillator(phase, alpha*amplitude_class2, changeDir);
   }
   else{
-    return phase2pos_oscillator(phase, amplitude_class1, changeDir);
+    return phase2pos_oscillator(phase, scaling_amp_class1*amplitude_class1, changeDir);
   }
+}
+*/
+
+int16_t phase2pos_Class2(float phase, boolean changeDir){
+  if (sin(phase) > 0) // swing
+    return phase2pos_oscillator(phase, amplitude_class2, changeDir);
+  else // reduced amplitude in stance for class 2
+    return phase2pos_oscillator(phase, alpha*amplitude_class2, changeDir);
+}
+
+int16_t phase2pos_Class1(float phase, boolean changeDir, float scaling_amp_class1){
+    return phase2pos_oscillator(phase, scaling_amp_class1*amplitude_class1, changeDir);
 }
 
 

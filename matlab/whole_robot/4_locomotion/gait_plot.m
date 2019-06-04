@@ -28,6 +28,8 @@ GRF = GRF_filtered;
 
 %%
 threshold_unloading = 0.2; %Fukuhuara, figure 6, stance if more than 20% of maximal value
+[value_unloading,max_value_GRF_limb] = determine_value_unloading(GRF,threshold_unloading);
+
 %% plotting GRFs
 switch n_limb
     case 4
@@ -152,7 +154,7 @@ set(zoom(f_total_load),'Motion','horizontal');
 linkaxes([ax_grf;ax_gait;ax_phase;ax_total_load],'x');
 
 %%
-xlim([0 60]);
+xlim([90 100]);
 
 
 %%

@@ -64,7 +64,7 @@ uint8_t n_changes_recording = 2;
 
 //float phi_init[4] = {3.14, 3.14, 3.14, 3.14};
 //float phi_init[6] = {0, 0, 0, 3.14, 3.14, 3.14};
-float phi_init[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+float phi_init[4] = {0, 0, 0, 0};
 
 uint8_t n_lc_amputated = 0;
 std::vector<uint8_t>  idx_lc_amputated;
@@ -92,6 +92,7 @@ std::vector<std::vector<uint8_t>>  limbs;
 std::vector<std::vector<bool>>  changeDirs; 
 std::vector<bool>  changeDirs_Yaw; 
 std::vector<std::vector<float>> inverse_map; 
+std::vector<float> scaling_amp_class1;
 
 
 //filtering
