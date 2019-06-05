@@ -80,8 +80,9 @@ void twitch_main()
     {
 
       // Reset variables for learning
-      reset_twitch_variables();
-      
+      reset_s_dot_last();
+      reset_integrated_speed();
+
       for (uint8_t i_part = 0; i_part < 3; i_part++)
       {
         mean_time_computation_part = 0;
@@ -368,6 +369,11 @@ void twitch_learning_prog(int i_action, float m_learning)
 
     // Select data from array
     s_dot_select = s_dot_last[j_sensor];
+    //for the speed, we integrate it.
+    if (j_sensor>=3*n_ard && j_sensor<3*n_ard + 3){
+      integrated_speed[j_sensor-3*n_ard] += s_dot_select * IMU_GAIN * TIME_INTERVAL_TWITCH * 0.001; 
+      s_dot_select = integrated_speed[j_sensor-3*n_ard];
+    }
 
     // Select weight from array
     if (LEARN_IN_INT16_T){
@@ -420,14 +426,17 @@ void twitch_learning_prog(int i_action, float m_learning)
 
 }
 
-void reset_twitch_variables()
+void reset_s_dot_last()
 {
-  // Reset variables used in the twitching process
-
   for (int j_tmp = 0; j_tmp < n_ard * 3 + IMU_USEFUL_CHANNELS; j_tmp++)
   {
     s_dot_last[j_tmp] = 0;
   }
+}
+
+void reset_integrated_speed(){
+  for (int i=0; i<3 ; i++)
+    integrated_speed[i] = 0;
 }
 
 

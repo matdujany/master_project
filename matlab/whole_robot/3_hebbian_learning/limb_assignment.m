@@ -9,7 +9,7 @@ export_plots = false;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 123;
+recordID = 124;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
@@ -37,27 +37,27 @@ hinton_LC(weights_lc,parms,1);
 %fusing the weights with the 2 directions
 weights_fused = zeros(size(weights_lc,1),parms.n_m);
 for i=1:parms.n_m
-    weights_fused(:,i)= (abs(weights_lc(:,1+2*(i-1))) + abs(weights_lc(:,2*i)))/2;
+    weights_fused(:,i) = ( weights_lc(:,2*i-1) + weights_lc(:,2*i) )/2;
 end
 
 
 %% fusing the weights over loadcell channels
-weights_fused_sumc = zeros(size(weights_fused,1)/3,parms.n_m);
+weights_fused_norm = zeros(size(weights_fused,1)/3,parms.n_m);
 for j=1:size(weights_fused,1)/3
     %weights_fused_sumc(j,:)=(abs(weights_fused(1+3*(j-1),:)) + abs(weights_fused(2+3*(j-1),:)) + abs(weights_fused(3*j,:)))/3;
-    weights_fused_sumc(j,:)=sum(abs(weights_fused([1:3]+3*(j-1),:)))/3;
-
+    %weights_fused_sumc(j,:)=sum(abs(weights_fused([1:3]+3*(j-1),:)))/3;
+    weights_fused_norm(j,:)=sqrt(sum( weights_fused([1:3]+3*(j-1),:).^2 ));
 end
 
-weights_fused_limbass = weights_fused_sumc;
-plot_weights_limb_assignment(6*weights_fused_limbass,parms);
+weights_fused_limbass = weights_fused_norm;
+plot_weights_limb_assignment(weights_fused_limbass,parms);
 
 %%
-[~,closest_LC] = max(weights_fused_sumc,[],1);
+[~,closest_LC] = max(weights_fused_limbass,[],1);
 
 likelihood_LC = zeros(1,parms.n_m);
 for i=1:parms.n_m
-    values = maxk(weights_fused_sumc(:,i),2);
+    values = maxk(weights_fused_limbass(:,i),2);
     likelihood_LC(i) = values(1)/values(2);
 end
 format bank;
@@ -74,7 +74,7 @@ if sum(abs(good_closest_LC'-closest_LC))~=0
 end
 
 %%
-h=plot_weights_limb_assignment(6*weights_fused_limbass,parms);
+h=plot_weights_limb_assignment(weights_fused_limbass,parms);
 h.Colormap = [1 1 1; 1 0 0; 0 1 0; 1 1 0];%white, red, green, yellow
 caxis('manual');
 set(gca,'CLim',[1 4]);

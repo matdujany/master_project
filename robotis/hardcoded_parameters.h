@@ -41,7 +41,8 @@ std::vector<std::vector<float>> inverse_map_X_123{
 
 uint16_t neutral_pos_123[8] = {510, 497, 501, 511, 508, 532, 509, 502};
 
-float scaling_amp_class1_123[4] = {0.855, 0.023, 1, 0.153};
+float scaling_amp_class1_forward_123[4] = {0.855, 0.023, 1, 0.153};
+float scaling_amp_class1_yaw_123[4] = {1, 0.914,0.930,0.666};
 
 std::vector<std::vector<uint8_t>> limbs_X_8{
     {13,12},

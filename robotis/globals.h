@@ -92,7 +92,8 @@ std::vector<std::vector<uint8_t>>  limbs;
 std::vector<std::vector<bool>>  changeDirs; 
 std::vector<bool>  changeDirs_Yaw; 
 std::vector<std::vector<float>> inverse_map; 
-std::vector<float> scaling_amp_class1;
+std::vector<float> scaling_amp_class1_forward;
+std::vector<float> scaling_amp_class1_yaw;
 
 
 //filtering
@@ -206,6 +207,8 @@ float s_dot_last[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS];   // Most recent val
 
 float val_old_IMU_acc_corrected[3];
 float val_old_IMU_gyro_corrected[3];
+float integrated_speed[3]; //for learning speed weights.
+
 
 //motor
 uint16_t last_motor_pos[MAX_NR_SERVOS];  // Most recent values of motor positions

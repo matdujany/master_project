@@ -161,7 +161,7 @@
 #define GYRO_GAIN 0.06957 // Same gain on all axes, should put the gyro readings in deg/seconds
 #define GYRO_GAIN_TO_RAD 0.0012142 //GYRO_GAIN * pi/180 --> should put the gyro readings in rad/seconds
 
-#define GRAVITY_IMU 256.0f // "1G reference" used for DCM filter and accelerometer calibration
+#define IMU_GAIN 0.0383f // 1g (9.81 m/s2) = 256 in IMU scaling --> IMU GAIN 9.81/256 
 
 #define DELAY_FRAMES_UPDATE_OFFSET      30   //should be more than 20 ms, because the DATA OUTPUTE RATE of the IMU is 20
 #define NB_VALUES_MEAN_UPDATE_OFFSET    50 

@@ -277,20 +277,24 @@ void fill_inverse_map_array( std::vector<std::vector<float>> inverse_map_hardcod
   }
 }
 
-void fill_scaling_amp_class1(float scaling_amp_class1_hardcoded[]){
-  scaling_amp_class1.resize(n_limb);
+void fill_scaling_amp_class1(float scaling_amp_class1_forward_hardcoded[], float scaling_amp_class1_yaw_hardcoded[]){
+  scaling_amp_class1_forward.resize(n_limb);
+  scaling_amp_class1_yaw.resize(n_limb);
   for (int i=0; i<n_limb; i++){
-    scaling_amp_class1[i] = scaling_amp_class1_hardcoded[i];
+    scaling_amp_class1_forward[i] = scaling_amp_class1_forward_hardcoded[i];
+    scaling_amp_class1_yaw[i] = scaling_amp_class1_yaw_hardcoded[i];
   } 
 }
 
 void initialize_scaling_amp_class1(){
-  scaling_amp_class1.resize(n_limb);
+  scaling_amp_class1_forward.resize(n_limb);
+  scaling_amp_class1_yaw.resize(n_limb);
   for (int i=0; i<n_limb; i++){
-    scaling_amp_class1[i] = 1;
+    scaling_amp_class1_forward[i] = 1;
+    scaling_amp_class1_yaw[i] = 1;
   }
   if (MAP_USED == 123){
-    fill_scaling_amp_class1(scaling_amp_class1_123);
+    fill_scaling_amp_class1(scaling_amp_class1_forward_123, scaling_amp_class1_yaw_123);
   }
 }
 
@@ -531,8 +535,8 @@ void send_command_limb_oscillators(){
   for (int i=0; i<n_limb; i++){
     //class 1 first : doing movement
     servo_id_list[2*i] = id[limbs[i][0]];
-    goal_position_straight = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs[i][0], scaling_amp_class1[i]);
-    goal_position_yaw = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs_Yaw[i], scaling_amp_class1[i]);
+    goal_position_straight = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs[i][0], scaling_amp_class1_forward[i]);
+    goal_position_yaw = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs_Yaw[i], scaling_amp_class1_yaw[i]);
 
     goal_positions_tegotae[2*i] = neutral_pos[limbs[i][0]] + (weight_straight * goal_position_straight + weight_yaw * goal_position_yaw);
     

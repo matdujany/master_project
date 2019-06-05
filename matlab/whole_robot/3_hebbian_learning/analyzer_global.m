@@ -105,10 +105,14 @@ direction_list = {'X','Y','Z'};
 
 %% scaling amplitudes of class 1
 weights_speed_class1 = zeros(n_limb,1);
+weights_yaw_class1 = zeros(n_limb,1);
 for i=1:n_limb
     weights_speed_class1(i) = weights_speed_fused(desired_movement_speed_channel,motors_classes(i,1));
+    weights_yaw_class1(i) = weights_yaw_fused(1,motors_classes(i,1));
 end
-scaling_amp_class1 = abs(weights_speed_class1)/max(abs(weights_speed_class1));
+scaling_amp_class1_forward = abs(weights_speed_class1)/max(abs(weights_speed_class1));
+scaling_amp_class1_yaw = abs(weights_yaw_class1)/max(abs(weights_yaw_class1));
+
 %% z effect
 z_effect_limb_to_lc = zeros(parms.n_lc,n_limb);
 for i_limb=1:n_limb

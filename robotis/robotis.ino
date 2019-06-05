@@ -75,7 +75,7 @@ void setup() {
 
   //record_tegotae_custom_phi_init(300*1000);
   
-  tegotae_bluetooth();
+  //tegotae_bluetooth();
   
   //record_tegotae_leg_amputated_programmed();
 }   
@@ -84,11 +84,11 @@ void setup() {
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
   
-  //update_load_pos_values();
-  //SerialUSB.print("Motor positions, ");
-  //print_motor_positions();
-  //show_value_DC(20);
-  //serial_read_neutral_pos();
+  update_load_pos_values();
+  SerialUSB.print("Motor positions, ");
+  print_motor_positions();
+  show_value_DC(20);
+  serial_read_neutral_pos();
   
 
   //serial_read_test_twitch();
