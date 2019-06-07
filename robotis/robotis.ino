@@ -24,6 +24,7 @@ void setup() {
   /////////////////////////////////
   // DYNAMIXEL                   //
   /////////////////////////////////
+
   while(!SerialUSB);
   init_dynamixel();
   
@@ -66,30 +67,32 @@ void setup() {
   //pose_stance();
   delay(1000);
 
-  //updating IMU offsets (recalibration)
+  //updating IMU offsets (recalibration)     
   update_IMU_offsets();
 
   //twitch_record_wrapper();
 
   //record_tegotae_changes();
 
-  //record_tegotae_custom_phi_init(300*1000);
+  //record_tegotae_custom_phi_init(90*1000);
   
-  //tegotae_bluetooth();
+  tegotae_bluetooth();
   
-  //record_tegotae_leg_amputated_programmed();
+  //record_tegotae_change_dir(240*1000);
+
+
 }   
 
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
   
-  update_load_pos_values();
-  SerialUSB.print("Motor positions, ");
-  print_motor_positions();
-  show_value_DC(20);
-  serial_read_neutral_pos();
-  
+  //update_load_pos_values();
+  //SerialUSB.print("Motor positions, ");
+  //print_motor_positions();
+  //show_value_DC(20);
+  //serial_read_neutral_pos();
+
 
   //serial_read_test_twitch();
 

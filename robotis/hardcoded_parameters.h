@@ -13,7 +13,7 @@
 //123 for weird quadruped
 
 
-#define MAP_USED 123
+#define MAP_USED 127
 
 std::vector<std::vector<uint8_t>> limbs_X_4_weird{
     {0,2},
@@ -29,7 +29,8 @@ std::vector<std::vector<bool>>  changeDirs_X_4_weird{
     {false,true},
 };
 
-std::vector<bool>  changeDirs_X_Yaw_4_weird{true,true,true,true};
+std::vector<bool>  changeDirs_Yaw_4_weird{true,true,true,true};
+std::vector<bool>  changeDirs_Y_4_weird{false,true,false,false};
 
 float sigma_advanced_X_123 = 0.1574;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_123{
@@ -38,11 +39,24 @@ std::vector<std::vector<float>> inverse_map_X_123{
 {-0.486, 0.632, -0.632, 0.631} ,
 {0.577, -0.578, 0.582, -0.475}
 };
-
 uint16_t neutral_pos_123[8] = {510, 497, 501, 511, 508, 532, 509, 502};
-
 float scaling_amp_class1_forward_123[4] = {0.855, 0.023, 1, 0.153};
 float scaling_amp_class1_yaw_123[4] = {1, 0.914,0.930,0.666};
+float scaling_amp_class1_Y_123[4] = {0.049, 1, 0.137, 0.978};
+
+
+float sigma_advanced_X_127 = 0.1878;// scaled for 50% of 0.5Hz
+std::vector<std::vector<float>> inverse_map_X_127{
+{-1.000, 0.953, -0.836, 0.939} ,
+{0.543, -0.717, 0.597, -0.474} ,
+{-0.564, 0.619, -0.616, 0.716} ,
+{0.637, -0.679, 0.628, -0.455}
+};
+
+uint16_t neutral_pos_127[8] = {512, 511, 509, 508, 511, 510, 497, 512};
+float scaling_amp_class1_forward_127[4] = {0.862, 0.091, 1, 0.054};
+float scaling_amp_class1_Y_127[4] = {0.148, 1, 0.015, 0.946};
+float scaling_amp_class1_yaw_127[4] = {1, 0.842, 0.892, 0.666};
 
 std::vector<std::vector<uint8_t>> limbs_X_8{
     {13,12},

@@ -6,8 +6,8 @@ addpath('functions');
 addpath('../2_load_data_code');
 
 %% loading
-recordID = 50;
-n_limb = 8;
+recordID = 103;
+n_limb = 4;
 phi_only = false;
 
 fprintf("data_processing\n");

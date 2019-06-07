@@ -65,6 +65,8 @@ void record_tegotae_leg_amputated_programmed(){
 }
 
 
+
+
 void record_tegotae_leg_amputated_Serial3(unsigned long recording_duration){
   init_tegotae();
   init_recording_locomotion();
@@ -94,11 +96,10 @@ void record_tegotae_leg_amputated_Serial3(unsigned long recording_duration){
 void record_tegotae_custom_phi_init(unsigned long recording_duration){
   init_tegotae();
   init_recording_locomotion();
-
   init_phi_tegotae();
-  for (int i=0; i<n_limb; i++){
-    phi[i] = phi_init[i];
-  }
+
+  //change_dir_mode_to_XY();
+
   unsigned long t_start_recording = millis();
   while (millis()-t_start_recording<recording_duration)
   {
@@ -107,6 +108,38 @@ void record_tegotae_custom_phi_init(unsigned long recording_duration){
     update_phi_tegotae();
     send_command_limb_oscillators();
     //SerialUSB.print("Time elapsed for all operations of tegotae loop (in ms): ");SerialUSB.println(millis()-t_start_update_dc);
+    while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
+  }
+
+  SerialUSB.println("Tegotae recording over");
+  SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
+  SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);  
+}
+
+void record_tegotae_change_dir(unsigned long recording_duration){
+  init_tegotae();
+  init_recording_locomotion();
+  init_phi_tegotae();
+
+  //change_dir_mode_to_XY();
+
+  unsigned long t_start_recording = millis();
+  while (millis()-t_start_recording<recording_duration)
+  {
+    unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);
+    send_phi_and_pos_Serial3();
+    update_phi_tegotae();
+    send_command_limb_oscillators();
+    //SerialUSB.print("Time elapsed for all operations of tegotae loop (in ms): ");SerialUSB.println(millis()-t_start_update_dc);
+    
+    if (SerialUSB.available()){
+      while (SerialUSB.available()){
+        delay(1);
+        SerialUSB.read();
+      }
+      weight_straight = 1 - weight_straight;
+      weight_yaw = 1 - weight_yaw;
+    }   
     while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
   }
 
@@ -170,8 +203,14 @@ void tegotae_bluetooth(){
   init_tegotae();
   init_phi_tegotae();
   setup_serial_bluetooth();
+
+  //change_dir_mode_to_XY();
+ 
   weight_straight = 0;
   weight_yaw = 0;
+  weight_X = 0;
+  weight_Y = 0;
+
   print_phi_info();
   send_command_limb_oscillators();
   SerialUSB.println("waiting for bluetooth connection ...");
@@ -180,7 +219,12 @@ void tegotae_bluetooth(){
   init_t_offset_oscillators();
   while (true){
     unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);  //the order of the 2 lines here matter a locomotion
-    serial_read_bluetooth_main();
+    
+    if (locomotion_2_joysticks)
+      serial_read_bluetooth_2joysticks_main();
+    else
+      serial_read_bluetooth_main();
+
     update_phi_tegotae();
     send_command_limb_oscillators();
     print_phi_info();
@@ -192,6 +236,29 @@ void tegotae_bluetooth(){
 
 /// Bluetooth commands functions
 
+void update_locomotion_weights_2(uint8_t radiusL, uint8_t angleL, uint8_t radiusR, uint8_t angleR){
+  float angleR_rad = ((float)angleR)/36 * (2*3.1415);
+  float weight_X_new = ((float)radiusR/10) * cos(angleR_rad);
+  float weight_Y_new = -((float)radiusR/10) * sin(angleR_rad);
+  
+  float angleL_rad = ((float)angleL)/36 * (2*3.1415);
+  float weight_yaw_new = -sin(angleL_rad);
+  if (angleL == 18)
+    weight_yaw_new = 0;
+
+  weight_X = smooth_weight(weight_X_new, weight_X);
+  weight_Y = smooth_weight(weight_Y_new, weight_Y);
+  weight_yaw = smooth_weight(weight_yaw_new,weight_yaw);
+}
+
+void print_locomotion_weights_2(){
+  SerialUSB.print("Locomotion weights : X "); SerialUSB.print(weight_X,2);
+  SerialUSB.print(", Y "); SerialUSB.print(weight_Y,2);
+  SerialUSB.print(", Yaw "); SerialUSB.println(weight_yaw,2);
+  SerialUSB.println();
+}
+
+
 //joyX and joyY are between -100 and 100
 void update_locomotion_weights(int8_t joyX, int8_t joyY){
   float joyXf = float(joyX)/100.0;
@@ -202,19 +269,30 @@ void update_locomotion_weights(int8_t joyX, int8_t joyY){
     joyXf = joyXf/norm;
     joyYf = joyYf/norm;
   }
+
+  /*
   float weight_straight_new = joyYf;
   float weight_yaw_new = joyXf;
   //smoothing
-  float threshold_max_variation = 0.05;
   if (abs(weight_straight_new - weight_straight)>threshold_max_variation){
     weight_straight_new = weight_straight + threshold_max_variation*get_sign(weight_straight_new - weight_straight);
   }
   if (abs(weight_yaw_new - weight_yaw)>threshold_max_variation){
     weight_yaw_new = weight_yaw + threshold_max_variation*get_sign(weight_yaw_new - weight_yaw);
   }
+  */
 
-  weight_straight = weight_straight_new;
-  weight_yaw = weight_yaw_new;
+  weight_straight = smooth_weight(joyYf, weight_straight);
+  weight_yaw = smooth_weight(joyXf,weight_yaw);
+
+}
+
+float smooth_weight(float weight_new, float weight_old){
+  float threshold_max_variation = 0.05;
+   if (abs(weight_new - weight_old)>threshold_max_variation){
+    weight_new = weight_old + threshold_max_variation*get_sign(weight_new - weight_old);
+  } 
+  return weight_new;
 }
 
 void increase_freq_bluetooth() {
@@ -267,6 +345,13 @@ void fill_changeDirs_Yaw_array( std::vector<bool> changeDirs_Yaw_hardcoded){
   }
 }
 
+void fill_changeDirs_Y_array( std::vector<bool> changeDirs_Y_hardcoded){
+  changeDirs_Y.resize(n_limb);
+  for (int i=0; i<n_limb; i++){
+    changeDirs_Y[i] = changeDirs_Y_hardcoded[i];
+  }
+}
+
 void fill_inverse_map_array( std::vector<std::vector<float>> inverse_map_hardcoded){
   inverse_map.resize(n_limb);
   for (int i=0; i<n_limb; i++){
@@ -286,6 +371,13 @@ void fill_scaling_amp_class1(float scaling_amp_class1_forward_hardcoded[], float
   } 
 }
 
+void fill_scaling_amp_class1_Y(float scaling_amp_class1_Y_hardcoded[]){
+  scaling_amp_class1_Y.resize(n_limb);
+  for (int i=0; i<n_limb; i++){
+    scaling_amp_class1_Y[i] = scaling_amp_class1_Y_hardcoded[i];
+  } 
+}
+
 void initialize_scaling_amp_class1(){
   scaling_amp_class1_forward.resize(n_limb);
   scaling_amp_class1_yaw.resize(n_limb);
@@ -296,6 +388,24 @@ void initialize_scaling_amp_class1(){
   if (MAP_USED == 123){
     fill_scaling_amp_class1(scaling_amp_class1_forward_123, scaling_amp_class1_yaw_123);
   }
+
+  if (MAP_USED == 127){
+    fill_scaling_amp_class1(scaling_amp_class1_forward_127, scaling_amp_class1_yaw_127);
+    fill_scaling_amp_class1_Y(scaling_amp_class1_Y_127);
+  }
+
+}
+
+void change_dir_mode_to_XY(){
+  if (MAP_USED == 123){
+    fill_scaling_amp_class1(scaling_amp_class1_forward_123, scaling_amp_class1_Y_123);
+    fill_changeDirs_Yaw_array(changeDirs_Y_4_weird);
+  }
+  if (MAP_USED == 127){
+    fill_scaling_amp_class1(scaling_amp_class1_forward_127, scaling_amp_class1_Y_127);
+    fill_changeDirs_Yaw_array(changeDirs_Y_4_weird);
+  }
+
 }
 
 void fill_neutral_pos(uint16_t neutral_pos_hardcoded[]){
@@ -310,61 +420,59 @@ void initialize_hardcoded_limbs(){
   if (MAP_USED == 104) {
     n_limb = 4;
     fill_neutral_pos(neutral_pos_104);
-    if (direction_X){
-      fill_limbs_array(limbs_X_4);
-      fill_changeDirs_array(changeDirs_X_4);
-      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4);
-    }
+    fill_limbs_array(limbs_X_4);
+    fill_changeDirs_array(changeDirs_X_4);
+    fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4);
   }
 
   if (MAP_USED == 105) {
     n_limb = 4;
     fill_neutral_pos(neutral_pos_105);
-    if (direction_X){
-      fill_limbs_array(limbs_X_4);
-      fill_changeDirs_array(changeDirs_X_4);
-      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4);
-    }
+    fill_limbs_array(limbs_X_4);
+    fill_changeDirs_array(changeDirs_X_4);
+    fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4);
   }
   
   if (MAP_USED == 108) {
     n_limb = 6;
     fill_neutral_pos(neutral_pos_108);
-    if (direction_X){
-      fill_limbs_array(limbs_X_6);
-      fill_changeDirs_array(changeDirs_X_6);
-      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_6);
-    }
+    fill_limbs_array(limbs_X_6);
+    fill_changeDirs_array(changeDirs_X_6);
+    fill_changeDirs_Yaw_array(changeDirs_X_Yaw_6);
   }
 
   if (MAP_USED == 110) {
     n_limb = 6;
     fill_neutral_pos(neutral_pos_110);
-    if (direction_X){
-      fill_limbs_array(limbs_X_6);
-      fill_changeDirs_array(changeDirs_X_6);
-      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_6);
-    }
+    fill_limbs_array(limbs_X_6);
+    fill_changeDirs_array(changeDirs_X_6);
+    fill_changeDirs_Yaw_array(changeDirs_X_Yaw_6);
   } 
 
   if (MAP_USED == 115) {
     n_limb = 8;
     fill_neutral_pos(neutral_pos_115);
-    if (direction_X){
-      fill_limbs_array(limbs_X_8);
-      fill_changeDirs_array(changeDirs_X_8);
-      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_8);
-    }
+    fill_limbs_array(limbs_X_8);
+    fill_changeDirs_array(changeDirs_X_8);
+    fill_changeDirs_Yaw_array(changeDirs_X_Yaw_8);
   } 
 
   if (MAP_USED == 123) {
     n_limb = 4;
     fill_neutral_pos(neutral_pos_123);
-    if (direction_X){
-      fill_limbs_array(limbs_X_4_weird);
-      fill_changeDirs_array(changeDirs_X_4_weird);
-      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4_weird);
-    }
+    fill_limbs_array(limbs_X_4_weird);
+    fill_changeDirs_array(changeDirs_X_4_weird);
+    fill_changeDirs_Yaw_array(changeDirs_Yaw_4_weird);
+  } 
+
+  if (MAP_USED == 127) {
+    n_limb = 4;
+    fill_neutral_pos(neutral_pos_127);
+    fill_limbs_array(limbs_X_4_weird);
+    fill_changeDirs_array(changeDirs_X_4_weird);
+    fill_changeDirs_Yaw_array(changeDirs_Yaw_4_weird);
+    fill_changeDirs_Y_array(changeDirs_Y_4_weird);
+
   } 
 
   init_offset_class1();
@@ -376,50 +484,44 @@ void initialize_hardcoded_limbs(){
 void initialize_inverse_map_advanced_tegotae(){
   if (MAP_USED==104)
   {
-    if (direction_X){
-      sigma_advanced = sigma_advanced_X_104;
-      fill_inverse_map_array(inverse_map_X_104);
-    }
+    sigma_advanced = sigma_advanced_X_104;
+    fill_inverse_map_array(inverse_map_X_104);
   }
 
   if (MAP_USED==105)
   {
-    if (direction_X){
-      sigma_advanced = sigma_advanced_X_105;
-      fill_inverse_map_array(inverse_map_X_105);
-    }
+    sigma_advanced = sigma_advanced_X_105;
+    fill_inverse_map_array(inverse_map_X_105);
   }
 
   if (MAP_USED==108)
   {
-    if (direction_X){
-      sigma_advanced = sigma_advanced_X_108;
-      fill_inverse_map_array(inverse_map_X_108);
-    }
+    sigma_advanced = sigma_advanced_X_108;
+    fill_inverse_map_array(inverse_map_X_108);
   }
 
   if (MAP_USED==110)
   {
-    if (direction_X){
-      sigma_advanced = sigma_advanced_X_110;
-      fill_inverse_map_array(inverse_map_X_110);
-    }
+    sigma_advanced = sigma_advanced_X_110;
+    fill_inverse_map_array(inverse_map_X_110);
   }
 
   if (MAP_USED==115)
   {
-    if (direction_X){
-      sigma_advanced = sigma_advanced_X_115;
-      fill_inverse_map_array(inverse_map_X_115);
-    }
+    sigma_advanced = sigma_advanced_X_115;
+    fill_inverse_map_array(inverse_map_X_115);
   }
 
   if (MAP_USED==123)
   {
-    if (direction_X){
-      sigma_advanced = sigma_advanced_X_123;
-      fill_inverse_map_array(inverse_map_X_123);
-    }
+    sigma_advanced = sigma_advanced_X_123;
+    fill_inverse_map_array(inverse_map_X_123);
+  }
+
+  if (MAP_USED==127)
+  {
+    sigma_advanced = sigma_advanced_X_127;
+    fill_inverse_map_array(inverse_map_X_127);
   }
 }
 
@@ -529,17 +631,24 @@ void init_offset_class1(){
 
 void send_command_limb_oscillators(){
   uint8_t  servo_id_list[n_servos];
-  int16_t goal_position_straight;
   int16_t goal_position_yaw;
 
   for (int i=0; i<n_limb; i++){
     //class 1 first : doing movement
     servo_id_list[2*i] = id[limbs[i][0]];
-    goal_position_straight = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs[i][0], scaling_amp_class1_forward[i]);
-    goal_position_yaw = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs_Yaw[i], scaling_amp_class1_yaw[i]);
+    if (locomotion_2_joysticks){
+      int16_t goal_position_X = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs[i][0], scaling_amp_class1_forward[i]);
+      int16_t goal_position_Y = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs_Y[i], scaling_amp_class1_Y[i]);
+      goal_position_yaw = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs_Yaw[i], scaling_amp_class1_yaw[i]);
+      goal_positions_tegotae[2*i] = neutral_pos[limbs[i][0]] + (weight_X * goal_position_X + weight_Y * goal_position_Y + weight_yaw * goal_position_yaw);
 
-    goal_positions_tegotae[2*i] = neutral_pos[limbs[i][0]] + (weight_straight * goal_position_straight + weight_yaw * goal_position_yaw);
-    
+    }
+    else {
+      int16_t goal_position_straight = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs[i][0], scaling_amp_class1_forward[i]);
+      goal_position_yaw = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs_Yaw[i], scaling_amp_class1_yaw[i]);
+      goal_positions_tegotae[2*i] = neutral_pos[limbs[i][0]] + (weight_straight * goal_position_straight + weight_yaw * goal_position_yaw);
+    }
+
     //class 2 : stance swing
     servo_id_list[2*i+1] = id[limbs[i][1]];
     goal_positions_tegotae[2*i+1] = neutral_pos[limbs[i][1]] + phase2pos_Class2(phi[i], changeDirs[i][1]);
@@ -589,7 +698,7 @@ int16_t phase2pos_Class1(float phase, boolean changeDir, float scaling_amp_class
 void init_phi_tegotae(){
   //
   for (int i=0; i<n_limb; i++){
-    phi[i] = 0;
+    phi[i] = phi_init[i];
   }
   init_t_offset_oscillators();
 }
@@ -635,9 +744,16 @@ void update_phi_tegotae()
       phi_dot[i] = simple_tegotae_rule(phi[i],N_s[i],N_p[i]);
     }
 
-    //actual update only if the locomotion weights are non 0.
-    if(weight_straight*weight_straight + weight_yaw*weight_yaw > 0){
-      phi[i] = phi[i] + phi_dot[i] * (t_current - t_last_phi_update) / 1000;
+    //increase in phase only if the locomotion weights are non 0
+    if (locomotion_2_joysticks)
+    {
+      if(weight_X*weight_X + weight_Y*weight_Y + weight_yaw*weight_yaw > 0)
+        phi[i] = phi[i] + phi_dot[i] * (t_current - t_last_phi_update) / 1000;
+    }
+    else
+    {
+      if(weight_straight*weight_straight + weight_yaw*weight_yaw > 0)
+        phi[i] = phi[i] + phi_dot[i] * (t_current - t_last_phi_update) / 1000;
     }
     
     if (phi[i]>2*pi)
@@ -743,6 +859,8 @@ void init_recording_locomotion(){
   switch_frame_recording_mode();
   SerialUSB.print("Waiting for any input from Serial USB console to start recording...");
   while (!SerialUSB.available());  
+  while (SerialUSB.available()) 
+   SerialUSB.read();
   SerialUSB.println("recording started !");
   SerialUSB.flush();
 }
@@ -840,9 +958,9 @@ void print_locomotion_parameters(){
   SerialUSB.print("Amplitude class 1 (motors producing the movement) (in degrees) : ");SerialUSB.println(amplitude_class1);  
   SerialUSB.print("Amplitude class 2 (motors doing swing/stance cycle) (in degrees) : ");SerialUSB.println(amplitude_class2);  
   SerialUSB.print("Alpha factor for hip movement amplitude reduction in stance  : ");SerialUSB.println(alpha);    
-  SerialUSB.print("Locomotion in direction : "); 
-  (direction_X) ? SerialUSB.println("X") : 0;
-  (direction_Y) ? SerialUSB.println("Y") : 0;
+  //SerialUSB.print("Locomotion in direction : "); 
+  //(direction_X) ? SerialUSB.println("X") : 0;
+  //(direction_Y) ? SerialUSB.println("Y") : 0;
   if (tegotae_advanced){
     if (USE_FILTER_TEGOTAE){
       SerialUSB.print("Using filter of size ");

@@ -3,11 +3,11 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 50;
+recordID = 103;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 
-n_limb = 8;
+n_limb = 4;
 [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
 n_limb = size(limbs,1);
 
@@ -24,7 +24,7 @@ for i=1:n_limb
     GRF_filtered(:,i) = filter(filter_coeffs,1,GRF(:,i));
 end
 
-GRF = GRF_filtered;
+%GRF = GRF_filtered;
 
 %%
 threshold_unloading = 0.2; %Fukuhuara, figure 6, stance if more than 20% of maximal value
@@ -34,10 +34,10 @@ threshold_unloading = 0.2; %Fukuhuara, figure 6, stance if more than 20% of maxi
 switch n_limb
     case 4
         limb_list_ordered = [3; 4; 2 ;1];
-        limb_names_ordered= {'L1','L2','R1','R2'};      
+        limb_names_ordered= {'L1','L2','R1','R2'};
     case 6
         limb_list_ordered = [4; 5; 6; 3; 2; 1];
-        limb_names_ordered= {'L1','L2','L3','R1','R2','R3'};           
+        limb_names_ordered= {'L1','L2','L3','R1','R2','R3'};
     case 8
         limb_list_ordered = [5; 4; 3; 2; 6; 7; 8 ;1];
         limb_names_ordered= {'L1','L2','L3','L4','R1','R2','R3','R4'};
@@ -72,10 +72,10 @@ xlims  = [0 60];
 switch n_limb
     case 4
         limb_list_gait_diagram = [2; 1; 3 ;4];
-        limb_names_gait_diagram= {'R1','R2','L1','L2'};      
+        limb_names_gait_diagram= {'R1','R2','L1','L2'};
     case 6
         limb_list_gait_diagram = [3; 2; 1; 4; 5; 6];
-        limb_names_gait_diagram= {'R1','R2','R3','L1','L2','L3'};   
+        limb_names_gait_diagram= {'R1','R2','R3','L1','L2','L3'};
     case 8
         limb_list_gait_diagram = [6; 7; 8; 1; 5; 4; 3; 2];
         limb_names_gait_diagram = {'R1','R2','R3','R4','L1','L2','L3','L4'};
@@ -93,7 +93,7 @@ for i=1:n_limb
     [idx_start_stance,idx_stop_stance] = determine_start_stop_stance(GRF(:,i_limb_plot),threshold_unloading);
     time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
     for k=1:length(idx_start_stance)
-        y_patch = 1 + n_limb - i + 0.25*[-1 -1 1 1]; 
+        y_patch = 1 + n_limb - i + 0.25*[-1 -1 1 1];
         x_patch = [idx_start_stance(k) idx_stop_stance(k) idx_stop_stance(k) idx_start_stance(k)];
         color_patch = color_list(mod(i,4)+1);
         color_patch = color_list(i,:);
@@ -114,7 +114,7 @@ set(zoom(f_gait),'Motion','horizontal')
 % switch n_limb
 %     case 4
 %         limb_list_phase = [2; 1; 3 ;4];
-%         limb_names_phase= {'R1','R2','L1','L2'};      
+%         limb_names_phase= {'R1','R2','L1','L2'};
 %     case 6
 %         limb_list_phase = [3; 2; 1; 4; 5; 6];
 %         limb_names_phase= {'R1','R2','R3','L1','L2','L3'}   ;
@@ -150,8 +150,56 @@ ax_total_load =gca();
 
 set(zoom(f_total_load),'Motion','horizontal');
 
+%% delta phases
+figure;
+ax_delta_phases = zeros(n_limb,1);
+for i=1:n_limb
+    subplot(2,2,i);
+    time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
+    hold on;
+    legend_list = cell(n_limb-1,1);
+    count = 1;
+    for j=1:n_limb
+        if j~=i
+            plot(time,mod(pos_phi_data.limb_phi(i,:)-pos_phi_data.limb_phi(j,:),2*pi),'LineWidth',1.5,'Color',color_list(j,:));
+            legend_list{count,1} = ['Limb ' num2str(j)];
+            count = count + 1;
+        end
+    end
+    ylabel('Delta Phase [rad]');
+    xlabel('Time [s]');
+    title(['Reference Limb ' num2str(i)]);
+    lgd=legend(legend_list);
+    ax_delta_phases(i,1) = gca();
+end
+
+%% plotting positions
+ax_positions = zeros(n_limb,1);
+for i_limb = 1:n_limb
+    if mod(i_limb-1,4) == 0
+        figure;
+    end
+    subplot(2,2,mod(i_limb-1,4)+1)
+    hold on;
+    plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3,pos_phi_data.motor_position(limb_ids(i_limb,1),:),'b');
+    plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,2),:)/10^3,pos_phi_data.motor_position(limb_ids(i_limb,2),:),'k');
+%     command_pos_c1 = phase2pos_wrapper(pos_phi_data.limb_phi(i_limb,:)+offset_class1(i_limb),0,changeDir(i_limb,1),parms_locomotion);
+%     command_pos_c2 = phase2pos_wrapper(pos_phi_data.limb_phi(i_limb,:),1,changeDir(i_limb,2),parms_locomotion);
+%     plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3,command_pos_c1,'b--');
+%     plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,2),:)/10^3,command_pos_c2,'k--');    
+    ylim([400 600]);
+%     plot_stance_patches_phi(pos_phi_data.limb_phi(i_limb,:),gca(),pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3);
+    ax_positions(i_limb,1)=gca();
+%     add_stance_patches_GRF(GRF(:,i_limb),ax.YLim,(data.time(:,i_limb)-data.time(1,i_limb))/10^3);
+    legend({['Class 1 (movement effector), M' num2str(limb_ids(i_limb,1)) ', ID ' num2str(limbs(i_limb,1))],...
+        ['Class 2 (swing/stance), M' num2str(limb_ids(i_limb,2)) ', ID ' num2str(limbs(i_limb,2))]});
+    ylabel('Motor Position');
+    xlabel('Time [s]');
+    title(['Limb ' num2str(i_limb)]);
+end
+
 %%
-linkaxes([ax_grf;ax_gait;ax_phase;ax_total_load],'x');
+linkaxes([ax_grf;ax_gait;ax_phase;ax_total_load; ax_delta_phases;ax_positions ],'x');
 
 %%
 xlim([90 100]);

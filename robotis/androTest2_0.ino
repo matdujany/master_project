@@ -16,15 +16,62 @@ long previousMillis = 0;                                // will store last time 
 long sendInterval = SLOW;                               // interval between Buttons status transmission (milliseconds)
 String displayStatus = "Walking";                          // message to Android device
 unsigned long last_update_joystick = 0;
-
 int8_t joyX; //
 int8_t joyY;
+
+uint8_t radiusL; //between 0 and 10
+uint8_t radiusR;
+uint8_t angleR; //between 0 and 35 (angle/10)
+uint8_t angleL;
+byte cmd2[6] = {0, 0, 0, 0, 0, 0};                 // bytes received
+
 
 void setup_serial_bluetooth()  {
   Serial3.begin(BAUD_RATE_BLUE);
   delay(1000);
   while(Serial3.available())  Serial3.read();         // empty RX buffer
   delay(1000);
+  SerialUSB.println("bluetoooth setup");
+}
+
+void getJoystickState2(byte data[6])    {
+ radiusL = data[1];
+ angleL = data[2];
+ radiusR = data[3];
+ angleR = data[4]; 
+}
+
+void printJoystickState2() {
+  SerialUSB.print("Joystick L : radius ");SerialUSB.print(radiusL);SerialUSB.print(", angle/10 ");SerialUSB.println(angleL);
+  SerialUSB.print("Joystick R : radius ");SerialUSB.print(radiusR);SerialUSB.print(", angle/10 ");SerialUSB.println(angleR); 
+}
+
+void serial_read_bluetooth_2joysticks_main(){
+  if(Serial3.available()){
+    delayMicroseconds(1500);
+    cmd2[0] =  Serial3.read(); 
+    //SerialUSB.println("found smth");
+    //SerialUSB.println(Serial3.read());
+    if(cmd2[0] == STX)  {
+      int i=1;      
+      while(Serial3.available())  {
+        //delay(1);
+        delayMicroseconds(1500); //the original delay of 1 ms was not enought for my phone/application
+        cmd2[i] = Serial3.read();
+        if(cmd2[i]>35 || i>5)  
+          break;     // Communication error
+        if((cmd2[i]==ETX) && i==5){
+          getJoystickState2(cmd2);
+          printJoystickState2();
+          update_locomotion_weights_2(radiusL, angleL, radiusR, angleR);
+          print_locomotion_weights_2();
+          break;
+        }
+        i++;
+      }
+    }
+
+  }
 }
 
 void serial_read_bluetooth_main() {

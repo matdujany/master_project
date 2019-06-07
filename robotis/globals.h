@@ -42,17 +42,21 @@ float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
 float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
 float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
 float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
-float sigma_s         = 0.06;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
-//0.11 for quadruped, 0.08 for hexapode, 0.06 for octopod
+float sigma_s         = 0.13;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
+//0.11 for quadruped, 0.08 for hexapode, 0.06 for octopod, 0.13 for weird quadruped
 
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 
 bool tegotae_advanced   = true;     //to use advanced tegotae rule
-bool direction_X        = true;    //to go in X
-bool direction_Y        = false;   //to go in Y 
+//bool direction_X        = true;    //to go in X
+//bool direction_Y        = false;   //to go in Y 
 bool tegotae_propulsion = false;    //adds the body propulsion term in the tegotae rule.
 float weight_straight = 1;
 float weight_yaw = 0;
+
+float weight_X = 0;
+float weight_Y = 0;
+bool locomotion_2_joysticks = false;
 
 //recordings and experiments
 float frequency_recording[3] = {0.15, 0.5, 1};
@@ -64,14 +68,20 @@ uint8_t n_changes_recording = 2;
 
 //float phi_init[4] = {3.14, 3.14, 3.14, 3.14};
 //float phi_init[6] = {0, 0, 0, 3.14, 3.14, 3.14};
-float phi_init[4] = {0, 0, 0, 0};
+
+float phi_init[4] = {4.72, 1.60, 3.18, 4.39};
+//float phi_init[4] = {4.72, 1.60, 3.18, 4.39};
+//float phi_init[4] = {5.60, 6.03, 3.44, 0.87};
+//float phi_init[4] = {0.94, 1.62, 5.28, 1.60};
+//float phi_init[4] = {5.12, 1.53, 5.84, 2.20};
+//float phi_init[4] = {1.24, 1.58, 3.87, 2.97};
 
 uint8_t n_lc_amputated = 0;
 std::vector<uint8_t>  idx_lc_amputated;
 
-int idx_lc_amputated_programmed[7] = {1, 2, 3, 4, 5, 6, 7}; //at time_changes_amputation[j] loadcell idx_lc_amputated_programmed[j] is removed
-int time_changes_amputation[8] = {0, 0, 0, 0, 0, 0, 0, 150}; //the last value is the end of the recording
-uint8_t n_amputations_programmed = 7;
+int idx_lc_amputated_programmed[3] = {0, 2, 3}; //at time_changes_amputation[j] loadcell idx_lc_amputated_programmed[j] is removed
+int time_changes_amputation[4] = {0, 0, 0, 120}; //the last value is the end of the recording
+uint8_t n_amputations_programmed = 3;
 //idx_lc_amputated_programmed should be of size n_amputations_programmed
 //time_changes_amputation should be of size n_amputations_programmed+1
 
@@ -94,6 +104,10 @@ std::vector<bool>  changeDirs_Yaw;
 std::vector<std::vector<float>> inverse_map; 
 std::vector<float> scaling_amp_class1_forward;
 std::vector<float> scaling_amp_class1_yaw;
+
+//useful only if can do 2 directions
+std::vector<bool>  changeDirs_Y; 
+std::vector<float> scaling_amp_class1_Y;
 
 
 //filtering

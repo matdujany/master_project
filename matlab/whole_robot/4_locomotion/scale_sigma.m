@@ -1,11 +1,14 @@
 
-frequency = [0.15, 0.5, 1];
-scaling = [0.2, 0.2, 0.2];
-% scaling = 0.5;
-% frequency = 0.5;
+% frequency = [0.15, 0.5, 1];
+% scaling = [0.2, 0.2, 0.2];
+scaling = 0.5;
+frequency = 0.5;
 direction = "X";
-recordid_map_used = 115;
+recordid_map_used = 127;
 [inverse_map,sigma_advanced_coded] = get_inverse_map(direction,recordid_map_used);
+
+inverse_map = rand_map;
+
 n_limbs = size(inverse_map,1);
 
 switch 2*n_limbs
@@ -13,7 +16,11 @@ switch 2*n_limbs
         if recordid_map_used < 103
             total_load = 16;
         else
-            total_load = 14; %cables removed
+            if recordid_map_used < 116
+                total_load = 14; %cables removed
+            else
+                total_load = 12;%cables removed and weird configurations
+            end
         end
     case 12
         if recordid_map_used < 107
@@ -31,7 +38,7 @@ switch 2*n_limbs
 end
 
 
-GRF_term = mean(diag(inverse_map))*total_load;
+GRF_term = mean(abs(diag(inverse_map)))*total_load;
 sigma_advanced = scaling.*frequency*(-2*pi/GRF_term);
 sigma_simple = scaling.*frequency*(-2*pi/total_load);
 disp ('sigma_advanced :'); fprintf('%.4f,',sigma_advanced);
