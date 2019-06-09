@@ -20,7 +20,14 @@ hinton_IMU(weights_robotis{parms.n_twitches},parms,1);
 hinton_LC_asymmetry(weights_robotis{parms.n_twitches},parms,1);
 
 %% computing speed (integration of IMU data)
-weights_speed_all = compute_weights_speed(data,lpdata,parms);
+if recordID < 128
+    weights_speed_all = compute_weights_speed(data,lpdata,parms);
+else
+    for k=1:parms.n_twitches
+        weights_speed_all{k} = weights_robotis{k}(end-5:end-3,:);
+    end
+end
+
 plot_weight_evolution_speed(weights_speed_all,parms);
 
 weights_speed = weights_speed_all{parms.n_twitches};
@@ -31,7 +38,7 @@ weights_speed_fused = fuse_weights_sym_direction(weights_speed,parms);
 % hinton_speed_fused(weights_speed_fused,parms,1);
 
 %% reorganizing in limbs
-[limb,~,~] = get_good_limb(parms,recordID);
+limb = get_good_limb(parms,recordID);
 n_limb = size(limb,1);
 weights_speed_fused_limb_order = zeros(size(weights_speed_fused));
 for i=1:n_limb
@@ -62,7 +69,7 @@ end
 
 h_speed_yaw_limb = hinton_speed_yaw_limb(weights_speed_fused_limb_order,weights_yaw_fused_limb_order,limb,1);
 h_speed_yaw_limb.Position = [126   178   970   600];
-if export_plots == true
+if export_plots
     export_fig(['figures_report/weights_speed_yaw_limb_' num2str(recordID) '.pdf']);
 end
 %% finding the motors and directions to produce movement in X and Y direction

@@ -24,7 +24,7 @@ fontSize_lines = 13;
 fontSize_columns = 13;
 
 %column labels
-y_shift_up = 0.75;
+y_shift_up = 0.55;
 y_shift_bottom = 0.25;
 
 for i=1:parms.n_m

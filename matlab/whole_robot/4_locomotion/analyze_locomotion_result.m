@@ -1,10 +1,10 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 36;
+recordID = 109;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
-n_limb = 6;
+n_limb = 4;
 [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
 n_limb = size(limbs,1);
 n_samples = size(pos_phi_data.limb_phi,2);
@@ -86,6 +86,7 @@ end
 % end
 
 %%
+parms_locomotion.frequency = 0.5
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 simulated_limb_phi = compute_phi_wrapper(pos_phi_data,GRF,parms_locomotion);
 

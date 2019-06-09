@@ -42,12 +42,12 @@ float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
 float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
 float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
 float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
-float sigma_s         = 0.13;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
+float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
 //0.11 for quadruped, 0.08 for hexapode, 0.06 for octopod, 0.13 for weird quadruped
 
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 
-bool tegotae_advanced   = true;     //to use advanced tegotae rule
+bool tegotae_advanced   = false;     //to use advanced tegotae rule
 //bool direction_X        = true;    //to go in X
 //bool direction_Y        = false;   //to go in Y 
 bool tegotae_propulsion = false;    //adds the body propulsion term in the tegotae rule.
@@ -60,8 +60,8 @@ bool locomotion_2_joysticks = false;
 
 //recordings and experiments
 float frequency_recording[3] = {0.15, 0.5, 1};
-float sigma_advanced_recording[3] = {0.0118,0.0392,0.0785}; // at time_changes[i]
-int time_changes[3] = {180, 270, 360}; //the last value is the end of the recoding
+float sigma_advanced_recording[3] = {0.0367,0.0367,0.0367}; // at time_changes[i]
+int time_changes[3] = {90, 180, 270}; //the last value is the end of the recoding
 uint8_t n_changes_recording = 2;
 //frequency_recording, sigma_advanced_recording and time_changes should have the same size 
 //n_changes_recording should be equal to their size - 1 
@@ -69,7 +69,7 @@ uint8_t n_changes_recording = 2;
 //float phi_init[4] = {3.14, 3.14, 3.14, 3.14};
 //float phi_init[6] = {0, 0, 0, 3.14, 3.14, 3.14};
 
-float phi_init[4] = {4.72, 1.60, 3.18, 4.39};
+float phi_init[4] = {0, 0, 0, 0};
 //float phi_init[4] = {4.72, 1.60, 3.18, 4.39};
 //float phi_init[4] = {5.60, 6.03, 3.44, 0.87};
 //float phi_init[4] = {0.94, 1.62, 5.28, 1.60};

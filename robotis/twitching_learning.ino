@@ -371,7 +371,9 @@ void twitch_learning_prog(int i_action, float m_learning)
     s_dot_select = s_dot_last[j_sensor];
     //for the speed, we integrate it.
     if (j_sensor>=3*n_ard && j_sensor<3*n_ard + 3){
-      integrated_speed[j_sensor-3*n_ard] += s_dot_select * IMU_GAIN * TIME_INTERVAL_TWITCH * 0.001; 
+
+      //the integrated speed value here is in mm/s because TIME_INTERVAL_TWITCH is in ms.
+      integrated_speed[j_sensor-3*n_ard] += s_dot_select * IMU_GAIN * TIME_INTERVAL_TWITCH; 
       s_dot_select = integrated_speed[j_sensor-3*n_ard];
     }
 

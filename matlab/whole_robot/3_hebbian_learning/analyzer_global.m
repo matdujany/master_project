@@ -11,13 +11,21 @@ addpath('computing_functions');
 addpath('class_detection_function');
 
 %% Load data
-recordID = 127;
+recordID = 105;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
 
 
-weights_speed_all = compute_weights_speed(data,lpdata,parms);
+
+if recordID < 128
+    weights_speed_all = compute_weights_speed(data,lpdata,parms);
+else
+    for k=1:parms.n_twitches
+        weights_speed_all{k} = weights_robotis{k}(end-5:end-3,:);
+    end
+end
+
 weights_speed = weights_speed_all{parms.n_twitches};
 weights_speed = 100*weights_speed/max(max(abs(weights_speed)));
 % hinton_speed(weights_speed,parms,1);
@@ -43,7 +51,7 @@ if recordID == 111
 end
 
 %%
-[limb,~,~] = get_good_limb(parms,recordID);
+limb = get_good_limb(parms,recordID);
 n_limb = size(limb,1);
 weights_speed_fused_limb_order = zeros(size(weights_speed_fused));
 for i=1:n_limb
@@ -84,8 +92,6 @@ weights_lc = 100*weights_lc/max(max(abs(weights_lc))) ;
 weights_lc_fused = fuse_weights_sym_direction(weights_lc,parms);
 % hinton_LC_fused(weights_lc_fused,parms,1);
 
-[limb,~,~] = get_good_limb(parms,recordID);
-n_limb = size(limb,1);
 weights_lc_fused_limb_order = zeros(size(weights_lc_fused));
 for i=1:n_limb
     for j=1:2
@@ -98,10 +104,10 @@ h_lcz = hinton_LC_limb_1_channel(3,weights_lc_fused_limb_order,parms,limb,1);
 
 
 %% class detection
-desired_movement_speed_channel = 1; %1 for X, 2 for Y
+desired_movement_speed_channel = 2; %1 for X, 2 for Y
 direction_list = {'X','Y','Z'};
-% [motors_classes,likelihood_class1,dir_oscillations,dir_oscillations_yaw] = get_class_c1_before_c2(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
-[motors_classes,likelihood_class2,dir_oscillations,dir_oscillations_yaw] = get_class_c2_before_c1(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
+[motors_classes,likelihood_class1,dir_oscillations,dir_oscillations_yaw] = get_class_c1_before_c2(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
+%[motors_classes,likelihood_class2,dir_oscillations,dir_oscillations_yaw] = get_class_c2_before_c1(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
 
 %% scaling amplitudes of class 1
 weights_speed_class1 = zeros(n_limb,1);
@@ -117,18 +123,19 @@ scaling_amp_class1_yaw = abs(weights_yaw_class1)/max(abs(weights_yaw_class1));
 z_effect_limb_to_lc = zeros(parms.n_lc,n_limb);
 for i_limb=1:n_limb
     for i_lc = 1:parms.n_lc      
-%         z_effect_limb_to_lc(i_lc,i_limb) = sum(dir_oscillations(i_limb,1:2) .* weights_lc_fused(3*i_lc,motors_classes(i_limb,1:2)));
+%          z_effect_limb_to_lc(i_lc,i_limb) = sum([-1 1].*dir_oscillations(i_limb,1:2) .* weights_lc_fused(3*i_lc,motors_classes(i_limb,1:2)));
         z_effect_limb_to_lc(i_lc,i_limb) = dir_oscillations(i_limb,2) * weights_lc_fused(3*i_lc,motors_classes(i_limb,2));
     end
 end
-h_directmap = plot_limb_to_lc_effect(z_effect_limb_to_lc,parms,['Direct map for movement in direction ' direction_list{desired_movement_speed_channel}]);
-
+% h_directmap = plot_limb_to_lc_effect(z_effect_limb_to_lc,parms,['Direct map for movement in direction ' direction_list{desired_movement_speed_channel}]);
+ h_directmap = plot_limb_to_lc_effect(z_effect_limb_to_lc,parms);
 
 %% inverse map for tegotae
 z_effect_lc_to_limb = z_effect_limb_to_lc';
 z_effect_lc_to_limb = z_effect_lc_to_limb/max(max(abs(z_effect_lc_to_limb))) ;
 
-h_invmap = plot_lc_to_limb_inv_map(z_effect_lc_to_limb,parms,['Inverse map for movement in direction ' direction_list{desired_movement_speed_channel}]);
+% h_invmap = plot_lc_to_limb_inv_map(z_effect_lc_to_limb,parms,['Inverse map for movement in direction ' direction_list{desired_movement_speed_channel}]);
+h_invmap = plot_lc_to_limb_inv_map(z_effect_lc_to_limb,parms);
 
 %% scaling sigma
 frequency = 0.5;
@@ -183,6 +190,12 @@ addpath('../../export_fig');
 if false
 %     export_fig('figures_report/hinton_speed.pdf',h_speed);
 %     export_fig('figures_simon_2/hinton_lcz.pdf',h_lcz);
-%     export_fig(['figures_report/direct_map_' num2str(recordID) '.pdf'],h_directmap);
-    export_fig(['figures_report/inv_map_tegotae_' num2str(recordID) '.pdf'],h_invmap);
+%     export_fig(['figures_report/direct_map_' direction_list{desired_movement_speed_channel} '_' num2str(recordID) '.pdf'],h_directmap);
+     export_fig(['figures_report/inv_map_' direction_list{desired_movement_speed_channel} '_' num2str(recordID) '.pdf'],h_invmap);
 end
+
+%%
+disp ('scaling_amp_class1_forward :'); fprintf('%.2f\n',scaling_amp_class1_forward);
+
+fprintf('%0.2f ', scaling_amp_class1_forward)
+fprintf('%0.2f ', scaling_amp_class1_yaw)

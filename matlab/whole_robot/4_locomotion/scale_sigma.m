@@ -1,13 +1,13 @@
 
-% frequency = [0.15, 0.5, 1];
-% scaling = [0.2, 0.2, 0.2];
-scaling = 0.5;
-frequency = 0.5;
-direction = "X";
-recordid_map_used = 127;
+frequency = [0.15, 0.5, 1];
+scaling = [0.5, 0.5, 0.5];
+% scaling = 0.5;
+% frequency = 0.5;
+direction = "Y";
+recordid_map_used = 105;
 [inverse_map,sigma_advanced_coded] = get_inverse_map(direction,recordid_map_used);
 
-inverse_map = rand_map;
+% inverse_map = rand_map;
 
 n_limbs = size(inverse_map,1);
 

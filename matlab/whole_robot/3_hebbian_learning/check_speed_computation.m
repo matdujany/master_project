@@ -10,7 +10,7 @@ addpath('computing_functions');
 export_plots = false;
 
 %% Load data
-recordID = 124;
+recordID = 128;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -25,6 +25,6 @@ weights_speed_comp = compute_weights_speed(data,lpdata,parms);
 max_dif_norm = check_weights_diff(weights_speed_robotis,weights_speed_comp,5);
 
 %%
-hinton_speed(weights_speed_comp{5},parms,1);
+hinton_speed(weights_speed_comp{5},parms,1,'computed');
 %%
-hinton_speed(weights_speed_robotis{5},parms,1);
+hinton_speed(weights_speed_robotis{5},parms,1,'robotis');

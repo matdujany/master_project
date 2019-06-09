@@ -428,9 +428,16 @@ void initialize_hardcoded_limbs(){
   if (MAP_USED == 105) {
     n_limb = 4;
     fill_neutral_pos(neutral_pos_105);
-    fill_limbs_array(limbs_X_4);
-    fill_changeDirs_array(changeDirs_X_4);
-    fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4);
+    if (bool_Y_105){
+      fill_limbs_array(limbs_Y_4);
+      fill_changeDirs_array(changeDirs_Y_4);
+      fill_changeDirs_Yaw_array(changeDirs_Y_Yaw_4);
+    }
+    else {
+      fill_limbs_array(limbs_X_4);
+      fill_changeDirs_array(changeDirs_X_4);
+      fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4);
+    }
   }
   
   if (MAP_USED == 108) {
@@ -490,8 +497,14 @@ void initialize_inverse_map_advanced_tegotae(){
 
   if (MAP_USED==105)
   {
+    if (bool_Y_105){
+    sigma_advanced = sigma_advanced_Y_105;
+    fill_inverse_map_array(inverse_map_Y_105);
+    }
+    else{
     sigma_advanced = sigma_advanced_X_105;
     fill_inverse_map_array(inverse_map_X_105);
+    }
   }
 
   if (MAP_USED==108)

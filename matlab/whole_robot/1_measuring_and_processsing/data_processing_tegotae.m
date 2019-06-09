@@ -4,15 +4,18 @@ clear; clc; close all;
 
 addpath('functions');
 addpath('../2_load_data_code');
-
 %% loading
-recordID = 103;
+recordID = 113;
 n_limb = 4;
 phi_only = false;
 
 fprintf("data_processing\n");
 filename = get_record_name_locomotion(recordID);
 [data_rec, phi_position_data, parms_locomotion, parms] = load_data_locomotion(recordID);
+% parms.n_m = 8;
+% parms.nr_arduino = 4;
+% parms.n_lc = 4;
+% parms.frame_size  = 7 + parms.nr_arduino * parms.sensor_data_length + parms.IMU_data_length;
 fprintf('Data loaded from file: %s\n', filename);
 
 %% Main 

@@ -6,19 +6,24 @@ end
 
 fontSize=16;
 [h,fig_parms] = hinton_raw(inv_map);
-x_min = fig_parms.xmin-0.2;
-x_max = fig_parms.xmax+0.2;
-y_min = fig_parms.ymin-0.2;
-y_max = fig_parms.ymax+0.2;
+x_min = fig_parms.xmin-0.1;
+x_max = fig_parms.xmax+0.1;
+y_min = fig_parms.ymin-0.1;
+y_max = fig_parms.ymax+0.1;
 
 hold on;
 xlim([x_min, x_max]);
 ylim([y_min, y_max]);
 for i=1:parms.n_lc
-    text(x_min-0.1,i-0.5,['Limb ' num2str(parms.n_lc+1-i)],'FontSize',fontSize,'HorizontalAlignment','right');
+    %limb phase
+    text(x_min-0.1,i-0.5,['$$ \dot{\phi_' num2str(parms.n_lc+1-i) '} $$'],'FontSize',fontSize+10,'HorizontalAlignment','right','Interpreter','latex');
+    if i<parms.n_lc
+        plot([x_min x_max],i*[1 1],'k--');
+    end
 end
 for i=1:parms.n_lc
-    text(i-0.5,y_max+0.1,['LC ' num2str(i)],'FontSize',fontSize,'HorizontalAlignment','center','VerticalAlignment','bottom');
+    %z lc 
+    text(i-0.5,y_max+0.05,['$$ N_' num2str(i) '^V $$'],'FontSize',fontSize+4,'HorizontalAlignment','center','VerticalAlignment','bottom','Interpreter','latex');
 end
 for i_limb=1:parms.n_lc
     for i_lc=1:parms.n_lc

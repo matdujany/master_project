@@ -1,10 +1,13 @@
-function h = hinton_speed(weights_speed,parms,writeValues)
+function h = hinton_speed(weights_speed,parms,writeValues,titleString)
 %HINTON_LC Summary of this function goes here
 %   Detailed explanation goes here
 
 
-if nargin ==2
+if nargin == 2
     writeValues = 0;
+end
+if nargin <= 3
+    titleString ='Speed weights, integrated from IMU';
 end
 
 [h,fig_parms] = hinton_raw(weights_speed);
@@ -57,6 +60,6 @@ h.Color = 'w';
 h.Position = [10 10 1000 250];
 hold off;
 
-xlabel('Speed weights, integrated from IMU','FontSize',fontSize);
+xlabel(titleString,'FontSize',fontSize);
 end
 

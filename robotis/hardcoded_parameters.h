@@ -13,7 +13,7 @@
 //123 for weird quadruped
 
 
-#define MAP_USED 127
+#define MAP_USED 105
 
 std::vector<std::vector<uint8_t>> limbs_X_4_weird{
     {0,2},
@@ -149,6 +149,13 @@ std::vector<std::vector<uint8_t>> limbs_X_4{
     {7,6}
 };
 
+std::vector<std::vector<uint8_t>> limbs_Y_4{
+    {4,5},
+    {2,3},
+    {0,1},
+    {6,7}
+};
+
 std::vector<std::vector<bool>>  changeDirs_X_4{
     {false,false},
     {false,false},
@@ -156,7 +163,17 @@ std::vector<std::vector<bool>>  changeDirs_X_4{
     {true,true}
 };
 
+std::vector<std::vector<bool>>  changeDirs_Y_4{
+    {true,true},
+    {true,false},
+    {true,true},
+    {true,false}
+};
+
+
 std::vector<bool>  changeDirs_X_Yaw_4{true,true,true,true};
+std::vector<bool>  changeDirs_Y_Yaw_4{false,true,true,false};
+
 
 float sigma_advanced_X_104 = 0.1239;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_104{
@@ -177,3 +194,13 @@ std::vector<std::vector<float>> inverse_map_X_105{
 };
 uint16_t neutral_pos_105[8]=
 {519, 512, 508, 514, 503, 506, 521, 518};
+
+float sigma_advanced_Y_105 = 0.1410; // scaled for 50% of 0.5Hz
+std::vector<std::vector<float>> inverse_map_Y_105{
+{-0.873, 0.875, -0.895, 0.869} ,
+{0.9, -0.933, 0.870, -0.862} ,
+{-0.965, 1.000, -0.916, 0.879} ,
+{0.816, -0.829, 0.801, -0.771} ,
+};
+
+bool bool_Y_105 = false;

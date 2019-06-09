@@ -1,49 +1,36 @@
-function [limb,sign_direction_dropoff,sign_direction_knee] = get_good_limb(parms,recordID)
+function limb = get_good_limb(parms,recordID)
 %GOOD_limb HARDCODED
 switch parms.n_m
     case 6
             limb = [5     6;     3      4;     1     2];
-            sign_direction_dropoff= 0;
-            sign_direction_knee = 0;
     case 8
-        if recordID < 67
-            limb = [5     6;     7     8;     1     2;     3     4];
-            sign_direction_dropoff= [1    -1    -1     1];
-            sign_direction_knee = [1    -1    -1     1];
-        else
-            sign_direction_dropoff=0;
-            sign_direction_knee = 0;
-            if recordID < 103
-                limb = [1    5;     4     6;     2     3;     7     8];
-
-            else
-                if recordID < 115
-                    limb = [5    6;     3       4;     1     2;     7     8];
-                else
-                    limb = [3    1;    5    6;   2       4;    7     8];
-                end
-            end
+        if recordID < 103
+            limb = [1    5;     4     6;     2     3;     7     8];
+        end
+        if ismember(recordID,[103:105 128:129])
+            limb = [5    6;     3       4;     1     2;     7     8];
+        end
+        if ismember(recordID,[116:127])
+            limb = [3    1;    5    6;   2       4;    7     8];
         end
     case 12
         if recordID < 67
-        limb =  [9    10;   11    12;    1     2;     7     8;     5     6;     3     4];
-        sign_direction_dropoff= [1    -1    -1     1     1    -1];
-        sign_direction_knee = [1   -1   -1   1  1  -1];
-        else
-            if recordID <107
-                limb =  [9    10;   11    12;    3     4;     1     2;     7     8;     5     6];
-                sign_direction_dropoff= [1    -1    -1     -1     1    1];
-                sign_direction_knee = [1   -1   -1   -1  1  1];
-            else
-                limb =  [9    10;   7    1;    4     5;     2     3;     6     8;     11     12];
-                sign_direction_dropoff= 0;
-                sign_direction_knee =0   ;
-            end
+            limb =  [9    10;   11    12;    1     2;     7     8;     5     6;     3     4];
+        end
+         if ismember(recordID,[68:91])
+            limb =  [9    10;   11    12;    3     4;     1     2;     7     8;     5     6];
+        end
+        if ismember(recordID,[107:110])
+            limb =  [9    10;   7    1;    4     5;     2     3;     6     8;     11     12];
+        end
+        if ismember(recordID,[130:130])
+            limb =  [9    10;   4    5;    6     8;     2     3;     11     12;     7     1];
+        end
+        if ismember(recordID,[131:132])
+            limb =  [2    3;   6     8;     4     5;     9  10;     7     1; 11     12];
         end
     case 16
         limb =  [13    14;   15    16;    4     5;     2     3;     9     1;     8     10; 11 12; 6 7];   
-        sign_direction_dropoff= 0;
-        sign_direction_knee = 0;
         if recordID == 94
             limb =  [9    1;   8    10;    4     5;     2     3;     13     14;     15     16; 11 12; 6 7];   
         end

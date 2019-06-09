@@ -85,33 +85,150 @@ switch recordId
     case 41
         record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_42_36';
     case 42
-        record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_46_37';                
+        record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_46_37';
     case 43
         record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_50_52';
     case 44
-        record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_55_47';             
+        record_name = 'tegotae_advanced_amputations_110_X_2019-5-30-18_55_47';
     case 45
-        record_name = 'tegotae_simple_X_2019-5-30-19_11_33';        
+        record_name = 'tegotae_simple_X_2019-5-30-19_11_33';
     case 46
-        record_name = 'tegotae_simple_X_2019-5-30-19_16_1';      
+        record_name = 'tegotae_simple_X_2019-5-30-19_16_1';
     case 47
         record_name = 'tegotae_advanced_110_X_2019-5-30-19_22_38';
     case 48
         record_name = 'tegotae_advanced_110_X_2019-5-30-19_26_24';
     case 50
-        record_name = 'tegotae_advanced_115_X_2019-6-1-17_12_51';        
+        record_name = 'tegotae_advanced_115_X_2019-6-1-17_12_51';
+    case 51
+        record_name = 'tegotae_advanced_115_X_2019-6-1-18_7_26';
+    case 52
+        record_name = 'tegotae_advanced_115_X_2019-6-1-18_12_15';
+    case 53
+        record_name = 'tegotae_advanced_115_X_2019-6-1-18_17_8';
+    case 54
+        record_name = 'tegotae_advanced_115_X_2019-6-1-18_23_5';
+    case 55
+        record_name = 'tegotae_advanced_115_X_2019-6-1-18_27_4';
+    case 56
+        record_name = 'tegotae_advanced_freqchanges_115_X_2019-6-1-18_34_17';
+    case 57
+        record_name = 'tegotae_advanced_addmasses_115_X_2019-6-1-18_45_15';
+    case 58
+        record_name = 'tegotae_advanced_addmasses_115_X_2019-6-1-18_52_36';
+    case 59
+        record_name = 'tegotae_advanced_addmasses_115_X_2019-6-1-19_0_37';
+    case 60
+        record_name = 'tegotae_advanced_amputateted_115_X_2019-6-1-19_50_23';
+    case 61
+        record_name = 'tegotae_advanced_amputateted_115_X_2019-6-1-20_4_34';
+    case 62
+        record_name = 'tegotae_advanced_amputateted_115_X_2019-6-1-20_10_58';
+    case 63
+        record_name = 'tegotae_advanced_amputateted_115_X_2019-6-1-20_15_25';
+    case 64
+        record_name = 'tegotae_advanced_amputateted_115_X_2019-6-1-20_20_17';
+    case 65
+        record_name = 'tegotae_advanced_amputateted_115_X_2019-6-1-20_26_23';
+    case 66
+        record_name = 'tegotae_advanced_amputateted_115_X_2019-6-1-20_30_16';
+    case 67
+        record_name = 'tegotae_advanced_amputateted_115_X_2019-6-1-20_47_46';
+    case 68
+        record_name = 'tegotae_advanced_amputated_115_X_2019-6-2-13_31_9';
+    case 69
+        record_name = 'tegotae_advanced_amputated_115_X_2019-6-2-13_38_8';
     case 70
-        record_name = 'tegotae_simple_X_2019-6-7-10_24_31';  
+        record_name = 'tegotae_simple_X_2019-6-7-10_24_31';
+    case 71
+        record_name = 'tegotae_simple_X_2019-6-7-10_52_53';
+    case 72
+        record_name = 'tegotae_simple_X_2019-6-7-10_57_14';
+    case 73
+        record_name = 'tegotae_simple_X_2019-6-7-11_2_33';
+    case 74
+        record_name = 'tegotae_simple_X_2019-6-7-11_8_14';
+    case 75
+        record_name = 'tegotae_advanced_127_X_2019-6-7-11_14_16';
+    case 76
+        record_name = 'tegotae_advanced_127_X_2019-6-7-13_21_51';
+    case 77
+        record_name = 'tegotae_advanced_127_X_2019-6-7-13_25_36';
+    case 78
+        record_name = 'tegotae_advanced_127_X_2019-6-7-13_28_28';
+    case 79
+        record_name = 'tegotae_advanced_127_X_2019-6-7-13_32_42';
+    case 80
+        record_name = 'tegotae_advanced_ones_X_2019-6-7-13_47_1';
+    case 81
+        record_name = 'tegotae_advanced_ones_X_2019-6-7-13_50_22';
+    case 82
+        record_name = 'tegotae_advanced_ones_X_2019-6-7-13_54_25';
+    case 83
+        record_name = 'tegotae_advanced_ones_X_2019-6-7-13_57_48';
+    case 84
+        record_name = 'tegotae_advanced_ones_X_2019-6-7-13_42_42';
+    case 85
+        record_name = 'tegotae_advanced_ones_X_2019-6-7-14_9_49';
+    case 86
+        record_name = 'tegotae_advanced_ones_X_2019-6-7-14_14_27';
+    case 87
+        record_name = 'tegotae_advanced_ones_X_2019-6-7-14_18_12';
+    case 88
+        record_name = 'tegotae_advanced_ones_X_2019-6-7-14_21_52';
+    case 89
+        record_name = 'tegotae_advanced_ones_X_2019-6-7-14_25_30';
+    case 90
+        record_name = 'tegotae_advanced_amputated_127_X_2019-6-7-14_47_4';
+    case 91
+        record_name = 'tegotae_advanced_amputated_127_X_2019-6-7-14_51_3';
+    case 92
+        record_name = 'tegotae_advanced_amputated_127_X_2019-6-7-14_57_12';
+    case 93
+        record_name = 'tegotae_advanced_amputated_127_X_2019-6-7-15_2_12';
+    case 94
+        record_name = 'tegotae_simple_amputated_X_2019-6-7-15_23_32';
+    case 95
+        record_name = 'tegotae_simple_amputated_X_2019-6-7-15_29_23';
     case 96
-        record_name = 'tegotae_simple_amputated_X_2019-6-7-15_45_57';             
+        record_name = 'tegotae_simple_amputated_X_2019-6-7-15_45_57';
     case 97
-        record_name = 'tegotae_simple_changeDir_X_2019-6-7-16_51_59'; 
+        record_name = 'tegotae_simple_changeDir_X_2019-6-7-16_51_59';
     case 98
-        record_name = 'tegotae_simple_changeDir_X_2019-6-7-17_22_31'; 
+        record_name = 'tegotae_simple_changeDir_X_2019-6-7-17_22_31';
     case 99
-        record_name = 'tegotae_advanced_changeDir_127_X_2019-6-7-17_33_26';         
+        record_name = 'tegotae_advanced_changeDir_127_X_2019-6-7-17_33_26';
+    case 100
+        record_name = 'tegotae_advanced_changeDir_127_X_2019-6-7-17_52_54';
+    case 101
+        record_name = 'tegotae_simple_Yaw_2019-6-7-18_10_8';
+    case 102
+        record_name = 'tegotae_simple_Y_2019-6-7-18_13_54';
     case 103
-        record_name = 'tegotae_advanced_127_Yaw_2019-6-7-18_20_46';  
+        record_name = 'tegotae_advanced_127_Y_2019-6-7-18_16_59';
+    case 104
+        record_name = 'tegotae_advanced_127_Yaw_2019-6-7-18_20_46';
+    case 105
+        record_name = 'tegotae_advanced_addmass_105_X_2019-6-2-14_15_15';
+    case 106
+        record_name = 'tegotae_advanced_105_X_2019-6-8-15_4_12';
+    case 107
+        record_name = 'tegotae_simple_X_2019-6-8-15_17_19';
+    case 108
+        record_name = 'tegotae_advanced_addMass_105_X_2019-6-9-18_38_43';
+    case 109
+        record_name = 'tegotae_advanced_105_Y_2019-6-9-18_56_58';
+    case 110
+        record_name = 'tegotae_advanced_105_Y_2019-6-9-19_5_32';
+    case 111
+        record_name = 'tegotae_advanced_1051_Y_2019-6-9-19_56_51';
+    case 112
+        record_name = 'tegotae_advanced_1052_Y_2019-6-9-20_1_47';
+    case 113
+        record_name = 'tegotae_simple_X_2019-6-9-21_53_12';
+             
+                 
+         
     otherwise
         disp('unknown recordID for locomotion');
 end

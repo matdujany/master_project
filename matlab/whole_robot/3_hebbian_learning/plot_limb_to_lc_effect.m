@@ -19,6 +19,9 @@ for i=1:parms.n_lc
 end
 for i=1:parms.n_lc
     text(i-0.5,y_max+0.1,['Limb ' num2str(i)],'FontSize',fontSize,'HorizontalAlignment','center','VerticalAlignment','bottom');
+    if i<parms.n_lc
+        plot(i*[1 1],[y_min y_max],'k--');
+    end
 end
 for i_limb=1:parms.n_lc
     for i_lc=1:parms.n_lc
@@ -28,7 +31,7 @@ for i_limb=1:parms.n_lc
         else
             color = 'w';
         end
-        text(i_lc-0.5,parms.n_lc-i_limb+0.5,num2str(value,'%.3f'),'Color',color,'FontSize',fontSize,'HorizontalAlignment','center');
+        text(i_lc-0.5,parms.n_lc-i_limb+0.5,num2str(value,'%.1f'),'Color',color,'FontSize',fontSize,'HorizontalAlignment','center');
     end
 end
 h.Color = 'w';

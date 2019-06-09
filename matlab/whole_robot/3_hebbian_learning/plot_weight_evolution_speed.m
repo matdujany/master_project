@@ -76,7 +76,7 @@ ax=gca();
 ax.FontSize = fontsize-2;
 grid on;
 if isfield(opt_parms,'ylims')
-    ylim(opt_parms.ylims);
+     ylim(opt_parms.ylims);
 end
 end
 

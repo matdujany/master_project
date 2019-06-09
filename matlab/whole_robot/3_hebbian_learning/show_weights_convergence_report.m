@@ -1,12 +1,14 @@
-clear; 
+clear;
 close all; clc;
+
+export_plots = false;
 
 %% Load data
 addpath('../2_load_data_code');
 addpath('computing_functions');
 addpath('hinton_plot_functions');
 
-recordID = 105;
+recordID = 127;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
@@ -21,14 +23,17 @@ opt_parms.lc_list = [3];
 opt_parms.ylims = [-85 85];
 f1=plot_weight_evolution_LC_both(weights_computed,parms,0,0,opt_parms);
 f1.Position = 10^3*[0.0058    0.4210    1.5296    0.3410];
-export_fig('figures_report/weight_conv_lc3_105.pdf',f1);
-
+if export_plots
+    export_fig('figures_report/weight_conv_lc3_105.pdf',f1);
+end
 
 opt_parms.lc_list = [2];
 opt_parms.ylims = [-85 85];
 f2=plot_weight_evolution_LC_both(weights_computed,parms,0,0,opt_parms);
 f2.Position = 10^3*[0.0058    0.4210    1.5296    0.3410];
-export_fig('figures_report/weight_conv_lc2_105.pdf',f2);
+if export_plots
+    export_fig('figures_report/weight_conv_lc2_105.pdf',f2);
+end
 
 %%
 f_gyro=plot_weight_evolution_IMU(weights_robotis,parms,opt_parms);
@@ -36,26 +41,32 @@ f_gyro.Position = 10^3*[0.0058    0.4210    1.5296    0.3410];
 
 % hidediag=true;
 % plot_weight_pos_evolution(weights_pos_robotis,parms,hidediag);
-export_fig('figures_report/weight_conv_gyro_105.pdf',f_gyro);
-
+if export_plots
+    export_fig('figures_report/weight_conv_gyro_105.pdf',f_gyro);
+end
 %%
 hinton_LC(weights_computed{5},parms);
 
 %%
 weights_speed = compute_weights_speed(data,lpdata,parms);
-opt_parms.ylims = 0.5*[-1 1];
+opt_parms.ylims = [-500 300];
 f_speed=plot_weight_evolution_speed(weights_speed,parms,opt_parms);
 f_speed.Position = 10^3*[0.0058    0.4210    1.5296    0.3410];
-export_fig('figures_report/weight_conv_speed_105.pdf',f_speed);
-
+if export_plots
+    export_fig('figures_report/weight_conv_speed_105.pdf',f_speed);
+end
 
 
 %%
 h=hinton_full_with_speed(weights_robotis,weights_speed,parms,0);
 h.Position = [ 1           41         1536        749];
-export_fig('figures_report/full_hinton_105.pdf',h);
+if export_plots
+    export_fig('figures_report/full_hinton_105.pdf',h);
+end
 
 %%
 h=hinton_full_with_speed(weights_robotis,weights_speed,parms,1);
 h.Position = [ 1           41         1536        749];
-export_fig('figures_report/full_hinton_105_values.pdf',h);
+if export_plots
+    export_fig('figures_report/full_hinton_105_values.pdf',h);
+end

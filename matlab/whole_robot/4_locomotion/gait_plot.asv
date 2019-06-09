@@ -59,10 +59,10 @@ end
 xlims = [0 60]; %% in secs
 f=figure;
 f.Color = 'w';
-index_subplots = reshape(1:n_limb, 2, n_limb/2).';
+index = reshape(1:n_limb, 2, n_limb/2).';
 ax_grf = zeros(n_limb,1);
 for i=1:n_limb
-    ax_grf(i,1) = subplot(n_limb/2,2,index_subplots(i));
+    ax_grf(i,1) = subplot(n_limb/2,2,index(i));
     i_limb_plot = limb_list_ordered(i);
     time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
     plot(time, GRF(:,i_limb_plot));
@@ -111,9 +111,9 @@ for i=1:n_limb
     for k=1:length(idx_start_stance)
         y_patch = 1 + n_limb - i + 0.25*[-1 -1 1 1];
         x_patch = [idx_start_stance(k) idx_stop_stance(k) idx_stop_stance(k) idx_start_stance(k)];
-%         color_patch = color_list(mod(i,4)+1);
+        color_patch = color_list(mod(i,4)+1);
         color_patch = color_list(i,:);
-        patch(time(x_patch),y_patch,color_patch,'FaceAlpha',1,'EdgeColor','none','HandleVisibility','off');
+        patch(time(x_patch),y_patch,color_patch,'FaceAlpha',0.8,'EdgeColor','none','HandleVisibility','off');
     end
 end
 ax_gait=gca();
@@ -147,8 +147,7 @@ set(zoom(f_gait),'Motion','horizontal')
 % end
 
 f_phase=figure;
-f_phase.Color = 'w';
-% title('Limb Phases');
+title('Phases computed by robotis');
 for i_limb = 1:n_limb
     hold on;
     time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
@@ -160,14 +159,8 @@ end
 ax_phase=gca();
 ax_phase.FontSize = fontSizeTicks;
 lgd=legend(legend_list);
-lgd.FontSize = fontSize;
-lgd.Location = 'eastoutside';
-grid on;
 f_phase.Position = [57.4         94.2         1184        302.4];
 set(zoom(f_phase),'Motion','horizontal');
-yticks(pi*[0:2]);
-yticklabels({'0','\pi','2\pi'});
-ylim(2*pi*[0 1] + [0 0.5]);
 
 %% total load;
 f_total_load = figure;
@@ -180,28 +173,25 @@ ax_total_load.FontSize = fontSizeTicks;
 set(zoom(f_total_load),'Motion','horizontal');
 
 %% delta phases
-
 f_delta_phases = figure;
 f_delta_phases.Color = 'w';
 ax_delta_phases = zeros(n_limb,1);
 for i=1:n_limb
-    ax_delta_phases(i,1) = subplot(n_limb/2,2,index_subplots(i));
+    ax_delta_phases(i,1) = subplot(2,2,i);
     time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
     hold on;
     legend_list = cell(n_limb-1,1);
     count = 1;
-    index_limb = limb_list_ordered(i);
     for j=1:n_limb
-        j_limb = limb_list_gait_diagram(j);
-        if j_limb~=index_limb
-            plot(time,unwrap(mod(pos_phi_data.limb_phi(j_limb,:)-pos_phi_data.limb_phi(index_limb,:),2*pi)),'LineWidth',1.5,'Color',color_list(j,:));
-            legend_list{count,1} = [limb_names_gait_diagram{j} ' (Limb ' num2str(j_limb) ')'];
+        if j~=i
+            plot(time,unwrap(mod(pos_phi_data.limb_phi(i,:)-pos_phi_data.limb_phi(j,:),2*pi)),'LineWidth',1.5,'Color',color_list(j,:));
+            legend_list{count,1} = ['Limb ' num2str(j)];
             count = count + 1;
         end
     end
     ylabel('Delta Phase [rad]');
     xlabel('Time [s]');
-    title(['Phase reference: ' limb_names_ordered{i} ' (Limb ' num2str(index_limb) ')']);
+    title(['Phase reference: Limb ' num2str(i)]);
     lgd=legend(legend_list);
     lgd.FontSize = fontSize;
     lgd.Location = 'best';
@@ -215,6 +205,7 @@ for i=1:n_limb
     yrule = ax.YAxis;
     yrule.FontSize = fontSizeTicks+2;
 end
+sgtitle
 
 set(zoom(f_delta_phases),'Motion','horizontal');
 
@@ -222,12 +213,11 @@ set(zoom(f_delta_phases),'Motion','horizontal');
 %% plotting positions
 ax_positions = zeros(n_limb,1);
 neutral_pos = read_neutral_pos(parms_locomotion.id_map_used,parms.n_m);
-for index_limb = 1:n_limb
-    if mod(index_limb-1,4) == 0
+for i_limb = 1:n_limb
+    if mod(i_limb-1,4) == 0
         figure;
     end
-    i_limb = limb_list_ordered(index_limb);
-    ax_positions(index_limb,1)=subplot(2,2,mod(index_limb-1,4)+1);
+    ax_positions(i_limb,1)=subplot(2,2,mod(i_limb-1,4)+1);
     hold on;
     
     plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3,pos_phi_data.motor_position(limb_ids(i_limb,1),:)-neutral_pos(limb_ids(i_limb,1)),'b');
@@ -246,7 +236,7 @@ for index_limb = 1:n_limb
         ['Class 2 (swing/stance), M' num2str(limb_ids(i_limb,2)) ', ID ' num2str(limbs(i_limb,2))]});
     ylabel('Motor Position');
     xlabel('Time [s]');
-    title([limb_names_ordered{index_limb} ' (Limb ' num2str(i_limb) ')']);
+    title(['Limb ' num2str(i_limb)]);
 
 end
 
@@ -254,7 +244,7 @@ end
 linkaxes([ax_grf;ax_gait;ax_phase;ax_total_load; ax_delta_phases;ax_positions ],'x');
 
 %%
-xlim([0 60]);
+xlim([0 20]);
 
 
 %%
@@ -275,10 +265,6 @@ end
 
 if false
     export_fig(['figures_report_locomotion/gait_diagram_' num2str(recordID) '.pdf'],f_gait);
-end
-
-if false
-    export_fig(['figures_report_locomotion/phases_' num2str(recordID) '.pdf'],f_phase);
 end
 
 

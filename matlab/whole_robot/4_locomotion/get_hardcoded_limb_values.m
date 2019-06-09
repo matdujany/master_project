@@ -4,38 +4,35 @@ function [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(pa
 
 switch n_limb
     case 4
-        if recordID < 103
+        if ismember(recordID,[70:104])
+            limb_ids = 1 + [0 2; 5 4; 3 1; 7 6];
+            changeDir_C2 = [ 1; 0; 0; 1];
             switch parms_locomotion.direction
                 case 'X'
-                    limb_ids = [6 5; 8 7; 2 1; 4 3];
-                    changeDir = [0 0; 1 1; 1 1; 0 0];
+                    changeDir_C1 = [0; 1; 1; 0];
                 case 'Y'
-                    limb_ids = [5 6; 7 8; 1 2; 3 4]; %same as limbs but motor IDs are rescaled to 1:n_motors
-                    changeDir = [1 1; 1 0; 1 1; 1 0];
+                    changeDir_C1 = [0; 1; 0; 0];
                 case 'Yaw'
-                    limb_ids = [5 6; 7 8; 1 2; 3 4]; %same as limbs but motor IDs are rescaled to 1:n_motors
-                    changeDir = [1 1; 1 0; 0 1; 0 0];
+                    changeDir_C1 = [1; 1; 1; 1];
                 otherwise
                     disp('unrecognized locomotion direction');
             end
-            real_servo_ids = [2     3    13    14    15    16    17    18];
-        else
+            changeDir = [changeDir_C1 changeDir_C2];
+            real_servo_ids = [4:7    15:18];
+        end
+        if ismember(recordID,[26:30 105:113])
             switch parms_locomotion.direction
                 case 'X'
-                    limb_ids = [6 5; 4 3; 2 1; 8 7];
-                    changeDir = [0 0;  0 0; 1 1; 1 1];
+                    limb_ids = 1 + [5 4; 3 2; 1 0; 7 6];
+                    changeDir = [0 0; 0 0; 1 1; 1 1];
+                case 'Y'
+                    limb_ids = 1 + [4 5; 2 3; 0 1; 6 7];
+                    changeDir = [1  1; 1  0; 1  1; 1  0];
                 otherwise
                     disp('unrecognized locomotion direction');
             end
-            real_servo_ids = [4    5   6   7   15    16    17    18];
+            real_servo_ids = [4:7    15:18];
         end
-        limbs = real_servo_ids(limb_ids);
-        
-        offset_class1 = [pi/2; pi/2; pi/2; pi/2];
-        if isfield(parms_locomotion,'turning') && parms_locomotion.turning
-            offset_class1 = [pi/2; -pi/2; -pi/2; pi/2];
-        end
-        
     case 6
         switch parms_locomotion.direction
             case 'X'
@@ -46,8 +43,6 @@ switch n_limb
         end
         
         real_servo_ids = [1 4:10  15:18];
-        limbs = real_servo_ids(limb_ids);
-        offset_class1 = pi/2*ones(n_limb,1);
         
     case 8
         if recordID < 50
@@ -69,8 +64,8 @@ switch n_limb
             end
             real_servo_ids = [1:11  13 15:18];
         end
-        limbs = real_servo_ids(limb_ids);
-        offset_class1 = pi/2*ones(n_limb,1);
         
 end
 
+limbs = real_servo_ids(limb_ids);
+offset_class1 = pi/2*ones(n_limb,1);

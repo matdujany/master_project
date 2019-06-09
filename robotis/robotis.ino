@@ -67,19 +67,16 @@ void setup() {
   //pose_stance();
   delay(1000);
 
-  //updating IMU offsets (recalibration)     
-  update_IMU_offsets();
-
   //twitch_record_wrapper();
 
   //record_tegotae_changes();
 
-  //record_tegotae_custom_phi_init(90*1000);
+  record_tegotae_custom_phi_init(120*1000);
   
-  tegotae_bluetooth();
+  //tegotae_bluetooth();
   
   //record_tegotae_change_dir(240*1000);
-
+  //pose_stance_512();
 
 }   
 
