@@ -9,7 +9,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 108;
+recordID = 109;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 
@@ -208,10 +208,13 @@ for i=1:n_limb
     ax = gca();
     ax.FontSize = fontSizeTicks;
     grid on;
-    yticks(pi*[-2:2]);
-    yticklabels({'-2\pi','-\pi','0','\pi','2\pi'});
+    y_min = -6;
+    y_max = 6;
+    yticks(pi*[y_min:y_max]);
+    pi_label_lists = make_pi_label_lists(y_min,y_max);
+    yticklabels(pi_label_lists);
     
-    ylim(2*pi*[-1 1] + [-0.5 0.5]);
+    ylim(pi*[y_min y_max] + [-0.5 0.5]);
     yrule = ax.YAxis;
     yrule.FontSize = fontSizeTicks+2;
 end
@@ -254,7 +257,7 @@ end
 linkaxes([ax_grf;ax_gait;ax_phase;ax_total_load; ax_delta_phases;ax_positions ],'x');
 
 %%
-xlim([0 60]);
+xlim([0 120]);
 
 
 %%
