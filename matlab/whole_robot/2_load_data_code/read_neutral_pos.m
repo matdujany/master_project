@@ -8,6 +8,10 @@ if recordId < 100
     return;
 end
 
+if ismember(recordId,[1051 1052]) %hand modified versions of map 105
+    recordId = 105;
+end
+    
 filename = get_record_name(recordId);
 currentFolder = pwd;
 cd('../../../../data');
