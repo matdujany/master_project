@@ -19,8 +19,8 @@
 #define BUFFER_SIZE                 256
 
 // SERVO'S
-#define MAX_NR_SERVOS               12
-#define MAX_N_LIMB                   6
+#define MAX_NR_SERVOS               16
+#define MAX_N_LIMB                   8
 
 // DAISYCHAIN
 // Sampling Settings
@@ -48,8 +48,8 @@
 
 //these two times are the delay between updates on the daisychian
 // 20 ms for 4 lcs, 21 ms for 6 lcs, 22 ms for 8 lcs : almost 0 erros
-#define TIME_INTERVAL_TWITCH        21     // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
-#define DELAY_UPDATE_DC_TEGOTAE     21     //
+#define TIME_INTERVAL_TWITCH        20    // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
+#define DELAY_UPDATE_DC_TEGOTAE     20     //
 
 
 #define DURATION_MANUAL_RECENTERING         15     //in s, manual recentering between twitch cycles

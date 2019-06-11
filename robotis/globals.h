@@ -47,7 +47,7 @@ float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; s
 
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 
-bool tegotae_advanced   = false;     //to use advanced tegotae rule
+bool tegotae_advanced   = true;     //to use advanced tegotae rule
 //bool direction_X        = true;    //to go in X
 //bool direction_Y        = false;   //to go in Y 
 bool tegotae_propulsion = false;    //adds the body propulsion term in the tegotae rule.
@@ -69,12 +69,12 @@ uint8_t n_changes_recording = 2;
 //float phi_init[4] = {3.14, 3.14, 3.14, 3.14};
 //float phi_init[6] = {0, 0, 0, 3.14, 3.14, 3.14};
 
-float phi_init[4] = {0, 0, 0, 0};
+//float phi_init[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 //float phi_init[4] = {4.72, 1.60, 3.18, 4.39};
 //float phi_init[4] = {5.60, 6.03, 3.44, 0.87};
 //float phi_init[4] = {0.94, 1.62, 5.28, 1.60};
 //float phi_init[4] = {5.12, 1.53, 5.84, 2.20};
-//float phi_init[4] = {1.24, 1.58, 3.87, 2.97};
+float phi_init[4] = {1.24, 1.58, 3.87, 2.97};
 
 uint8_t n_lc_amputated = 0;
 std::vector<uint8_t>  idx_lc_amputated;

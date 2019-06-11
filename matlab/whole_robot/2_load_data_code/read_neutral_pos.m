@@ -2,6 +2,14 @@ function neutral_pos = read_neutral_pos(recordId, n_m)
 %READ_NEUTRAL_POS Summary of this function goes here
 %   Detailed explanation goes here
 
+if strcmp(recordId,"R")
+   recordId = 127;
+end
+
+if strcmp(recordId,"115R")%hand modified versions of map 115, with 0.4 at (1,2)
+   recordId = 115;
+end
+
 if recordId < 100
     disp('Record ID < 100, neutral pos = 512');
     neutral_pos= 512*ones(n_m,1);

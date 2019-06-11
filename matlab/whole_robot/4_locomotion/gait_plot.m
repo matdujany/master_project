@@ -9,11 +9,11 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 50;
+recordID = 119;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 
-n_limb = 8;
+n_limb = 4;
 [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
 n_limb = size(limbs,1);
 
@@ -23,7 +23,7 @@ for i=1:n_limb
 end
 
 %filtered version:
-size_mv_average = 5;
+size_mv_average = 6;
 filter_coeffs = 1/size_mv_average*ones(size_mv_average,1);
 GRF_filtered = zeros(size(GRF));
 for i=1:n_limb
@@ -41,9 +41,9 @@ switch n_limb
     case 4
         limb_list_ordered = [3; 4; 2 ;1];
         limb_names_ordered= {'L1','L2','R1','R2'};
-        if ismember(recordID,[70:103])
-            limb_list_ordered = [2; 4; 3 ;1];
-            limb_names_ordered= {'F','B','L','R'};
+        if ismember(recordID,[70:104 115:120])
+            limb_list_ordered = [2; 4; 1 ;3];
+            limb_names_ordered= {'F','B','R','L'};
         end
     case 6
         limb_list_ordered = [4; 5; 6; 3; 2; 1];
@@ -79,9 +79,9 @@ for i=1:n_limb
     grid on;
 end
 linkaxes(ax_grf,'x');
-% f_GRF.Position = 10^3*[0.0018    0.4130    1.1752    0.3696];
+f_GRF.Position = 10^3*[0.0018    0.4130    1.1752    0.3696];
 % f_GRF.Position = 10^3*[0.0018    0.2590    1.1752    0.5236];
-f_GRF.Position = 10^3*[0.0018    0.0640    1.1752    0.7186];
+% f_GRF.Position = 10^3*[0.0018    0.0640    1.1752    0.7186];
 
 %% gait diagramm
 xlims  = [0 60];
@@ -89,7 +89,7 @@ switch n_limb
     case 4
         limb_list_gait_diagram = [2; 1; 3 ;4];
         limb_names_gait_diagram= {'R1','R2','L1','L2'};
-        if ismember(recordID,[70:103])
+        if ismember(recordID,[70:104 115:120])
             limb_list_gait_diagram = [2; 1; 3 ;4];
             limb_names_gait_diagram= {'F','R','L','B'};
         end
@@ -229,13 +229,19 @@ for i=1:n_limb
     ax = gca();
     ax.FontSize = fontSizeTicks;
     grid on;
-    y_min_delta_phase_range = -3;
-    y_max_delta_phase_range = 3;
+    y_min_delta_phase_range = -10;
+    y_max_delta_phase_range = 10;
+    
     yticks(pi*[y_min_delta_phase_range:y_max_delta_phase_range]);
     pi_label_lists = make_pi_label_lists(y_min_delta_phase_range,y_max_delta_phase_range);
     yticklabels(pi_label_lists);
+    ylim(pi*5*[-1 1] + 0.5*[-1 1]);
     
-    ylim(pi*[-2 2] + [-0.5 0.5]);
+%     yticks(pi/2*[y_min_delta_phase_range:y_max_delta_phase_range]);
+%     pi_label_lists = {'-3/2\pi','-\pi','-1/2\pi','0','1/2\pi','\pi','3/2\pi'};
+%     yticklabels(pi_label_lists);   
+%     ylim(3*pi/2*[-1 1] + 0.5*[-1 1]);
+    
     yrule = ax.YAxis;
     yrule.FontSize = fontSizeTicks+2;
 end
@@ -245,37 +251,47 @@ if n_limb == 8
 end
 set(zoom(f_delta_phases),'Motion','horizontal');
 
+%%
+xlim([0 120]);
 
 %% plotting positions
 ax_positions = zeros(n_limb,1);
 neutral_pos = read_neutral_pos(parms_locomotion.id_map_used,parms.n_m);
+f_pos=figure;
 for index_limb = 1:n_limb
-    if mod(index_limb-1,4) == 0
-        figure;
-    end
+%     if mod(index_limb-1,4) == 0
+%         f_pos=figure;
+%     end
+
     i_limb = limb_list_ordered(index_limb);
-    ax_positions(index_limb,1)=subplot(2,2,mod(index_limb-1,4)+1);
+    ax_positions(index_limb,1)= subplot(n_limb/2,2,index_subplots(index_limb));
+
     hold on;
     
-    plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3,pos_phi_data.motor_position(limb_ids(i_limb,1),:)-neutral_pos(limb_ids(i_limb,1)),'b');
-    plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,2),:)/10^3,pos_phi_data.motor_position(limb_ids(i_limb,2),:)-neutral_pos(limb_ids(i_limb,2)),'k');
-    command_pos_c1 = phase2pos_wrapper(pos_phi_data.limb_phi(i_limb,:)+offset_class1(i_limb),0,changeDir(i_limb,1),parms_locomotion);
-    command_pos_c2 = phase2pos_wrapper(pos_phi_data.limb_phi(i_limb,:),1,changeDir(i_limb,2),parms_locomotion);
-    
-    plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3,command_pos_c1-512,'b--');
-    plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,2),:)/10^3,command_pos_c2-512,'k--');    
-    ylim([-100 100]);
+    plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3,1/3.413*(pos_phi_data.motor_position(limb_ids(i_limb,1),:)-neutral_pos(limb_ids(i_limb,1))),'b','LineWidth',lineWidth);
+    plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,2),:)/10^3,1/3.413*(pos_phi_data.motor_position(limb_ids(i_limb,2),:)-neutral_pos(limb_ids(i_limb,2))),'k','LineWidth',lineWidth);
+%     command_pos_c1 = phase2pos_wrapper(pos_phi_data.limb_phi(i_limb,:)+offset_class1(i_limb),0,changeDir(i_limb,1),parms_locomotion);
+%     command_pos_c2 = phase2pos_wrapper(pos_phi_data.limb_phi(i_limb,:),1,changeDir(i_limb,2),parms_locomotion);
+%     
+%     plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3,command_pos_c1-512,'b--');
+%     plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,2),:)/10^3,command_pos_c2-512,'k--');    
+    ylim([-25 25]);
 %     plot_stance_patches_phi(pos_phi_data.limb_phi(i_limb,:),gca(),pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3);
     ax=gca();
     ax.FontSize = fontSizeTicks;
-%     add_stance_patches_GRF(GRF(:,i_limb),ax.YLim,(data.time(:,i_limb)-data.time(1,i_limb))/10^3);
-    legend({['Class 1 (movement effector), M' num2str(limb_ids(i_limb,1)) ', ID ' num2str(limbs(i_limb,1))],...
-        ['Class 2 (swing/stance), M' num2str(limb_ids(i_limb,2)) ', ID ' num2str(limbs(i_limb,2))]});
-    ylabel('Motor Position');
+    add_stance_patches_GRF(GRF(:,i_limb),threshold_unloading,ax.YLim,time,'b');
+%     legend({['Class 1 (movement effector), M' num2str(limb_ids(i_limb,1)) ', ID ' num2str(limbs(i_limb,1))],        ['Class 2 (swing/stance), M' num2str(limb_ids(i_limb,2)) ', ID ' num2str(limbs(i_limb,2))]});
+    lgd=legend({['M' num2str(limb_ids(i_limb,1))],['M' num2str(limb_ids(i_limb,2))]});
+    lgd.Location = 'eastoutside';
+    lgd.FontSize =fontSize;
+    grid on;
+    ylabel('Positions [deg]');
     xlabel('Time [s]');
     title([limb_names_ordered{index_limb} ' (Limb ' num2str(i_limb) ')']);
 
 end
+f_pos.Color = 'w';
+f_pos.Position = 10^3*[ 0.0018    0.3750    1.1752    0.4076];
 
 %%
 linkaxes([ax_grf;ax_gait;ax_phase;ax_total_load; ax_delta_phases;ax_positions ],'x');
@@ -306,6 +322,12 @@ end
 
 if false
     export_fig(['figures_report_locomotion/phases_' num2str(recordID) '.pdf'],f_phase);
+end
+
+if false
+%     export_fig(['figures_report_locomotion/motor_positions_' num2str(recordID) '.pdf'],f_pos);
+    f_pos.PaperOrientation = 'landscape';
+    print(f_pos, '-dpdf', '-bestfit', ['figures_report_locomotion\motor_positions_' num2str(recordID) '.pdf']); 
 end
 
 if false

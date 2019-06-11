@@ -4,7 +4,7 @@ function [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(pa
 
 switch n_limb
     case 4
-        if ismember(recordID,[70:104])
+        if ismember(recordID,[70:104 115:120])
             limb_ids = 1 + [0 2; 5 4; 3 1; 7 6];
             changeDir_C2 = [ 1; 0; 0; 1];
             switch parms_locomotion.direction
