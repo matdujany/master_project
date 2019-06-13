@@ -5,9 +5,9 @@ clear; clc; close all;
 addpath('functions');
 addpath('../2_load_data_code');
 %% loading
-recordID = 120;
-n_limb = 4;
-phi_only = false;
+recordID = 124;
+n_limb = 6;
+phi_only = true;
 
 fprintf("data_processing\n");
 filename = get_record_name_locomotion(recordID);

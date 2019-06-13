@@ -13,7 +13,7 @@
 //123 for weird quadruped
 //dont forget to change TIME_INTERVAL_TWITCH and DELAY_UPDATE_DC_TEGOTAE
 
-#define MAP_USED 127
+#define MAP_USED 110
 
 std::vector<std::vector<uint8_t>> limbs_X_4_weird{
     {0,2},

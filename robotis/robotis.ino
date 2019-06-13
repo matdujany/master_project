@@ -32,7 +32,7 @@ void setup() {
   // LOADCELLS + BLUETOOTH       //
   /////////////////////////////////
 
-  // Setup:  Serial2: load cells and IMU; Serial3: Bluetooth or Matlab
+  // Setup:  Serial2: load cells and IMU; Serial3: Bluetooth or Matlab (recordings)
   // Pins:   Serial2 => 4 (tx), 5 (rx); Serial3 => 24 (tx), 25 (rx)
   Serial2.begin(BAUD_RATE);
 
@@ -71,7 +71,7 @@ void setup() {
 
   //record_tegotae_changes();
 
-  record_tegotae_custom_phi_init(120*1000);
+  record_tegotae_leg_amputated_Serial3(240*1000);
   
   //tegotae_bluetooth();
   

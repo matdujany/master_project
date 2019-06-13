@@ -3,8 +3,8 @@ clear;
 close all;
 
 phi_cycle = linspace(0,4*pi+0.5,200);
-phi_init = [pi/2; pi/2; pi/2; pi/2];
-% phi_init = [0; 0; 0; 0];
+% phi_init = [pi/2; pi/2; pi/2; pi/2];
+phi_init = [0; 0; 0; 0];
 
 % set_parms_locomotion;
 params.amplitude_class2_deg = 20;
@@ -16,15 +16,15 @@ params.alpha=1;
 %change dir class 2 = 0 if negative correlation between limb load
 %effect and motor movement
 
-change_dir_class2 = 1;
-change_dir_class1 = 1;
+change_dir_class1 = 0;
+change_dir_class2 = 0;
 
 
 offset_class1 = pi/2;
 
 shiftplot = 0.15;
 
-x_patch_loading = [0 pi pi 0];
+x_patch_loading = pi/2+[0 pi pi 0];
 % x_patch_loading = pi/2+[0 pi pi 0];
 amp_pos2 = params.amplitude_class2_deg * 3.413;
 y_patch_loading = 1.2*[-amp_pos2 -amp_pos2 amp_pos2 amp_pos2]/512-shiftplot;
@@ -33,7 +33,7 @@ amp_pos1 = params.amplitude_class1_deg * 3.413;
 y_patch_stance = 2*[-amp_pos1 -amp_pos1 amp_pos1 amp_pos1]/512+shiftplot;
 
 lineWidth = 1.2;
-fontSize = 14;
+fontSize = 16;
 fontSizeTicks = 14;
 
 f=figure;
@@ -50,12 +50,16 @@ for i=0:1
     patch(i*2*pi+x_patch_loading,y_patch_loading,'b','FaceAlpha',0.1,'EdgeColor','none','HandleVisibility','off');
     patch(i*2*pi+x_patch_stance,y_patch_stance,'r','FaceAlpha',0.1,'EdgeColor','none','HandleVisibility','off');
 end
- lgd=legend({'Class 1, negative correlation between motor movement and robot speed in desired direction',...
-     'Class 2, positive correlation between motor movement and load under limb','Class 2, with reduction of amplitude'},'FontSize',fontSize);
+%  lgd=legend({'Class 1, negative correlation between motor movement and robot speed in desired direction',...
+%      'Class 2, positive correlation between motor movement and load under limb','Class 2, with reduction of amplitude'},'FontSize',fontSize);
 % lgd=legend({'Class 1, negative correlation between motor movement and robot speed in desired direction',...
 %     'Class 2, negative correlation between motor movement and load under limb','Class 2, with reduction of amplitude'},'FontSize',fontSize);
 
+ lgd=legend({['Class 1, changeDir = ' num2str(change_dir_class1)],...
+     ['Class 2, changeDir = ' num2str(change_dir_class2)],'Class 2, with amplitude reduction'},'FontSize',fontSize);
+ 
 ylabel('Motor Position','FontSize',fontSize);
+
 xlabel('Limb Phase [rad]','FontSize',fontSize);
 xticks([0:8]*pi/2);
 xlim([0 4*pi+0.5]);
@@ -70,7 +74,8 @@ ax.FontSize = fontSizeTicks;
 %%
 f.Color = 'w';
 f.Position = [596   390   985   588];
-lgd.Position = [0.1379    0.8577    0.8142    0.1310];
+lgd.Location = 'northoutside';
 set(f,'PaperOrientation','landscape');
-% print(f, '-dpdf','-bestfit', 'figures_report/limb_oscillator_theory_pos_corr.pdf');
-% print(f, '-dpdf','-bestfit', 'figures_report/limb_oscillator_theory_neg_pos_corr.pdf');
+if false
+print(f, '-dpdf','-bestfit', ['figures_report_locomotion/limb_oscillator_theory_changeDirs_' num2str(change_dir_class1) '_' num2str(change_dir_class2) '.pdf']);
+end

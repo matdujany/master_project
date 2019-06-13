@@ -9,8 +9,8 @@
 
 parms = struct();
 
-parms.nr_arduino  = 4;
-parms.n_m         = 8;
+parms.nr_arduino  = 6;
+parms.n_m         = 12;
 parms.n_dir       = 2;
 
 % learning parameters

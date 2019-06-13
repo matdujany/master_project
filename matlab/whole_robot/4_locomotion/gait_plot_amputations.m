@@ -9,7 +9,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 122;
+recordID = 124;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 
@@ -196,6 +196,7 @@ set(zoom(f_total_load),'Motion','horizontal');
 
 %% delta phases
 
+
 f_delta_phases = figure;
 f_delta_phases.Color = 'w';
 ax_delta_phases = zeros(n_limb,1);
@@ -217,6 +218,7 @@ for i=1:n_limb
             count = count + 1;
         end
     end
+    
     ylabel('Delta Phase [rad]');
     xlabel('Time [s]');
     title(['Phase reference: ' limb_names_ordered{i} ' (Limb ' num2str(index_limb) ')']);
@@ -251,66 +253,9 @@ if n_limb == 8
 end
 set(zoom(f_delta_phases),'Motion','horizontal');
 
-%%
 linkaxes([ax_grf;ax_gait;ax_phase;ax_total_load; ax_delta_phases],'x');
-xlim([0 120]);
-
-%% plotting positions
-% ax_positions = zeros(n_limb,1);
-% neutral_pos = read_neutral_pos(parms_locomotion.id_map_used,parms.n_m);
-% f_pos=figure;
-% for index_limb = 1:n_limb
-% %     if mod(index_limb-1,4) == 0
-% %         f_pos=figure;
-% %     end
-% 
-%     i_limb = limb_list_ordered(index_limb);
-%     ax_positions(index_limb,1)= subplot(n_limb/2,2,index_subplots(index_limb));
-% 
-%     hold on;
-%     
-%     plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3,1/3.413*(pos_phi_data.motor_position(limb_ids(i_limb,1),:)-neutral_pos(limb_ids(i_limb,1))),'b','LineWidth',lineWidth);
-%     plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,2),:)/10^3,1/3.413*(pos_phi_data.motor_position(limb_ids(i_limb,2),:)-neutral_pos(limb_ids(i_limb,2))),'k','LineWidth',lineWidth);
-% %     command_pos_c1 = phase2pos_wrapper(pos_phi_data.limb_phi(i_limb,:)+offset_class1(i_limb),0,changeDir(i_limb,1),parms_locomotion);
-% %     command_pos_c2 = phase2pos_wrapper(pos_phi_data.limb_phi(i_limb,:),1,changeDir(i_limb,2),parms_locomotion);
-% %     
-% %     plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3,command_pos_c1-512,'b--');
-% %     plot(pos_phi_data.motor_timestamps(limb_ids(i_limb,2),:)/10^3,command_pos_c2-512,'k--');    
-%     ylim([-25 25]);
-% %     plot_stance_patches_phi(pos_phi_data.limb_phi(i_limb,:),gca(),pos_phi_data.motor_timestamps(limb_ids(i_limb,1),:)/10^3);
-%     ax=gca();
-%     ax.FontSize = fontSizeTicks;
-%     add_stance_patches_GRF(GRF(:,i_limb),threshold_unloading,ax.YLim,time,'b');
-% %     legend({['Class 1 (movement effector), M' num2str(limb_ids(i_limb,1)) ', ID ' num2str(limbs(i_limb,1))],        ['Class 2 (swing/stance), M' num2str(limb_ids(i_limb,2)) ', ID ' num2str(limbs(i_limb,2))]});
-%     lgd=legend({['M' num2str(limb_ids(i_limb,1))],['M' num2str(limb_ids(i_limb,2))]});
-%     lgd.Location = 'eastoutside';
-%     lgd.FontSize =fontSize;
-%     grid on;
-%     ylabel('Positions [deg]');
-%     xlabel('Time [s]');
-%     title([limb_names_ordered{index_limb} ' (Limb ' num2str(i_limb) ')']);
-% 
-% end
-% f_pos.Color = 'w';
-% f_pos.Position = 10^3*[ 0.0018    0.3750    1.1752    0.4076];
-% 
-% %%
-% linkaxes([ax_grf;ax_gait;ax_phase;ax_total_load; ax_delta_phases;ax_positions ],'x');
-
 %%
-xlim([0 210]);
-
-
-%%
-if recordID == 26
-    t_start_0_15 = 84.4;
-    t_stop_0_15 = 112.3;
-    duty_factor_0_15 = compute_duty_factor(GRF,data,t_start_0_15,t_stop_0_15,threshold_unloading);
-    
-    t_start_0_5 = 160.3;
-    t_stop_0_5 = 174.6;
-    duty_factor_0_5 = compute_duty_factor(GRF,data,t_start_0_5,t_stop_0_5,threshold_unloading);
-end
+xlim([190 205]);
 
 %%
 if false
@@ -326,22 +271,8 @@ if false
 end
 
 if false
-%     export_fig(['figures_report_locomotion/motor_positions_' num2str(recordID) '.pdf'],f_pos);
-    f_pos.PaperOrientation = 'landscape';
-    print(f_pos, '-dpdf', '-bestfit', ['figures_report_locomotion\motor_positions_' num2str(recordID) '.pdf']); 
-end
-
-if false
 %     export_fig(['figures_report_locomotion/GRF_' num2str(recordID) '.pdf'],f_GRF);
     f_GRF.PaperOrientation = 'landscape';
     print(f_GRF, '-dpdf', '-bestfit', ['figures_report_locomotion\GRF_' num2str(recordID) '.pdf']); 
 end
-
-% 
-% %%
-% size_mv_average_IMU = 10;
-% filter_coeffs_IMU = 1/size_mv_average_IMU*ones(size_mv_average_IMU,1);
-% 
-% figure;
-% plot(data.time(:,end),filter(filter_coeffs_IMU,1,data.float_value_time{1,end}(:,2)))
 

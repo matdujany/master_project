@@ -84,7 +84,7 @@ void record_tegotae_leg_amputated_Serial3(unsigned long recording_duration){
     update_phi_tegotae();
     send_command_limb_oscillators();
     read_Serial3_leg_changes();
-    SerialUSB.print("Time elapsed for all operations of tegotae loop (in ms): ");SerialUSB.println(millis()-t_start_update_dc);
+    //SerialUSB.print("Time elapsed for all operations of tegotae loop (in ms): ");SerialUSB.println(millis()-t_start_update_dc);
     while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
   }
 
