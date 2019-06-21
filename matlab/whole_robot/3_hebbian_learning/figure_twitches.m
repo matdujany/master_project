@@ -111,7 +111,7 @@ legend_list_dot_time = {['Motor ' num2str(idx_motor) ' filt and diff'],...
 
 color_list=lines(5);
 f=figure;
-if true
+if false
     %time signals part
     % subplot(2,1,1);
     hold on;

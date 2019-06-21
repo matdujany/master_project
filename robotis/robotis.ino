@@ -25,7 +25,11 @@ void setup() {
   // DYNAMIXEL                   //
   /////////////////////////////////
 
-  while(!SerialUSB);
+  while(!SerialUSB.available());
+  //empyting the the USB console from a message that VScode writes
+  while (SerialUSB.available()){
+    SerialUSB.read();
+  }
   init_dynamixel();
   
   /////////////////////////////////
@@ -36,10 +40,6 @@ void setup() {
   // Pins:   Serial2 => 4 (tx), 5 (rx); Serial3 => 24 (tx), 25 (rx)
   Serial2.begin(BAUD_RATE);
 
-  //empyting the the USB console from a message that VScode writes
-  while (SerialUSB.available()){
-    SerialUSB.read();
-  }
 
   // Delay to have everyone ready for serial com
   delay(5000);
@@ -65,18 +65,20 @@ void setup() {
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
   //pose_stance();
-  delay(1000);
+  delay(5000);
 
   //twitch_record_wrapper();
 
   //record_tegotae_changes();
 
-  record_tegotae_leg_amputated_Serial3(240*1000);
+  //record_tegotae_leg_amputated_Serial3(600*1000);
   
-  //tegotae_bluetooth();
+  tegotae_bluetooth();
   
   //record_tegotae_change_dir(240*1000);
   //pose_stance_512();
+
+  //tegotae();
 
 }   
 

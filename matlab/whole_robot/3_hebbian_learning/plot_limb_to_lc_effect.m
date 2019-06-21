@@ -15,7 +15,7 @@ hold on;
 xlim([x_min, x_max]);
 ylim([y_min, y_max]);
 for i=1:parms.n_lc
-    text(x_min-0.1,i-0.5,['LC ' num2str(parms.n_lc+1-i)],'FontSize',fontSize,'HorizontalAlignment','right');
+    text(x_min-0.1,i-0.5,['LC ' num2str(parms.n_lc+1-i) ' Z'],'FontSize',fontSize,'HorizontalAlignment','right');
 end
 for i=1:parms.n_lc
     text(i-0.5,y_max+0.1,['Limb ' num2str(i)],'FontSize',fontSize,'HorizontalAlignment','center','VerticalAlignment','bottom');

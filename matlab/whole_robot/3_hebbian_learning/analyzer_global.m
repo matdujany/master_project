@@ -11,7 +11,7 @@ addpath('computing_functions');
 addpath('class_detection_function');
 
 %% Load data
-recordID = 104;
+recordID = 127;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -106,9 +106,11 @@ h_lcz = hinton_LC_limb_1_channel(3,weights_lc_fused_limb_order,parms,limb,1);
 %% class detection
 desired_movement_speed_channel = 2; %1 for X, 2 for Y
 direction_list = {'X','Y','Z'};
-[motors_classes,likelihood_class1,dir_oscillations,dir_oscillations_yaw] = get_class_c1_before_c2(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
-%[motors_classes,likelihood_class2,dir_oscillations,dir_oscillations_yaw] = get_class_c2_before_c1(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
-
+if recordID == 127
+    [motors_classes,likelihood_class2,dir_oscillations,dir_oscillations_yaw] = get_class_c2_before_c1(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
+else
+    [motors_classes,likelihood_class1,dir_oscillations,dir_oscillations_yaw] = get_class_c1_before_c2(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
+end
 %% scaling amplitudes of class 1
 weights_speed_class1 = zeros(n_limb,1);
 weights_yaw_class1 = zeros(n_limb,1);

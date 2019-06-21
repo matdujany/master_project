@@ -2,12 +2,14 @@ clear;
 close all; clc;
 
 addpath('../2_load_data_code');
+addpath('hinton_plot_functions');
+addpath('computing_functions');
 
 %% Load data
-recordID = 86;
+recordID = 105;
 [data, lpdata, parms] =  load_data_processed(recordID);
-% add_parms;
-parms.nr_arduino = 4;
+% % add_parms;
+% parms.nr_arduino = 4;
 weights_robotis = read_weights_robotis(recordID,parms);
 weights_pos_robotis = read_weights_pos_robotis(recordID,parms);
 
@@ -43,20 +45,25 @@ for i=1:length(pos_start_learning)
     end
 end
 
+integrated_speed_func = compute_integrated_speed(data,lpdata,parms);
+
+
 %%
 figure;
 text_list_channels = {'X','Y','Z'};
 for i=1:3
-subplot(2,2,i);
+subplot(3,1,i);
 hold on;
-plot(integrated_speed(index_start:index_end,i));
-plot(integrated_speed_2(index_start:index_end,i));
-plot(myfilter(integrated_speed(index_start:index_end,i)));
-plot_patch_learning(gcf(),idx_start_learning,idx_end_learning,1);
-legend('Raw IMU integrated','Filtered IMU integrated','Raw IMU integrated then filtered');
-ylabel(['Speed ' text_list_channels{i} ' [m/s]']);
+% plot(integrated_speed(index_start:index_end,i));
+% plot(integrated_speed_2(index_start:index_end,i));
+% plot(myfilter(integrated_speed(index_start:index_end,i)));
+plot(integrated_speed_func(index_start:index_end,i));
+ax=gca();
+plot_patch_learning(ax.YLim,idx_start_learning,idx_end_learning,1);
+% legend('Raw IMU integrated','Filtered IMU integrated','Raw IMU integrated then filtered');
+ylabel(['Speed ' text_list_channels{i} ' [mm/s]']);
 end
-sgtitle('IMU accelerometer integrated signal');
+sgtitle('Accelerometer integrated signal');
 
 
 %%

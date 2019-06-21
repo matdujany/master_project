@@ -10,10 +10,10 @@
 //105 for quaduped
 //110 for hexapod
 //115 for octopod
-//123 for weird quadruped
+//127 for weird quadruped
 //dont forget to change TIME_INTERVAL_TWITCH and DELAY_UPDATE_DC_TEGOTAE
 
-#define MAP_USED 110
+#define MAP_USED 127
 
 std::vector<std::vector<uint8_t>> limbs_X_4_weird{
     {0,2},
@@ -45,8 +45,6 @@ float scaling_amp_class1_yaw_123[4] = {1, 0.914,0.930,0.666};
 float scaling_amp_class1_Y_123[4] = {0.049, 1, 0.137, 0.978};
 
 
-//learnt matrix
-/*
 float sigma_advanced_X_127 = 0.1878;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_127{
 {-1.000, 0.953, -0.836, 0.939} ,
@@ -54,16 +52,17 @@ std::vector<std::vector<float>> inverse_map_X_127{
 {-0.564, 0.619, -0.616, 0.716} ,
 {0.637, -0.679, 0.628, -0.455}
 };
-*/
 
 //matrix R used for experiments
-float sigma_advanced_X_127 = 0.5647;// scaled for 50% of 0.5Hz
-std::vector<std::vector<float>> inverse_map_X_127{
+/*
+float sigma_advanced_X_R = 0.5647;// scaled for 50% of 0.5Hz
+std::vector<std::vector<float>> inverse_map_X_R{
 {0.05, -0.36, -0.35, -0.24},
 {0.34, -0.25, 0.31, -0.26},
 {0.43, -0.15, -0.30, -0.25},
 {0.12, -0.03, -0.15, 0.33}
 };
+*/
 
 uint16_t neutral_pos_127[8] = {512, 511, 509, 508, 511, 510, 497, 512};
 float scaling_amp_class1_forward_127[4] = {0.862, 0.091, 1, 0.054};
@@ -97,8 +96,8 @@ std::vector<bool>  changeDirs_X_Yaw_8{true,true,true,true,true,true,true,true};
 
 float sigma_advanced_X_115 = 0.0981;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_115{
-//{-0.318, 0.176, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} ,
-{-0.318, 0.400, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} ,
+{-0.318, 0.176, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} , //learnt version the (1,2) term could be bad.
+//{-0.318, 0.400, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} ,   //with correction
 {0.400, -0.896, 0.474, 0.040, -0.187, 0.148, -0.006, 0.218} ,
 {0.029, 0.345, -0.853, 0.464, 0.129, -0.033, 0.221, -0.113} ,
 {0.025, 0.038, 0.376, -0.452, 0.215, 0.162, -0.076, -0.144} ,
@@ -210,10 +209,18 @@ uint16_t neutral_pos_105[8]=
 
 float sigma_advanced_Y_105 = 0.1410; // scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_Y_105{
+//original version
+/*
 {-0.564, 0.688, -0.895, 0.869} ,
 {0.665, -0.933, 0.870, -0.862} ,
 {-0.965, 1.000, -0.916, 0.879} ,
 {0.816, -0.829, 0.801, -0.771} ,
+*/
+//corrected version
+{-0.873, 0.875, -0.895, 0.869} ,
+{0.9, -0.933, 0.870, -0.862} ,
+{-0.965, 1.000, -0.916, 0.879} ,
+{0.816, -0.829, 0.801, -0.771} ,
 };
 
-bool bool_Y_105 = true;
+bool bool_Y_105 = false;

@@ -77,8 +77,12 @@ for i_lc=1:length(opt_parms.lc_list)
         plot(0,0,'LineStyle',linestyle_list{j},'Color',colorlist(ceil(j/2),:))
     end
     axis off
-    l=legend(legend_list{:}); 
+    [l,hobj]=legend(legend_list{:}); 
     l.Position = [0.759436060557064,0.07459388574413,0.138467575728145,0.872946029537721];
     l.FontSize = fontsize;
+    hl = findobj(hobj,'type','line');
+    set(hl,'LineWidth',1); 
+        l.FontSize = fontsize;
+
 end
 end

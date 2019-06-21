@@ -7,9 +7,9 @@ void init_tegotae(){
   print_locomotion_parameters();
 }
 
-void read_Serial3_leg_changes(){
-  while (Serial3.available()){
-    char char_read = Serial3.read();
+void read_SerialUSB_leg_changes(){
+  while (SerialUSB.available()){
+    char char_read = SerialUSB.read();
     if (char_read>47 && char_read<58){ //ASCII code : 0 = 48, 9 = 57
       uint8_t idx_temp = char_read - 48; 
       if (idx_temp < n_limb) {
@@ -83,7 +83,7 @@ void record_tegotae_leg_amputated_Serial3(unsigned long recording_duration){
     send_phi_Serial3();
     update_phi_tegotae();
     send_command_limb_oscillators();
-    read_Serial3_leg_changes();
+    read_SerialUSB_leg_changes();
     //SerialUSB.print("Time elapsed for all operations of tegotae loop (in ms): ");SerialUSB.println(millis()-t_start_update_dc);
     while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
   }
@@ -191,6 +191,7 @@ void tegotae(){
   print_phi_info();
   while (true){
     unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);
+    cut_loadcells();
     update_phi_tegotae();
     send_command_limb_oscillators();
     print_phi_info();
@@ -199,12 +200,20 @@ void tegotae(){
   }
 }
 
+//tune the index left.
+void cut_loadcells(){
+    for (uint8_t idx = 0; idx <  6; idx ++){
+      if (idx != 5)
+        ser_rx_buf.last_loadcell_data_float[2+3*idx] = 0;
+    }
+}
+
 void tegotae_bluetooth(){
   init_tegotae();
   init_phi_tegotae();
   setup_serial_bluetooth();
 
-  //change_dir_mode_to_XY();
+  //change_dir_mode_to_XY();//useful for starfish if using only one joystick and desired locomotion is XY instead of X Yaw.
  
   weight_straight = 0;
   weight_yaw = 0;

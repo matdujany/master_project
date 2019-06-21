@@ -56,7 +56,7 @@ float weight_yaw = 0;
 
 float weight_X = 0;
 float weight_Y = 0;
-bool locomotion_2_joysticks = false;
+bool locomotion_2_joysticks = true;
 
 //recordings and experiments
 float frequency_recording[3] = {0.15, 0.5, 1};

@@ -8,7 +8,7 @@ addpath('../2_load_data_code');
 addpath('computing_functions');
 addpath('hinton_plot_functions');
 
-recordID = 127;
+recordID = 105;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 

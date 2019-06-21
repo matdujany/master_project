@@ -88,6 +88,12 @@ for i=1:parms.n_m
         patches.CData(parms.n_lc*i -  good_closest_LC(i) + 1) = 4;
     end
 end
+h;
+hold on;
+for i=1:parms.n_m
+   text(i-0.5,-0.5,num2str(likelihood_LC(i),'%.2f'),'FontSize',15,'HorizontalAlignment','center');
+end
+text(-0.5,-0.5,'Ratio','FontSize',15,'HorizontalAlignment','center');
 
 if export_plots == true
     export_fig(['figures_report/limb_assignment_' num2str(recordID) '.pdf']);
