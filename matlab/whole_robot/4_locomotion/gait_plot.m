@@ -9,7 +9,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 39;
+recordID = 34;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 
@@ -180,9 +180,19 @@ end
 grid on;
 f_phase.Position = [6 356 1184 174];
 set(zoom(f_phase),'Motion','horizontal');
-yticks(pi*[0:2]);
-yticklabels({'0','\pi','2\pi'});
+% yticks(pi[0:2]);
+% yticklabels({'0','\pi','2\pi'});
+
+yticks(2*pi/3*[0:3]);
+yticklabels({'0','2\pi/3','4\pi/3','2\pi'});
+for i=1:2
+    plot([time(1) time(end)],2*pi/3*[i i],'k--','LineWidth',1.5,'HandleVisibility','off');
+end
+xlim([90 95]);
 ylim(2*pi*[0 1] + [0 0.5]);
+xticks(90+[0:5]);
+f_phase.Position = 10^3 * [0.0060    0.2554    1.5206    0.2746];
+
 
 %% total load;
 f_total_load = figure;

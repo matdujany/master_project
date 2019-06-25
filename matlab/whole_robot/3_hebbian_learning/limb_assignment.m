@@ -9,7 +9,7 @@ export_plots = false;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 127;
+recordID = 115;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
@@ -19,7 +19,7 @@ parms_sim.eta = 20;
 weights_sim = compute_weights_wrapper(data,lpdata,parms_sim,0,0,0,0);
 
 weights_check = compute_weights_wrapper(data,lpdata,parms,0,0,0,0);
-weights_chosen = weights_sim; %sim or robotis
+weights_chosen = weights_robotis; %sim or robotis
 
 %%
 hinton_LC(weights_chosen{parms.n_twitches},parms,1);

@@ -25,7 +25,7 @@ void setup() {
   // DYNAMIXEL                   //
   /////////////////////////////////
 
-  while(!SerialUSB.available());
+  //while(!SerialUSB.available());
   //empyting the the USB console from a message that VScode writes
   while (SerialUSB.available()){
     SerialUSB.read();
