@@ -11,7 +11,7 @@ addpath('computing_functions');
 addpath('class_detection_function');
 
 %% Load data
-recordID = 127;
+recordID = 110;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
