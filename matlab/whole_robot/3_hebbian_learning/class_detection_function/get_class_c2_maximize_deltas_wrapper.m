@@ -3,6 +3,7 @@ function [motors_classes,dir_oscillations,dir_oscillations_yaw] = get_class_c2_m
 %   Detailed explanation goes here
 
 n_limb=size(limb,1);
+weights_lcz_fused = weights_lc_fused(3*[1:size(weights_lc_fused,1)/3],:);
 motors_class_c2 = get_class_c2_maximize_deltas(limb,weights_lcz_fused);
 motors_classes = zeros(n_limb,2);
 for i=1:n_limb
