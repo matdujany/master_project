@@ -394,27 +394,26 @@ void initialize_scaling_amp_class1(){
     scaling_amp_class1_forward[i] = 1;
     scaling_amp_class1_yaw[i] = 1;
   }
-  if (MAP_USED == 123){
-    fill_scaling_amp_class1(scaling_amp_class1_forward_123, scaling_amp_class1_yaw_123);
-  }
-
   if (MAP_USED == 127){
     fill_scaling_amp_class1(scaling_amp_class1_forward_127, scaling_amp_class1_yaw_127);
     fill_scaling_amp_class1_Y(scaling_amp_class1_Y_127);
+  }
+  if (MAP_USED == 134){
+    fill_scaling_amp_class1(scaling_amp_class1_forward_134, scaling_amp_class1_yaw_134);
+    fill_scaling_amp_class1_Y(scaling_amp_class1_Y_134);
   }
 
 }
 
 void change_dir_mode_to_XY(){
-  if (MAP_USED == 123){
-    fill_scaling_amp_class1(scaling_amp_class1_forward_123, scaling_amp_class1_Y_123);
-    fill_changeDirs_Yaw_array(changeDirs_Y_4_weird);
-  }
   if (MAP_USED == 127){
     fill_scaling_amp_class1(scaling_amp_class1_forward_127, scaling_amp_class1_Y_127);
-    fill_changeDirs_Yaw_array(changeDirs_Y_4_weird);
+    fill_changeDirs_Yaw_array(changeDirs_Y_s_quad);
   }
-
+  if (MAP_USED == 134){
+    fill_scaling_amp_class1(scaling_amp_class1_forward_134, scaling_amp_class1_Y_134);
+    fill_changeDirs_Yaw_array(changeDirs_Y_hex_quad);
+  }
 }
 
 void fill_neutral_pos(uint16_t neutral_pos_hardcoded[]){
@@ -425,14 +424,6 @@ void fill_neutral_pos(uint16_t neutral_pos_hardcoded[]){
 }
 
 void initialize_hardcoded_limbs(){
-
-  if (MAP_USED == 104) {
-    n_limb = 4;
-    fill_neutral_pos(neutral_pos_104);
-    fill_limbs_array(limbs_X_4);
-    fill_changeDirs_array(changeDirs_X_4);
-    fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4);
-  }
 
   if (MAP_USED == 105) {
     n_limb = 4;
@@ -449,14 +440,6 @@ void initialize_hardcoded_limbs(){
     }
   }
   
-  if (MAP_USED == 108) {
-    n_limb = 6;
-    fill_neutral_pos(neutral_pos_108);
-    fill_limbs_array(limbs_X_6);
-    fill_changeDirs_array(changeDirs_X_6);
-    fill_changeDirs_Yaw_array(changeDirs_X_Yaw_6);
-  }
-
   if (MAP_USED == 110) {
     n_limb = 6;
     fill_neutral_pos(neutral_pos_110);
@@ -473,22 +456,22 @@ void initialize_hardcoded_limbs(){
     fill_changeDirs_Yaw_array(changeDirs_X_Yaw_8);
   } 
 
-  if (MAP_USED == 123) {
-    n_limb = 4;
-    fill_neutral_pos(neutral_pos_123);
-    fill_limbs_array(limbs_X_4_weird);
-    fill_changeDirs_array(changeDirs_X_4_weird);
-    fill_changeDirs_Yaw_array(changeDirs_Yaw_4_weird);
-  } 
-
   if (MAP_USED == 127) {
     n_limb = 4;
     fill_neutral_pos(neutral_pos_127);
-    fill_limbs_array(limbs_X_4_weird);
-    fill_changeDirs_array(changeDirs_X_4_weird);
-    fill_changeDirs_Yaw_array(changeDirs_Yaw_4_weird);
-    fill_changeDirs_Y_array(changeDirs_Y_4_weird);
+    fill_limbs_array(limbs_X_s_quad);
+    fill_changeDirs_array(changeDirs_X_s_quad);
+    fill_changeDirs_Yaw_array(changeDirs_Yaw_s_quad);
+    fill_changeDirs_Y_array(changeDirs_Y_s_quad);
+  } 
 
+  if (MAP_USED == 134) {
+    n_limb = 6;
+    fill_neutral_pos(neutral_pos_134);
+    fill_limbs_array(limbs_X_hex_quad);
+    fill_changeDirs_array(changeDirs_X_hex_quad);
+    fill_changeDirs_Yaw_array(changeDirs_Yaw_hex_quad);
+    fill_changeDirs_Y_array(changeDirs_Y_hex_quad);
   } 
 
   init_offset_class1();
@@ -498,11 +481,6 @@ void initialize_hardcoded_limbs(){
 }
 
 void initialize_inverse_map_advanced_tegotae(){
-  if (MAP_USED==104)
-  {
-    sigma_advanced = sigma_advanced_X_104;
-    fill_inverse_map_array(inverse_map_X_104);
-  }
 
   if (MAP_USED==105)
   {
@@ -514,12 +492,6 @@ void initialize_inverse_map_advanced_tegotae(){
     sigma_advanced = sigma_advanced_X_105;
     fill_inverse_map_array(inverse_map_X_105);
     }
-  }
-
-  if (MAP_USED==108)
-  {
-    sigma_advanced = sigma_advanced_X_108;
-    fill_inverse_map_array(inverse_map_X_108);
   }
 
   if (MAP_USED==110)
@@ -534,16 +506,16 @@ void initialize_inverse_map_advanced_tegotae(){
     fill_inverse_map_array(inverse_map_X_115);
   }
 
-  if (MAP_USED==123)
-  {
-    sigma_advanced = sigma_advanced_X_123;
-    fill_inverse_map_array(inverse_map_X_123);
-  }
-
   if (MAP_USED==127)
   {
     sigma_advanced = sigma_advanced_X_127;
     fill_inverse_map_array(inverse_map_X_127);
+  }
+
+  if (MAP_USED==134)
+  {
+    sigma_advanced = sigma_advanced_X_134;
+    fill_inverse_map_array(inverse_map_X_134);
   }
 }
 
