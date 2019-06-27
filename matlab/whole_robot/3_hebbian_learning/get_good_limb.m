@@ -29,6 +29,9 @@ switch parms.n_m
         if ismember(recordID,[131:132])
             limb =  [2    3;   6     8;     4     5;     9  10;     7     1; 11     12];
         end
+        if ismember(recordID,134)
+            limb =  [9    10;   4     5;     6     8;     2  3;     11     12; 7     1];
+        end    
     case 16
         limb =  [13    14;   15    16;    4     5;     2     3;     9     1;     8     10; 11 12; 6 7];   
         if recordID == 94

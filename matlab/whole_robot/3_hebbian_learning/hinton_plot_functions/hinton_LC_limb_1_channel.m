@@ -9,8 +9,14 @@ end
 n_motors = parms.n_m;
 n_sensors= parms.n_lc;
 weights_lc_fused_limb_order_channel_selected = zeros(n_sensors,n_motors);
-for i=1:n_sensors
-    weights_lc_fused_limb_order_channel_selected(i,:) = weights_lc_fused_limb_order(channel_selected+3*(i-1),:);
+
+if ismember(channel_selected,[1:3])
+    for i=1:n_sensors
+        weights_lc_fused_limb_order_channel_selected(i,:) = weights_lc_fused_limb_order(channel_selected+3*(i-1),:);
+    end
+else
+    weights_lc_fused_limb_order_channel_selected = weights_lc_fused_limb_order;
+    channel_selected = 3;
 end
 
 [h,fig_parms] = hinton_raw(weights_lc_fused_limb_order_channel_selected);
