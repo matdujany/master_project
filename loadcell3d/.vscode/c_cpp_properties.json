@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:\\\\Users\\\\dujany\\\\AppData\\\\Local\\\\Arduino15\\\\packages\\\\SparkFun\\\\hardware\\\\avr\\\\1.1.12\\\\**"
+            ],
+            "forcedInclude": [],
+            "intelliSenseMode": "msvc-x64",
+            "compilerPath": "C:\\MinGW-w64\\mingw64\\bin\\gcc.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

@@ -32,7 +32,7 @@ using namespace Ad7124;
 //using namespace Ad7124;
 
 #define DT 1000        // interrupt period of timer1 in microseconds, use multiples of hundred
-#define I_LOADCELL 3   // Arduino-Loadcell number (written next to the # on loadcell sensor).
+#define I_LOADCELL 11   // Arduino-Loadcell number (written next to the # on loadcell sensor).
 #define BAUD_RATE 500000
 
 double cal_gain[3];
@@ -43,7 +43,7 @@ const int ledPin = 5;
 const int ssPin = 10;
 const int spiEnPin = 9;
 const int spiMISOPin = 14;
-
+const int RXLED = 17; //for RX LED
 const int rdyPin = 14; // inverted, DOUT (MISO) pin of the Chip
 
 const double Gain = 128;
@@ -55,7 +55,6 @@ const double Gain = 128;
 //const double cal_offset[] = {-1.68, -3.33, 0.10};
 
 /* Frame Handling============================================================ */
-int send_data_flag=0; //make sure always new data is sent; not used in the loadcell setup
 uint8_t last_byte=0x00;
 uint8_t frame_type=0x00;
 uint8_t frame_data_length=0x00;
@@ -112,17 +111,31 @@ void timing_check_and_update_loadcells(){
   SerialUSB.println(average_duration);  
 }
 
+void turn_off_red_LEDS(){
+  digitalWrite(RXLED, HIGH);   // set the RX LED OFF
+  TXLED0; //TX LED is not tied to a normally controlled pin so a macro is needed, turn LED OFF 
+}
+
+void turn_on_red_LEDS(){
+ digitalWrite(RXLED, LOW);   // set the RX LED ON
+ TXLED1;
+}
+
 
 // -----------------------------------------------------------------------------
 void setup() {
   int ret;
 
   pinMode (ledPin, OUTPUT);
-  digitalWrite (ledPin, 1);
+  digitalWrite (ledPin, 1); //this line could be very important
 
   pinMode (spiEnPin, OUTPUT);
-  digitalWrite (spiEnPin, 1); // enable SPI
+  digitalWrite (spiEnPin, 1); // enable SPI //this line could be very important
 
+  pinMode(RXLED, OUTPUT);  // Set RX LED as an output (just to turn it off and on):
+  //turn_on_red_LEDS();
+  turn_off_red_LEDS();
+  
   //Initialize serial and wait for port to open:
   Serial1.begin(BAUD_RATE);
 
@@ -311,7 +324,6 @@ if(Serial1.available()){
     frame_type=0x00;
     arduino_ID=0x00;
     enable_reading=0;
-    //send_data_flag=0;
   }  
 
 
@@ -358,7 +370,6 @@ if(Serial1.available()){
         if (byte_no==(SENSOR_DATA_LENGTH-1))
         {
           loadcell_data[byte_no]=timestamp;
-          //send_data_flag = 0;
         }
         outByte=loadcell_data[byte_no];
       }

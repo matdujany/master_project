@@ -1,0 +1,6 @@
+{
+    "board": "SparkFun:avr:promicro",
+    "configuration": "cpu=16MHzatmega32U4",
+    "port": "COM17",
+    "sketch": "loadcell3d.ino"
+}
