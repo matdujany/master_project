@@ -32,12 +32,25 @@
 
 // LEARNING
 //#define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
-#define SLOPE_LEARNING              1.4f      //1.4f 
 #define LEARNING_RATE               10.0     // Learning rate for the update rule
 #define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
-#define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
-#define DURATION_PART2              500    // Duration of part 2 in ms; part 2: begins at the action of going back to initial position;   servo goes from step position to initial position
-#define N_TWITCHES                  5
+#define DURATION_PART1              2200    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
+#define DURATION_PART2              200    // Duration of part 2 in ms; part 2: begins at the action of going back to initial position;   servo goes from step position to initial position
+#define N_TWITCHES                  3
+
+#define TWITCH_RAMP_MODE             0 //use ramp command for twitching
+#define SLOPE_LEARNING              1.4f      //1.4f 
+
+#define TWITCH_SINE_MODE             0 //use sine command instead of ramp for twitching
+#define AMPL_SINE_TWITCHING          10 // Amplitude (in degrees) of sine wave during twitching
+#define FREQ_SINE_TWITCHING          0.5 // frequency (Hz) of sine wave during twitching.
+
+#define TWITCH_COS_MODE             1 //use cos command instead of ramp for twitching
+#define AMPL_COS_TWITCHING          10 // Amplitude (in degrees) of sine wave during twitching
+#define FREQ_COS_TWITCHING          0.5 // frequency (Hz) of sine wave during twitching.
+
+
+
 
 #define COMPLIANT_MODE              1   // (0) : all servos remain at default parameters 
                                         // (1) : the non moving servos are compliant, the moving one is stiff

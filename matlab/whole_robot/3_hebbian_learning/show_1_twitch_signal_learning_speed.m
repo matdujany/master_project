@@ -1,28 +1,44 @@
 clear; 
-close all; clc;
+% close all; clc;
 
 addpath('../2_load_data_code');
 addpath('../plotting_functions');
 addpath('hinton_plot_functions');
 addpath('computing_functions');
+addpath('analysis_plot_function');
 
 %% Load data
-recordID = 116;
+recordID = 135;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
 %%
 weights_robotis  = read_weights_robotis(recordID,parms);
-hinton_IMU(weights_robotis{parms.n_twitches},parms);
+% hinton_IMU(weights_robotis{parms.n_twitches},parms);
 
 integrated_speed = compute_integrated_speed(data,lpdata,parms);
 weights_speed = compute_weights_speed(data,lpdata,parms);
-hinton_speed(weights_speed{parms.n_twitches},parms,1);
-plot_weight_evolution_speed(weights_speed,parms);
+
+% hinton_speed(weights_speed{parms.n_twitches},parms,1);
+% plot_weight_evolution_speed(weights_speed,parms);
+
+%% showing the initial data used
+limb = get_good_limb(parms,recordID);
+weights_speed_last = weights_speed{parms.n_twitches};
+weights_speed_last = 100*weights_speed_last/max(max(abs(weights_speed_last)));
+weights_speed_fused = fuse_weights_sym_direction(weights_speed_last,parms);
+
+weights_yaw = weights_robotis{parms.n_twitches}(end,:);
+weights_gyro = weights_robotis{parms.n_twitches}(end-2:end,:);
+weights_yaw_rescaled = 100 * weights_yaw/max(max(abs(weights_gyro))) ;
+weights_yaw_fused = fuse_weights_sym_direction(weights_yaw_rescaled,parms);
+
+h_speed_yaw_limb = plot_hinton_speed_yaw_limb_order(weights_speed_fused,weights_yaw_fused,limb);
+
 %%
-n_iter = 2;
-index_motor_plot = 5;
-index_channel_speed = 2;
+n_iter = 1;
+index_motor_plot = 3;
+index_channel_speed = 1;
 bool_plot_lc_signal = false;
 
 %%

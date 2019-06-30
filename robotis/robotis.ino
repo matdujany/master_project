@@ -67,7 +67,7 @@ void setup() {
   //pose_stance();
   delay(5000);
 
-  //twitch_record_wrapper();
+  twitch_record_wrapper();
 
   //record_tegotae_changes();
 
@@ -86,11 +86,11 @@ void setup() {
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
   
-  update_load_pos_values();
-  SerialUSB.print("Motor positions, ");
-  print_motor_positions();
-  show_value_DC(1000);
-  serial_read_neutral_pos();
+  //update_load_pos_values();
+  //SerialUSB.print("Motor positions, ");
+  //print_motor_positions();
+  //show_value_DC(20);
+  //serial_read_neutral_pos();
 
 
   //serial_read_test_twitch();

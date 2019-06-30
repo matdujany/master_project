@@ -17,13 +17,17 @@ parms.n_dir       = 2;
 parms.rampe_slope    = 1.4;         %position increment per frame
 parms.eta            = 10;        %learning rate
 parms.duration_part0 = 500; % in ms
-parms.duration_part1 = 500; % in ms
-parms.duration_part2 = 500; % in ms
-parms.n_twitches     = 5;
+parms.duration_part1 = 2200; % in ms
+parms.duration_part2 = 200; % in ms
+parms.n_twitches     = 3;
 parms.compliant_mode = 1;
 parms.recentering    = 1;
 parms.recentering_delay    = 1500; % in ms
 parms.time_interval_twitch = 21; % in ms
+parms.use_sine_twicthing = 1;
+parms.ampl_sine_twitching = 12; % in degrees
+parms.freq_sine_twitching = 0.5; % in Hz
+
 
 %filter
 parms.use_filter = 1;

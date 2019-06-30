@@ -6,7 +6,7 @@ addpath('../2_load_data_code');
 addpath('../plotting_functions');
 
 %% Load data
-recordID = 63;
+recordID = 110;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 

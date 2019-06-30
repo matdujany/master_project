@@ -9,6 +9,7 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
 void twitch_record_wrapper(){
+  check_twitching_mode();
   print_twitching_parameters();
   Serial3.begin(2000000);   //for fast writing to Matlab of load and pos data via Serial3
   init_weight_matrix();
@@ -231,10 +232,24 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
   update_load_pos_values();
   update_lc_IMU_values();
 
+  //
+  if (i_part == 0){
+    if (TWITCH_COS_MODE==1){
+      twitch_part0_moving_prep_cos(i_servo, dir_sign, n_frames_tmp);
+    }
+  }
+
+
   //sending command to move
   if (i_part == 1){
     //twitch_part1_moving(i_servo, dir_sign, n_frames_tmp, n_frames_this_part);
-    twitch_part1_moving_ramp(i_servo, dir_sign, n_frames_tmp);
+    //twitch_part1_moving_ramp(i_servo, dir_sign, n_frames_tmp);
+    if (TWITCH_SINE_MODE==1)
+      twitch_part1_moving_sine(i_servo, dir_sign, n_frames_tmp);
+    if (TWITCH_COS_MODE==1)
+      twitch_part1_moving_cos(i_servo, dir_sign, n_frames_tmp);
+    if (TWITCH_RAMP_MODE==1)
+      twitch_part1_moving_ramp(i_servo, dir_sign, n_frames_tmp);
   }
 
   if (i_part==2){
@@ -277,6 +292,30 @@ void twitch_part1_moving(uint8_t i_servo, int dir_sign, int n_frames_tmp, int n_
   set_goal_position(id[i_servo], command_pos);
 }
 */
+
+void twitch_part1_moving_sine(uint8_t i_servo, int dir_sign, int n_frames_tmp)
+{
+  uint16_t command_pos = neutral_pos[i_servo] + dir_sign * 3.413 * AMPL_SINE_TWITCHING * sin((float)(2*PI*FREQ_SINE_TWITCHING*n_frames_tmp*TIME_INTERVAL_TWITCH)/1000);
+  set_goal_position(id[i_servo], command_pos);
+}
+
+
+void twitch_part0_moving_prep_cos(uint8_t i_servo, int dir_sign, int n_frames_tmp)
+{
+  int time_margin_ms = 200;
+  uint16_t command_pos;
+  if (n_frames_tmp*TIME_INTERVAL_TWITCH<DURATION_PART0-time_margin_ms)
+    command_pos = neutral_pos[i_servo] + dir_sign * 3.413 * AMPL_COS_TWITCHING * (float)n_frames_tmp*TIME_INTERVAL_TWITCH/(DURATION_PART0-time_margin_ms);
+  else
+    command_pos = neutral_pos[i_servo] + dir_sign * 3.413 * AMPL_COS_TWITCHING;
+  set_goal_position(id[i_servo], command_pos);
+}
+
+void twitch_part1_moving_cos(uint8_t i_servo, int dir_sign, int n_frames_tmp)
+{
+  uint16_t command_pos = neutral_pos[i_servo] + dir_sign * 3.413 * AMPL_COS_TWITCHING * cos((float)(2*PI*FREQ_SINE_TWITCHING*n_frames_tmp*TIME_INTERVAL_TWITCH)/1000);
+  set_goal_position(id[i_servo], command_pos);
+}
 
 void twitch_part1_moving_ramp(uint8_t i_servo, int dir_sign, int n_frames_tmp)
 {
@@ -724,9 +763,27 @@ void init_weight_matrix(){
   }
 }
 
+void check_twitching_mode(){
+  if (TWITCH_SINE_MODE+TWITCH_COS_MODE+TWITCH_RAMP_MODE!=1){
+    SerialUSB.println("Twitch command mode improper (only one should be activated between SINE MODE, COS MODE and RAMP MODE).");
+    SerialUSB.println("Entering infinite loop");
+    while(1);
+  }
+}
+
 
 void print_twitching_parameters(){
-  SerialUSB.print("Slope of the ramp used for learning : "); SerialUSB.println(SLOPE_LEARNING);
+  if (TWITCH_SINE_MODE){
+    SerialUSB.print("Amplitude (in deg) of the sine used for learning : "); SerialUSB.println(AMPL_SINE_TWITCHING);
+    SerialUSB.print("Frequency (in Hz) of the sine used for learning : "); SerialUSB.println(FREQ_SINE_TWITCHING);
+  }
+  if (TWITCH_COS_MODE){
+    SerialUSB.print("Amplitude (in deg) of the cos used for learning : "); SerialUSB.println(AMPL_COS_TWITCHING);
+    SerialUSB.print("Frequency (in Hz) of the cos used for learning : "); SerialUSB.println(FREQ_COS_TWITCHING);
+  }
+  if (TWITCH_RAMP_MODE){
+    SerialUSB.print("Slope of the ramp used for learning : "); SerialUSB.println(SLOPE_LEARNING);
+  }
   //SerialUSB.print("Step Amplitude : "); SerialUSB.println(STEP_AMPL);
   SerialUSB.print("Learning rate : "); SerialUSB.println(LEARNING_RATE);
   SerialUSB.print("Duration part 0 : "); SerialUSB.println(DURATION_PART0);

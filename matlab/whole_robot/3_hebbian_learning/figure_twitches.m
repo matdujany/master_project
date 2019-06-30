@@ -9,7 +9,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %% Load data
-recordID = 105; %15
+recordID = 110; %15
 [data, lpdata, parms] =  load_data_processed(recordID);
 all_neutral_pos = read_neutral_pos(recordID,parms.n_m);
 weights_robotis = read_weights_robotis(recordID,parms);
