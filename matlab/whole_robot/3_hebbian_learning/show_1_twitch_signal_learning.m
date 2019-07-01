@@ -26,8 +26,8 @@ lpdata = compute_filtered_signal_lpdata(lpdata,parms);
 % good_closest_LC = get_good_closest_LC(parms,recordID);
 %%
 n_iter = 1;
-index_motor_plot = 10;
-index_loadcell_plot = 1;
+index_motor_plot = 7;
+index_loadcell_plot = 6;
 index_channel_plot = 3;
 neutral_pos = all_neutral_pos(index_motor_plot);
 

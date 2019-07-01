@@ -12,7 +12,7 @@ addpath('class_detection_function');
 addpath('analysis_plot_function');
 
 %% Load data
-recordID = 135;
+recordID = 110;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -81,9 +81,9 @@ if ismember(recordID,[105 110 115])
          [motors_classes,likelihood_class1,dir_oscillations,dir_oscillations_yaw] = get_class_c1_before_c2(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
 end
 %c2 first
-if ismember(recordID,127)
-        [motors_classes,likelihood_class2,dir_oscillations,dir_oscillations_yaw] = get_class_c2_before_c1(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
-end
+% if ismember(recordID,127)
+%         [motors_classes,likelihood_class2,dir_oscillations,dir_oscillations_yaw] = get_class_c2_before_c1(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
+% end
 if ismember(recordID,[134:137])
         [motors_classes,dir_oscillations,dir_oscillations_yaw,likelihood_class2] = get_class_c2_maximize_deltas_wrapper(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
         % motors_class_c2 = get_class_c2_maximize_deltas(limb,weights_lcz_fused);

@@ -14,7 +14,6 @@ parms.n_m         = 12;
 parms.n_dir       = 2;
 
 % learning parameters
-parms.rampe_slope    = 1.4;         %position increment per frame
 parms.eta            = 10;        %learning rate
 parms.duration_part0 = 500; % in ms
 parms.duration_part1 = 2200; % in ms
@@ -24,10 +23,22 @@ parms.compliant_mode = 1;
 parms.recentering    = 1;
 parms.recentering_delay    = 1500; % in ms
 parms.time_interval_twitch = 21; % in ms
-parms.use_sine_twicthing = 1;
+
+parms.use_ramp_slope = 0;
+parms.rampe_slope    = 1.4;         %position increment per frame
+
+parms.use_sine_twitching = 0;
 parms.ampl_sine_twitching = 12; % in degrees
 parms.freq_sine_twitching = 0.5; % in Hz
 
+parms.use_cos_twitching = 1;
+parms.ampl_cos_twitching = 10; % in degrees
+parms.freq_cos_twitching = 0.5; % in Hz
+
+if parms.use_ramp_slope+parms.use_sine_twitching+parms.use_cos_twitching~=1
+    disp('Pb with parms. twitching mode selected');
+    return;
+end
 
 %filter
 parms.use_filter = 1;

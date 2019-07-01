@@ -69,7 +69,7 @@ h_lcz = plot_hinton_lc_limb_order(weights_lc_fused,limb,parms);
 % [h_lcz, weights_lcz_fused_limb_order_ratios] = plot_hinton_lc_limb_order_ratio_column(weights_lc_fused,limb,parms);
 
 %%
-motors_class_c2 = get_class_c2_maximize_deltas(limb,weights_lcz_fused);
+motors_class_c2 = get_class_c2_maximize_deltas(limb,weights_lc_fused);
 inv_map_max_deltas = get_inverse_map(weights_lc_fused,motors_class_c2,parms);
 h_invmap_max_deltas = plot_lc_to_limb_inv_map(inv_map_max_deltas,parms);
 h_invmap_max_deltas.Name = 'maximizing deltas';

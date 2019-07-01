@@ -1,5 +1,5 @@
 clear; 
-% close all; clc;
+close all; clc;
 
 addpath('../2_load_data_code');
 addpath('../plotting_functions');
@@ -8,7 +8,7 @@ addpath('computing_functions');
 addpath('analysis_plot_function');
 
 %% Load data
-recordID = 135;
+recordID = 137;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
@@ -37,7 +37,7 @@ h_speed_yaw_limb = plot_hinton_speed_yaw_limb_order(weights_speed_fused,weights_
 
 %%
 n_iter = 1;
-index_motor_plot = 3;
+index_motor_plot = 7;
 index_channel_speed = 1;
 bool_plot_lc_signal = false;
 

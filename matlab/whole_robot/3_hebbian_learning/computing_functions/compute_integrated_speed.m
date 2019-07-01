@@ -6,7 +6,7 @@ integrated_speed = zeros(size(data.IMU_corrected,1),3);
 
 for i=2:size(data.IMU_corrected,1)
     for channel=1:3
-        if abs(data.IMU_corrected(i,channel))>50
+        if abs(data.IMU_corrected(i,channel))>65
             disp(['IMU corrected value channel ' num2str(channel) ' sample ' num2str(i) ' has extreme value ' num2str(data.IMU_corrected(i,channel))]);
             disp(['This value is changed to the previous one ' num2str(data.IMU_corrected(i-1,channel))]);
             data.IMU_corrected(i,channel) = data.IMU_corrected(i-1,channel);
