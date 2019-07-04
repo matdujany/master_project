@@ -61,7 +61,14 @@ save(file_name_data,'data_rec','pos_load_data_rec','parms');
 
 
 function n_byte_approx = predict_n_bytes_approximate(parms)
-n_moves = parms.n_twitches * parms.n_m * parms.n_dir;
+
+if isfield(parms,'twitch_limb') &&  parms.twitch_limb== 1
+    n_moving_blocks = parms.n_limb;
+else
+    n_moving_blocks = parms.n_m ;
+end
+
+n_moves = parms.n_twitches * n_moving_blocks * parms.n_dir;
 n_frames_p0 = floor(parms.duration_part0/parms.time_interval_twitch);
 n_frames_p1 = floor(parms.duration_part1/parms.time_interval_twitch);
 n_frames_p2 = floor(parms.duration_part2/parms.time_interval_twitch);
@@ -80,13 +87,21 @@ end
 
 %duration of the recording (for timeout) in seconds
 function duration_approx = predict_duration(parms)
-duration_approx =  (parms.n_twitches * parms.n_m * parms.n_dir)...
+
+if isfield(parms,'twitch_limb') &&  parms.twitch_limb== 1
+    n_moving_blocks = parms.n_limb;
+else
+    n_moving_blocks = parms.n_m ;
+end
+
+duration_approx =  (parms.n_twitches * n_moving_blocks * parms.n_dir)...
         *(parms.duration_part0+parms.duration_part1+parms.duration_part2)/1000; %in seconds
 
 %automatic recentering between twitches
 if parms.recentering == 1
-    duration_approx = duration_approx + (parms.n_twitches * parms.n_m * parms.n_dir)*parms.recentering_delay/1000;
+    duration_approx = duration_approx + (parms.n_twitches * n_moving_blocks * parms.n_dir)*parms.recentering_delay/1000;
 end
+
 
 %manual recentering between twitch cycles
 duration_approx = duration_approx + parms.n_twitches*parms.manual_recentering_duration;

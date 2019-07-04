@@ -8,7 +8,7 @@ addpath('../2_load_data_code');
 addpath('computing_functions');
 addpath('hinton_plot_functions');
 
-recordID = 137;
+recordID = 140;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
@@ -16,6 +16,7 @@ weights_robotis  = read_weights_robotis(recordID,parms);
 weights_pos_robotis = read_weights_pos_robotis(recordID,parms);
 
 weights_computed = compute_weights_wrapper(data,lpdata,parms,0,0,0,0);
+hinton_LC_dissymetry(weights_lc,parms,1);
 
 %%
 opt_parms.motor_list = [1:12];

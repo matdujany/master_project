@@ -12,7 +12,7 @@ addpath('class_detection_function');
 addpath('analysis_plot_function');
 
 %% Load data
-recordID = 140;
+recordID = 141;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);

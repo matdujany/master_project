@@ -8,7 +8,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 137;
+recordID = 141;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 all_neutral_pos = read_neutral_pos(recordID,parms.n_m);
@@ -25,7 +25,7 @@ lpdata = compute_filtered_signal_lpdata(lpdata,parms);
 
 % good_closest_LC = get_good_closest_LC(parms,recordID);
 %%
-n_iter = 1;
+n_iter = 5;
 index_motor_plot = 7;
 index_loadcell_plot = 6;
 index_channel_plot = 3;
@@ -38,6 +38,7 @@ for i_dir = 1 : 2
 index_sensor = index_channel_plot+3*(index_loadcell_plot-1);
 
 n_frames_theo = get_theo_number_frames(parms);
+
 
 index_start = n_frames_theo.per_twitch*(n_iter-1) + ...
     (n_frames_theo.per_action)*(index_motor_plot-1)*parms.n_dir +...

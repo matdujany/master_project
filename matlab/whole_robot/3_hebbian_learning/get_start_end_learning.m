@@ -5,16 +5,23 @@ n_frames_part0 = floor(parms.duration_part0/parms.time_interval_twitch);
 n_frames_part1 = floor(parms.duration_part1/parms.time_interval_twitch);
 n_frames_part2 = floor(parms.duration_part2/parms.time_interval_twitch);
 
-nb_theo_frames = (n_frames_part0+n_frames_part1+n_frames_part2)*(parms.n_twitches*parms.n_m*parms.n_dir);
+if isfield(parms,'twitch_limb') &&  parms.twitch_limb== 1
+    n_moving_blocks = parms.n_limb;
+else
+    n_moving_blocks = parms.n_m ;
+end
 
-changes_frame = [n_frames_part0 n_frames_part0+n_frames_part1 n_frames_part0+n_frames_part1+n_frames_part2];
+
+% nb_theo_frames = (n_frames_part0+n_frames_part1+n_frames_part2)*(parms.n_twitches*n_moving_blocks*parms.n_dir);
+% changes_frame = [n_frames_part0 n_frames_part0+n_frames_part1 n_frames_part0+n_frames_part1+n_frames_part2];
+
 total_duration = n_frames_part0+n_frames_part1+n_frames_part2;
 
 pos_start_learning = [n_frames_part0+1];
 pos_end_learning   = [n_frames_part0+n_frames_part1];
 
 for k=1:parms.n_twitches
-    for i_motor = 1:parms.n_m
+    for i_moving = 1:n_moving_blocks
         for i_dir = 1:parms.n_dir
             pos_start_learning=[pos_start_learning pos_start_learning(end)+total_duration];
             pos_end_learning=[pos_end_learning pos_end_learning(end)+total_duration];

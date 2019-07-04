@@ -21,7 +21,7 @@ addpath('functions')
 
 clear; clc; close all;
 
-recordID = 140;
+recordID = 141;
 
 % Check if there is already an instance of a communication interface and
 % clears it
@@ -40,7 +40,12 @@ IMU_offsets = true;
 gyro_in_degs = true;
 
 %% Main 
-n_moves = parms.n_twitches * parms.n_m * parms.n_dir;
+if isfield(parms,'twitch_limb') &&  parms.twitch_limb== 1
+    n_moving_blocks = parms.n_limb;
+else
+    n_moving_blocks = parms.n_m ;
+end
+n_moves = parms.n_twitches * n_moving_blocks * parms.n_dir;
 n_frames_p0 = floor(parms.duration_part0/parms.time_interval_twitch);
 n_frames_p1 = floor(parms.duration_part1/parms.time_interval_twitch);
 n_frames_p2 = floor(parms.duration_part2/parms.time_interval_twitch);
@@ -123,7 +128,7 @@ end
 if IMU_offsets
     parms.IMU_offsets = true;
     IMU_offsets = read_IMU_offsets(recordID,parms.n_twitches);
-    n_frames_twitch_cycle =  parms.n_m * parms.n_dir * (n_frames_p0+n_frames_p1+n_frames_p2);
+    n_frames_twitch_cycle =  n_moving_blocks * parms.n_dir * (n_frames_p0+n_frames_p1+n_frames_p2);
     data.IMU_corrected = zeros(size(data.float_value_time{1,parms.nr_arduino+1}));
     if size(data.float_value_time{1,parms.nr_arduino+1},2)~=6
         disp('Warning, not 6 IMU channels ?');

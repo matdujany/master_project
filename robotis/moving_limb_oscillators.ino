@@ -306,7 +306,7 @@ float smooth_weight(float weight_new, float weight_old){
 
 void increase_freq_bluetooth() {
   float frequency_new = frequency + 0.1;
-  if (frequency_new > 1)
+  if (frequency_new > 1.5)
     frequency_new = 1;
   //float sigma_advanced_new = frequency_new*sigma_advanced/frequency;
 
@@ -316,8 +316,6 @@ void increase_freq_bluetooth() {
 
 void decrease_freq_bluetooth() {
   frequency = frequency - 0.1;
-  if (frequency < 0.1)
-    frequency = 0.1;
 }
 
 void increase_sigma_adv_bluetooth() {
@@ -661,15 +659,6 @@ void send_command_limb_oscillators(){
 }
 
 
-int16_t phase2pos_oscillator(float phase, float amp_deg, boolean changeDir){
-  int16_t pos;
-  if (changeDir)
-    pos = (int16_t)( -1 * (float)(3.413*amp_deg*sin(phase)));
-  else
-    pos = (int16_t)((float)(3.413*amp_deg*sin(phase)));
-  return pos;
-}
-
 /*
 int16_t phase2pos_wrapper(float phase, boolean isClass2, boolean changeDir, float scaling_amp_class1){
   if (isClass2){
@@ -693,6 +682,15 @@ int16_t phase2pos_Class2(float phase, boolean changeDir){
 
 int16_t phase2pos_Class1(float phase, boolean changeDir, float scaling_amp_class1){
     return phase2pos_oscillator(phase, scaling_amp_class1*amplitude_class1, changeDir);
+}
+
+int16_t phase2pos_oscillator(float phase, float amp_deg, boolean changeDir){
+  int16_t pos;
+  if (changeDir)
+    pos = (int16_t)( -1 * (float)(3.413*amp_deg*sin(phase)));
+  else
+    pos = (int16_t)((float)(3.413*amp_deg*sin(phase)));
+  return pos;
 }
 
 

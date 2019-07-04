@@ -40,6 +40,13 @@ if parms.use_ramp_slope+parms.use_sine_twitching+parms.use_cos_twitching~=1
     return;
 end
 
+parms.twitch_limb = 1;
+parms.n_limb = 6;
+if parms.twitch_limb==1
+    disp('Twitching with all limbs mode activated');
+end
+
+
 %filter
 parms.use_filter = 1;
 parms.add_filter_size = 4;

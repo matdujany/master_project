@@ -67,13 +67,13 @@ void setup() {
   //pose_stance();
   delay(5000);
 
-  twitch_record_wrapper();
+  //twitch_record_wrapper();
 
   //record_tegotae_changes();
 
   //record_tegotae_leg_amputated_Serial3(600*1000);
   
-  //tegotae_bluetooth();
+  tegotae_bluetooth();
   
   //record_tegotae_change_dir(240*1000);
   //pose_stance_512();

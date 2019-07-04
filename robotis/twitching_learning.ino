@@ -14,6 +14,12 @@ void twitch_record_wrapper(){
   Serial3.begin(2000000);   //for fast writing to Matlab of load and pos data via Serial3
   init_weight_matrix();
 
+  #ifdef TWITCH_LIMB_ENABLED
+    n_limb = 6;
+    fill_limbs_array(limbs_X_6);
+    fill_changeDirs_array(changeDirs_X_6);
+  #endif
+
   // Execute twitching procedure n_twitch times.
   for(int i_twitch = 0; i_twitch < N_TWITCHES; i_twitch++){
 
@@ -63,8 +69,6 @@ void twitch_main()
   for (int i=0; i<3;i++)
     n_frames_part[i]=int(interv_arr[i]/TIME_INTERVAL_TWITCH);
 
-  int dir_sign[] = {-1, 1};
-  int i_action = 0;
   int count_missed_frames_row = 0; //counter of the number of missed frames in a row.
   //if this counter gets too high, a long delay is added and the daisychain is reinitialized
   float limit_duration = 1.5 * duration_daisychain;
@@ -73,8 +77,12 @@ void twitch_main()
   ///////////////////////////////////////////////////////////////////////////
   /// Learning Loop
   ///////////////////////////////////////////////////////////////////////////
-
+  #ifdef TWITCH_LIMB_ENABLED
+  for (uint8_t i_limb = 0; i_limb < n_limb; i_limb++)
+  #else
   for (uint8_t i_servo = 0; i_servo < n_servos; i_servo++)
+  #endif
+
   {
     // Loop over directions
     for (uint8_t i_dir = 0; i_dir < 2; i_dir++)
@@ -98,7 +106,12 @@ void twitch_main()
           if (COMPLIANT_MODE==2){
             make_all_servos_stiff_syncWrite();
           }
-          change_motor_parameters_movement_learning(id[i_servo]);
+          #ifdef TWITCH_LIMB_ENABLED
+          for (uint8_t i_servo_limb = 0; i_servo_limb < 2; i_servo_limb++)
+            change_motor_parameters_movement_learning( id[ limbs[i_limb][i_servo_limb] ] );
+          #else
+          change_motor_parameters_movement_learning( id[i_servo] );
+          #endif
         }
 
         // Keep looping until required number of frames is reached
@@ -123,13 +136,17 @@ void twitch_main()
             //SerialUSB.print("frame found in "); SerialUSB.print(millis()-timestamp_startframe);SerialUSB.println("ms");
             
             //processing
-            twitch_processing_frame_found(i_part, i_servo, dir_sign[i_dir], i_action, n_frames_tmp, n_frames_part[i_part]);
+            #ifdef TWITCH_LIMB_ENABLED
+            twitch_frame_found_main_twitch_limb(i_part, i_limb, i_dir, n_frames_tmp, n_frames_part[i_part]);
+            #else
+            twitch_frame_found_main(i_part, i_servo, i_dir, n_frames_tmp, n_frames_part[i_part]);
+            #endif
 
             //SerialUSB.print("Frame captured and processing done in ");SerialUSB.print(millis()-timestamp_startframe);
             //SerialUSB.println(" ms, waiting until TIME_INTERVAL_TWITCH to send an other one");
            
             //waiting to send the next one
-            while( millis()-timestamp_startframe<TIME_INTERVAL_TWITCH);
+            while( millis()-timestamp_startframe < TIME_INTERVAL_TWITCH );
           }
           //else it means that something got wrong in the daisychain
           //we print info and we try again
@@ -137,7 +154,7 @@ void twitch_main()
             SerialUSB.print("No complete frame received within ");
             SerialUSB.print(limit_duration);
             SerialUSB.print(" ms, trying again (trying to collect frame ");SerialUSB.print(n_frames_tmp+1);
-            SerialUSB.print("), servo ");SerialUSB.print(i_servo);
+            //SerialUSB.print("), servo ");SerialUSB.print(i_servo);
             SerialUSB.print(", direction ");SerialUSB.print(2*i_dir-1);
             SerialUSB.print(", part ");SerialUSB.println(i_part);
             delay(15);
@@ -166,9 +183,6 @@ void twitch_main()
         recentering_between_action();
       }
 
-
-      // Counting number of actions (total = number of servo's * 2 directions)
-      i_action++;
     }
 
   }
@@ -221,25 +235,12 @@ void compute_max_gap_stance(uint16_t &max_pos_gap, uint8_t &index_servo_max, uin
 }
 
 
-void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign, int i_action, int n_frames_tmp, int n_frames_this_part){
-  unsigned long start_time_computation;
-  start_time_computation = millis();
-
-  //the filter is updated : the values (last_motor_pos and l)
-  update_buf_filter();
-  //print_buf_filter();
-
-  update_load_pos_values();
-  update_lc_IMU_values();
-
-  //
+void twitch_movement_commands(uint8_t i_part, uint8_t i_servo, int dir_sign, int n_frames_tmp, int n_frames_this_part){
   if (i_part == 0){
     if (TWITCH_COS_MODE==1){
       twitch_part0_moving_prep_cos(i_servo, dir_sign, n_frames_tmp);
     }
   }
-
-
   //sending command to move
   if (i_part == 1){
     //twitch_part1_moving(i_servo, dir_sign, n_frames_tmp, n_frames_this_part);
@@ -256,7 +257,26 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
     //twitch_part2_moving(i_servo, n_frames_tmp, n_frames_this_part);
     twitch_part2_allrecentering(n_frames_tmp, n_frames_this_part);
   }
+}
 
+
+void twitch_frame_found_main(uint8_t i_part, uint8_t i_servo, uint8_t i_dir, int n_frames_tmp, int n_frames_this_part){
+  int dir_sign[] = {-1, 1};
+  unsigned long start_time_computation;
+  start_time_computation = millis();
+
+  //Measurements processing part
+  //the filter is updated : the values (last_motor_pos and l)
+  update_buf_filter();
+  //print_buf_filter();
+
+  update_load_pos_values();
+  update_lc_IMU_values();
+
+  //movement part
+  twitch_movement_commands(i_part, i_servo, dir_sign[i_dir], n_frames_tmp, n_frames_this_part);
+
+  //Learning part
   if (USE_FILTER_LEARNING){
     calculate_m_dot_filtered();
     calculate_s_dot_filtered();
@@ -266,12 +286,12 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
     calculate_s_dot();
   }
 
-
   // Learning during part 1
   if (i_part == 1){
     //float m_learning = dir_sign*m_dot_pos[i_servo]; // sign is flipped for M-
     float m_learning = m_dot_pos[i_servo]; // no sign flip
-    twitch_learning_prog(i_action, m_learning);
+    int i_action = 2*i_servo + i_dir;
+    twitch_learning_prog( i_action, m_learning);
   }
 
   //sending measures to Matlab
@@ -284,6 +304,85 @@ void twitch_processing_frame_found(uint8_t i_part, uint8_t i_servo, int dir_sign
   }
 }
 
+void twitch_movement_commands_limb(uint8_t i_part, uint8_t i_limb, int dir_sign, int n_frames_tmp, int n_frames_this_part){
+  //sending command to move
+  float amplitude_traj_twitching = 20; //in degrees
+  float phase_limb_center_twitch = 3*pi/2;
+  float amp_phase_move_twitch = pi/3;
+  float offset_phase[2] = {pi/2, 0};
+
+  if (i_part == 0){
+
+    for (uint8_t i_servo_limb = 0; i_servo_limb<2; i_servo_limb++){
+      int16_t start_pos_twitch = neutral_pos[limbs[i_limb][i_servo_limb]] + phase2pos_oscillator(phase_limb_center_twitch + offset_phase[i_servo_limb], amplitude_traj_twitching, changeDirs[i_limb][i_servo_limb]);
+      twitch_part0_smooth_preparation(limbs[i_limb][i_servo_limb], start_pos_twitch, n_frames_tmp);
+    }
+  }
+
+  if (i_part == 1){
+    float phase_mov = dir_sign * amp_phase_move_twitch *(float)n_frames_tmp*TIME_INTERVAL_TWITCH/DURATION_PART1;
+    float phase_limb = phase_limb_center_twitch + phase_mov;
+    //SerialUSB.print("phase limb in rads : "); SerialUSB.println(phase_limb,3);
+
+    for (uint8_t i_servo_limb = 0; i_servo_limb<2; i_servo_limb++)
+    {
+      int16_t command_pos = neutral_pos[limbs[i_limb][i_servo_limb]] + 
+            phase2pos_oscillator(phase_limb + offset_phase[i_servo_limb], amplitude_traj_twitching, changeDirs[i_limb][i_servo_limb]);
+      set_goal_position(id[ limbs[i_limb][i_servo_limb] ], command_pos);
+      //SerialUSB.print("Command positions motor (ID "); SerialUSB.print(id[ limbs[i_limb][i_servo_limb] ]);
+      //SerialUSB.print(") : "); SerialUSB.println(command_pos); 
+    }
+  }
+}
+
+void twitch_frame_found_main_twitch_limb(uint8_t i_part, uint8_t i_limb, uint8_t i_dir, int n_frames_tmp, int n_frames_this_part){
+  int dir_sign[] = {-1, 1};
+  unsigned long start_time_computation;
+  start_time_computation = millis();
+
+  //Measurements processing part
+  //the filter is updated : the values (last_motor_pos and l)
+  update_buf_filter();
+  //print_buf_filter();
+
+  update_load_pos_values();
+  update_lc_IMU_values();
+
+  //movement part
+  twitch_movement_commands_limb(i_part, i_limb, dir_sign[i_dir], n_frames_tmp, n_frames_this_part);
+
+  //Learning part
+  if (USE_FILTER_LEARNING){
+    calculate_m_dot_filtered();
+    calculate_s_dot_filtered();
+  }
+  else{
+    calculate_m_dot();
+    calculate_s_dot();
+  }
+
+  // Learning during part 1
+  if (i_part == 1){
+    for (uint8_t i_servo_limb = 0; i_servo_limb < 2; i_servo_limb++){
+      uint8_t i_servo_temp = limbs[i_limb][i_servo_limb] ;
+      float m_learning = m_dot_pos[ i_servo_temp ]; // no sign flip
+      int i_action = 2*i_servo_temp + i_dir;
+      twitch_learning_prog(i_action, m_learning);     
+    }
+  }
+
+  //sending measures to Matlab
+  printing_serial3_lpdata(i_part);
+  
+  int time_computation = millis()-start_time_computation;
+  mean_time_computation_part += (time_computation)/(float)n_frames_this_part;
+  if (i_part == 1){
+    max_time_computation_p1 = std::max(max_time_computation_p1,time_computation);
+  }
+}
+
+
+
 /*
 void twitch_part1_moving(uint8_t i_servo, int dir_sign, int n_frames_tmp, int n_frames_tot)
 {
@@ -292,6 +391,17 @@ void twitch_part1_moving(uint8_t i_servo, int dir_sign, int n_frames_tmp, int n_
   set_goal_position(id[i_servo], command_pos);
 }
 */
+
+void twitch_part0_smooth_preparation(uint8_t i_servo, uint16_t final_goal_pos, int n_frames_tmp)
+{
+  int time_margin_ms = 200;
+  uint16_t command_pos;
+  if (n_frames_tmp*TIME_INTERVAL_TWITCH<DURATION_PART0-time_margin_ms)
+    command_pos = neutral_pos[i_servo] + (final_goal_pos - neutral_pos[i_servo]) * (float)n_frames_tmp*TIME_INTERVAL_TWITCH/(DURATION_PART0-time_margin_ms);
+  else
+    command_pos = final_goal_pos;
+  set_goal_position(id[i_servo], command_pos);
+}
 
 void twitch_part1_moving_sine(uint8_t i_servo, int dir_sign, int n_frames_tmp)
 {
