@@ -45,6 +45,7 @@ float alpha           = 0.2;  //reduction of amplitude during stance for class 2
 float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
 //0.11 for quadruped, 0.08 for hexapode, 0.06 for octopod, 0.13 for weird quadruped
 
+
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 
 bool tegotae_advanced   = true;     //to use advanced tegotae rule
@@ -56,7 +57,7 @@ float weight_yaw = 0;
 
 float weight_X = 0;
 float weight_Y = 0;
-bool locomotion_2_joysticks = true;
+bool locomotion_2_joysticks = false;
 
 //recordings and experiments
 float frequency_recording[3] = {0.15, 0.5, 1};
@@ -97,7 +98,7 @@ float offset_class1[MAX_N_LIMB] = {0};
 
 //To be learned
 int n_limb;
-float sigma_advanced;
+float sigma_advanced = 0;
 std::vector<std::vector<uint8_t>>  limbs;
 std::vector<std::vector<bool>>  changeDirs; 
 std::vector<bool>  changeDirs_Yaw; 

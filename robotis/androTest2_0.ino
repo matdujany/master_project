@@ -14,7 +14,7 @@ byte cmd[8] = {0, 0, 0, 0, 0, 0, 0, 0};                 // bytes received
 byte buttonStatus = 0;                                  // first Byte sent to Android device
 long previousMillis = 0;                                // will store last time Buttons status was updated
 long sendInterval = SLOW;                               // interval between Buttons status transmission (milliseconds)
-String displayStatus = "Walking";                          // message to Android device
+String displayStatus;                        // message to Android device
 unsigned long last_update_joystick = 0;
 int8_t joyX; //
 int8_t joyY;
@@ -32,6 +32,7 @@ void setup_serial_bluetooth()  {
   while(Serial3.available())  Serial3.read();         // empty RX buffer
   delay(1000);
   SerialUSB.println("bluetoooth setup");
+  displayStatus = String(sigma_advanced,4); 
 }
 
 void getJoystickState2(byte data[6])    {
@@ -171,36 +172,24 @@ void getButtonState(int bStatus)  {
 // -----------------  BUTTON #1  -----------------------
    case 'A':
      buttonStatus |= B000001;        // ON
-     SerialUSB.println("\n** Learn Button : ON **");
-     // your code...      
-     displayStatus = "Learning";
-     SerialUSB.println(displayStatus);
+     SerialUSB.println("Increasing sigma by 0.01");
+     increase_sigma_adv_bluetooth();      
+     displayStatus = String(sigma_advanced,4);
      break;
    case 'B':
      buttonStatus &= B111110;        // OFF
-     SerialUSB.println("\n** Learn Button: OFF **");
-     // your code...      
-     displayStatus = "Idle";
-     SerialUSB.println(displayStatus);
      break;
 
 // -----------------  BUTTON #2  -----------------------
    case 'C':
      buttonStatus |= B000010;        // ON
-     SerialUSB.println("\n** Walk button: ON **");
-     // your code...      
-     displayStatus = "Walking";
-     SerialUSB.println(displayStatus);
+     SerialUSB.println("Decreasing sigma by 0.01");
+     decrease_sigma_adv_bluetooth();      
+     displayStatus = String(sigma_advanced,4);
      break;
    case 'D':
      buttonStatus &= B111101;        // OFF
-     SerialUSB.println("\n** Walk button: OFF **");
-     // your code...      
-     displayStatus = "Idle";
-     SerialUSB.println(displayStatus);
      break;
-
-    
 
 // -----------------  BUTTON #3  -----------------------
    case 'E':

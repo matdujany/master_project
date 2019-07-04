@@ -12,7 +12,7 @@ addpath('class_detection_function');
 addpath('analysis_plot_function');
 
 %% Load data
-recordID = 110;
+recordID = 140;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -32,6 +32,10 @@ weights_speed = 100*weights_speed/max(max(abs(weights_speed)));
 % hinton_speed(weights_speed,parms,1);
 
 weights_speed_fused = fuse_weights_sym_direction(weights_speed,parms);
+if recordID == 138
+    msgbox('Warning, harcoding the speed X of M3 to -20');
+    weights_speed_fused(1,3) = -20;
+end
 % hinton_speed_fused(weights_speed_fused,parms,1);
 
 weights_yaw = weights_robotis{parms.n_twitches}(end,:);
@@ -77,7 +81,7 @@ desired_movement_speed_channel = 1; %1 for X, 2 for Y
 direction_list = {'X','Y','Z'};
 
 %c1 first
-if ismember(recordID,[105 110 115])
+if ismember(recordID,[105 110 115 138])
          [motors_classes,likelihood_class1,dir_oscillations,dir_oscillations_yaw] = get_class_c1_before_c2(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
 end
 %c2 first

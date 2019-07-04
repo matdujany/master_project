@@ -20,7 +20,7 @@ switch parms.n_m
          if ismember(recordID,[68:91])
             limb =  [9    10;   11    12;    3     4;     1     2;     7     8;     5     6];
         end
-        if ismember(recordID,[107:110])
+        if ismember(recordID,[107:110 138:140])
             limb =  [9    10;   7    1;    4     5;     2     3;     6     8;     11     12];
         end
         if ismember(recordID,[130:130])

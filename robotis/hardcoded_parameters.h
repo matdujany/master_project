@@ -13,7 +13,7 @@
 
 //dont forget to change TIME_INTERVAL_TWITCH and DELAY_UPDATE_DC_TEGOTAE
 
-#define MAP_USED 134
+#define MAP_USED 110
 
 
 //Starfish Hexapod SECTION
@@ -165,6 +165,7 @@ std::vector<bool>  changeDirs_X_Yaw_6{true,true,true,true,true,true};
 
 float sigma_advanced_X_110 = 0.1206;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_110{
+    /*
 {-0.490, 0.100, 0.227, -0.308, 0.074, 0.287} ,
 {0.428, -1.000, 0.550, -0.051, -0.002, 0.088} ,
 {0.134, 0.391, -0.697, 0.280, 0.264, -0.437} ,
@@ -172,6 +173,16 @@ std::vector<std::vector<float>> inverse_map_X_110{
 {0.036, 0.007, -0.097, 0.456, -0.786, 0.329} ,
 {0.214, 0.039, -0.294, 0.156, 0.209, -0.377} ,
 };
+*/
+
+{-0.450, 0.402, 0.025, -0.334, 0.239, 0.146} ,
+{0.433, -1.000, 0.561, -0.065, 0.073, 0.083} ,
+{-0.029, 0.436, -0.508, 0.126, 0.365, -0.378} ,
+{-0.319, -0.014, 0.344, -0.523, 0.513, 0.051} ,
+{0.187, -0.225, 0.057, 0.494, -0.824, 0.413} ,
+{0.362, -0.032, -0.280, 0.131, 0.293, -0.319} 
+};
+
 uint16_t neutral_pos_110[12] = {510,   514,   512,   508,   510,   509,   513,   511,   509,   511,   514,   510};
 
 //Quadruped section

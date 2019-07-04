@@ -23,7 +23,7 @@ switch parms.n_m
         if ismember(recordID,[68:91])
                 good_closest_LC = [4;4;3;3;6;6;5;5;1;1;2;2];
         end
-        if ismember(recordID,[107:110])
+        if ismember(recordID,[107:110 138:140])
            good_closest_LC = [2;4;4;3;3;5;2;5;1;1;6;6];
         end
         if ismember(recordID,[130:130])

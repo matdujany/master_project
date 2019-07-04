@@ -237,7 +237,7 @@ void tegotae_bluetooth(){
     update_phi_tegotae();
     send_command_limb_oscillators();
     print_phi_info();
-    
+    print_Tegotae_parameters();
 
     while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
   }
@@ -308,10 +308,10 @@ void increase_freq_bluetooth() {
   float frequency_new = frequency + 0.1;
   if (frequency_new > 1)
     frequency_new = 1;
-  float sigma_advanced_new = frequency_new*sigma_advanced/frequency;
+  //float sigma_advanced_new = frequency_new*sigma_advanced/frequency;
 
   frequency = frequency_new;
-  sigma_advanced = sigma_advanced_new;
+  //sigma_advanced = sigma_advanced_new;
 }
 
 void decrease_freq_bluetooth() {
@@ -319,6 +319,15 @@ void decrease_freq_bluetooth() {
   if (frequency < 0.1)
     frequency = 0.1;
 }
+
+void increase_sigma_adv_bluetooth() {
+  sigma_advanced += 0.01;
+}
+
+void decrease_sigma_adv_bluetooth() {
+  sigma_advanced -= 0.01;
+}
+
 
 //change dir is set to true for class 2 if - hip direction produces lift off
 //change dir is set to true for class 1 if - knee direction pushes backwards
@@ -973,5 +982,24 @@ void print_locomotion_parameters(){
   if (tegotae_propulsion){
     SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p :"); SerialUSB.println(sigma_p);
   }
+}
+
+void print_Tegotae_parameters(){
+  if (tegotae_advanced){
+    if (USE_FILTER_TEGOTAE){
+      SerialUSB.print("Using filter of size ");
+      SerialUSB.print(FILTER_SIZE_TEGOTAE); SerialUSB.println(" for Tegotae.");
+    }
+    SerialUSB.print("Parameters learned from twitching record ID "); SerialUSB.println(MAP_USED);
+    SerialUSB.print("Sigma for advanced tegotae  : "); SerialUSB.println(sigma_advanced,5);
+  }
+  else
+  {
+    SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
+  }
+  if (tegotae_propulsion){
+    SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p :"); SerialUSB.println(sigma_p);
+  }  
+  SerialUSB.print("Frequency (in Hertz) : ");SerialUSB.println(frequency);
 }
 

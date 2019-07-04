@@ -34,18 +34,18 @@
 //#define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
 #define LEARNING_RATE               10.0     // Learning rate for the update rule
 #define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
-#define DURATION_PART1              2200    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
-#define DURATION_PART2              200    // Duration of part 2 in ms; part 2: begins at the action of going back to initial position;   servo goes from step position to initial position
-#define N_TWITCHES                  3
+#define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
+#define DURATION_PART2              500    // Duration of part 2 in ms; part 2: begins at the action of going back to initial position;   servo goes from step position to initial position
+#define N_TWITCHES                  5
 
-#define TWITCH_RAMP_MODE             0 //use ramp command for twitching
+#define TWITCH_RAMP_MODE             1 //use ramp command for twitching
 #define SLOPE_LEARNING              1.4f      //1.4f 
 
 #define TWITCH_SINE_MODE             0 //use sine command instead of ramp for twitching
 #define AMPL_SINE_TWITCHING          10 // Amplitude (in degrees) of sine wave during twitching
 #define FREQ_SINE_TWITCHING          0.5 // frequency (Hz) of sine wave during twitching.
 
-#define TWITCH_COS_MODE             1 //use cos command instead of ramp for twitching
+#define TWITCH_COS_MODE             0 //use cos command instead of ramp for twitching
 #define AMPL_COS_TWITCHING          10 // Amplitude (in degrees) of sine wave during twitching
 #define FREQ_COS_TWITCHING          0.5 // frequency (Hz) of sine wave during twitching.
 
@@ -70,11 +70,12 @@
 
 #define LIMIT_VAL_LC_LEARNING           50 //if a LC reports a value > LIMIT_VAL_LC_LEARNING, it is discarded and the previous value is taken
 //This is to make sure that the learning is not compromised by a communication error in the daisychain.
-//the max value that the loadcells can handle is 50 N anyway.
+//the max value that the loadcells can measure is 50N.
+
 #define LIMIT_VAL_ACC_LEARNING           26
 //the accelerometer values are integrated, one huge value is enough to ruin the learning
-//i have determined this value just by looking at the accelerometer signals.
 //in the accelerometer scaling, 256 = 1g (9.81 m/s^2) so 26 = 1.0 m/(s^2).
+//i have determined this value just by looking at the accelerometer signals.
 
 //FILTERS
 #define USE_FILTER_LEARNING              1 

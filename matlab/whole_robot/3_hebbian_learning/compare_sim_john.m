@@ -20,9 +20,9 @@ weights_simulation = dlmread('matrix_john/correlation_matrix_ramp.csv',' ');
 h1 = hinton_john(weights_simulation,parms,1);
 h1.Name = 'simulations John original';
 
-%%
-h2 = hinton_LC(weights_robotis,parms,1);
-h2.Name = 'Robotis';
+% %%
+% h2 = hinton_LC(weights_robotis,parms,1);
+% h2.Name = 'Robotis';
 
 %%
 weights_sim=zeros(18,24);
@@ -79,3 +79,4 @@ h_directmap = plot_limb_to_lc_effect(z_effect_limb_to_lc,parms);
 z_effect_lc_to_limb = z_effect_limb_to_lc';
 z_effect_lc_to_limb = z_effect_lc_to_limb/max(max(abs(z_effect_lc_to_limb))) ;
 h_invmap = plot_lc_to_limb_inv_map(z_effect_lc_to_limb,parms);
+h_invmap.Name = 'Inverse map with John data, my limb order'
