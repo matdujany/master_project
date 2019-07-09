@@ -45,6 +45,7 @@ const int spiEnPin = 9;
 const int spiMISOPin = 14;
 const int RXLED = 17; //for RX LED
 const int rdyPin = 14; // inverted, DOUT (MISO) pin of the Chip
+const int digitalPinA0 = 18; //set to HIGH (5V)
 
 const double Gain = 128;
 
@@ -80,6 +81,7 @@ int rec                     = 0;
 
 double voltage;
 
+bool enable_writing = true; //true : the loadcell writes the measured value in the frame. false : the loadcell writes 0 values in the frame.
 
 /* macros =================================================================== */
 // Evaluate assertion macro
@@ -121,6 +123,20 @@ void turn_on_red_LEDS(){
  TXLED1;
 }
 
+void check_amputated_state(){
+  //SerialUSB.println(digitalRead(A1),3);
+  if (digitalRead(A1)>0){
+    enable_writing=false;
+    turn_off_red_LEDS();
+    SerialUSB.println("A1 high because connected to A0, LEDS off, writing values off");
+  }
+  else{
+    enable_writing=true;
+    turn_on_red_LEDS();
+    SerialUSB.println("A1 low because not connected to A0, LEDS on, writing values on");
+  }
+}
+
 
 // -----------------------------------------------------------------------------
 void setup() {
@@ -134,7 +150,10 @@ void setup() {
 
   pinMode(RXLED, OUTPUT);  // Set RX LED as an output (just to turn it off and on):
   //turn_on_red_LEDS();
-  turn_off_red_LEDS();
+  //turn_off_red_LEDS();
+
+  pinMode(digitalPinA0, OUTPUT); //set AO to output 
+  digitalWrite(digitalPinA0, HIGH); //set A0 to high
   
   //Initialize serial and wait for port to open:
   Serial1.begin(BAUD_RATE);
@@ -309,6 +328,8 @@ double outData;
 int i;
 uint8_t inByte, outByte;
 
+check_amputated_state();
+
 // check if data is available
 if(Serial1.available()){
   inByte = Serial1.read();
@@ -361,7 +382,7 @@ if(Serial1.available()){
     cc_byte+=inByte;
 
     // INSERT READINGS FROM SENSORS
-    if ( (frame_type==FRAME_TYPE_RECORDING)||(frame_type==FRAME_TYPE_NORMAL)||(frame_type==FRAME_TYPE_IMU_UPDATE_OFF))
+    if ( ( (frame_type==FRAME_TYPE_RECORDING)||(frame_type==FRAME_TYPE_NORMAL)||(frame_type==FRAME_TYPE_IMU_UPDATE_OFF)) && enable_writing)
     {
       uint8_t place_holder_arduino_no = 1 + (uint8_t) (frame_location_counter-5) / SENSOR_DATA_LENGTH;    // Keeps track to which Arduino the inByte belongs.
       uint8_t byte_no=(frame_location_counter-5) % SENSOR_DATA_LENGTH;                                    // Number of the byte in data array
