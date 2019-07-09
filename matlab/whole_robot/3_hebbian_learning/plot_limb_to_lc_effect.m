@@ -1,6 +1,11 @@
-function h=plot_limb_to_lc_effect(weights_limb_summed,parms,titleString)
+function h=plot_limb_to_lc_effect(weights_limb_summed,parms,channelSelected,titleString)
 
 if nargin == 2
+    titleString = '';
+    channelSelected = 3;
+end
+
+if nargin ==3 
     titleString = '';
 end
 
@@ -14,8 +19,9 @@ y_max = fig_parms.ymax+0.2;
 hold on;
 xlim([x_min, x_max]);
 ylim([y_min, y_max]);
+txt_channel_lc = {' X', ' Y', ' Z'};
 for i=1:parms.n_lc
-    text(x_min-0.1,i-0.5,['LC ' num2str(parms.n_lc+1-i) ' Z'],'FontSize',fontSize,'HorizontalAlignment','right');
+    text(x_min-0.1,i-0.5,['LC ' num2str(parms.n_lc+1-i) txt_channel_lc{channelSelected}],'FontSize',fontSize,'HorizontalAlignment','right');
 end
 for i=1:parms.n_lc
     text(i-0.5,y_max+0.1,['Limb ' num2str(i)],'FontSize',fontSize,'HorizontalAlignment','center','VerticalAlignment','bottom');
