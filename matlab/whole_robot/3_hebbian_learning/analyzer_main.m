@@ -12,7 +12,7 @@ addpath('class_detection_function');
 addpath('analysis_plot_function');
 
 %% Load data
-recordID = 110;
+recordID = 140;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -81,7 +81,7 @@ desired_movement_speed_channel = 1; %1 for X, 2 for Y
 direction_list = {'X','Y','Z'};
 
 %c1 first
-if ismember(recordID,[105 110 115 138])
+if ismember(recordID,[105 110 115 138:140])
          [motors_classes,likelihood_class1,dir_oscillations,dir_oscillations_yaw] = get_class_c1_before_c2(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
 end
 %c2 first

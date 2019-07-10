@@ -12,7 +12,7 @@ addpath('class_detection_function');
 addpath('analysis_plot_function');
 
 %% Load data
-recordID = 105;
+recordID = 138;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -98,3 +98,6 @@ x_effect_lc_to_limb = x_effect_limb_to_lc';
 x_effect_lc_to_limb = x_effect_lc_to_limb/max(max(abs(x_effect_lc_to_limb))) ;
 
 h_invmap_x = plot_lc_to_limb_inv_map(x_effect_lc_to_limb,parms);
+
+%%
+disp ('Inverse map :'); fprintf('{%.3f, %.3f, %.3f, %.3f, %.3f, %.3f} ,\n',x_effect_lc_to_limb');

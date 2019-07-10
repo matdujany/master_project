@@ -32,7 +32,7 @@ using namespace Ad7124;
 //using namespace Ad7124;
 
 #define DT 1000        // interrupt period of timer1 in microseconds, use multiples of hundred
-#define I_LOADCELL 11   // Arduino-Loadcell number (written next to the # on loadcell sensor).
+#define I_LOADCELL 4   // Arduino-Loadcell number (written next to the # on loadcell sensor).
 #define BAUD_RATE 500000
 
 double cal_gain[3];
@@ -45,7 +45,6 @@ const int spiEnPin = 9;
 const int spiMISOPin = 14;
 const int RXLED = 17; //for RX LED
 const int rdyPin = 14; // inverted, DOUT (MISO) pin of the Chip
-const int digitalPinA0 = 18; //set to HIGH (5V)
 
 const double Gain = 128;
 
@@ -124,17 +123,19 @@ void turn_on_red_LEDS(){
 }
 
 void check_amputated_state(){
-  //SerialUSB.println(digitalRead(A1),3);
-  if (digitalRead(A1)>0){
+  //SerialUSB.println(digitalRead(A1));
+  
+  if (digitalRead(A1)==0){
     enable_writing=false;
     turn_off_red_LEDS();
-    SerialUSB.println("A1 high because connected to A0, LEDS off, writing values off");
+    //SerialUSB.println("A1 low because connected to A0, LEDS off, writing values off");
   }
   else{
     enable_writing=true;
     turn_on_red_LEDS();
-    SerialUSB.println("A1 low because not connected to A0, LEDS on, writing values on");
+    //SerialUSB.println("A1 high because not connected to A0, LEDS on, writing values on");
   }
+  
 }
 
 
@@ -152,8 +153,9 @@ void setup() {
   //turn_on_red_LEDS();
   //turn_off_red_LEDS();
 
-  pinMode(digitalPinA0, OUTPUT); //set AO to output 
-  digitalWrite(digitalPinA0, HIGH); //set A0 to high
+  pinMode(A0, OUTPUT); //set AO to output 
+  digitalWrite(A0, LOW); //set A0 to low
+  pinMode(A1, INPUT_PULLUP); //A1 should be pulled to high by pullup resistor, if not connected to A0.
   
   //Initialize serial and wait for port to open:
   Serial1.begin(BAUD_RATE);

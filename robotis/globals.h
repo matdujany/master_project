@@ -38,7 +38,7 @@ int flagVerbose        = 0;       // Default mode: print no information
 
 
 // CPG/Tegotae Locomotion related:
-float frequency       = 0; //this is only for tegotae and not hardcoded trot
+float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
 float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
 float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
 float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
@@ -46,18 +46,31 @@ float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; s
 //0.11 for quadruped, 0.08 for hexapode, 0.06 for octopod, 0.13 for weird quadruped
 
 
-float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 
 bool tegotae_advanced   = true;     //to use advanced tegotae rule
 //bool direction_X        = true;    //to go in X
 //bool direction_Y        = false;   //to go in Y 
-bool tegotae_propulsion = false;    //adds the body propulsion term in the tegotae rule.
 float weight_straight = 1;
 float weight_yaw = 0;
 
 float weight_X = 0;
 float weight_Y = 0;
 bool locomotion_2_joysticks = false;
+
+//propulsion
+float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
+bool tegotae_propulsion = false;    //adds the body propulsion term in the tegotae rule.
+bool tegotae_propulsion_advanced = true;
+float sigma_p_advanced = -0.5;
+
+float inverse_map_propulsion[6][6] ={
+{-0.814, 0.293, 0.171, 0.174, 0.249, 0.075} ,
+{0.275, -0.936, 0.309, 0.167, 0.184, 0.189} ,
+{0.179, 0.315, -0.868, 0.088, 0.222, 0.157} ,
+{0.227, 0.227, 0.100, -0.856, 0.366, 0.160} ,
+{0.247, 0.195, 0.223, 0.286, -1.000, 0.270} ,
+{0.095, 0.229, 0.187, 0.160, 0.306, -0.790} ,
+};
 
 //recordings and experiments
 float frequency_recording[3] = {0.15, 0.5, 1};

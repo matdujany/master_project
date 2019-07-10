@@ -800,7 +800,25 @@ float advanced_tegotae_rule(uint8_t i_limb){
     phi_dot += - sigma_p * N_p[i_limb] * cos(phi[i_limb]);
   }
 
+  if (tegotae_propulsion_advanced)
+  {
+    float propulsion_advanced_term = advanced_tegotae_propulsion(i_limb);
+    phi_dot += sigma_p_advanced * propulsion_advanced_term * cos(phi[i_limb]);
+    SerialUSB.print("Limb ");SerialUSB.print(i_limb);SerialUSB.print(" : ");
+    SerialUSB.print(GRF_advanced_term);SerialUSB.print(", ");
+    SerialUSB.print(propulsion_advanced_term);SerialUSB.println();
+  }
+
+
   return phi_dot;
+}
+
+float advanced_tegotae_propulsion(uint8_t i_limb){
+  float propulsion_advanced_term = 0;
+  for (int j=0; j<n_limb; j++){
+    propulsion_advanced_term += inverse_map_propulsion[i_limb][j]*N_p[j];
+  }
+  return  propulsion_advanced_term;
 }
 
 /// Trot
