@@ -9,16 +9,16 @@ export_plots = false;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 140;
+recordID = 143;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);
 weights_pos_robotis  = read_weights_pos_robotis(recordID,parms);
 parms_sim = parms;
 parms_sim.eta = 20;
-weights_sim = compute_weights_wrapper(data,lpdata,parms_sim,0,0,0,0);
+weights_sim = compute_weights_wrapper(data,lpdata,parms_sim,1,0,0,0,0);
 
-weights_check = compute_weights_wrapper(data,lpdata,parms,0,0,0,0);
+weights_check = compute_weights_wrapper(data,lpdata,parms,1,0,0,0,0);
 weights_chosen = weights_robotis; %sim or robotis
 
 %%

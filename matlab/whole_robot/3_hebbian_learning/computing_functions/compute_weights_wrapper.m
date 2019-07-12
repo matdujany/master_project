@@ -1,4 +1,4 @@
-function weights = compute_weights_wrapper(data,lpdata,parms,flagFilter,flagPlot,flagDetailed,flagReinit,weights_init)
+function weights = compute_weights_wrapper(data,lpdata,parms,flagSpeed,flagFilter,flagPlot,flagDetailed,flagReinit,weights_init)
 %compute_weights_wrapper Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -31,7 +31,12 @@ end
 %%
 sensor_values = [s_dot_lc s_IMU(:,1:parms.n_useful_ch_IMU)];
 
-if nargin == 7
+if flagSpeed == 1
+    integrated_speed = compute_integrated_speed(data,lpdata,parms);
+    sensor_values = [s_dot_lc integrated_speed s_IMU(:,4:6)];
+end
+
+if nargin == 8
     n_sensors = size(sensor_values,2);
     weights_init = zeros(n_sensors,2*parms.n_m);
 end

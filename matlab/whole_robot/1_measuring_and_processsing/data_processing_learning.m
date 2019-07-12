@@ -21,7 +21,7 @@ addpath('functions')
 
 clear; clc; close all;
 
-recordID = 141;
+recordID = 143;
 
 % Check if there is already an instance of a communication interface and
 % clears it
@@ -35,6 +35,7 @@ addpath('../2_load_data_code');
 fprintf("data_processing\n");
 filename = get_record_name(recordID);
 [data_rec, pos_load_data_rec, parms] = load_data_raw(recordID);
+parms.eta = 15;
 fprintf('Data loaded from file: %s\n', filename);
 IMU_offsets = true;
 gyro_in_degs = true;

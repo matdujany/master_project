@@ -22,7 +22,7 @@ parms.n_twitches     = 5;
 parms.compliant_mode = 1;
 parms.recentering    = 1;
 parms.recentering_delay    = 1500; % in ms
-parms.time_interval_twitch = 21; % in ms
+parms.time_interval_twitch = 25; % in ms
 
 parms.use_ramp_slope = 1;
 parms.rampe_slope    = 1.4;         %position increment per frame
@@ -40,7 +40,7 @@ if parms.use_ramp_slope+parms.use_sine_twitching+parms.use_cos_twitching~=1
     return;
 end
 
-parms.twitch_limb = 1;
+parms.twitch_limb = 0;
 parms.n_limb = 6;
 if parms.twitch_limb==1
     disp('Twitching with all limbs mode activated');

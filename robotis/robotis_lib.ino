@@ -132,6 +132,7 @@ void count_arduinos_wrapper(int flagVerbose)
   // Keep sending bytes until whole frame is found
   while (!frame_found)
   {
+    SerialUSB.println("beginning of trial");
     try_capture_1_frame(1,1);
     i++;
     // If no full frame has been received after 1000 loops, throw error and break out of the loop
@@ -141,6 +142,7 @@ void count_arduinos_wrapper(int flagVerbose)
       SerialUSB.println("[ERROR] count_arduinos_wrapper(): Can not count the number of Arduino's");
       break;
     }
+    SerialUSB.println("end of trial");
   }
 
   // Parse the received frame

@@ -60,7 +60,7 @@ bool locomotion_2_joysticks = false;
 //propulsion
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 bool tegotae_propulsion = false;    //adds the body propulsion term in the tegotae rule.
-bool tegotae_propulsion_advanced = true;
+bool tegotae_propulsion_advanced = false;
 float sigma_p_advanced = -0.5;
 
 float inverse_map_propulsion[6][6] ={

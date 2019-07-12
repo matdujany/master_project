@@ -8,7 +8,7 @@ addpath('hinton_plot_functions');
 addpath('computing_functions');
 
 %% Load data
-recordID = 141;
+recordID = 143;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 all_neutral_pos = read_neutral_pos(recordID,parms.n_m);
@@ -26,8 +26,8 @@ lpdata = compute_filtered_signal_lpdata(lpdata,parms);
 % good_closest_LC = get_good_closest_LC(parms,recordID);
 %%
 n_iter = 5;
-index_motor_plot = 7;
-index_loadcell_plot = 6;
+index_motor_plot = 4;
+index_loadcell_plot = 3;
 index_channel_plot = 3;
 neutral_pos = all_neutral_pos(index_motor_plot);
 

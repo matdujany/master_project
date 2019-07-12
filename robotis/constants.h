@@ -32,10 +32,10 @@
 
 // LEARNING
 
-#define TWITCH_LIMB_ENABLED         1 
+//#define TWITCH_LIMB_ENABLED         1 
 
 //#define STEP_AMPL                   10     // Amplitude of step function during twitching (in degrees)
-#define LEARNING_RATE               10.0     // Learning rate for the update rule
+#define LEARNING_RATE               15.0     // Learning rate for the update rule
 #define DURATION_PART0              500    // Duration of part 0 in ms; part 0: begins at DURATION_PART0 ms before moving;                servo has initial position
 #define DURATION_PART1              500    // Duration of part 1 in ms; part 1: begins at the action of moving;                           servo goes from initial position to step position
 #define DURATION_PART2              500    // Duration of part 2 in ms; part 2: begins at the action of going back to initial position;   servo goes from step position to initial position
@@ -64,8 +64,8 @@
 
 //these two times are the delay between updates on the daisychian
 // 20 ms for 4 lcs, 21 ms for 6 lcs, 22 ms for 8 lcs : almost 0 erros
-#define TIME_INTERVAL_TWITCH        21    // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
-#define DELAY_UPDATE_DC_TEGOTAE     21     //
+#define TIME_INTERVAL_TWITCH        25    // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
+#define DELAY_UPDATE_DC_TEGOTAE     25     //
 
 
 #define DURATION_MANUAL_RECENTERING         15     //in s, manual recentering between twitch cycles

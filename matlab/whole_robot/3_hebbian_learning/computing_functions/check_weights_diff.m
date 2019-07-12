@@ -10,7 +10,7 @@ for i = 1:size(diff_weights,1)
     end
 end
 
-max_dif_norm = max(max(diff_weights_norm(weights_robotis{n_iter}>10^-3)));
+max_dif_norm = max(max(diff_weights_norm(weights_robotis{n_iter}>10^0)));
 
 format shortG
 if max_dif_norm>0.1

@@ -53,6 +53,7 @@ void setup() {
   init_circular_frame_array();
 
   // Determine the number of Arduino's using the full frame
+  SerialUSB.println("Trying to count arduinos");
   count_arduinos_wrapper(flagVerbose);
 
   // Adjust settings to match frame size to the number of load cell Arduino's
@@ -73,7 +74,7 @@ void setup() {
 
   //record_tegotae_leg_amputated_Serial3(600*1000);
   
-  //tegotae_bluetooth();
+  tegotae_bluetooth();
   
   //record_tegotae_change_dir(240*1000);
   //pose_stance_512();
@@ -86,11 +87,11 @@ void setup() {
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
   
-  update_load_pos_values();
-  SerialUSB.print("Motor positions, ");
-  print_motor_positions();
-  show_value_DC(20);
-  serial_read_neutral_pos();
+  //update_load_pos_values();
+  //SerialUSB.print("Motor positions, ");
+  //print_motor_positions();
+  //show_value_DC(20);
+  //serial_read_neutral_pos();
 
 
   //serial_read_test_twitch();
