@@ -1,3 +1,5 @@
+/*
+
 #include <vector> //takes a lot of space,
 //could be improved with pointers
 
@@ -99,6 +101,7 @@ std::vector<std::vector<float>> inverse_map_X_94{
  };
  */
 
+ /*
 std::vector<std::vector<uint8_t>> limbs_X{
     {5,4},
     {7,6},

@@ -16,7 +16,7 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
 // RING BUFFER
-#define BUFFER_SIZE                 256
+#define BUFFER_SIZE                 256     //should be bigger than the frame size
 
 // SERVO'S
 #define MAX_NR_SERVOS               12
@@ -53,8 +53,6 @@
 #define FREQ_COS_TWITCHING          0.5 // frequency (Hz) of sine wave during twitching.
 
 
-
-
 #define COMPLIANT_MODE              1   // (0) : all servos remain at default parameters 
                                         // (1) : the non moving servos are compliant, the moving one is stiff
                                         // (2) : all servos are stiff
@@ -62,13 +60,13 @@
 #define RECENTERING_DELAY           1500 
 
 
-//these two times are the delay between updates on the daisychian
+//these two times are the delays between updates on the daisychain
 // 20 ms for 4 lcs, 21 ms for 6 lcs, 22 ms for 8 lcs : almost 0 erros
 #define TIME_INTERVAL_TWITCH        25    // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
 #define DELAY_UPDATE_DC_TEGOTAE     25     //
 
 
-#define DURATION_MANUAL_RECENTERING         15     //in s, manual recentering between twitch cycles
+#define DURATION_MANUAL_RECENTERING         15     //in s, time allowed for manual recentering between twitch cycles (useful if gravity relief)
 #define TIME_INTERVAL_MANUAL_RECENTERING    200    //in ms, delay between frames during manual recentering (the frames are just sent to update the LC values to print on console)
 
 #define LIMIT_VAL_LC_LEARNING           50 //if a LC reports a value > LIMIT_VAL_LC_LEARNING, it is discarded and the previous value is taken
@@ -154,9 +152,9 @@
 
 //Motor parameters
 //for compliance slope, the smaller the stiffer
-#define SOFT_COMPLIANCE_MARGIN          50      //uint8_t value 
-#define SOFT_COMPLIANCE_SLOPE           128     //uint8_t value
-#define SOFT_PUNCH                      1       //uint16_t value
+#define SOFT_COMPLIANCE_MARGIN          2   //50      //uint8_t value 
+#define SOFT_COMPLIANCE_SLOPE           128 //128     //uint8_t value
+#define SOFT_PUNCH                      20   //1       //uint16_t value
 #define RECENTERING_COMPLIANCE_MARGIN         1
 #define RECENTERING_COMPLIANCE_SLOPE          32           
 #define RECENTERING_PUNCH                     30

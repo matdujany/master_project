@@ -417,3 +417,15 @@ void serial_read_neutral_pos(){
     } 
   }
 }
+
+/*
+void serial_read_motor_parms(){
+  if(SerialUSB.available()){
+    char char_read = SerialUSB.read();
+    if (char_read == 'p'){
+      punch = punch+5;
+      syncWrite_same_punch_all_servos(punch);
+      SerialUSB.print("New punch "); SerialUSB.println(punch);
+    }
+  }
+}*/

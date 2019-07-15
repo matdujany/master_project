@@ -31,5 +31,6 @@
         "system_error": "cpp",
         "tuple": "cpp",
         "utility": "cpp"
-    }
+    },
+    "C_Cpp.dimInactiveRegions": false
 }

@@ -10,15 +10,70 @@
 //115 for octopod
 //127 for starfish quadruped
 //134 for starfish hexapod
+//200 for starfish hexapod with new leg design
 
-//dont forget to change TIME_INTERVAL_TWITCH and DELAY_UPDATE_DC_TEGOTAE
+//when adding a new map,
+// add a case in initialize_hardcoded_limbs()
+// add a case in initialize_inverse_map_advanced_tegotae()
+// if need be, add a case in initialize_scaling_amp_class1()
 
-#define MAP_USED 110
+
+//dont forget to adapt TIME_INTERVAL_TWITCH and DELAY_UPDATE_DC_TEGOTAE
+#define MAP_USED 199
+
+
+//Starfish hexapod with new leg design,
+
+/*
+std::vector<std::vector<uint8_t>> limbs_X_s_hex_2{
+    {1, 2},
+    {8, 9},
+    {0, 4},
+    {3, 5},
+    {7, 6},
+    {10, 11}
+};
+
+std::vector<std::vector<bool>> changeDirs_X_s_hex_2{
+    {true,true},
+    {true,true},
+    {false,true},
+    {false,true},
+    {false,false},
+    {false,true}
+};
+
+std::vector<bool>  changeDirs_Yaw_s_hex_2{false,false,false,false,false,false};
+std::vector<bool>  changeDirs_s_Y_hex_2{false,false,false,false,false,true};
+
+float sigma_advanced_X_200= 0.0868;// scaled for 50% of 0.5Hz
+std::vector<std::vector<float>> inverse_map_X_200{
+{-0.915, 0.592, 0.021, -0.048, -0.259, 0.665} ,
+{0.571, -0.913, 0.677, -0.303, -0.054, 0.048} ,
+{0.047, 0.641, -0.930, 0.688, 0.062, -0.509} ,
+{-0.034, -0.310, 0.711, -1.000, 0.636, 0.007} ,
+{-0.268, -0.045, 0.011, 0.631, -0.954, 0.639} ,
+{0.661, 0.033, -0.501, 0.023, 0.683, -0.941}
+};
+uint16_t neutral_pos_200[12] = {510, 512, 508, 510, 508, 508, 516, 513, 510, 507, 511, 511};
+
+//hardcoded values
+float scaling_amp_class1_forward_200[6] = {1,1,0,1,1,0};
+float scaling_amp_class1_Y_200[6] = {0,0,1.000,0,0,1};
+float scaling_amp_class1_yaw_200[6] = {1,1,1,1,1,1};
+*/
+
+/*
+float scaling_amp_class1_forward_200[6] = {0.826,1.000,0.236,0.482,0.894,0.286};
+float scaling_amp_class1_Y_200[6] = {0.298,0.396,1.000,0.211,0.211,0.243};
+float scaling_amp_class1_yaw_200[6] = {0.139,0.723,1.000,0.681,0.101,0.380};
+*/
 
 
 //Starfish Hexapod SECTION
 
-std::vector<std::vector<uint8_t>> limbs_X_hex_quad{
+/*
+std::vector<std::vector<uint8_t>> limbs_X_s_hex{
     {9, 8},
     {4, 3},
     {7, 5},
@@ -27,7 +82,7 @@ std::vector<std::vector<uint8_t>> limbs_X_hex_quad{
     {0, 6}
 };
 
-std::vector<std::vector<bool>> changeDirs_X_hex_quad{
+std::vector<std::vector<bool>> changeDirs_X_s_hex{
     {false,false},
     {false,false},
     {false,false},
@@ -36,8 +91,8 @@ std::vector<std::vector<bool>> changeDirs_X_hex_quad{
     {true,true}
 };
 
-std::vector<bool>  changeDirs_Yaw_hex_quad{true,true,true,true,true,true,};
-std::vector<bool>  changeDirs_Y_hex_quad{true,false,true,false,true,false};
+std::vector<bool>  changeDirs_Yaw_s_hex{true,true,true,true,true,true,};
+std::vector<bool>  changeDirs_Y_s_hex{true,false,true,false,true,false};
 
 
 float sigma_advanced_X_134 = 0.1197;// scaled for 50% of 0.5Hz
@@ -53,9 +108,11 @@ uint16_t neutral_pos_134[12] = {512, 505, 508, 516, 511, 510, 509, 509, 514, 509
 float scaling_amp_class1_forward_134[6] = {1.000,0.286,0.100,0.396,0.796,0.086};
 float scaling_amp_class1_Y_134[6] = {0.171,0.284,0.598,0.004,0.165,1.000};
 float scaling_amp_class1_yaw_134[6] = {0.833,0.070,0.712,0.110,0.847,1.000};
+*/
 
-//S QUAD SECTION
 
+//Starfish quadruped SECTION
+/*
 std::vector<std::vector<uint8_t>> limbs_X_s_quad{
     {0,2},
     {5,4},
@@ -82,6 +139,12 @@ std::vector<std::vector<float>> inverse_map_X_127{
 {0.637, -0.679, 0.628, -0.455}
 };
 
+uint16_t neutral_pos_127[8] = {512, 511, 509, 508, 511, 510, 497, 512};
+float scaling_amp_class1_forward_127[4] = {0.862, 0.091, 1, 0.054};
+float scaling_amp_class1_Y_127[4] = {0.148, 1, 0.015, 0.946};
+float scaling_amp_class1_yaw_127[4] = {1, 0.842, 0.892, 0.666};
+*/
+
 //matrix R used for experiments
 /*
 float sigma_advanced_X_R = 0.5647;// scaled for 50% of 0.5Hz
@@ -93,14 +156,9 @@ std::vector<std::vector<float>> inverse_map_X_R{
 };
 */
 
-uint16_t neutral_pos_127[8] = {512, 511, 509, 508, 511, 510, 497, 512};
-float scaling_amp_class1_forward_127[4] = {0.862, 0.091, 1, 0.054};
-float scaling_amp_class1_Y_127[4] = {0.148, 1, 0.015, 0.946};
-float scaling_amp_class1_yaw_127[4] = {1, 0.842, 0.892, 0.666};
-
-
 //OCTOPOD SECTION
 
+/*
 std::vector<std::vector<uint8_t>> limbs_X_8{
     {13,12},
     {0,8},
@@ -139,10 +197,11 @@ std::vector<std::vector<float>> inverse_map_X_115{
 {0.200, 0.077, -0.088, -0.124, 0.095, -0.031, 0.335, -0.346} ,
 };
 uint16_t neutral_pos_115[16] = {510,   506,   512,   498,   512,   519,   515,   519,   503,   512,  511,   513,   515,   508,   503,   510};
-
+*/
 
 //Hexapod section
 
+/*
 std::vector<std::vector<uint8_t>> limbs_X_6{
     {9,8},
     {0,6},
@@ -162,6 +221,9 @@ std::vector<std::vector<bool>>  changeDirs_X_6{
 };
 
 std::vector<bool>  changeDirs_X_Yaw_6{true,true,true,true,true,true};
+
+uint16_t neutral_pos_110[12] = //{510,   514,   512,   508,   510,   509,   513,   511,   509,   511,   514,   510};
+{510, 491, 511, 511, 514, 530, 508, 511, 516, 508, 494, 530};//143
 
 float sigma_advanced_X_110 = 0.12;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_110{
@@ -187,6 +249,7 @@ std::vector<std::vector<float>> inverse_map_X_110{
 {0.362, -0.032, -0.280, 0.131, 0.293, -0.319} 
 */
     //record 143
+    /*
 {-0.742, 0.936, -0.106, -0.425, 0.170, 0.341} ,
 {0.445, -0.954, 0.546, 0.016, 0.055, 0.086} ,
 {-0.224, 1.000, -0.775, 0.440, 0.019, -0.399} ,
@@ -197,12 +260,10 @@ std::vector<std::vector<float>> inverse_map_X_110{
 
 };
 
-
-uint16_t neutral_pos_110[12] = //{510,   514,   512,   508,   510,   509,   513,   511,   509,   511,   514,   510};
-{510, 491, 511, 511, 514, 530, 508, 511, 516, 508, 494, 530};//143
+*/
 
 //Quadruped section
-
+/*
 std::vector<std::vector<uint8_t>> limbs_X_4{
     {5,4},
     {3,2},
@@ -257,10 +318,13 @@ std::vector<std::vector<float>> inverse_map_Y_105{
 {0.816, -0.829, 0.801, -0.771} ,
 */
 //corrected version
+/*
 {-0.873, 0.875, -0.895, 0.869} ,
 {0.9, -0.933, 0.870, -0.862} ,
 {-0.965, 1.000, -0.916, 0.879} ,
 {0.816, -0.829, 0.801, -0.771} ,
 };
 
+
 bool bool_Y_105 = false;
+*/

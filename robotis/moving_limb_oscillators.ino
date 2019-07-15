@@ -401,26 +401,33 @@ void initialize_scaling_amp_class1(){
     scaling_amp_class1_forward[i] = 1;
     scaling_amp_class1_yaw[i] = 1;
   }
-  if (MAP_USED == 127){
+  #if (MAP_USED == 127)
     fill_scaling_amp_class1(scaling_amp_class1_forward_127, scaling_amp_class1_yaw_127);
     fill_scaling_amp_class1_Y(scaling_amp_class1_Y_127);
-  }
-  if (MAP_USED == 134){
+  #endif
+
+  #if (MAP_USED == 134)
     fill_scaling_amp_class1(scaling_amp_class1_forward_134, scaling_amp_class1_yaw_134);
     fill_scaling_amp_class1_Y(scaling_amp_class1_Y_134);
-  }
+  #endif
 
+  #if (MAP_USED == 200)
+    fill_scaling_amp_class1(scaling_amp_class1_forward_200, scaling_amp_class1_yaw_200);
+    fill_scaling_amp_class1_Y(scaling_amp_class1_Y_200);
+  #endif
 }
 
 void change_dir_mode_to_XY(){
-  if (MAP_USED == 127){
+  #if (MAP_USED == 127)
     fill_scaling_amp_class1(scaling_amp_class1_forward_127, scaling_amp_class1_Y_127);
     fill_changeDirs_Yaw_array(changeDirs_Y_s_quad);
-  }
-  if (MAP_USED == 134){
+  #endif
+
+  #if (MAP_USED == 134)
     fill_scaling_amp_class1(scaling_amp_class1_forward_134, scaling_amp_class1_Y_134);
-    fill_changeDirs_Yaw_array(changeDirs_Y_hex_quad);
-  }
+    fill_changeDirs_Yaw_array(changeDirs_Y_s_hex);
+  #endif
+
 }
 
 void fill_neutral_pos(uint16_t neutral_pos_hardcoded[]){
@@ -432,7 +439,7 @@ void fill_neutral_pos(uint16_t neutral_pos_hardcoded[]){
 
 void initialize_hardcoded_limbs(){
 
-  if (MAP_USED == 105) {
+  #if (MAP_USED == 105)
     n_limb = 4;
     fill_neutral_pos(neutral_pos_105);
     if (bool_Y_105){
@@ -445,41 +452,50 @@ void initialize_hardcoded_limbs(){
       fill_changeDirs_array(changeDirs_X_4);
       fill_changeDirs_Yaw_array(changeDirs_X_Yaw_4);
     }
-  }
+  #endif
   
-  if (MAP_USED == 110) {
+  #if (MAP_USED == 110) 
     n_limb = 6;
     fill_neutral_pos(neutral_pos_110);
     fill_limbs_array(limbs_X_6);
     fill_changeDirs_array(changeDirs_X_6);
     fill_changeDirs_Yaw_array(changeDirs_X_Yaw_6);
-  } 
+  #endif 
 
-  if (MAP_USED == 115) {
+  #if (MAP_USED == 115)
     n_limb = 8;
     fill_neutral_pos(neutral_pos_115);
     fill_limbs_array(limbs_X_8);
     fill_changeDirs_array(changeDirs_X_8);
     fill_changeDirs_Yaw_array(changeDirs_X_Yaw_8);
-  } 
+  #endif 
 
-  if (MAP_USED == 127) {
+  #if (MAP_USED == 127)
     n_limb = 4;
     fill_neutral_pos(neutral_pos_127);
     fill_limbs_array(limbs_X_s_quad);
     fill_changeDirs_array(changeDirs_X_s_quad);
     fill_changeDirs_Yaw_array(changeDirs_Yaw_s_quad);
     fill_changeDirs_Y_array(changeDirs_Y_s_quad);
-  } 
+  #endif
 
-  if (MAP_USED == 134) {
+  #if (MAP_USED == 134)
     n_limb = 6;
     fill_neutral_pos(neutral_pos_134);
-    fill_limbs_array(limbs_X_hex_quad);
-    fill_changeDirs_array(changeDirs_X_hex_quad);
-    fill_changeDirs_Yaw_array(changeDirs_Yaw_hex_quad);
-    fill_changeDirs_Y_array(changeDirs_Y_hex_quad);
-  } 
+    fill_limbs_array(limbs_X_s_hex);
+    fill_changeDirs_array(changeDirs_X_s_hex);
+    fill_changeDirs_Yaw_array(changeDirs_Yaw_s_hex);
+    fill_changeDirs_Y_array(changeDirs_Y_s_hex);
+  #endif 
+
+  #if (MAP_USED == 200) 
+    n_limb = 6;
+    fill_neutral_pos(neutral_pos_200);
+    fill_limbs_array(limbs_X_s_hex_2);
+    fill_changeDirs_array(changeDirs_X_s_hex_2);
+    fill_changeDirs_Yaw_array(changeDirs_Yaw_s_hex_2);
+    fill_changeDirs_Y_array(changeDirs_s_Y_hex_2);
+  #endif 
 
   init_offset_class1();
   initialize_scaling_amp_class1();
@@ -489,41 +505,45 @@ void initialize_hardcoded_limbs(){
 
 void initialize_inverse_map_advanced_tegotae(){
 
-  if (MAP_USED==105)
-  {
-    if (bool_Y_105){
-    sigma_advanced = sigma_advanced_Y_105;
-    fill_inverse_map_array(inverse_map_Y_105);
+  #if (MAP_USED==105)
+    if (bool_Y_105)
+    {
+      sigma_advanced = sigma_advanced_Y_105;
+      fill_inverse_map_array(inverse_map_Y_105);
     }
-    else{
-    sigma_advanced = sigma_advanced_X_105;
-    fill_inverse_map_array(inverse_map_X_105);
+    else
+    {
+      sigma_advanced = sigma_advanced_X_105;
+      fill_inverse_map_array(inverse_map_X_105);
     }
-  }
+  #endif
 
-  if (MAP_USED==110)
-  {
+  #if (MAP_USED==110)
     sigma_advanced = sigma_advanced_X_110;
     fill_inverse_map_array(inverse_map_X_110);
-  }
+  #endif
 
-  if (MAP_USED==115)
-  {
+  #if (MAP_USED==115)
     sigma_advanced = sigma_advanced_X_115;
     fill_inverse_map_array(inverse_map_X_115);
-  }
+  #endif
 
-  if (MAP_USED==127)
-  {
+
+  #if (MAP_USED==127)
     sigma_advanced = sigma_advanced_X_127;
     fill_inverse_map_array(inverse_map_X_127);
-  }
+  #endif
 
-  if (MAP_USED==134)
-  {
+  #if (MAP_USED==134)
     sigma_advanced = sigma_advanced_X_134;
     fill_inverse_map_array(inverse_map_X_134);
-  }
+  #endif
+
+
+  #if (MAP_USED==200)
+    sigma_advanced = sigma_advanced_X_200;
+    fill_inverse_map_array(inverse_map_X_200);
+  #endif 
 }
 
 /*

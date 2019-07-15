@@ -488,9 +488,14 @@ void update_load_pos_values(){
         while (last_motor_pos[i]>612 || last_motor_pos[i]<412){
           last_motor_pos[i] = read_present_position(id[i]);
           counter_read++;
+          if (counter_read = 20){
+            break;
+          }
         }
-        SerialUSB.print("Found reasonable value after ");SerialUSB.print(counter_read);
-        SerialUSB.println(" trials");
+        if (counter_read < 20){
+          SerialUSB.print("Found reasonable value after ");SerialUSB.print(counter_read);
+          SerialUSB.println(" trials");
+        }
       }
 
       last_motor_load[i] = read_present_load(id[i]);
