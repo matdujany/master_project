@@ -19,7 +19,12 @@ void show_value_DC(unsigned long delay_updates){
 void test_dc(){
   while (true){
     unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,1);
-    while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
+    if(millis()-t_start_update_dc>DELAY_UPDATE_DC_TEGOTAE){
+      SerialUSB.println("the time required to collect a frame is > to DELAY_UPDATE_DC_TEGOTAE");
+    }
+    else{
+      while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
+    }
   }
 }
 
@@ -266,7 +271,7 @@ void send_and_get_wrapper()
   send_frame_byte(flagVerbose); //flagVerbose
   if (Serial2.available())
     get_dc_byte_wrapper();
-  //delayMicroseconds(0);
+  delayMicroseconds(250);
 }
 
 void get_dc_byte_wrapper(){

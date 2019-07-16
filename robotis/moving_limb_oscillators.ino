@@ -93,11 +93,12 @@ void record_tegotae_leg_amputated_Serial3(unsigned long recording_duration){
   SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);  
 }
 
-void record_tegotae_custom_phi_init(unsigned long recording_duration){
+void record_tegotae(unsigned long recording_duration){
   init_tegotae();
   init_recording_locomotion();
   init_phi_tegotae();
-
+  sigma_advanced = 0.15;
+  
   //change_dir_mode_to_XY();
 
   unsigned long t_start_recording = millis();

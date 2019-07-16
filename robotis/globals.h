@@ -64,6 +64,7 @@ bool tegotae_propulsion_advanced = false;
 float sigma_p_advanced = -0.5;
 
 float inverse_map_propulsion[6][6] ={
+  //for hexapod
 {-0.814, 0.293, 0.171, 0.174, 0.249, 0.075} ,
 {0.275, -0.936, 0.309, 0.167, 0.184, 0.189} ,
 {0.179, 0.315, -0.868, 0.088, 0.222, 0.157} ,
@@ -73,6 +74,8 @@ float inverse_map_propulsion[6][6] ={
 };
 
 //recordings and experiments
+
+//for record_tegotae_changes()
 float frequency_recording[3] = {0.15, 0.5, 1};
 float sigma_advanced_recording[3] = {0.0367,0.0367,0.0367}; // at time_changes[i]
 int time_changes[3] = {90, 180, 270}; //the last value is the end of the recoding
@@ -90,9 +93,11 @@ float phi_init[6] = {0, 0, 0, 0, 0, 0};
 //float phi_init[4] = {5.12, 1.53, 5.84, 2.20};
 //float phi_init[4] = {1.24, 1.58, 3.87, 2.97};
 
+//for amputations through Serial3 or programmed
 uint8_t n_lc_amputated = 0;
 std::vector<uint8_t>  idx_lc_amputated;
 
+//for record_tegotae_leg_amputated_programmed()
 int idx_lc_amputated_programmed[3] = {0, 2, 3}; //at time_changes_amputation[j] loadcell idx_lc_amputated_programmed[j] is removed
 int time_changes_amputation[4] = {0, 0, 0, 120}; //the last value is the end of the recording
 uint8_t n_amputations_programmed = 3;
