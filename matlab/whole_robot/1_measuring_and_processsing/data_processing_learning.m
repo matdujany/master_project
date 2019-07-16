@@ -21,7 +21,7 @@ addpath('functions')
 
 clear; clc; close all;
 
-recordID = 201;
+recordID = 203;
 
 % Check if there is already an instance of a communication interface and
 % clears it
@@ -154,9 +154,21 @@ if gyro_in_degs
 end
 
 %%
-file_name_processed_data=strcat("../../../../data/",filename,'_p');
-fprintf("Writing processed data to file: %s.mat\n", file_name_processed_data);
-save(file_name_processed_data,'data','lpdata','parms');
+time_dc = data.time - data.time(1,:)
+time_motor = (lpdata.motor_timestamp-lpdata.motor_timestamp(:,1))';
+
+%%
+figure;
+hold on;
+for i=1:parms.n_lc+1
+    plot(time_dc(:,i));
+end
+time_dc_lc = time_dc(:,1:parms.n_lc);
+
+%%
+% file_name_processed_data=strcat("../../../../data/",filename,'_p');
+% fprintf("Writing processed data to file: %s.mat\n", file_name_processed_data);
+% save(file_name_processed_data,'data','lpdata','parms');
 
 %% Functions 
 

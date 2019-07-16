@@ -3,7 +3,7 @@ clear; clc; close all;
 %% Parameters
 
 set_parms;
-parms_locomotion.recordingDuration = 240;
+parms_locomotion.recordingDuration = 180;
 parms_locomotion.frequency = 0.5; 
 
 parms_locomotion.amplitude_class1_deg = 20;
@@ -11,8 +11,8 @@ parms_locomotion.amplitude_class2_deg = 20;
 parms_locomotion.alpha = 0.2;
 parms_locomotion.sigma_s = 0.11;
 
-parms_locomotion.sigma_advanced = 0.1206;
-parms_locomotion.id_map_used = 110;
+parms_locomotion.sigma_advanced = 0.15;
+parms_locomotion.id_map_used = 200;
 parms_locomotion.turning = false;
 parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
 % parms_locomotion.phi_init = {5.12, 1.53, 5.84, 2.20};
@@ -21,7 +21,7 @@ parms_locomotion.use_filter = 0;
 parms_locomotion.filter_size = 4;
 % parms_locomotion.message = "changing from X to Y";
 
-parms_locomotion.categoryName = strcat("tegotae_advanced_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
+parms_locomotion.categoryName = strcat("tegotae_advanced_signalcuts_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
 % parms_locomotion.categoryName = strcat("tegotae_advanced_ones_",parms_locomotion.direction);
 % parms_locomotion.categoryName = strcat("tegotae_simple_",parms_locomotion.direction);
 

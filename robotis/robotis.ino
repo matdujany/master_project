@@ -61,25 +61,26 @@ void setup() {
 
   //timing duration of daisychain;
   //compute_duration_daisychain_ms();
-  duration_daisychain=7;
+  duration_daisychain=15;
   
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
   
   //pose_stance();
   
-  /*
+  
   pose_stance_512();
-  delay(10000);
+  delay(5000);
   SerialUSB.println("switching to compliant");
   make_all_servos_compliant_syncWrite();
   delay(5000);
   update_neutral_pos();
-  */
- 
-  //twitch_record_wrapper();
   
-  //record_tegotae(60*1000);
+ 
+  twitch_record_wrapper();
+  
+ 
+  //record_tegotae(180*1000);
   //record_tegotae_changes();
 
   //record_tegotae_leg_amputated_Serial3(600*1000);
@@ -96,7 +97,7 @@ void setup() {
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
 
-  test_dc();
+  //test_dc();
 
   //pose_stance_512();
   //serial_read_motor_parms();

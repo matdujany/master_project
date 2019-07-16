@@ -667,21 +667,23 @@ void print_hex_to_float_IMU(int i, byte tmp[], float tmp_fl)
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 void print_check_checksum(bool ismatch, uint8_t checksum_calc, uint8_t checksum_frame)
 {
-  SerialUSB.println("\ncalculate_checksum()");
-  SerialUSB.print("Frame checksum: \t");
-  SerialUSB.println(checksum_frame, HEX);
-  SerialUSB.print("Calculated checksum: \t");
+  SerialUSB.print("calculate_checksum() : ");
+  SerialUSB.print("Frame checksum: ");
+  SerialUSB.print(checksum_frame, HEX);
+  SerialUSB.print(", Calculated checksum: ");
   SerialUSB.println(checksum_calc, HEX);
 
+  /*
   if (!ismatch)
   {
     SerialUSB.println("Checksums don\'t match!");
   }
   SerialUSB.print("\n");
+  */
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
-void print_get_loadcell_byte(byte inByte)
+void print_get_daisychain_byte(byte inByte)
 {
   SerialUSB.print("0x");
   SerialUSB.print(inByte, HEX);

@@ -14,7 +14,7 @@ parms.n_m         = 12;
 parms.n_dir       = 2;
 
 % learning parameters
-parms.eta            = 10;        %learning rate
+parms.eta            = 15;        %learning rate
 parms.duration_part0 = 500; % in ms
 parms.duration_part1 = 500; % in ms
 parms.duration_part2 = 500; % in ms

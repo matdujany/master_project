@@ -19,12 +19,12 @@
 
 
 //dont forget to adapt TIME_INTERVAL_TWITCH and DELAY_UPDATE_DC_TEGOTAE
-#define MAP_USED 199
+#define MAP_USED 200
 
 
 //Starfish hexapod with new leg design,
 
-/*
+
 std::vector<std::vector<uint8_t>> limbs_X_s_hex_2{
     {1, 2},
     {8, 9},
@@ -61,7 +61,7 @@ uint16_t neutral_pos_200[12] = {510, 512, 508, 510, 508, 508, 516, 513, 510, 507
 float scaling_amp_class1_forward_200[6] = {1,1,0,1,1,0};
 float scaling_amp_class1_Y_200[6] = {0,0,1.000,0,0,1};
 float scaling_amp_class1_yaw_200[6] = {1,1,1,1,1,1};
-*/
+
 
 /*
 float scaling_amp_class1_forward_200[6] = {0.826,1.000,0.236,0.482,0.894,0.286};

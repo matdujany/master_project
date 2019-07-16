@@ -271,12 +271,12 @@ void send_and_get_wrapper()
   send_frame_byte(flagVerbose); //flagVerbose
   if (Serial2.available())
     get_dc_byte_wrapper();
-  //delayMicroseconds(250);
+  //delayMicroseconds(200);
 }
 
 void get_dc_byte_wrapper(){
   // Reads one byte from the rx port.
-  get_loadcell_byte(flagVerbose); //flagVerbose
+  get_daisychain_byte(flagVerbose); //flagVerbose
   // Boolean to check if frame has been found
   frame_found = check_frame(flagVerbose); //flagVerbose
 }
@@ -321,7 +321,7 @@ void send_frame_byte(int flagVerbose)
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
-void get_loadcell_byte(int flagVerbose)
+void get_daisychain_byte(int flagVerbose)
 {
   // Read byte from USART buffer and write it to ring buffer
 
@@ -334,11 +334,14 @@ void get_loadcell_byte(int flagVerbose)
   // Write the read byte to the ring buffer
   ser_rx_buf.buffer[ser_rx_buf.head] = inByte;
 
+  delayMicroseconds(DELAY_GET_BYTE_MICROSECONDS);
+
   // Verbose mode
-  if (flagVerbose)
+  if (flagVerbose) //flagVerbose
   {
     SerialUSB.print("Received: "); SerialUSB.println(inByte);
-    //print_get_loadcell_byte(inByte);
+
+    //print_get_daisychain_byte(inByte);
     if (inByte == END_FRAME)  
     {
     print_buffer();
@@ -353,13 +356,15 @@ void get_loadcell_byte(int flagVerbose)
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
-int check_frame(int flagVerbose)
+bool check_frame(int flagVerbose)
 {
   // Check if a frame is collected
   // There are 4 conditions, comparing:   1. End byte
   //                                      2. First start byte
   //                                      3. Second start byte
   //                                      4. Checksum comparison
+  
+  bool flagVerboselocal = true;
 
   if (flagVerbose){
     //SerialUSB.print("Head index: "); SerialUSB.print(ser_rx_buf.head);
@@ -370,7 +375,7 @@ int check_frame(int flagVerbose)
   {
     int idx_tail_tmp = ((ser_rx_buf.head - frame_buf.frame_size+1) & (BUFFER_SIZE - 1));
     if (flagVerbose){
-      SerialUSB.print("potential tail index: "); SerialUSB.print(idx_tail_tmp);
+      SerialUSB.print("End byte received, potential tail index: "); SerialUSB.println(idx_tail_tmp);
     }
     // 2. First start byte
     if (ser_rx_buf.buffer[idx_tail_tmp] == FRAME_SYNC_0) // Reads first start byte (0xFF)
@@ -381,7 +386,7 @@ int check_frame(int flagVerbose)
         // Determine new tail and make sure it is circular
         ser_rx_buf.tail = idx_tail_tmp;
         if (flagVerbose){
-          SerialUSB.print("confirmed tail index: "); SerialUSB.print(ser_rx_buf.tail);
+          SerialUSB.print("confirmed tail index (found byte 0 and byte 1 of frame at right positions): "); SerialUSB.println(ser_rx_buf.tail);
         }
 
         // Calculate checksum for the data in the ser_rx_buf buffer
@@ -394,25 +399,41 @@ int check_frame(int flagVerbose)
           {
             //print_check_frame();
           }
-          //SerialUSB.println("Frame found!");
           nb_frames_found++;
           return true;
         }
         else
+        {
+          if (flagVerboselocal){
+            SerialUSB.println("End byte received. First and Second Start byte at right positions. Checksum Error. ");
+          }            
           return false;
+        }
       }
       else
+      {
+        if (flagVerboselocal)
+        {
+          SerialUSB.println("End byte received. First start byte at right position. No second start byte at right position. ");
+        }
         return false;
+      }
     }
     else
+    {
+      if (flagVerboselocal)
+      {
+        //SerialUSB.print("End byte received. No first start byte at right position. ");
+      }
       return false;
+    }
   }
   else
     return false;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
-boolean check_checksum(int flagVerbose)
+bool check_checksum(int flagVerbose)
 {
   // Compare checksum that is found in the frame (checksum_frame) to the checksum as calculated from the data bytes in the frame (checksum_calc)
 

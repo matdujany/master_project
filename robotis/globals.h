@@ -55,7 +55,7 @@ float weight_yaw = 0;
 
 float weight_X = 0;
 float weight_Y = 0;
-bool locomotion_2_joysticks = true;
+bool locomotion_2_joysticks = false;
 
 //propulsion
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article

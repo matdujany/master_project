@@ -19,14 +19,14 @@
 #define BUFFER_SIZE                 256     //should be bigger than the frame size
 
 // SERVO'S
-#define MAX_NR_SERVOS               16
-#define MAX_N_LIMB                   8
+#define MAX_NR_SERVOS               12
+#define MAX_N_LIMB                   6
 
 // DAISYCHAIN
 // Sampling Settings
 // It will sample at the frequency given by 1000/TIME_INTERVAL_TWITCH
 
-#define    MAX_NR_ARDUINO           8      // Maximum number of load cell arduino's in the daisychain
+#define    MAX_NR_ARDUINO           6     // Maximum number of load cell arduino's in the daisychain
 #define    BAUD_RATE                500000  // Baud rate for load cell daisychain
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
@@ -62,8 +62,8 @@
 
 //these two times are the delays between updates on the daisychain
 // 20 ms for 4 lcs, 21 ms for 6 lcs, 22 ms for 8 lcs : almost 0 erros
-#define TIME_INTERVAL_TWITCH        21    // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
-#define DELAY_UPDATE_DC_TEGOTAE     21     //
+#define TIME_INTERVAL_TWITCH        25    // Sampling time in ms (frequency = 1000 / TIME_INTERVAL_TWITCH).
+#define DELAY_UPDATE_DC_TEGOTAE     25     //
 
 
 #define DURATION_MANUAL_RECENTERING         15     //in s, time allowed for manual recentering between twitch cycles (useful if gravity relief)
@@ -98,7 +98,8 @@
 // DAISYCHAIN                //
 ///////////////////////////////
 
-#define MAX_DELAY_FRAME         500     //for initializing the waiting time when the loadcell is discovered
+#define MAX_DELAY_FRAME                  500     //for initializing the waiting time when the loadcell is discovered
+#define DELAY_GET_BYTE_MICROSECONDS      100     //this should not be needed 
 
 
 // Frame properties

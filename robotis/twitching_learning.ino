@@ -146,6 +146,13 @@ void twitch_main()
             //SerialUSB.println(" ms, waiting until TIME_INTERVAL_TWITCH to send an other one");
            
             //waiting to send the next one
+            
+            if ( millis()-timestamp_startframe > TIME_INTERVAL_TWITCH )
+            {
+              SerialUSB.print("Warning, frame update and learning processing take more time (");
+              SerialUSB.print(millis()-timestamp_startframe);
+              SerialUSB.println("ms) than TIME_INTERVAL_TWITCH");
+            }
             while( millis()-timestamp_startframe < TIME_INTERVAL_TWITCH );
           }
           //else it means that something got wrong in the daisychain
@@ -156,7 +163,7 @@ void twitch_main()
             SerialUSB.print(" ms, trying again (trying to collect frame ");SerialUSB.print(n_frames_tmp+1);
             //SerialUSB.print("), servo ");SerialUSB.print(i_servo);
             SerialUSB.print(", direction ");SerialUSB.print(2*i_dir-1);
-            SerialUSB.print(", part ");SerialUSB.println(i_part);
+            SerialUSB.print(", part ");SerialUSB.print(i_part);SerialUSB.println(").");
             delay(15);
             count_missed_frames_row ++;
             if (count_missed_frames_row>=10){
