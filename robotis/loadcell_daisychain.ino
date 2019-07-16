@@ -271,7 +271,7 @@ void send_and_get_wrapper()
   send_frame_byte(flagVerbose); //flagVerbose
   if (Serial2.available())
     get_dc_byte_wrapper();
-  delayMicroseconds(250);
+  //delayMicroseconds(250);
 }
 
 void get_dc_byte_wrapper(){

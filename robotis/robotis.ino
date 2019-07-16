@@ -61,7 +61,7 @@ void setup() {
 
   //timing duration of daisychain;
   //compute_duration_daisychain_ms();
-  //duration_daisychain=7;
+  duration_daisychain=7;
   
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
