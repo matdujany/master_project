@@ -25,7 +25,7 @@ void setup() {
   // DYNAMIXEL                   //
   /////////////////////////////////
 
-  //while(!SerialUSB.available());
+  while(!SerialUSB.available());
   //empyting the the USB console from a message that VScode writes
   while (SerialUSB.available()){
     SerialUSB.read();
@@ -73,7 +73,7 @@ void setup() {
 
   //record_tegotae_leg_amputated_Serial3(600*1000);
   
-  tegotae_bluetooth();
+  //tegotae_bluetooth();
   
   //record_tegotae_change_dir(240*1000);
   //pose_stance_512();
@@ -85,7 +85,8 @@ void setup() {
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
-  
+
+  test_dc();
   //update_load_pos_values();
   //SerialUSB.print("Motor positions, ");
   //print_motor_positions();

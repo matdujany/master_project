@@ -32,7 +32,7 @@ using namespace Ad7124;
 //using namespace Ad7124;
 
 #define DT 1000        // interrupt period of timer1 in microseconds, use multiples of hundred
-#define I_LOADCELL 3   // Arduino-Loadcell number (written next to the # on loadcell sensor).
+#define I_LOADCELL 9   // Arduino-Loadcell number (written next to the # on loadcell sensor).
 #define BAUD_RATE 500000
 
 double cal_gain[3];
