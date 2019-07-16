@@ -250,7 +250,7 @@ unsigned long try_capture_1_frame(bool flagPrintFrameFail, bool flagPrintFrameFo
   }
   unsigned long time_stop = millis()-time_start_trial;
   if (flagPrintFrameFail & !frame_found){
-    SerialUSB.println("no frame found !");
+    SerialUSB.println("no frame found");
   }
   if (flagPrintFrameFoundTime & frame_found)
   {
@@ -329,7 +329,7 @@ void get_loadcell_byte(int flagVerbose)
   ser_rx_buf.buffer[ser_rx_buf.head] = inByte;
 
   // Verbose mode
-  if (flagVerbose)
+  if (1) //flagVerbose
   {
     SerialUSB.print("Received: "); SerialUSB.println(inByte);
     //print_get_loadcell_byte(inByte);
@@ -354,6 +354,7 @@ int check_frame(int flagVerbose)
   //                                      2. First start byte
   //                                      3. Second start byte
   //                                      4. Checksum comparison
+  bool flagVerboselocal = true;
 
   if (flagVerbose){
     //SerialUSB.print("Head index: "); SerialUSB.print(ser_rx_buf.head);
@@ -364,7 +365,7 @@ int check_frame(int flagVerbose)
   {
     int idx_tail_tmp = ((ser_rx_buf.head - frame_buf.frame_size+1) & (BUFFER_SIZE - 1));
     if (flagVerbose){
-      SerialUSB.print("potential tail index: "); SerialUSB.print(idx_tail_tmp);
+      SerialUSB.print("End byte received, potential tail index: "); SerialUSB.println(idx_tail_tmp);
     }
     // 2. First start byte
     if (ser_rx_buf.buffer[idx_tail_tmp] == FRAME_SYNC_0) // Reads first start byte (0xFF)
@@ -375,7 +376,7 @@ int check_frame(int flagVerbose)
         // Determine new tail and make sure it is circular
         ser_rx_buf.tail = idx_tail_tmp;
         if (flagVerbose){
-          SerialUSB.print("confirmed tail index: "); SerialUSB.print(ser_rx_buf.tail);
+          SerialUSB.print("confirmed tail index (found byte 0 and byte 1 of frame at right positions): "); SerialUSB.println(ser_rx_buf.tail);
         }
 
         // Calculate checksum for the data in the ser_rx_buf buffer
@@ -392,14 +393,26 @@ int check_frame(int flagVerbose)
           nb_frames_found++;
           return true;
         }
-        else
+        else{
+          if (flagVerboselocal){
+            SerialUSB.print("End byte received. First and Second Start byte at right positions. Checksum Error. ");
+          }            
           return false;
+        }
       }
       else
+      {
+        if (flagVerboselocal)
+          SerialUSB.print("End byte received. First start byte at right position. No second start byte at right position. ");
         return false;
+      }
     }
     else
+    {
+      if (flagVerboselocal)
+        //SerialUSB.print("End byte received. No first start byte at right position. ");
       return false;
+    }
   }
   else
     return false;
