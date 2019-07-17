@@ -68,13 +68,13 @@ for i=1:n_limb
     hold on;
     i_limb_plot = limb_list_ordered(i);
     time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
-    plot([time(1) time(end)],[value_unloading(i_limb_plot) value_unloading(i_limb_plot)],'k--');
     if plot_propulsion
         plot(time, GRP(:,i_limb_plot));
         ylabel('Y Load [N]');
         ylim([-5 5]);
         
     else
+        plot([time(1) time(end)],[value_unloading(i_limb_plot) value_unloading(i_limb_plot)],'k--');
         plot(time, GRF(:,i_limb_plot));
         ylabel('Z Load [N]');
         ylim([-2 13]);

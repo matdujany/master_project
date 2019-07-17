@@ -21,7 +21,7 @@ addpath('functions')
 
 clear; clc; close all;
 
-recordID = 203;
+recordID = 204;
 
 % Check if there is already an instance of a communication interface and
 % clears it
@@ -35,7 +35,6 @@ addpath('../2_load_data_code');
 fprintf("data_processing\n");
 filename = get_record_name(recordID);
 [data_rec, pos_load_data_rec, parms] = load_data_raw(recordID);
-parms.eta = 15;
 fprintf('Data loaded from file: %s\n', filename);
 IMU_offsets = true;
 gyro_in_degs = true;
@@ -154,7 +153,7 @@ if gyro_in_degs
 end
 
 %%
-time_dc = data.time - data.time(1,:)
+time_dc = data.time - data.time(1,:);
 time_motor = (lpdata.motor_timestamp-lpdata.motor_timestamp(:,1))';
 
 %%
@@ -166,9 +165,9 @@ end
 time_dc_lc = time_dc(:,1:parms.n_lc);
 
 %%
-% file_name_processed_data=strcat("../../../../data/",filename,'_p');
-% fprintf("Writing processed data to file: %s.mat\n", file_name_processed_data);
-% save(file_name_processed_data,'data','lpdata','parms');
+file_name_processed_data=strcat("../../../../data/",filename,'_p');
+fprintf("Writing processed data to file: %s.mat\n", file_name_processed_data);
+save(file_name_processed_data,'data','lpdata','parms');
 
 %% Functions 
 

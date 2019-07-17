@@ -9,7 +9,7 @@ export_plots = false;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 201;
+recordID = 204;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms = add_parms(parms);
 weights_robotis  = read_weights_robotis(recordID,parms);

@@ -35,7 +35,7 @@ switch parms.n_m
         if ismember(recordID,[134:137])
            good_closest_LC = [6;4;4;2;2;3;6;3;1;1;5;5];
         end
-        if ismember(recordID,[200:201])
+        if ismember(recordID,[200:204])
            good_closest_LC = [3;1;1;4;3;4;5;5;2;2;6;6];
         end
     case 16

@@ -38,7 +38,7 @@ spmd(2)
     else
         %lpdata (Serial3), yellow cable, red FTDI
         COMportID = 9;
-        bufferSize = 5000000; %TODO : size this buffer
+        bufferSize = 6000000; %TODO : size this buffer
         BaudRate = 2*10^6;
     end
     s=serial(strcat('COM',num2str(COMportID)),'BaudRate',BaudRate);
@@ -82,7 +82,7 @@ n_frames_calib = parms.n_twitches * parms.nb_values_mean_update_offset;
 
 n_frames_approx = n_frames_learning + n_frames_recentering + n_frames_manual_recentering + n_frames_calib;
 
-n_byte_approx = (parms.frame_size * n_frames_approx)*1.1;
+n_byte_approx = (parms.frame_size * n_frames_approx)*1.2;
 end
 
 %duration of the recording (for timeout) in seconds
