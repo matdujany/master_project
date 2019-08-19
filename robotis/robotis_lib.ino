@@ -366,106 +366,6 @@ void wrapper_parser(int flagVerbose)
   }
 }
 
-/* ===================================================================================================================================== */
-
-/////////////////////////////////
-// 4. BLUETOOTH                //
-/////////////////////////////////
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-void read_bluetooth_command(int flagVerbose)
-{
-  // Read Bluetooth input stream from Serial3 rx bus
-
-  // Read data from USART buffer
-  while (Serial3.available())
-  {
-    bluetooth_command[head] = Serial3.read();
-    head = (head + 1) % BLUE_FRAME_LENGTH;
-    blue_command_new = true;
-  }
-
-  // Verbose mode
-  if (flagVerbose)
-  {
-    print_read_bluetooth_command();
-  }
-}
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-
-/*
-void exe_blue_command(int flagVerbose)
-{
-  // Execute bluetooth command
-
-  // First byte should be 0xB1
-  if (bluetooth_command[0] != 0xB1)
-  {
-    SerialUSB.println("Bluetooth command not valid: First byte doesn't equal the start byte of the Bluetooth command.");
-  }
-  else
-  {
-    // Bluetooth command list
-    // For subprograms that take a lot of time ('Start Gait' and 'Start Detection Loop' for example),
-    // it is best to implement it setting flags in the loop() function instead of running the function here.
-    // This way, data still gets collected in between the different states of the subprogram.
-    if (bluetooth_command[1] == 0xB0)
-    {
-      //SerialUSB.println("[START] Gait");
-      bool_walk = true;
-    }
-    else if (bluetooth_command[1] == 0xB1)
-    {
-      //SerialUSB.println("[STOP] Gait");
-      bool_walk = false;
-    }
-    else if (bluetooth_command[1] == 0xB2)
-    {
-      //SerialUSB.println("[START] Stretch pose");
-      bool_walk = false;
-      //TODO : recode pose_stretch
-      //pose_stretch();
-    }
-    else if (bluetooth_command[1] == 0xB3)
-    {
-      //SerialUSB.println("[START] Walk pose");
-      bool_walk = false;
-      pose_stance();
-    }
-    else if (bluetooth_command[1] == 0xB4)
-    {
-      //SerialUSB.println("[RESET] phase shift");
-      reset_servo_offset();
-    }
-    else if (bluetooth_command[1] == 0xB5)
-    {
-      // Open slot
-    }
-    else if (bluetooth_command[1] == 0xB6)
-    {
-      twitch_main();
-    }
-  }
-}
-*/
-
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-void construct_initial_frame_blue(byte arduino_target)
-{
-  // Frame to send to the daisy chain. Not needed anymore!
-  initial_frame_blue[0] = FRAME_SYNC_0;   // First start byte
-  initial_frame_blue[1] = FRAME_SYNC_1;   // Second start byte
-  initial_frame_blue[2] = 0;              // Arduino ID
-  initial_frame_blue[3] = 0x13;           // Frame Type
-  initial_frame_blue[4] = 2;              // Data size
-  initial_frame_blue[5] = arduino_target; // Target Arduino ID
-  initial_frame_blue[6] = 0x00;           // Command
-  initial_frame_blue[7] = 0x00;           // Checksum
-  initial_frame_blue[8] = END_FRAME;      // End frame
-}
-
 
 /* ===================================================================================================================================== */
 
@@ -576,16 +476,6 @@ void print_parser()
   SerialUSB.print(ser_rx_buf.timestamp_IMU, HEX);
 
   SerialUSB.print("\n\n-End of wrapper_parser()-------------------------------\n");
-}
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-void print_read_bluetooth_command()
-{
-  for (int i = 0; i < BLUE_FRAME_LENGTH; i++)
-  {
-    SerialUSB.print(bluetooth_command[i], HEX);
-  }
-  SerialUSB.print("\n");
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------- */

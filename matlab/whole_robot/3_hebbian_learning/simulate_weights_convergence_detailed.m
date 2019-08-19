@@ -4,17 +4,18 @@ close all; clc;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 143;
+recordID = 210;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms_sim = parms;
-parms_sim.eta = 20;
+% parms_sim.eta = 20;
 weights_check = compute_weights_wrapper(data,lpdata,parms,1,0,0,0,0);
 weights_robotis  = read_weights_robotis(recordID,parms);
 max_dif_norm     = check_weights_diff(weights_check,weights_robotis,parms.n_twitches);
 
 %%
 flagDetailed = 1;
-weights_detailed = compute_weights_wrapper(data,lpdata,parms,1,0,0,flagDetailed,0);
+flagSpeed=1;
+weights_detailed = compute_weights_wrapper(data,lpdata,parms,flagSpeed,0,0,flagDetailed,0);
 
 %%
 [diff_norm_lc, diff_norm_IMU] = check_weights_detailed(weights_detailed,weights_robotis,parms);

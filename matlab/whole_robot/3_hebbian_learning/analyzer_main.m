@@ -12,7 +12,7 @@ addpath('class_detection_function');
 addpath('analysis_plot_function');
 
 %% Load data
-recordID = 204;
+recordID = 210;
 [data, lpdata, parms] =  load_data_processed(recordID);
 % [data, lpdata, parms] =  load_data_raw(recordID);
 
@@ -79,7 +79,7 @@ h_lcz = plot_hinton_lc_limb_order(weights_lc_fused,limb,parms);
 %
 
 %% class detection
-desired_movement_speed_channel = 2; %1 for X, 2 for Y
+desired_movement_speed_channel = 1; %1 for X, 2 for Y
 direction_list = {'X','Y','Z'};
 
 %c1 first
@@ -87,7 +87,7 @@ if ismember(recordID,[105 110 115 138:140])
          [motors_classes,likelihood_class1,dir_oscillations,dir_oscillations_yaw] = get_class_c1_before_c2(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
 end
 % c2 first
-if ismember(recordID,[127 143 200:204])
+if ismember(recordID,[127 143 200:204 210])
         [motors_classes,likelihood_class2,dir_oscillations,dir_oscillations_yaw] = get_class_c2_before_c1(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
 end
 if ismember(recordID,[134:137])

@@ -55,7 +55,7 @@ float weight_yaw = 0;
 
 float weight_X = 0;
 float weight_Y = 0;
-bool locomotion_2_joysticks = false;
+bool locomotion_bluetoooth_2_joysticks = false;
 
 //propulsion
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
@@ -196,19 +196,6 @@ unsigned long count_checksum_mismatches=0;
 /* ===================================================================================================================================== */
 
 /////////////////////////////////
-// 3. BLUETOOTH                //
-/////////////////////////////////
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-
-int        head              = 0;
-bool       blue_command_new  = false;
-uint8_t    bluetooth_command[BLUE_FRAME_LENGTH];
-uint8_t    initial_frame_blue[9];
-
-/* ===================================================================================================================================== */
-
-/////////////////////////////////
 // 5. DYNAMIXEL                //
 /////////////////////////////////
 
@@ -269,8 +256,8 @@ buffer_filter buf_filter;
 // Learning struct
 typedef struct learning_struct
 {
-  float weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
-  //int16_t weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
+  //float weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
+  int16_t weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
   
   //int weights_pos[MAX_NR_SERVOS][MAX_NR_SERVOS * 2];
 }

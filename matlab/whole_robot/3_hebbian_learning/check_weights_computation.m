@@ -9,7 +9,7 @@ addpath('computing_functions');
 
 %% Load data
 
-record_list = 143;
+record_list = 210;
 max_dif_lc = zeros(1,length(record_list));
 max_dif_speed = zeros(1,length(record_list));
 max_dif_gyro = zeros(1,length(record_list));
@@ -23,7 +23,7 @@ for idx=1:length(record_list)
     recordID = record_list(idx);
     [data, lpdata, parms] =  load_data_processed(recordID);
 %     parms=add_parms(parms);
-    weights_check = compute_weights_wrapper(data,lpdata,parms,0,flagPlot,0,0);
+    weights_check = compute_weights_wrapper(data,lpdata,parms,1,0,flagPlot,0,0);
     weights_read = read_weights_robotis(recordID,parms);
     
     for k=1:parms.n_twitches
@@ -47,5 +47,6 @@ end
 
 %%
 n_iter = 5;
+diff_lc = (weights_lc_robotis{n_iter} - weights_check{n_iter}(1:end-6,:));
 diff_speed = (weights_speed_robotis{n_iter} - weights_speed_check{n_iter});
 diff_gyro = (weights_gyro_robotis{n_iter} - weights_gyro_check{n_iter});

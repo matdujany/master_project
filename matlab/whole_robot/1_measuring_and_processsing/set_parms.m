@@ -46,6 +46,8 @@ if parms.twitch_limb==1
     disp('Twitching with all limbs mode activated');
 end
 
+parms.soft_punch = 20;
+parms.soft_margin = 2;
 
 %filter
 parms.use_filter = 1;

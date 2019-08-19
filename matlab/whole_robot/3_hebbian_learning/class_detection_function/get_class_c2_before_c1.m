@@ -19,7 +19,7 @@ for i=1:n_limb
 end
 
 [dir_oscillations,dir_oscillations_yaw] = get_dir_oscillations(desired_movement_speed_channel,motors_classes,weights_lc_fused,weights_speed_fused,weights_yaw_fused);
-
+dir_oscillations
 
 
 end

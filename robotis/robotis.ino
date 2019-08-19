@@ -49,7 +49,6 @@ void setup() {
 
   // Construct initial data frame and command frame
   construct_initial_frame();
-  construct_initial_frame_blue(0xFF);
   init_circular_frame_array();
 
   // Determine the number of Arduino's using the full frame
@@ -66,17 +65,9 @@ void setup() {
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
   
-  //pose_stance();
-  
-  
   pose_stance_512();
   delay(5000);
-  SerialUSB.println("switching to compliant");
-  make_all_servos_compliant_syncWrite();
-  delay(5000);
   update_neutral_pos();
-  
- 
   twitch_record_wrapper();
   
  

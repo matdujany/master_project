@@ -230,7 +230,7 @@ void tegotae_bluetooth(){
   while (true){
     unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);  //the order of the 2 lines here matter a locomotion
     
-    if (locomotion_2_joysticks)
+    if (locomotion_bluetoooth_2_joysticks)
       serial_read_bluetooth_2joysticks_main();
     else
       serial_read_bluetooth_main();
@@ -412,10 +412,11 @@ void initialize_scaling_amp_class1(){
     fill_scaling_amp_class1_Y(scaling_amp_class1_Y_134);
   #endif
 
-  #if (MAP_USED == 200)
-    fill_scaling_amp_class1(scaling_amp_class1_forward_200, scaling_amp_class1_yaw_200);
-    fill_scaling_amp_class1_Y(scaling_amp_class1_Y_200);
+  #if (MAP_USED == 204)
+    fill_scaling_amp_class1(scaling_amp_class1_forward_204, scaling_amp_class1_yaw_204);
+    fill_scaling_amp_class1_Y(scaling_amp_class1_Y_204);
   #endif
+
 }
 
 void change_dir_mode_to_XY(){
@@ -489,13 +490,21 @@ void initialize_hardcoded_limbs(){
     fill_changeDirs_Y_array(changeDirs_Y_s_hex);
   #endif 
 
-  #if (MAP_USED == 200) 
+  #if (MAP_USED == 204) 
     n_limb = 6;
-    fill_neutral_pos(neutral_pos_200);
+    fill_neutral_pos(neutral_pos_204);
     fill_limbs_array(limbs_X_s_hex_2);
     fill_changeDirs_array(changeDirs_X_s_hex_2);
     fill_changeDirs_Yaw_array(changeDirs_Yaw_s_hex_2);
     fill_changeDirs_Y_array(changeDirs_s_Y_hex_2);
+  #endif 
+
+  #if (MAP_USED == 210) 
+    n_limb = 6;
+    fill_neutral_pos(neutral_pos_210);
+    fill_limbs_array(limbs_X_hex_2);
+    fill_changeDirs_array(changeDirs_X_hex_2);
+    fill_changeDirs_Yaw_array(changeDirs_Yaw_hex_2);
   #endif 
 
   init_offset_class1();
@@ -541,9 +550,14 @@ void initialize_inverse_map_advanced_tegotae(){
   #endif
 
 
-  #if (MAP_USED==200)
-    sigma_advanced = sigma_advanced_X_200;
-    fill_inverse_map_array(inverse_map_X_200);
+  #if (MAP_USED==204)
+    sigma_advanced = sigma_advanced_X_204;
+    fill_inverse_map_array(inverse_map_X_204);
+  #endif 
+
+  #if (MAP_USED==210)
+    sigma_advanced = sigma_advanced_X_210;
+    fill_inverse_map_array(inverse_map_X_210);
   #endif 
 }
 
@@ -658,7 +672,7 @@ void send_command_limb_oscillators(){
   for (int i=0; i<n_limb; i++){
     //class 1 first : doing movement
     servo_id_list[2*i] = id[limbs[i][0]];
-    if (locomotion_2_joysticks){
+    if (locomotion_bluetoooth_2_joysticks){
       int16_t goal_position_X = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs[i][0], scaling_amp_class1_forward[i]);
       int16_t goal_position_Y = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs_Y[i], scaling_amp_class1_Y[i]);
       goal_position_yaw = phase2pos_Class1(phi[i]+offset_class1[i], changeDirs_Yaw[i], scaling_amp_class1_yaw[i]);
@@ -767,7 +781,7 @@ void update_phi_tegotae()
     }
 
     //increase in phase only if the locomotion weights are non 0
-    if (locomotion_2_joysticks)
+    if (locomotion_bluetoooth_2_joysticks)
     {
       if(weight_X*weight_X + weight_Y*weight_Y + weight_yaw*weight_yaw > 0)
         phi[i] = phi[i] + phi_dot[i] * (t_current - t_last_phi_update) / 1000;
@@ -1006,7 +1020,9 @@ void print_locomotion_parameters(){
       SerialUSB.print("Using filter of size ");
       SerialUSB.print(FILTER_SIZE_TEGOTAE); SerialUSB.println(" for Tegotae.");
     }
-    SerialUSB.print("Parameters learned from twitching record ID "); SerialUSB.println(MAP_USED);
+    #ifdef MAP_USED
+      SerialUSB.print("Parameters learned from twitching record ID "); SerialUSB.println(MAP_USED);
+    #endif
     SerialUSB.print("Sigma for advanced tegotae  : "); SerialUSB.println(sigma_advanced,5);
     print_inverse_map();
     print_limbs();
@@ -1021,13 +1037,16 @@ void print_locomotion_parameters(){
   }
 }
 
+
 void print_Tegotae_parameters(){
   if (tegotae_advanced){
     if (USE_FILTER_TEGOTAE){
       SerialUSB.print("Using filter of size ");
       SerialUSB.print(FILTER_SIZE_TEGOTAE); SerialUSB.println(" for Tegotae.");
     }
-    SerialUSB.print("Parameters learned from twitching record ID "); SerialUSB.println(MAP_USED);
+    #ifdef MAP_USED
+      SerialUSB.print("Parameters learned from twitching record ID "); SerialUSB.println(MAP_USED);
+    #endif
     SerialUSB.print("Sigma for advanced tegotae  : "); SerialUSB.println(sigma_advanced,5);
   }
   else

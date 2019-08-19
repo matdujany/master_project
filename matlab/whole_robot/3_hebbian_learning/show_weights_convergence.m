@@ -6,18 +6,18 @@ addpath('../2_load_data_code');
 addpath('computing_functions');
 addpath('hinton_plot_functions');
 
-recordID = 136;
+recordID = 210;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 
 weights_robotis  = read_weights_robotis(recordID,parms);
 weights_pos_robotis = read_weights_pos_robotis(recordID,parms);
 
-weights_computed = compute_weights_wrapper(data,lpdata,parms,0,0,0,0);
+weights_computed = compute_weights_wrapper(data,lpdata,parms,1,0,0,0,0);
 
 opt_parms.motor_list = [1:8];
 opt_parms.lc_list = [2:3];
-opt_parms.ylims = [2:3];
+% opt_parms.ylims = [2:3];
 
 plot_weight_evolution_LC_both(weights_computed,parms,0,0,opt_parms);
 plot_weight_evolution_IMU(weights_robotis,parms);

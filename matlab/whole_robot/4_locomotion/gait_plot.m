@@ -9,7 +9,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 125;
+recordID = 127;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 
@@ -57,7 +57,7 @@ switch n_limb
         end
 end
 
-plot_propulsion = true;
+plot_propulsion = false;
 xlims = [110 120]; %% in secs
 f_GRF=figure;
 f_GRF.Color = 'w';
