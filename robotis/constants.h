@@ -99,7 +99,7 @@
 ///////////////////////////////
 
 #define MAX_DELAY_FRAME                  500     //for initializing the waiting time when the loadcell is discovered
-#define DELAY_GET_BYTE_MICROSECONDS      100     //this should not be needed 
+#define DELAY_GET_BYTE_MICROSECONDS      80     ///100 /this should not be needed 
 
 
 // Frame properties
