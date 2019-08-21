@@ -20,7 +20,7 @@ switch parms.n_m
          if ismember(recordID,[68:91])
             limb =  [9    10;   11    12;    3     4;     1     2;     7     8;     5     6];
         end
-        if ismember(recordID,[107:110 138:143])
+        if ismember(recordID,[107:110 138:144])
             limb =  [9    10;   7    1;    4     5;     2     3;     6     8;     11     12];
         end
         if ismember(recordID,[130:130])
@@ -43,8 +43,11 @@ switch parms.n_m
         if recordID == 94
             limb =  [9    1;   8    10;    4     5;     2     3;     13     14;     15     16; 11 12; 6 7];   
         end
-        if recordID >= 111
+        if ismember(recordID,[111:115])
             limb =  [13    14;     9     1;     6     7;    12    11;     2     3;     4     5;     8    10;    15    16];
+        end
+        if ismember(recordID,[220])
+            limb =  [2    3;     10     11;     1     5;    14    15;    16    9;     12    13;   4     6;   8     7];            
         end
     otherwise
         disp ('unrecognized number of motors');

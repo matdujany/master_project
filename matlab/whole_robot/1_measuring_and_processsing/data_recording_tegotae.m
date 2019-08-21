@@ -6,13 +6,13 @@ set_parms;
 parms_locomotion.recordingDuration = 180;
 parms_locomotion.frequency = 0.5; 
 
-parms_locomotion.amplitude_class1_deg = 20;
-parms_locomotion.amplitude_class2_deg = 20;
+parms_locomotion.amplitude_class1_deg = 15;
+parms_locomotion.amplitude_class2_deg = 25;
 parms_locomotion.alpha = 0.2;
 parms_locomotion.sigma_s = 0.11;
 
-parms_locomotion.sigma_advanced = 0.14;
-parms_locomotion.id_map_used = 210;
+parms_locomotion.sigma_advanced = 0.0865;
+parms_locomotion.id_map_used = 220;
 parms_locomotion.turning = false;
 parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
 % parms_locomotion.phi_init = {5.12, 1.53, 5.84, 2.20};

@@ -539,13 +539,12 @@ void twitch_learning_prog(int i_action, float m_learning)
     }
 
     // Select weight from array
-    if (LEARN_IN_INT16_T){
+    #ifdef LEARN_IN_INT16_T
       weight_temp = learning.weights[j_sensor][i_action];
       weight_float = (float)(weight_temp)/100.0;
-    }
-    else {
+    #else 
       weight_float = learning.weights[j_sensor][i_action];
-    }
+    #endif
 
 
     // Apply Oja's differential learning rule
@@ -555,7 +554,7 @@ void twitch_learning_prog(int i_action, float m_learning)
     weight_float_updated = weight_float + LEARNING_RATE * weight_delta;
     
     
-    if (LEARN_IN_INT16_T){
+    #ifdef LEARN_IN_INT16_T
       if (100*abs(weight_float_updated)>32766){
         SerialUSB.print("Warning, int16 overflow !!!! for sensor (row) ");SerialUSB.print(j_sensor);
         SerialUSB.print(" and action (column) ");SerialUSB.println(i_action);
@@ -564,10 +563,9 @@ void twitch_learning_prog(int i_action, float m_learning)
       else{
         learning.weights[j_sensor][i_action] = (int16_t)(100*weight_float_updated);
       }
-    }
-    else {
+    #else
       learning.weights[j_sensor][i_action] = weight_float_updated;
-    }
+    #endif
 
     //SerialUSB.println(learning.weights[j_sensor][i_action]);
 

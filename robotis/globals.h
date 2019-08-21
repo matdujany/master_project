@@ -256,9 +256,12 @@ buffer_filter buf_filter;
 // Learning struct
 typedef struct learning_struct
 {
-  //float weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
+  #ifdef LEARN_IN_INT16_T
   int16_t weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
-  
+  #else
+  float weights[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS][MAX_NR_SERVOS * 2];       // Contains the most recent values of the weights. (All historic information is in these values)
+  #endif
+
   //int weights_pos[MAX_NR_SERVOS][MAX_NR_SERVOS * 2];
 }
 learning_struct;

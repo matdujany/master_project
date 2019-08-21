@@ -19,14 +19,14 @@
 #define BUFFER_SIZE                 256     //should be bigger than the frame size
 
 // SERVO'S
-#define MAX_NR_SERVOS               16
-#define MAX_N_LIMB                   8
+#define MAX_NR_SERVOS               12
+#define MAX_N_LIMB                   6
 
 // DAISYCHAIN
 // Sampling Settings
 // It will sample at the frequency given by 1000/TIME_INTERVAL_TWITCH
 
-#define    MAX_NR_ARDUINO           8    // Maximum number of load cell arduino's in the daisychain
+#define    MAX_NR_ARDUINO           6    // Maximum number of load cell arduino's in the daisychain
 #define    BAUD_RATE                500000  // Baud rate for load cell daisychain
 #define    BAUD_RATE_BLUE           9600   // Baud rate for bluetooth dongle
 
@@ -99,7 +99,7 @@
 ///////////////////////////////
 
 #define MAX_DELAY_FRAME                  500     //for initializing the waiting time when the loadcell is discovered
-#define DELAY_GET_BYTE_MICROSECONDS      80     ///100 /this should not be needed 
+#define DELAY_GET_BYTE_MICROSECONDS      100     ///100 /this should not be needed 
 
 
 // Frame properties
@@ -166,7 +166,7 @@
 #define MOV_LEARNING_COMPLIANCE_SLOPE          32  //16           
 #define MOV_LEARNING_PUNCH                     50  //150
 
-#define LEARN_IN_INT16_T        1  // 0 normal learning in float, 1 learning in in16_t
+//#define LEARN_IN_INT16_T      // if defined learning in in16_t, not defined normal learning in float, 
 
 ///////////////////////////////
 // IMU                     //

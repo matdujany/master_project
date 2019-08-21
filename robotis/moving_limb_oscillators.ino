@@ -238,7 +238,7 @@ void tegotae_bluetooth(){
     update_phi_tegotae();
     send_command_limb_oscillators();
     print_phi_info();
-    print_Tegotae_parameters();
+    print_Tegotae_parameters_bluetooth();
 
     while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
   }
@@ -507,6 +507,14 @@ void initialize_hardcoded_limbs(){
     fill_changeDirs_Yaw_array(changeDirs_Yaw_hex_2);
   #endif 
 
+  #if (MAP_USED == 220) 
+    n_limb = 8;
+    fill_neutral_pos(neutral_pos_220);
+    fill_limbs_array(limbs_X_oct_2);
+    fill_changeDirs_array(changeDirs_X_oct_2);
+    fill_changeDirs_Yaw_array(changeDirs_Yaw_oct_2);
+  #endif 
+
   init_offset_class1();
   initialize_scaling_amp_class1();
 
@@ -558,6 +566,11 @@ void initialize_inverse_map_advanced_tegotae(){
   #if (MAP_USED==210)
     sigma_advanced = sigma_advanced_X_210;
     fill_inverse_map_array(inverse_map_X_210);
+  #endif 
+
+  #if (MAP_USED==220)
+    sigma_advanced = sigma_advanced_X_220;
+    fill_inverse_map_array(inverse_map_X_220);
   #endif 
 }
 
@@ -1033,19 +1046,20 @@ void print_locomotion_parameters(){
     SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
   }
   if (tegotae_propulsion){
+    SerialUSB.println(tegotae_propulsion);
     SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p :"); SerialUSB.println(sigma_p);
   }
 }
 
 
-void print_Tegotae_parameters(){
+void print_Tegotae_parameters_bluetooth(){
   if (tegotae_advanced){
     if (USE_FILTER_TEGOTAE){
       SerialUSB.print("Using filter of size ");
       SerialUSB.print(FILTER_SIZE_TEGOTAE); SerialUSB.println(" for Tegotae.");
     }
     #ifdef MAP_USED
-      SerialUSB.print("Parameters learned from twitching record ID "); SerialUSB.println(MAP_USED);
+      SerialUSB.print("Map learned from twitching record ID "); SerialUSB.println(MAP_USED);
     #endif
     SerialUSB.print("Sigma for advanced tegotae  : "); SerialUSB.println(sigma_advanced,5);
   }

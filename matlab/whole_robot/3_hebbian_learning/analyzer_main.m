@@ -12,7 +12,7 @@ addpath('class_detection_function');
 addpath('analysis_plot_function');
 
 %% Load data
-recordID = 210;
+recordID = 144;
 [data, lpdata, parms] =  load_data_processed(recordID);
 % [data, lpdata, parms] =  load_data_raw(recordID);
 
@@ -87,12 +87,16 @@ if ismember(recordID,[105 110 115 138:140])
          [motors_classes,likelihood_class1,dir_oscillations,dir_oscillations_yaw] = get_class_c1_before_c2(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
 end
 % c2 first
-if ismember(recordID,[127 143 200:204 210])
+if ismember(recordID,[127 143 200:204 210 220])
         [motors_classes,likelihood_class2,dir_oscillations,dir_oscillations_yaw] = get_class_c2_before_c1(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
 end
 if ismember(recordID,[134:137])
         [motors_classes,dir_oscillations,dir_oscillations_yaw,likelihood_class2] = get_class_c2_maximize_deltas_wrapper(desired_movement_speed_channel,limb,weights_speed_fused,weights_yaw_fused,weights_lc_fused);
         % motors_class_c2 = get_class_c2_maximize_deltas(limb,weights_lcz_fused);
+end
+if ismember(recordID,[144])
+    motors_classes = [limb(:,2) limb(:,1)];
+    [dir_oscillations,dir_oscillations_yaw] = get_dir_oscillations(desired_movement_speed_channel,motors_classes,weights_lc_fused,weights_speed_fused,weights_yaw_fused);
 end
 
 %% z effect
@@ -148,17 +152,18 @@ fprintf('\n');
 if parms.n_m == 8
     disp ('Inverse map :'); fprintf('{%.3f, %.3f, %.3f, %.3f} ,\n',z_effect_lc_to_limb');
     fprintf('\n');
-    disp('Neutral pos :'); fprintf('{%i, %i, %i, %i, %i, %i, %i, %i} ,\n',read_neutral_pos(recordID, parms.n_m));
+    disp('Neutral pos :'); fprintf('{%i, %i, %i, %i, %i, %i, %i, %i} ;\n',read_neutral_pos(recordID, parms.n_m));
 end
 if parms.n_m == 12
     disp ('Inverse map :'); fprintf('{%.3f, %.3f, %.3f, %.3f, %.3f, %.3f} ,\n',z_effect_lc_to_limb');
     fprintf('\n');
-    disp('Neutral pos :'); fprintf('{%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i} ,\n',read_neutral_pos(recordID, parms.n_m));
+    disp('Neutral pos :'); fprintf('{%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i} ;\n',read_neutral_pos(recordID, parms.n_m));
 end
 if parms.n_m == 16
     disp ('Inverse map :'); fprintf('{%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f} ,\n',z_effect_lc_to_limb');
+    fprintf('\n');
+    disp('Neutral pos :'); fprintf('{%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i} ;\n',read_neutral_pos(recordID, parms.n_m));
 end
-fprintf('\n');
 
 disp ('scaling_amp_class1_forward :');
 fprintf('%.3f,',scaling_amp_class1_forward);

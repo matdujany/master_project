@@ -35,7 +35,7 @@ for k=1:n_twitches
     
     %learning done in int16_t for these records (*100 for more precision,
     %floats were too big).
-    if ismember(recordId,[111:115])
+    if ismember(recordId,[111:115 220])
         weights_robotis{k} = weights_robotis{k}/100;
     end
     

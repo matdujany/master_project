@@ -11,16 +11,63 @@
 //127 for starfish quadruped
 //134 for starfish hexapod
 //200 for starfish hexapod with new leg design
+//210 for hexapod with new leg design
+//220 for octopod with new leg design
 
 //when adding a new map,
 // add a case in initialize_hardcoded_limbs()
 // add a case in initialize_inverse_map_advanced_tegotae()
 // if needed, add a case in initialize_scaling_amp_class1()
 
-#ifdef do_locomotion
+
+#define DO_LOCOMOTION
+
+#ifdef DO_LOCOMOTION
 
 //dont forget to adapt TIME_INTERVAL_TWITCH and DELAY_UPDATE_DC_TEGOTAE
-#define MAP_USED 210
+#define MAP_USED 110
+
+//Octopod with new leg design : 220.
+std::vector<std::vector<uint8_t>> limbs_X_oct_2{
+{1, 2},
+{9, 10},
+{0, 4},
+{13, 14},
+{15, 8},
+{11, 12},
+{3, 5},
+{7, 6},
+};
+
+
+std::vector<std::vector<bool>> changeDirs_X_oct_2{
+{true,true},
+{true,true},
+{true,true},
+{true,true},
+{false,true},
+{false,true},
+{false,true},
+{false,false},
+};
+
+std::vector<bool>  changeDirs_Yaw_oct_2{false,false,false,false,false,false,false,false};
+
+float sigma_advanced_X_220 = 0.0865;// scaled for 50% of 0.5Hz
+std::vector<std::vector<float>> inverse_map_X_220{
+
+{-0.533, 0.571, 0.086, -0.118, -0.141, -0.050, 0.014, 0.171} ,
+{0.486, -1.000, 0.470, 0.055, -0.064, 0.051, -0.004, 0.033} ,
+{0.043, 0.344, -0.847, 0.439, 0.072, -0.046, 0.037, -0.046} ,
+{-0.087, 0.070, 0.486, -0.459, 0.070, 0.054, -0.027, -0.093} ,
+{-0.141, -0.040, 0.077, 0.092, -0.656, 0.622, 0.187, -0.144} ,
+{-0.065, 0.036, -0.025, 0.043, 0.503, -0.932, 0.375, 0.050} ,
+{0.003, -0.029, 0.056, -0.047, 0.079, 0.306, -0.786, 0.420} ,
+{0.159, 0.028, -0.057, -0.126, -0.138, 0.115, 0.554, -0.551}
+
+};
+uint16_t neutral_pos_220[16] = {511, 511, 507, 510, 508, 509, 516, 512, 509, 510, 506, 510, 507, 510, 508, 513};
+
 
 //Hexapod with new leg design : 210.
 std::vector<std::vector<uint8_t>> limbs_X_hex_2{
@@ -245,7 +292,7 @@ uint16_t neutral_pos_115[16] = {510,   506,   512,   498,   512,   519,   515,  
 
 //Hexapod section
 
-/*
+
 std::vector<std::vector<uint8_t>> limbs_X_6{
     {9,8},
     {0,6},
@@ -272,7 +319,7 @@ uint16_t neutral_pos_110[12] = //{510,   514,   512,   508,   510,   509,   513,
 float sigma_advanced_X_110 = 0.12;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_110{
 
-    /* 
+    //record 110
 {-0.490, 0.100, 0.227, -0.308, 0.074, 0.287} ,
 {0.428, -1.000, 0.550, -0.051, -0.002, 0.088} ,
 {0.134, 0.391, -0.697, 0.280, 0.264, -0.437} ,
@@ -280,7 +327,7 @@ std::vector<std::vector<float>> inverse_map_X_110{
 {0.036, 0.007, -0.097, 0.456, -0.786, 0.329} ,
 {0.214, 0.039, -0.294, 0.156, 0.209, -0.377} ,
 };
-*/
+
 
     
     //record 138
@@ -304,7 +351,7 @@ std::vector<std::vector<float>> inverse_map_X_110{
 
 };
 
-*/
+
 
 //Quadruped section
 /*

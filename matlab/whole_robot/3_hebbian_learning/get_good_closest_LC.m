@@ -23,7 +23,7 @@ switch parms.n_m
         if ismember(recordID,[68:91])
                 good_closest_LC = [4;4;3;3;6;6;5;5;1;1;2;2];
         end
-        if ismember(recordID,[107:110 138:143])
+        if ismember(recordID,[107:110 138:144])
            good_closest_LC = [2;4;4;3;3;5;2;5;1;1;6;6];
         end
         if ismember(recordID,[130:130])
@@ -46,8 +46,12 @@ switch parms.n_m
         if recordID == 94
             good_closest_LC = [1;4;4;3;3;8;8;2;1;2;7;7;5;5;6;6];
         end
-        if recordID >= 111
+        if ismember(recordID,[111:115])
            good_closest_LC = [2;5;5;6;6;3;3;7;2;7;4;4;1;1;8;8];
+        end
+        
+        if ismember(recordID,[220])
+           good_closest_LC = [3;1;1;7;3;7;8;8;5;2;2;6;6;4;4;5];
         end
     otherwise
         disp('unrecognized number of motors');

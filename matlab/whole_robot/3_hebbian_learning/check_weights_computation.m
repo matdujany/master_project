@@ -9,7 +9,7 @@ addpath('computing_functions');
 
 %% Load data
 
-record_list = 210;
+record_list = 220;
 max_dif_lc = zeros(1,length(record_list));
 max_dif_speed = zeros(1,length(record_list));
 max_dif_gyro = zeros(1,length(record_list));
