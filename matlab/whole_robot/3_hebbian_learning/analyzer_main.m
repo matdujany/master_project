@@ -12,13 +12,12 @@ addpath('class_detection_function');
 addpath('analysis_plot_function');
 
 %% Load data
-recordID = 144;
+recordID = 110;
 [data, lpdata, parms] =  load_data_processed(recordID);
 % [data, lpdata, parms] =  load_data_raw(recordID);
 
 % parms=add_parms(parms);
 weights_robotis = read_weights_robotis(recordID,parms);
-
 
 if recordID < 128
     weights_speed_all = compute_weights_speed(data,lpdata,parms);

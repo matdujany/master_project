@@ -227,6 +227,7 @@ void tegotae_bluetooth(){
   while (!Serial3.available());
   SerialUSB.println("Bluetooth connection found !");
   init_t_offset_oscillators();
+
   while (true){
     unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);  //the order of the 2 lines here matter a locomotion
     
@@ -320,11 +321,11 @@ void decrease_freq_bluetooth() {
 }
 
 void increase_sigma_adv_bluetooth() {
-  sigma_advanced += 0.01;
+  sigma_advanced += 0.2;
 }
 
 void decrease_sigma_adv_bluetooth() {
-  sigma_advanced -= 0.01;
+  sigma_advanced -= 0.2;
 }
 
 
@@ -776,17 +777,36 @@ void update_filter_tegotae(){
 
 void update_phi_tegotae()
 {
+  unsigned long t_current = millis() - t_offset_oscillators;
+
   if (USE_FILTER_TEGOTAE)
     update_filter_tegotae();
+
   for (int i=0; i<n_limb; i++){
+    //we store the old values before writing the new ones
+    if (USE_DERIVATIVE_TEGOTAE){
+      float delta_N_s;
+      delta_N_s = ser_rx_buf.last_loadcell_data_float[2 + i * 3] - N_s[i];
+      float delta_time = (t_current - t_last_phi_update);
+      N_s_derivative[i] = 100.0/delta_time * delta_N_s;
+      SerialUSB.print("Limb "); SerialUSB.print(i);
+      SerialUSB.print(" , GRF "); SerialUSB.print(ser_rx_buf.last_loadcell_data_float[2 + i * 3]);
+      SerialUSB.print(" , delta GRF "); SerialUSB.print(delta_N_s);
+      SerialUSB.print(" , delta time (ms) "); SerialUSB.print(delta_time);
+      SerialUSB.print(" , derivative "); SerialUSB.println(N_s_derivative[i]);
+    }
     N_s[i] = ser_rx_buf.last_loadcell_data_float[2 + i * 3]; //support is 3rd channel of loadcells
     N_p[i] = ser_rx_buf.last_loadcell_data_float[1 + i * 3]; //propulsion is Y channel of loadcells, (could be determined with the loadcell connection weights) 
   }
-  unsigned long t_current = millis() - t_offset_oscillators;
+
+
   for (int i=0; i<n_limb; i++){
 
     if (tegotae_advanced){
-      phi_dot[i] = advanced_tegotae_rule(i);
+      if (USE_DERIVATIVE_TEGOTAE)
+        phi_dot[i] = advanced_tegotae_rule_derivative(i);
+      else
+        phi_dot[i] = advanced_tegotae_rule(i);
     }
     else
     {
@@ -822,6 +842,22 @@ float simple_tegotae_rule(float phase, float ground_reaction_force, float propul
 
   return phi_dot;
 }
+
+
+float advanced_tegotae_rule_derivative(uint8_t i_limb){
+  float GRF_advanced_term = 0;
+  for (int j=0; j<n_limb; j++){
+    GRF_advanced_term += inverse_map[i_limb][j]*N_s_derivative[j];
+  }
+
+  if (phi[i_limb]<3*pi/2)
+    GRF_advanced_term = 0;
+  
+  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term;
+
+  return phi_dot;
+}
+
 
 float advanced_tegotae_rule(uint8_t i_limb){
   float GRF_advanced_term = 0;

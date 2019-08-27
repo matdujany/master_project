@@ -1,24 +1,29 @@
-//Code taken from : https://forum.arduino.cc/index.php?topic=173246.msg1766646#msg1766646
+// (mono joystick command - Joystick BT Commander)
+//Part of this code taken from : https://forum.arduino.cc/index.php?topic=173246.msg1766646#msg1766646
 // Version nAndroTest V2.0 - @kas2014\ndemo for V5.x App
 //I have made a few modifications to adapt it to the robot
 
-// make sure your BT board is set @BAUD_RATE_BLUE bps
+// The part of the code for double joystick command I made mysefl
+
+// make sure the BT board is set @BAUD_RATE_BLUE bps
 
 
 #define    STX          0x02
 #define    ETX          0x03
 #define    SLOW         750                            // Datafields refresh rate (ms)
-#define    FAST         250                             // Datafields refresh rate (ms)
+#define    FAST         250                            // Datafields refresh rate (ms)
 
-byte cmd[8] = {0, 0, 0, 0, 0, 0, 0, 0};                 // bytes received
-byte buttonStatus = 0;                                  // first Byte sent to Android device
-long previousMillis = 0;                                // will store last time Buttons status was updated
-long sendInterval = SLOW;                               // interval between Buttons status transmission (milliseconds)
-String displayStatus;                        // message to Android device
+//single joystick
+byte cmd[8] = {0, 0, 0, 0, 0, 0, 0, 0};                // bytes received
+byte buttonStatus = 0;                                 // first Byte sent to Android device
+long previousMillis = 0;                               // will store last time Buttons status was updated
+long sendInterval = SLOW;                              // interval between Buttons status transmission (milliseconds)
+String displayStatus;                                  // message to Android device
 unsigned long last_update_joystick = 0;
-int8_t joyX; //
+int8_t joyX;
 int8_t joyY;
 
+//double joystick
 uint8_t radiusL; //between 0 and 10
 uint8_t radiusR;
 uint8_t angleR; //between 0 and 35 (angle/10)
@@ -34,6 +39,9 @@ void setup_serial_bluetooth()  {
   SerialUSB.println("bluetoooth setup");
   displayStatus = String(sigma_advanced,4); 
 }
+
+
+/// DOUBLE JOYSTICK PART
 
 void getJoystickState2(byte data[6])    {
  radiusL = data[1];
@@ -74,6 +82,9 @@ void serial_read_bluetooth_2joysticks_main(){
 
   }
 }
+
+
+/// SINGLE JOYSTICK PART (Joystick BT COMMANDER)
 
 void serial_read_bluetooth_main() {
   if(Serial3.available())  {                           // data received from smartphone

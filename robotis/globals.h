@@ -110,6 +110,8 @@ unsigned long t_offset_oscillators   = 0;
 float phi[MAX_N_LIMB]             = {0};
 float phi_dot[MAX_N_LIMB]         = {0};
 float N_s[MAX_NR_ARDUINO] = {0}; //body support term for Tegotae
+float N_s_derivative[MAX_NR_ARDUINO] = {0}; //body support term for derivative Tegotae
+
 float N_p[MAX_NR_ARDUINO] = {0}; //body propulsion term for Tegotae.
 uint16_t goal_positions_tegotae[MAX_NR_SERVOS];
 float offset_class1[MAX_N_LIMB] = {0};

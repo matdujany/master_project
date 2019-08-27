@@ -85,6 +85,8 @@
 #define USE_FILTER_TEGOTAE               0
 #define FILTER_SIZE_TEGOTAE              3  //number of additional values stored, used for filtering only the GRF from LCs during the tegotae walking.
 
+#define USE_DERIVATIVE_TEGOTAE           1 // to use derivative formula in Tegotae instead
+
 /* ===================================================================================================================================== */
 
 /////////////////////////////////
@@ -99,7 +101,7 @@
 ///////////////////////////////
 
 #define MAX_DELAY_FRAME                  500     //for initializing the waiting time when the loadcell is discovered
-#define DELAY_GET_BYTE_MICROSECONDS      100     ///100 /this should not be needed 
+#define DELAY_GET_BYTE_MICROSECONDS      50     ///100 /this should not be needed 
 
 
 // Frame properties
