@@ -788,7 +788,7 @@ void update_phi_tegotae()
       float delta_N_s;
       delta_N_s = ser_rx_buf.last_loadcell_data_float[2 + i * 3] - N_s[i];
       float delta_time = (t_current - t_last_phi_update);
-      N_s_derivative[i] = 100.0/delta_time * delta_N_s;
+      N_s_derivative[i] = 1000.0/delta_time * delta_N_s;
       SerialUSB.print("Limb "); SerialUSB.print(i);
       SerialUSB.print(" , GRF "); SerialUSB.print(ser_rx_buf.last_loadcell_data_float[2 + i * 3]);
       SerialUSB.print(" , delta GRF "); SerialUSB.print(delta_N_s);
@@ -850,8 +850,8 @@ float advanced_tegotae_rule_derivative(uint8_t i_limb){
     GRF_advanced_term += inverse_map[i_limb][j]*N_s_derivative[j];
   }
 
-  if (phi[i_limb]<3*pi/2)
-    GRF_advanced_term = 0;
+  //if (phi[i_limb]<3*pi/2)
+  //  GRF_advanced_term = 0;
   
   float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term;
 
@@ -879,6 +879,8 @@ float advanced_tegotae_rule(uint8_t i_limb){
   }
 
   float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
+  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term;
+
   if (tegotae_propulsion)
   {
     phi_dot += - sigma_p * N_p[i_limb] * cos(phi[i_limb]);

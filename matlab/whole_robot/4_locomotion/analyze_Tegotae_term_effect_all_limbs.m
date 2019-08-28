@@ -1,7 +1,7 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 31;
+recordID = 130;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 n_limb = 6;
@@ -15,7 +15,6 @@ end
 if n_samples_phi == n_samples_GRF+1
     phi = pos_phi_data.limb_phi(:,2:end);
 end
-    
 
 % GRF = zeros(n_samples,n_limb);
 for i=1:n_limb

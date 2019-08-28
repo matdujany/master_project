@@ -9,8 +9,8 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 128;
-n_limb = 8;
+recordID = 129;
+n_limb = 6;
 
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
@@ -238,7 +238,7 @@ for i=1:n_limb
     yticks(pi*[y_min_delta_phase_range:y_max_delta_phase_range]);
     pi_label_lists = make_pi_label_lists(y_min_delta_phase_range,y_max_delta_phase_range);
     yticklabels(pi_label_lists);
-    ylim(pi*2*[-1 1] + 0.5*[-1 1]);
+    ylim(pi*4*[-1 1] + 0.5*[-1 1]);
     
     %     yticks(pi/2*[y_min_delta_phase_range:y_max_delta_phase_range]);
     %     pi_label_lists = {'-3/2\pi','-\pi','-1/2\pi','0','1/2\pi','\pi','3/2\pi'};
