@@ -789,11 +789,15 @@ void update_phi_tegotae()
       delta_N_s = ser_rx_buf.last_loadcell_data_float[2 + i * 3] - N_s[i];
       float delta_time = (t_current - t_last_phi_update);
       N_s_derivative[i] = 1000.0/delta_time * delta_N_s;
+
+      /*
       SerialUSB.print("Limb "); SerialUSB.print(i);
       SerialUSB.print(" , GRF "); SerialUSB.print(ser_rx_buf.last_loadcell_data_float[2 + i * 3]);
       SerialUSB.print(" , delta GRF "); SerialUSB.print(delta_N_s);
       SerialUSB.print(" , delta time (ms) "); SerialUSB.print(delta_time);
       SerialUSB.print(" , derivative "); SerialUSB.println(N_s_derivative[i]);
+      */
+
     }
     N_s[i] = ser_rx_buf.last_loadcell_data_float[2 + i * 3]; //support is 3rd channel of loadcells
     N_p[i] = ser_rx_buf.last_loadcell_data_float[1 + i * 3]; //propulsion is Y channel of loadcells, (could be determined with the loadcell connection weights) 
@@ -848,12 +852,13 @@ float advanced_tegotae_rule_derivative(uint8_t i_limb){
   float GRF_advanced_term = 0;
   for (int j=0; j<n_limb; j++){
     GRF_advanced_term += inverse_map[i_limb][j]*N_s_derivative[j];
+    //GRF_advanced_term += inverse_map[i_limb][j]*N_s[j];
   }
 
-  //if (phi[i_limb]<3*pi/2)
-  //  GRF_advanced_term = 0;
-  
-  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term;
+  //GRF_advanced_term = 0;
+  float phi_dot = 2 * pi * frequency + 0.1 * sigma_advanced * GRF_advanced_term;
+
+  //float phi_dot = 2 * pi * frequency + 0.1 * sigma_advanced * GRF_advanced_term * N_s_derivative[i_limb];
 
   return phi_dot;
 }
@@ -878,7 +883,16 @@ float advanced_tegotae_rule(uint8_t i_limb){
     GRF_advanced_term += inverse_map[i_limb][j]*grf_under_limb;
   }
 
-  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
+  int8_t square_correction = 1;
+  
+  //if (cos(phi[i_limb])<0)
+  //  square_correction = -1;
+  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * square_correction;
+
+  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * N_p[i_limb]*0.3;
+
+
+  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
   //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term;
 
   if (tegotae_propulsion)
@@ -1111,3 +1125,10 @@ void print_Tegotae_parameters_bluetooth(){
   SerialUSB.print("Frequency (in Hertz) : ");SerialUSB.println(frequency);
 }
 
+
+int sign(float number){
+  if (number>0) 
+    return 1;
+  else
+   return -1;
+}

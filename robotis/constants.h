@@ -85,7 +85,7 @@
 #define USE_FILTER_TEGOTAE               0
 #define FILTER_SIZE_TEGOTAE              3  //number of additional values stored, used for filtering only the GRF from LCs during the tegotae walking.
 
-#define USE_DERIVATIVE_TEGOTAE           1 // to use derivative formula in Tegotae instead
+#define USE_DERIVATIVE_TEGOTAE           0   // to use derivative formula in Tegotae instead
 
 /* ===================================================================================================================================== */
 

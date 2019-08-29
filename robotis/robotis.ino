@@ -65,14 +65,13 @@ void setup() {
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
   
-  
   //pose_stance_512();
   //delay(5000);
   //update_neutral_pos();
 
   //twitch_record_wrapper();
   
- 
+  SerialUSB.println("  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * N_p[i_limb]*0.3;");
   record_tegotae(180*1000);
   //record_tegotae_changes();
 

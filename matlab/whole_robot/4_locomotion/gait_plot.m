@@ -9,14 +9,31 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 129;
+% recordID = 108;
+% n_limb = 4;
+
+% recordID = 34;
+% n_limb = 6;
+
+% recordID = 50;
+% n_limb = 8;
+
+recordID = 134;
 n_limb = 6;
+
 
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 
 [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
 n_limb = size(limbs,1);
+
+n_samples_phi = size(pos_phi_data.limb_phi,2);
+n_samples_GRF = size(data.time,1);
+
+if abs(n_samples_phi-n_samples_GRF)>1
+    disp('Warning ! Number of samples dont agree');
+end
 
 % GRF = zeros(n_samples,n_limb);
 for i=1:n_limb
@@ -41,7 +58,7 @@ threshold_unloading = 0.2; %Fukuhuara, figure 6, stance if more than 20% of maxi
 %% plotting GRFs
 [limb_list_ordered,limb_names_ordered] = get_limb_list_names(n_limb,recordID);
 
-plot_propulsion = false;
+plot_propulsion = true;
 xlims = [110 120]; %% in secs
 f_GRF=figure;
 f_GRF.Color = 'w';

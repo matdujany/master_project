@@ -85,6 +85,7 @@ uint8_t n_changes_recording = 2;
 
 //float phi_init[4] = {3.14, 3.14, 3.14, 3.14};
 float phi_init[6] = {0, 0, 0, 0, 0, 0};
+//float phi_init[6] = {0, 2.09, 4.19, 0, 2.09, 4.19}; //bipod
 
 //float phi_init[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 //float phi_init[4] = {4.72, 1.60, 3.18, 4.39};

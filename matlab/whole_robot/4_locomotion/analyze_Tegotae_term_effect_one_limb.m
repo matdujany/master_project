@@ -5,13 +5,12 @@ addpath('../2_load_data_code');
 % recordID = 108; 
 % n_limb = 4;
 
-recordID = 130; 
-n_limb = 6;
+recordID = 129; %130; 
+n_limb = 4;
 
 
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
-[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
 [inverse_map,sigma_advanced] = get_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
 
 n_limb = size(limbs,1);
@@ -149,7 +148,9 @@ title(['Limb LC ' num2str(i_limb_plot)]);
 
 ax_compareN=gca();
 add_stance_patches_GRF(GRF(:,i_limb_plot),threshold_unloading,ax_compareN.YLim,time,'b');
-xlim([78 94]);
+linkaxes([ax_grf ax_Ncosphi ax_Ndot ax_compareN],'x');
+
+xlim([0 30]);
 
 
 %% comparing Tegotae terms with phase update
@@ -183,6 +184,7 @@ xlim([0 20]);
 
 %% comparing Tegotae terms
 figure;
+sgtitle(['Limb LC ' num2str(i_limb_plot)]);
 linewidth = 1.2;
 time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
 subplot(3,1,1);
@@ -229,9 +231,9 @@ xlim([78 94]);
 i_reference_leg = 2;
 ax_comp=zeros(6,1);
 figure;
-sgtitle(['Ref leg ' num2str(i_reference_leg)]);
+sgtitle(['Contributions to Advanced Tegotae Rule - Ref leg ' num2str(i_reference_leg)]);
 for i=1:n_limb
-    subplot(3,2,i);
+    subplot(n_limb/2,2,i);
     hold on;
     time = (data.time(:,i)-data.time(1,i))/10^3;
     plot(time,-GRF(:,i).*cos(phi(:,i_reference_leg)));
@@ -250,6 +252,8 @@ xlim([78 94]);
 
 %% comparing phi command position.
 %% plotting positions
+[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
+
 command_pos_c1 = phase2pos_wrapper(pos_phi_data.limb_phi(i_limb_plot,:)+pi/2,0,changeDir(i_limb_plot,1),parms_locomotion);
 command_pos_c2 = phase2pos_wrapper(pos_phi_data.limb_phi(i_limb_plot,:),1,changeDir(i_limb_plot,2),parms_locomotion);
 figure;
