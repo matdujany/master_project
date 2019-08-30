@@ -838,11 +838,30 @@ void update_phi_tegotae()
 
 
 float simple_tegotae_rule(float phase, float ground_reaction_force, float propulsion_force){
-  float phi_dot = 2 * pi * frequency - sigma_s * ground_reaction_force * cos(phase);
+  
+  int8_t binary_cos_sign = 1;
+  
+  if (cos(phase)<0)
+    binary_cos_sign = -1;
+
+  int8_t ground_reaction_force_binary = 0;
+
+  if (ground_reaction_force>1.5)
+      ground_reaction_force_binary = 1;
+
+  
+  
+  //float phi_dot = 2 * pi * frequency - sigma_s * ground_reaction_force * cos(phase);
+  //float phi_dot = 2 * pi * frequency - sigma_s * ground_reaction_force * binary_cos_sign;
+
+  float phi_dot = 2 * pi * frequency - sigma_s * 4 * ground_reaction_force_binary * binary_cos_sign;
+
   if (tegotae_propulsion)
   {
     phi_dot += - sigma_p * propulsion_force * cos(phase);
   }
+
+
 
   return phi_dot;
 }
@@ -866,9 +885,12 @@ float advanced_tegotae_rule_derivative(uint8_t i_limb){
 
 float advanced_tegotae_rule(uint8_t i_limb){
   float GRF_advanced_term = 0;
+  float GRF_advanced_term_binary = 0;
+
   for (int j=0; j<n_limb; j++){
 
     float grf_under_limb = N_s[j];
+    uint8_t grf_under_limb_binary = 0;
 
     if (USE_FILTER_TEGOTAE){
       for (int k=0; k<FILTER_SIZE_TEGOTAE; k++)
@@ -880,20 +902,37 @@ float advanced_tegotae_rule(uint8_t i_limb){
     //SerialUSB.print("Limb ");SerialUSB.print(j);
     //SerialUSB.print(" grf filtered :"); SerialUSB.println(grf_under_limb,4);
 
+    if (grf_under_limb>1.5)
+      grf_under_limb_binary = 1;
+
     GRF_advanced_term += inverse_map[i_limb][j]*grf_under_limb;
+    GRF_advanced_term_binary += inverse_map[i_limb][j]*grf_under_limb_binary;
+
   }
 
-  int8_t square_correction = 1;
+  int8_t binary_cos_sign = 1;
   
-  //if (cos(phi[i_limb])<0)
-  //  square_correction = -1;
-  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * square_correction;
-
-  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * N_p[i_limb]*0.3;
-
+  if (cos(phi[i_limb])<0)
+    binary_cos_sign = -1;
 
   //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
+  //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * cos(phi[i_limb]); //todo
+
   //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term;
+
+  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * binary_cos_sign;
+  //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * binary_cos_sign;
+
+  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * N_p[i_limb]*0.3;
+  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * (-N_p[i_limb]);
+  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * sign(N_p[i_limb]);
+  //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * sign(N_p[i_limb]);
+
+
+  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * sign(-N_s_derivative[i_limb]);
+  //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * sign(N_s_derivative[i_limb]);
+
+
 
   if (tegotae_propulsion)
   {

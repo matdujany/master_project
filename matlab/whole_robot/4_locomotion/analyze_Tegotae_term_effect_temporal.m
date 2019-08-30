@@ -6,14 +6,13 @@ addpath('../2_load_data_code');
 % n_limb = 4;
 
 recordID = 129; %130; 
-n_limb = 4;
+n_limb = 6;
 
 
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 [inverse_map,sigma_advanced] = get_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
 
-n_limb = size(limbs,1);
 n_samples_phi = size(pos_phi_data.limb_phi,2);
 n_samples_GRF = size(data.time,1);
 phi = pos_phi_data.limb_phi;

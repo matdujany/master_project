@@ -11,10 +11,10 @@ addpath('../2_load_data_code');
 % t_stop = 25;
 
 %%%% hexa
-recordID = 34; 
+recordID = 129; 
 n_limb = 6;
-t_start = 78;
-t_stop = 94;
+t_start = 0;
+t_stop = 30;
 
 %%%% octo
 % recordID = 50;
@@ -27,10 +27,6 @@ t_stop = 94;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 parms_locomotion.frequency = 0.5;
 
-[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
-[inverse_map,sigma_advanced] = get_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
-
-n_limb = size(limbs,1);
 n_samples_phi = size(pos_phi_data.limb_phi,2);
 n_samples_GRF = size(data.time,1);
 phi = pos_phi_data.limb_phi;
@@ -85,6 +81,10 @@ end
 
 
 %% computing Tegotae feedback terms values
+
+[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
+[inverse_map,sigma_advanced] = get_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
+
 GRF_advanced_term = (inverse_map*GRF')';
 advanced_Tegotae_term_split = zeros([size(GRF_advanced_term) n_limb]);
 
@@ -108,13 +108,15 @@ end
 max(max(abs(advanced_Tegotae-sum(advanced_Tegotae_term_split,3))))
 
 
-
-%% contributions limb to advanced Tegotae
+%% plotting parameters
 i_limb_plot = 2;
 time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
 [~,index_start] = min(abs(time-t_start));
 [~,index_stop] = min(abs(time-t_stop));
 dot_size = 15;
+
+%% contributions limb to advanced Tegotae
+
 figure;
 title(['Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
 hold on;
@@ -140,70 +142,95 @@ grid on;
 
 
 
-%% GRFs
+%% subplots 
+i_limb_plot = 2;
+
 figure;
+subplot(2,3,1);
+% GRFs
+plot_grf(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop);
+
+subplot(2,3,2);
+% Ncosphi
+plot_Ncosphi(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop);
+
+subplot(2,3,3);
+% Ndots
+plot_Ndots(i_limb_plot,phi,N_dot_filtered,index_start,index_stop,dot_size,t_start,t_stop);
+
+subplot(2,3,4);
+% N N_horz
+plot_N_Nhorz(i_limb_plot,phi,GRF,GRP,index_start,index_stop,dot_size,t_start,t_stop);
+
+subplot(2,3,5);
+% N N_dot_ref
+plot_N_signcosphi(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop);
+
+subplot(2,3,6);
+% N N_dot_ref
+plot_N_Ndotref(i_limb_plot,phi,GRF,N_dot_filtered,index_start,index_stop,dot_size,t_start,t_stop)
+
+%% functions
+function plot_grf(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop)
 title(['Reference for phase : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
 hold on;
-% scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),[],time(index_start:index_stop),'filled')
-
+n_limb = size(GRF,2);
 for i=1:n_limb
     scatter(phi(index_start:index_stop,i_limb_plot),GRF(index_start:index_stop,i),dot_size,'filled');
     legend_list{i} = ['GRF ' num2str(i)];
 end
-% scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),dot_size,'filled');
-% legend_list{5} = 'Phi dot - \omega';
-
-% scatter(phi(index_start:index_stop,i_limb_plot),simple_Tegotae(index_start:index_stop,i_limb_plot),dot_size,'filled');
-% legend_list{6} = 'Simple Tegotae';
-
 legend(legend_list);
 xlabel('\phi_{ref}');
 xticks(pi/2*[0:4]);
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-ylim([-1 9]);
+ylim([-1 10]);
 ylabel('GRF [N]');
 grid on;
+end
 
-%% Ncosphi
-figure;
+function plot_Ncosphi(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop)
 title(['Reference for phase : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
 hold on;
-% scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),[],time(index_start:index_stop),'filled')
-
+n_limb = size(GRF,2);
 for i=1:n_limb
     scatter(phi(index_start:index_stop,i_limb_plot),GRF(index_start:index_stop,i).*cos(phi(index_start:index_stop,i_limb_plot)),dot_size,'filled');
     legend_list{i} = ['Limb ' num2str(i)];
 end
-% scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),dot_size,'filled');
-% legend_list{5} = 'Phi dot - \omega';
-
-% scatter(phi(index_start:index_stop,i_limb_plot),simple_Tegotae(index_start:index_stop,i_limb_plot),dot_size,'filled');
-% legend_list{6} = 'Simple Tegotae';
-
-legend(legend_list);
+legend(legend_list,'Location','southeast');
 xticks(pi/2*[0:4]);
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 xlabel('\phi_{ref}');
-ylim(6*[-1 1]);
+ylim(10*[-1 1]);
 ylabel('Ncos(\phi_{ref}) [N]');
 grid on;
+end
 
-%% N_dots
-figure;
+function plot_N_signcosphi(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop)
 title(['Reference for phase : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
 hold on;
-% scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),[],time(index_start:index_stop),'filled')
+n_limb = size(GRF,2);
+for i=1:n_limb
+    scatter(phi(index_start:index_stop,i_limb_plot),GRF(index_start:index_stop,i).*sign(cos(phi(index_start:index_stop,i_limb_plot))),dot_size,'filled');
+    legend_list{i} = ['Limb ' num2str(i)];
+end
+legend(legend_list,'Location','southeast');
+xticks(pi/2*[0:4]);
+xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
+xlabel('\phi_{ref}');
+ylim(10*[-1 1]);
+ylabel('Nsign(cos(\phi_{ref})) [N]');
+grid on;
+end
 
+function plot_Ndots(i_limb_plot,phi,N_dot_filtered,index_start,index_stop,dot_size,t_start,t_stop)
+
+title(['Reference for phase : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
+hold on;
+n_limb = size(N_dot_filtered,2);
 for i=1:n_limb
     scatter(phi(index_start:index_stop,i_limb_plot),N_dot_filtered(index_start:index_stop,i),dot_size,'filled');
     legend_list{i} = ['Limb ' num2str(i)];
 end
-% scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),dot_size,'filled');
-% legend_list{5} = 'Phi dot - \omega';
-
-% scatter(phi(index_start:index_stop,i_limb_plot),simple_Tegotae(index_start:index_stop,i_limb_plot),dot_size,'filled');
-% legend_list{6} = 'Simple Tegotae';
-
 legend(legend_list);
 xticks(pi/2*[0:4]);
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
@@ -211,52 +238,40 @@ xlabel('\phi_{ref}');
 ylim(20*[-1 1]);
 ylabel('N dot filtered [N/s]');
 grid on;
+end
 
-%% N N_horz
-figure;
-title(['Reference for phase and N_horz : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
+function plot_N_Nhorz(i_limb_plot,phi,GRF,GRP,index_start,index_stop,dot_size,t_start,t_stop)
+title(['Reference for phase and N horz : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
 hold on;
-% scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),[],time(index_start:index_stop),'filled')
-
+n_limb = size(GRF,2);
 for i=1:n_limb
     scatter(phi(index_start:index_stop,i_limb_plot),GRF(index_start:index_stop,i).*GRP(index_start:index_stop,i_limb_plot),dot_size,'filled');
     legend_list{i} = ['Limb ' num2str(i)];
 end
-% scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),dot_size,'filled');
-% legend_list{5} = 'Phi dot - \omega';
-
-% scatter(phi(index_start:index_stop,i_limb_plot),simple_Tegotae(index_start:index_stop,i_limb_plot),dot_size,'filled');
-% legend_list{6} = 'Simple Tegotae';
 
 legend(legend_list);
 xticks(pi/2*[0:4]);
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 xlabel('\phi_{ref}');
 ylim(20*[-1 1]);
-ylabel('N dot filtered [N/s]');
+ylabel('N * N horz_{ref} [N/s]');
 grid on;
+end
 
-%% N N_dot_ref
-
-figure;
+function plot_N_Ndotref(i_limb_plot,phi,GRF,N_dot_filtered,index_start,index_stop,dot_size,t_start,t_stop)
 title(['Reference for phase and N dot: Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
 hold on;
-% scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),[],time(index_start:index_stop),'filled')
-
+n_limb = size(GRF,2);
 for i=1:n_limb
     scatter(phi(index_start:index_stop,i_limb_plot),-N_dot_filtered(index_start:index_stop,i_limb_plot).*GRF(index_start:index_stop,i),dot_size,'filled');
     legend_list{i} = ['Limb ' num2str(i)];
 end
-% scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),dot_size,'filled');
-% legend_list{5} = 'Phi dot - \omega';
 
-% scatter(phi(index_start:index_stop,i_limb_plot),simple_Tegotae(index_start:index_stop,i_limb_plot),dot_size,'filled');
-% legend_list{6} = 'Simple Tegotae';
-
-legend(legend_list);
+legend(legend_list,'Location','southeast');
 xticks(pi/2*[0:4]);
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 xlabel('\phi_{ref}');
 ylim(80*[-1 1]);
 ylabel('-N * N dot filtered ref [N^2/s]');
 grid on;
+end
