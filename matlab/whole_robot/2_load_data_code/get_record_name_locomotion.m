@@ -278,7 +278,25 @@ switch recordId
         record_name = 'tegotae_advanced_binaryN_110_X_2019-8-30-14_39_28';                     
     case 139
         record_name = 'tegotae_advanced_binaryNdot_110_X_2019-8-30-15_13_53';                     
-                         
+    case 140
+        record_name = 'tegotae_simple_binarycos_quad_2019-9-3-18_2_7';                     
+    case 141
+        record_name = 'quad_hardcoded_inphase_2019-9-3-18_6_58';                     
+    case 142
+        record_name = 'tegotae_advanced_GRFref_110_X_2019-9-4-10_47_12';                     
+    case 143
+        record_name = 'tegotae_simpleGRFref_X_2019-9-4-14_53_22';                     
+    case 144
+        record_name = 'hardcoded_LS_quad_X_2019-9-4-15_1_44';                     
+    case 145
+        record_name = 'tegotae_advanced_GRFref_110_X_2019-9-5-11_17_33';                     
+    case 146
+        record_name = 'tegotae_advanced_110_X_2019-9-5-16_38_30';                     
+    case 147
+        record_name = 'tegotae_advanced_110_X_2019-9-5-16_45_11';                     
+    case 148
+        record_name = 'tegotae_advanced_110_X_2019-9-5-16_54_28';                                                                                                            
+                                                                                                     
                            
     otherwise
         disp('unknown recordID for locomotion');

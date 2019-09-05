@@ -20,7 +20,7 @@ switch n_limb
             changeDir = [changeDir_C1 changeDir_C2];
             real_servo_ids = [4:7    15:18];
         end
-        if ismember(recordID,[26:30 105:113])
+        if ismember(recordID,[26:30 105:113  140:144])
             switch parms_locomotion.direction
                 case 'X'
                     limb_ids = 1 + [5 4; 3 2; 1 0; 7 6];

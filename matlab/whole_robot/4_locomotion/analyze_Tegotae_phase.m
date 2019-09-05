@@ -11,10 +11,10 @@ addpath('../2_load_data_code');
 % t_stop = 25;
 
 %%%% hexa
-recordID = 129; 
+recordID = 34; %139: n dot %132 hardcoded bipod
 n_limb = 6;
-t_start = 0;
-t_stop = 30;
+t_start = 56;
+t_stop = 70;
 
 %%%% octo
 % recordID = 50;
@@ -22,6 +22,8 @@ t_stop = 30;
 % n_limb = 8;
 % t_start = 60;
 % t_stop = 76;
+
+compute_tegotae_advanced = true;
 
 %%
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
@@ -79,35 +81,6 @@ for i=1:n_limb
 
 end
 
-
-%% computing Tegotae feedback terms values
-
-[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
-[inverse_map,sigma_advanced] = get_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
-
-GRF_advanced_term = (inverse_map*GRF')';
-advanced_Tegotae_term_split = zeros([size(GRF_advanced_term) n_limb]);
-
-for i_limb_contrib=1:n_limb
-    for i_limb_controlled=1:n_limb
-        advanced_Tegotae_term_split(:,i_limb_controlled,i_limb_contrib) = ...
-            sigma_advanced *inverse_map(i_limb_controlled,i_limb_contrib)*GRF(:,i_limb_contrib) .*cos(phi(:,i_limb_controlled));
-    end
-end
-
-for i=1:n_limb
-    simple_Tegotae(:,i) = -0.1*GRF(:,i).*cos(phi(:,i));
-    advanced_Tegotae(:,i) = sigma_advanced * GRF_advanced_term(:,i) .*cos(phi(:,i));
-%     advanced_Tegotae_without_cos(:,i) = sigma_advanced * GRF_advanced_term(:,i);
-end
-
-% advanced_Tegotae_dot = sigma_advanced*(inverse_map*N_dot')';
-% advanced_Tegotae_dot_filtered = sigma_advanced*(inverse_map*N_dot_filtered')';
-
-
-max(max(abs(advanced_Tegotae-sum(advanced_Tegotae_term_split,3))))
-
-
 %% plotting parameters
 i_limb_plot = 2;
 time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
@@ -115,23 +88,28 @@ time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
 [~,index_stop] = min(abs(time-t_stop));
 dot_size = 15;
 
-%% contributions limb to advanced Tegotae
 
+%% computing Tegotae feedback terms values
+
+if compute_tegotae_advanced
+    
+[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
+[inverse_map,sigma_advanced] = get_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
+
+[simple_Tegotae, advanced_Tegotae, advanced_Tegotae_term_split] = compute_GRF_advanced_split(GRF,phi,inverse_map,sigma_advanced);
+max(max(abs(advanced_Tegotae-sum(advanced_Tegotae_term_split,3))))
+
+
+%% contributions limb to advanced Tegotae
 figure;
 title(['Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
 hold on;
-% scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),[],time(index_start:index_stop),'filled')
-
 for i=1:n_limb
     scatter(phi(index_start:index_stop,i_limb_plot),advanced_Tegotae_term_split(index_start:index_stop,i_limb_plot,i),dot_size,'filled');
     legend_list{i} = ['Contribution limb ' num2str(i)];
 end
 scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),dot_size,'k','filled');
 legend_list{n_limb+1} = 'Phi dot - \omega';
-
-% scatter(phi(index_start:index_stop,i_limb_plot),simple_Tegotae(index_start:index_stop,i_limb_plot),dot_size,'filled');
-% legend_list{6} = 'Simple Tegotae';
-
 legend(legend_list);
 xticks(pi/2*[0:4]);
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
@@ -140,7 +118,7 @@ xlabel('\phi_{ref}');
 ylim(1.1*[-1 1]);
 grid on;
 
-
+end
 
 %% subplots 
 i_limb_plot = 2;

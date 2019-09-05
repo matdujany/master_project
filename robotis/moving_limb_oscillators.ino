@@ -814,7 +814,7 @@ void update_phi_tegotae()
     }
     else
     {
-      phi_dot[i] = simple_tegotae_rule(phi[i],N_s[i],N_p[i]);
+      phi_dot[i] = simple_tegotae_rule(phi[i],N_s[i],N_p[i],i);
     }
 
     //increase in phase only if the locomotion weights are non 0
@@ -837,7 +837,7 @@ void update_phi_tegotae()
 }
 
 
-float simple_tegotae_rule(float phase, float ground_reaction_force, float propulsion_force){
+float simple_tegotae_rule(float phase, float ground_reaction_force, float propulsion_force, uint8_t i_limb){
   
   int8_t binary_cos_sign = 1;
   
@@ -854,7 +854,10 @@ float simple_tegotae_rule(float phase, float ground_reaction_force, float propul
   //float phi_dot = 2 * pi * frequency - sigma_s * ground_reaction_force * cos(phase);
   //float phi_dot = 2 * pi * frequency - sigma_s * ground_reaction_force * binary_cos_sign;
 
-  float phi_dot = 2 * pi * frequency - sigma_s * 4 * ground_reaction_force_binary * binary_cos_sign;
+  //float phi_dot = 2 * pi * frequency - sigma_s * (ground_reaction_force - GRF_ref[i_limb]) * binary_cos_sign;
+  float phi_dot = 2 * pi * frequency;
+
+  //float phi_dot = 2 * pi * frequency - sigma_s * 4 * ground_reaction_force_binary * binary_cos_sign;
 
   if (tegotae_propulsion)
   {
@@ -882,10 +885,10 @@ float advanced_tegotae_rule_derivative(uint8_t i_limb){
   return phi_dot;
 }
 
-
 float advanced_tegotae_rule(uint8_t i_limb){
   float GRF_advanced_term = 0;
   float GRF_advanced_term_binary = 0;
+
 
   for (int j=0; j<n_limb; j++){
 
@@ -905,7 +908,17 @@ float advanced_tegotae_rule(uint8_t i_limb){
     if (grf_under_limb>1.5)
       grf_under_limb_binary = 1;
 
-    GRF_advanced_term += inverse_map[i_limb][j]*grf_under_limb;
+    /*
+    float grf_ref_func = 0;
+    if (phi[j]>pi)
+      //grf_ref_func = GRF_ref[j] * sin(phi[j]-pi);
+      grf_ref_func = GRF_ref[j] * abs(sin(2*phi[j]));
+    GRF_advanced_term += inverse_map[i_limb][j] * (grf_under_limb-grf_ref_func);
+    */
+
+    GRF_advanced_term += inverse_map[i_limb][j]*(grf_under_limb - GRF_ref[j]);
+    //GRF_advanced_term += inverse_map[i_limb][j]*grf_under_limb;
+
     GRF_advanced_term_binary += inverse_map[i_limb][j]*grf_under_limb_binary;
 
   }
@@ -915,7 +928,8 @@ float advanced_tegotae_rule(uint8_t i_limb){
   if (cos(phi[i_limb])<0)
     binary_cos_sign = -1;
 
-  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
+  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
+
   //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * cos(phi[i_limb]); //todo
 
   //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term;
@@ -924,7 +938,7 @@ float advanced_tegotae_rule(uint8_t i_limb){
   //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * binary_cos_sign;
 
   //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * N_p[i_limb]*0.3;
-  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * (-N_p[i_limb]);
+  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * (-N_p[i_limb]);
   //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * sign(N_p[i_limb]);
   //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * sign(N_p[i_limb]);
 
@@ -932,6 +946,7 @@ float advanced_tegotae_rule(uint8_t i_limb){
   //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * sign(-N_s_derivative[i_limb]);
   //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * sign(N_s_derivative[i_limb]);
 
+  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * binary_cos_sign;
 
 
   if (tegotae_propulsion)
@@ -1140,6 +1155,8 @@ void print_locomotion_parameters(){
     SerialUSB.println(tegotae_propulsion);
     SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p :"); SerialUSB.println(sigma_p);
   }
+
+  print_GRF_ref();
 }
 
 
@@ -1164,6 +1181,14 @@ void print_Tegotae_parameters_bluetooth(){
   SerialUSB.print("Frequency (in Hertz) : ");SerialUSB.println(frequency);
 }
 
+void print_GRF_ref(){
+  SerialUSB.print("GRF ref : ");
+  for (uint8_t i=0; i<n_limb; i++){
+    SerialUSB.print(GRF_ref[i],3);
+    SerialUSB.print(" ");
+  }
+  SerialUSB.println();
+}
 
 int sign(float number){
   if (number>0) 

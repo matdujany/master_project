@@ -71,8 +71,8 @@ void setup() {
 
   //twitch_record_wrapper();
   
-  SerialUSB.println("sigma_advanced * GRF_advanced_term * (-N_p[i_limb]*0.3);");
-  record_tegotae(120*1000);
+  SerialUSB.println("advanced with cos phi, empty diagonal");
+  record_tegotae(240*1000);
   //record_tegotae_changes();
 
   //record_tegotae_leg_amputated_Serial3(600*1000);

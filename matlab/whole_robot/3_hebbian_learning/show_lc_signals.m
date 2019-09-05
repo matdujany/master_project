@@ -2,6 +2,8 @@ clear;
 close all; clc;
 
 addpath('learning_functions');
+addpath('hinton_plot_functions');
+
 addpath('../2_load_data_code');
 addpath('../plotting_functions');
 
