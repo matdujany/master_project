@@ -1,7 +1,6 @@
-function [delta_phases] = compute_delta_phases(pos_phi_data)
+function [delta_phases] = compute_delta_phases(phi)
 %COMPUTE_DELTA_PHASES Summary of this function goes here
 %   Detailed explanation goes here
-phi = pos_phi_data.limb_phi;
 n_limb = size(phi,1);
 delta_phases = zeros(n_limb,n_limb,size(phi,2));
 

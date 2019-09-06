@@ -1,6 +1,12 @@
-function [f_GRF,ax_grf] = plot_GRF(GRF,data,threshold_unloading,n_limb,recordID)
+function [f_GRF,ax_grf] = plot_GRF(GRF,time_limbs,threshold_unloading,recordID)
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
+
+n_limb = size(GRF,2);
+
+if size(time_limbs,2)==1
+    time_limbs = repmat(time_limbs,1,n_limb);
+end
 
 fontSize = 14;
 fontSizeTicks = 12;
@@ -18,7 +24,8 @@ for i=1:n_limb
     subplot(n_limb/2,2,index_subplots(i));
     hold on;
     i_limb_plot = limb_list_ordered(i);
-    time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
+    time = time_limbs(:,i_limb_plot);
+%     time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
     plot([time(1) time(end)],[value_unloading(i_limb_plot) value_unloading(i_limb_plot)],'k--');
     plot(time, GRF(:,i_limb_plot));
     ylabel('Z Load [N]');

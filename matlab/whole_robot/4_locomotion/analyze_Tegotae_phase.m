@@ -5,16 +5,16 @@ addpath('../2_load_data_code');
 
 %% use gait plot to pick t start and t stop
 %%%%% quad
-% recordID = 108; 
-% n_limb = 4;
-% t_start = 15;
-% t_stop = 25;
+recordID = 108; 
+n_limb = 4;
+t_start = 15;
+t_stop = 25;
 
 %%%% hexa
-recordID = 34; %139: n dot %132 hardcoded bipod
-n_limb = 6;
-t_start = 56;
-t_stop = 70;
+% recordID = 34; %139: n dot %132 hardcoded bipod
+% n_limb = 6;
+% t_start = 56;
+% t_stop = 70;
 
 %%%% octo
 % recordID = 50;
@@ -94,7 +94,7 @@ dot_size = 15;
 if compute_tegotae_advanced
     
 [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
-[inverse_map,sigma_advanced] = get_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
+[inverse_map,sigma_advanced] = load_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
 
 [simple_Tegotae, advanced_Tegotae, advanced_Tegotae_term_split] = compute_GRF_advanced_split(GRF,phi,inverse_map,sigma_advanced);
 max(max(abs(advanced_Tegotae-sum(advanced_Tegotae_term_split,3))))
@@ -126,7 +126,7 @@ i_limb_plot = 2;
 figure;
 subplot(2,3,1);
 % GRFs
-plot_grf(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop);
+plot_grf_phase(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop);
 
 subplot(2,3,2);
 % Ncosphi
@@ -147,109 +147,3 @@ plot_N_signcosphi(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_
 subplot(2,3,6);
 % N N_dot_ref
 plot_N_Ndotref(i_limb_plot,phi,GRF,N_dot_filtered,index_start,index_stop,dot_size,t_start,t_stop)
-
-%% functions
-function plot_grf(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop)
-title(['Reference for phase : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
-hold on;
-n_limb = size(GRF,2);
-for i=1:n_limb
-    scatter(phi(index_start:index_stop,i_limb_plot),GRF(index_start:index_stop,i),dot_size,'filled');
-    legend_list{i} = ['GRF ' num2str(i)];
-end
-legend(legend_list);
-xlabel('\phi_{ref}');
-xticks(pi/2*[0:4]);
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-ylim([-1 10]);
-ylabel('GRF [N]');
-grid on;
-end
-
-function plot_Ncosphi(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop)
-title(['Reference for phase : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
-hold on;
-n_limb = size(GRF,2);
-for i=1:n_limb
-    scatter(phi(index_start:index_stop,i_limb_plot),GRF(index_start:index_stop,i).*cos(phi(index_start:index_stop,i_limb_plot)),dot_size,'filled');
-    legend_list{i} = ['Limb ' num2str(i)];
-end
-legend(legend_list,'Location','southeast');
-xticks(pi/2*[0:4]);
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-xlabel('\phi_{ref}');
-ylim(10*[-1 1]);
-ylabel('Ncos(\phi_{ref}) [N]');
-grid on;
-end
-
-function plot_N_signcosphi(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop)
-title(['Reference for phase : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
-hold on;
-n_limb = size(GRF,2);
-for i=1:n_limb
-    scatter(phi(index_start:index_stop,i_limb_plot),GRF(index_start:index_stop,i).*sign(cos(phi(index_start:index_stop,i_limb_plot))),dot_size,'filled');
-    legend_list{i} = ['Limb ' num2str(i)];
-end
-legend(legend_list,'Location','southeast');
-xticks(pi/2*[0:4]);
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-xlabel('\phi_{ref}');
-ylim(10*[-1 1]);
-ylabel('Nsign(cos(\phi_{ref})) [N]');
-grid on;
-end
-
-function plot_Ndots(i_limb_plot,phi,N_dot_filtered,index_start,index_stop,dot_size,t_start,t_stop)
-
-title(['Reference for phase : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
-hold on;
-n_limb = size(N_dot_filtered,2);
-for i=1:n_limb
-    scatter(phi(index_start:index_stop,i_limb_plot),N_dot_filtered(index_start:index_stop,i),dot_size,'filled');
-    legend_list{i} = ['Limb ' num2str(i)];
-end
-legend(legend_list);
-xticks(pi/2*[0:4]);
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-xlabel('\phi_{ref}');
-ylim(20*[-1 1]);
-ylabel('N dot filtered [N/s]');
-grid on;
-end
-
-function plot_N_Nhorz(i_limb_plot,phi,GRF,GRP,index_start,index_stop,dot_size,t_start,t_stop)
-title(['Reference for phase and N horz : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
-hold on;
-n_limb = size(GRF,2);
-for i=1:n_limb
-    scatter(phi(index_start:index_stop,i_limb_plot),GRF(index_start:index_stop,i).*GRP(index_start:index_stop,i_limb_plot),dot_size,'filled');
-    legend_list{i} = ['Limb ' num2str(i)];
-end
-
-legend(legend_list);
-xticks(pi/2*[0:4]);
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-xlabel('\phi_{ref}');
-ylim(20*[-1 1]);
-ylabel('N * N horz_{ref} [N/s]');
-grid on;
-end
-
-function plot_N_Ndotref(i_limb_plot,phi,GRF,N_dot_filtered,index_start,index_stop,dot_size,t_start,t_stop)
-title(['Reference for phase and N dot: Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
-hold on;
-n_limb = size(GRF,2);
-for i=1:n_limb
-    scatter(phi(index_start:index_stop,i_limb_plot),-N_dot_filtered(index_start:index_stop,i_limb_plot).*GRF(index_start:index_stop,i),dot_size,'filled');
-    legend_list{i} = ['Limb ' num2str(i)];
-end
-
-legend(legend_list,'Location','southeast');
-xticks(pi/2*[0:4]);
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-xlabel('\phi_{ref}');
-ylim(80*[-1 1]);
-ylabel('-N * N dot filtered ref [N^2/s]');
-grid on;
-end

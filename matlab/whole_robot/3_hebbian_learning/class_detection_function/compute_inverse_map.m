@@ -1,4 +1,4 @@
-function inv_map = get_inverse_map(weights_lc_fused,motors_class_c2,parms)
+function inv_map = compute_inverse_map(weights_lc_fused,motors_class_c2,parms)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 

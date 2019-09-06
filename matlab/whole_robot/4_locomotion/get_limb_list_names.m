@@ -3,13 +3,16 @@ function [limb_list_ordered,limb_names_ordered] = get_limb_list_names(n_limb,rec
 %   Detailed explanation goes here
 switch n_limb
     case 4
+        %normal quadruped
         limb_list_ordered = [3; 4; 2 ;1];
         limb_names_ordered= {'L1','L2','R1','R2'};
+        %starfish quadruped
         if ismember(recordID,[70:104 115:120])
             limb_list_ordered = [2; 4; 1 ;3];
             limb_names_ordered= {'F','B','R','L'};
         end
     case 6
+        %hexapod
         limb_list_ordered = [4; 5; 6; 3; 2; 1];
         limb_names_ordered= {'L1','L2','L3','R1','R2','R3'};
     case 8

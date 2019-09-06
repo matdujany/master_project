@@ -13,9 +13,10 @@ n_limb = 6;
 
 %%
 phi = pos_phi_data.limb_phi;
-delta_phases = compute_delta_phases(pos_phi_data);
+time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
+delta_phases = compute_delta_phases(phi);
 
-[f_delta_phases,ax_delta_phases] = plot_delta_phases(pos_phi_data,delta_phases,recordID);
+[f_delta_phases,ax_delta_phases] = plot_delta_phases(time,delta_phases,recordID);
 
 %%
 
@@ -41,4 +42,11 @@ for k=1:n_limb
     end
 end
 
-[f_psi_dot,ax_psi_dot] = plot_delta_phases(pos_phi_data,psi_dot_time,recordID);
+[f_psi_dot,ax_psi_dot] = plot_delta_phases(time,psi_dot_time,recordID);
+
+%%
+
+for i_limb_ref_phase=1:6
+    fun = @(psi)sys_eqn(psi,inverse_map,i_limb_ref_phase);
+    sum(fun(psi(:,i_limb_ref_phase)).^2)
+end

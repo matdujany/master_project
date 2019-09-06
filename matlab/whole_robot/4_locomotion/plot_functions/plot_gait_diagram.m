@@ -1,4 +1,4 @@
-function [f_gait,ax_gait] = plot_gait_diagram(GRF,data,threshold_unloading,recordID)
+function [f_gait,ax_gait] = plot_gait_diagram(GRF,time_limbs,threshold_unloading,recordID)
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -10,6 +10,10 @@ xlims  = [0 60];
 n_limb = size(GRF,2);
 [limb_list_gait_diagram,limb_names_gait_diagram] = get_limb_list_names_gait_diagram(n_limb,recordID);
 
+if size(time_limbs,2)==1
+    time_limbs = repmat(time_limbs,1,n_limb);
+end
+
 color_list = lines(n_limb);
 if n_limb == 8
     color_list(n_limb,:) = [0.25, 0.25, 0.25];
@@ -20,7 +24,7 @@ f_gait.Color = 'w';
 for i=1:n_limb
     i_limb_plot = limb_list_gait_diagram(i);
     [idx_start_stance,idx_stop_stance] = determine_start_stop_stance(GRF(:,i_limb_plot),threshold_unloading);
-    time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
+    time = time_limbs(:,i);
     for k=1:length(idx_start_stance)
         y_patch = 1 + n_limb - i + 0.25*[-1 -1 1 1];
         x_patch = [idx_start_stance(k) idx_stop_stance(k) idx_stop_stance(k) idx_start_stance(k)];

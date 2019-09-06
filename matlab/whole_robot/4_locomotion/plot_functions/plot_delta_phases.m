@@ -1,10 +1,10 @@
-function [f_delta_phases,ax_delta_phases] = plot_delta_phases(pos_phi_data,delta_phases,recordID)
+function [f_delta_phases,ax_delta_phases] = plot_delta_phases(time,delta_phases,recordID)
 
 fontSize = 14;
 fontSizeTicks = 12;
 lineWidth = 1.5;
 xlims  = [0 60];
-n_limb = size(pos_phi_data.limb_phi,1);
+n_limb = size(delta_phases,1);
 [limb_list_ordered,limb_names_ordered] = get_limb_list_names(n_limb,recordID);
 [limb_list_gait_diagram,limb_names_gait_diagram] = get_limb_list_names_gait_diagram(n_limb,recordID);
 
@@ -19,7 +19,7 @@ index_subplots = reshape(1:n_limb, 2, n_limb/2).';
 ax_delta_phases = zeros(n_limb,1);
 for i=1:n_limb
     ax_delta_phases(i,1) = subplot(n_limb/2,2,index_subplots(i));
-    time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
+%     time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
     hold on;
     legend_list = cell(n_limb-1,1);
     count = 1;

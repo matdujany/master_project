@@ -22,8 +22,8 @@ n_limb = 6;
 % recordID = 34;
 % n_limb = 6;
 
-% recordID = 142;
-% n_limb = 4;
+recordID = 142;
+n_limb = 4;
 
 
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
@@ -60,10 +60,11 @@ threshold_unloading = 0.2; %Fukuhuara, figure 6, stance if more than 20% of maxi
 [value_unloading,max_value_GRF_limb] = determine_value_unloading(GRF,threshold_unloading);
 
 %% plotting GRFs
-[f_GRF,ax_grf] = plot_GRF(GRF,data,threshold_unloading,n_limb,recordID);
+time = (data.time(:,:)-data.time(1,:))/10^3;
+[f_GRF,ax_grf] = plot_GRF(GRF,time,threshold_unloading,recordID);
 
 %% gait diagramm
-[f_gait,ax_gait] = plot_gait_diagram(GRF,data,threshold_unloading,recordID);
+[f_gait,ax_gait] = plot_gait_diagram(GRF,time,threshold_unloading,recordID);
 
 %% phases
 [f_phase,ax_phase] = plot_phases(pos_phi_data,recordID);
@@ -78,10 +79,20 @@ ax_total_load.FontSize = fontSizeTicks;
 
 set(zoom(f_total_load),'Motion','horizontal');
 
-%% delta phases
-delta_phases = compute_delta_phases(pos_phi_data);
+figure;
+subplot(1,2,1);
+title('Load on the right');
+plot(sum(GRF(:,1:n_limb/2),2));
+subplot(1,2,2);
+title('Load on the left');
+plot(sum(GRF(:,n_limb/2+1:end),2));
 
-[f_delta_phases,ax_delta_phases] = plot_delta_phases(pos_phi_data,delta_phases,recordID);
+%% delta phases
+phi = pos_phi_data.limb_phi;
+delta_phases = compute_delta_phases(phi);
+time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
+[f_delta_phases,ax_delta_phases] = plot_delta_phases(time,delta_phases,recordID);
+
 %%
 linkaxes([ax_grf;ax_gait;ax_phase;ax_total_load; ax_delta_phases],'x');
 xlim([0 120]);

@@ -109,6 +109,6 @@ figure;
 plot(time,simple_Tegotae(:,i_limb_plot));
 
 figure;
-plot(time,abs(advanced_Tegotae(:,i_limb_plot)));
+plot(time,advanced_Tegotae(:,i_limb_plot));
 
 

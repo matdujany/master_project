@@ -1,6 +1,6 @@
-function total_load = get_total_load(recordID,parms)
+function total_load = get_total_load(recordID,n_m)
 
-switch parms.n_m
+switch n_m
     case 8
         if recordID < 103
             total_load = 16;

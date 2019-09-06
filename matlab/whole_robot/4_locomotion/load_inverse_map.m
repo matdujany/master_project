@@ -1,4 +1,4 @@
-function [inverse_map,sigma_advanced] = get_inverse_map(direction,id_map_used)
+function [inverse_map,sigma_advanced] = load_inverse_map(direction,id_map_used)
 %GET_INVERSE_MAP Summary of this function goes here
 %   Detailed explanation goes here
 
