@@ -12,6 +12,8 @@ recordID = 110;
 omega = 2*pi*0.5;
 total_load = get_total_load(recordID,n_limb*2);
 [inverse_map,sigma] = load_inverse_map("X",recordID);
+N_ref = 1.5*ones(n_limb,1);
+N_ref(1:2) = 6;
 % inverse_map = [-1 0 0 0 0 1; 0 -1 0 0 1 0; 0 0 -1 1 0 0; 0 0 1 -1 0 0; 0 1 0 0 -1 0; 1 0 0 0 0 -1];
 % [inverse_map,sigma] = load_inverse_map("X","115R");
 % inverse_map = [-1 0.9 -1 0.95; 1 -1 1 -1; -1 1 -1 1; 1 -1 1 -1];
@@ -26,14 +28,14 @@ time_step = 10^-3;
 tmax = 240; %duration of simulation in seconds
 tspan = 0:time_step:tmax;
 
-odefun = @(t,phi)compute_phi_dot(t,phi,omega,inverse_map,sigma,total_load);
+odefun = @(t,phi)compute_phi_dot(t,phi,omega,inverse_map,sigma,total_load,N_ref);
 % [time,phi]=ode23tb(odefun,[0 tmax],phi0);
 [time,phi]=ode23tb(odefun,tspan,phi0);
 
 %%
 GRF = zeros(length(time),n_limb);
 for i=1:length(time)
-    GRF(i,:) = estimate_GRF_from_phi(phi(i,:)',total_load);
+    GRF(i,:) = estimate_GRF_from_phi(phi(i,:)',total_load,n_limb);
 end
 threshold_unloading = 0.2;
 [f_GRF,ax_grf] = plot_GRF(GRF,time,threshold_unloading,recordID);
@@ -71,3 +73,4 @@ dot_size = 15;
 
 figure;
 plot_grf_phase(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop);
+

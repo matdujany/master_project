@@ -21,8 +21,11 @@ n_limb = 6;
 
 % recordID = 34;
 % n_limb = 6;
+% 
+% recordID = 145;
+% n_limb = 6;
 
-recordID = 142;
+recordID = 108;
 n_limb = 4;
 
 

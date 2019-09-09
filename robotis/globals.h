@@ -39,7 +39,7 @@ int flagVerbose        = 0;       // Default mode: print no information
 
 // CPG/Tegotae Locomotion related:
 float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
-float amplitude_class1 = 2; //class 1 are motors producing the movement in the direction asked
+float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
 float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
 float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
 float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
@@ -94,8 +94,8 @@ float phi_init[6] = {0, 0, 0, 0, 0, 0};
 //float phi_init[6] = {0, 2.09, 4.19, 0, 2.09, 4.19}; //bipod
 
 //float GRF_ref[6] = {3.1514,    2.9963,    3.4211,    2.8164,    3.3008,    3.2554}; 
-//float GRF_ref[6] = {1.5,   1.5,    1.5,    1.5,    1.5,    1.5}; 
-float GRF_ref[6] = {0, 0, 0, 0, 0, 0}; 
+float GRF_ref[6] = {6,   6,    1.5,    1.5,    1.5,    1.5}; 
+//float GRF_ref[6] = {0, 0, 0, 0, 0, 0}; 
 
 
 //float phi_init[8] = {0, 0, 0, 0, 0, 0, 0, 0};

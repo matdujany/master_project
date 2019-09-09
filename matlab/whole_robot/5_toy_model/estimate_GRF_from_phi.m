@@ -1,11 +1,20 @@
-function GRF = estimate_GRF_from_phi(phi,total_load)
+function GRF = estimate_GRF_from_phi(phi,total_load,n_limb)
 
-GRF = estimate_GRF_from_phi_method1(phi,total_load);
+% GRF = estimate_GRF_from_phi_method1(phi,total_load);
 % GRF = estimate_GRF_from_phi_method2(phi,total_load);
 
-% GRF = ones(length(phi),1);
-GRF = GRF.*(1-sin(phi))/2; 
-GRF = total_load/sum(GRF) * GRF;
+% GRF = GRF.*(1-sin(phi))/2; 
+
+GRF = estimate_GRF_from_profile(phi,total_load,n_limb);
+
+
+if sum(GRF)>0
+    GRF = total_load/sum(GRF) * GRF;
+end
+
+if sum(isnan(GRF))>0
+    disp('GRF nan');
+end
 
 end
 
@@ -33,8 +42,6 @@ end
 
 
 end
-
-
 
 function GRF = estimate_GRF_from_phi_method1(phi,total_load)
 
