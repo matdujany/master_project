@@ -1,20 +1,18 @@
-function GRF = estimate_GRF_from_phi(phi,total_load,n_limb)
+function GRF = estimate_GRF_from_phi(phi,total_load,n_limb,profilparms)
+%GRF is (n_limb,1) column vector
+%phi is (n_limb,1) column vector
+
 
 % GRF = estimate_GRF_from_phi_method1(phi,total_load);
-% GRF = estimate_GRF_from_phi_method2(phi,total_load);
-
 % GRF = GRF.*(1-sin(phi))/2; 
 
-GRF = estimate_GRF_from_profile(phi,total_load,n_limb);
+% GRF = estimate_GRF_from_profile(phi,total_load,n_limb);
+GRF = estimate_GRF_from_profile(phi,profilparms.recordID,profilparms.i_limb);
 
-
-if sum(GRF)>0
-    GRF = total_load/sum(GRF) * GRF;
-end
-
-if sum(isnan(GRF))>0
-    disp('GRF nan');
-end
+GRF(:,sum(GRF,1)>0) = total_load * GRF(:,sum(GRF,1)>0) ./sum(GRF(:,sum(GRF,1)>0),1);
+% if sum(GRF)>0
+%     GRF = total_load/sum(GRF) * GRF;
+% end
 
 end
 
@@ -45,23 +43,20 @@ end
 
 function GRF = estimate_GRF_from_phi_method1(phi,total_load)
 
-idx_legs_stance = find(mod(phi,2*pi) >= pi);
-n_legs_stance = length(idx_legs_stance);
+phi = mod(phi,2*pi);
+% idx_legs_stance = find(mod(phi,2*pi) >= pi);
+n_legs_stance = sum(phi>=pi,1);
 
-n_limb = length(phi);
-GRF = zeros(n_limb,1);
-for i=1:n_legs_stance
-    GRF(idx_legs_stance(i),1) = total_load/n_legs_stance;
-end
+n_limb = size(phi,1);
+GRF = zeros(size(phi,1),size(phi,2));
 
+GRF(:,n_legs_stance == 0) = total_load/n_limb;
+% GRF(:, n_legs_stance>0) = repmat(total_load./n_legs_stance(n_legs_stance>0),n_limb,1);
+GRF(:, n_legs_stance>0) = repmat(total_load./n_legs_stance(n_legs_stance>0),n_limb,1);
 
-if n_legs_stance == 0
-    GRF(:,1) = total_load/n_limb;
-end
-
-if n_legs_stance == 1
-    GRF(idx_legs_stance(1),1) = total_load/2;
-end
+% for i=1:n_legs_stance
+%     GRF(idx_legs_stance(i),1) = total_load/n_legs_stance;
+% end
 
 
 end

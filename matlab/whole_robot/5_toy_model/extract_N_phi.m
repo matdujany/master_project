@@ -23,6 +23,11 @@ t_stop = 25;
 % t_start = 60;
 % t_stop = 76;
 
+%%
+fontSize = 14;
+fontSizeTicks = 12;
+lineWidth = 1.5;
+
 
 %%
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
@@ -98,8 +103,22 @@ GRF_source = GRF(index_start:index_stop,i_limb_ext);
 %%
 [phi_source, index] = unique(phi_source); 
 GRF_source = GRF_source(index);
-phi_query = linspace(0,2*pi,100)';
+margin_pad = 0.5;
+phi_query = linspace(0-margin_pad,2*pi+margin_pad,100)';
 
+%% padding to make it really periodic
+margin_pad = 0.5; %in radians
+[~,idx1] = min(abs(phi_source-margin_pad));
+phi_source = [phi_source; 2*pi + phi_source(1:idx1)];
+GRF_source = [GRF_source; GRF_source(1:idx1)];
+[~,idx2] = min(abs(phi_source-(2*pi-margin_pad)));
+phi_source = [ - 2*pi + phi_source(idx2:end); phi_source];
+GRF_source = [GRF_source(idx2:end); GRF_source];
+[phi_source, index] = unique(phi_source); 
+GRF_source = GRF_source(index);
+
+
+%% spline and interpolation methods not successful there because too much points
 
 size_mv_average = 10;
 b = 1/size_mv_average*ones(size_mv_average,1);
@@ -109,41 +128,45 @@ p = polyfit(phi_source,GRF_source_filtered,5);
 GRF_guessed = interp1(phi_source,GRF_source_filtered,phi_query,'spline');
 GRF_guessed2 = polyval(p,phi_query);
 
-%%
-grid_x = linspace(0,2*pi,30);
-phi_grid = zeros(length(grid_x)-1);
-GRF_grid = zeros(length(grid_x)-1);
+%% we reduce the number of points by subsampling, using an average
+grid_x = linspace(0-margin_pad,2*pi+margin_pad,100);
+phi_grid = zeros(length(grid_x)-1,1);
+GRF_grid = zeros(length(grid_x)-1,1);
 for i=1:length(grid_x)-1
     idx = find(grid_x(i)<phi_source & phi_source<grid_x(i+1));
-    phi_grid(i) = (grid_x(i) + grid_x(i+1))/2;
-    GRF_grid(i) = mean(GRF_source_filtered(idx));
+    phi_grid(i,1) = (grid_x(i) + grid_x(i+1))/2;
+    GRF_grid(i,1) = mean(GRF_source_filtered(idx));
 end
 
+profile_spline = spline(phi_grid,GRF_grid);
+GRF_guessed_from_grid = ppval(profile_spline,phi_query);
+
 %%
-figure;
-hold on;
-% scatter(phi(index_start:index_stop,i_limb_ext),GRF(index_start:index_stop,i_limb_ext),dot_size,'filled');
-scatter(phi_source,GRF_source,dot_size,'filled');
-plot(phi_query,GRF_guessed)
-plot(phi_query,GRF_guessed2)
-plot(phi_grid,GRF_grid);
-% plot(phi_query,GRF_guessed3)
-xlabel('\phi Limb');
-xticks(pi/2*[0:4]);
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-% ylim([-1 10]);
-ylabel('GRF [N]');
-grid on;
-title(['Limb extracted ' num2str(i_limb_ext)]);
+% figure;
+% hold on;
+% % scatter(phi(index_start:index_stop,i_limb_ext),GRF(index_start:index_stop,i_limb_ext),dot_size,'filled');
+% scatter(phi_source,GRF_source,dot_size,'filled');
+% plot(phi_query,GRF_guessed)
+% plot(phi_query,GRF_guessed2)
+% plot(phi_grid,GRF_grid);
+% legend('Source data not filtered', 'interp1 spline', 'polyfit','my grid method');
+% % plot(phi_query,GRF_guessed3)
+% xlabel('\phi Limb');
+% xticks(pi/2*[0:4]);
+% xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
+% % ylim([-1 10]);
+% ylabel('GRF [N]');
+% grid on;
+% title(['Limb extracted ' num2str(i_limb_ext)]);
 
 %%
 figure;
 hold on;
 % scatter(phi(index_start:index_stop,i_limb_ext),GRF(index_start:index_stop,i_limb_ext),dot_size,'filled');
 scatter(phi_source,GRF_source_filtered,dot_size,'filled');
-plot(phi_query,GRF_guessed);
-plot(phi_query,GRF_guessed2);
-plot(phi_grid,GRF_grid);
+plot(phi_grid,GRF_grid,'Linewidth',lineWidth);
+plot(phi_query,GRF_guessed_from_grid,'Linewidth',lineWidth);
+legend('Source data filtered','my grid method','grid and then spline');
 xlabel('\phi Limb');
 xticks(pi/2*[0:4]);
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
@@ -151,3 +174,8 @@ xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 ylabel('GRF [N]');
 grid on;
 title(['Limb extracted ' num2str(i_limb_ext)]);
+
+%%
+filename = ['record_' num2str(recordID) '_limb_' num2str(i_limb_ext)];
+file_name_profile=strcat("profiles/",filename);
+save(file_name_profile,'profile_spline','phi_grid','GRF_grid');

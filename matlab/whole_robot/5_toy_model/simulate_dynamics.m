@@ -6,14 +6,18 @@ addpath(genpath('../4_locomotion'));
 addpath(genpath('../3_hebbian_learning'));
 
 %%
-n_limb = 6;
-recordID = 110;
+n_limb = 4;
+recordID = 105;
 
 omega = 2*pi*0.5;
 total_load = get_total_load(recordID,n_limb*2);
 [inverse_map,sigma] = load_inverse_map("X",recordID);
 N_ref = 1.5*ones(n_limb,1);
 N_ref(1:2) = 6;
+
+profilparms.recordID = 108;
+profilparms.i_limb = 3;
+
 % inverse_map = [-1 0 0 0 0 1; 0 -1 0 0 1 0; 0 0 -1 1 0 0; 0 0 1 -1 0 0; 0 1 0 0 -1 0; 1 0 0 0 0 -1];
 % [inverse_map,sigma] = load_inverse_map("X","115R");
 % inverse_map = [-1 0.9 -1 0.95; 1 -1 1 -1; -1 1 -1 1; 1 -1 1 -1];
@@ -23,20 +27,21 @@ N_ref(1:2) = 6;
 phi0 = zeros(n_limb,1);
 % phi0 = [0;pi;0;pi;0;pi];
 
-% time_step = 25*10^-3; % in seconds
-time_step = 10^-3;
-tmax = 240; %duration of simulation in seconds
+time_step = 25*10^-3; % in seconds
+% time_step = 10^-3;
+tmax = 120; %duration of simulation in seconds
 tspan = 0:time_step:tmax;
 
-odefun = @(t,phi)compute_phi_dot(t,phi,omega,inverse_map,sigma,total_load,N_ref);
+odefun = @(t,phi)compute_phi_dot(t,phi,omega,inverse_map,sigma,total_load,N_ref,profilparms);
 % [time,phi]=ode23tb(odefun,[0 tmax],phi0);
 [time,phi]=ode23tb(odefun,tspan,phi0);
 
 %%
-GRF = zeros(length(time),n_limb);
-for i=1:length(time)
-    GRF(i,:) = estimate_GRF_from_phi(phi(i,:)',total_load,n_limb);
-end
+GRF = estimate_GRF_from_phi(phi',total_load,n_limb,profilparms);
+GRF = GRF';
+% for i=1:length(time)
+%     GRF(i,:) = estimate_GRF_from_phi(phi(i,:)',total_load,n_limb,profilparms);
+% end
 threshold_unloading = 0.2;
 [f_GRF,ax_grf] = plot_GRF(GRF,time,threshold_unloading,recordID);
 
