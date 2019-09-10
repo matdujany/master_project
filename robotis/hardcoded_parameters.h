@@ -316,8 +316,8 @@ std::vector<bool>  changeDirs_X_Yaw_6{true,true,true,true,true,true};
 uint16_t neutral_pos_110[12] = //{510,   514,   512,   508,   510,   509,   513,   511,   509,   511,   514,   510};
 {510, 491, 511, 511, 514, 530, 508, 511, 516, 508, 494, 530};//143
 
-//float sigma_advanced_X_110 = 0.12;// scaled for 50% of 0.5Hz
-float sigma_advanced_X_110 = 0.3;// test
+float sigma_advanced_X_110 = 0.12;// scaled for 50% of 0.5Hz
+//float sigma_advanced_X_110 = 0.3;// test
 
 std::vector<std::vector<float>> inverse_map_X_110{
 

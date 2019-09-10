@@ -296,7 +296,21 @@ switch recordId
         record_name = 'tegotae_advanced_110_X_2019-9-5-16_45_11';                     
     case 148
         record_name = 'tegotae_advanced_110_X_2019-9-5-16_54_28';                                                                                                            
-                                                                                                     
+    case 149
+        record_name = 'tegotae_advanced_110_X_2019-9-10-14_16_55';                                                                                                            
+    case 150
+        record_name = 'tegotae_advanced_110_X_2019-9-10-14_48_22';                                                                                                            
+    case 151
+        record_name = 'tegotae_advanced_110_X_2019-9-10-14_57_40';                                                                                                            
+    case 152
+        record_name = 'tegotae_advanced_110_X_2019-9-10-15_11_45';                                                                                                                                                                                                                      
+    case 153
+        record_name = 'tegotae_advanced_110_X_2019-9-10-15_17_24';                                                                                                            
+    case 154
+        record_name = 'tegotae_advanced_110_X_2019-9-10-15_44_26';                                                                                                            
+                                                                                                                                    
+                                                                                                                         
+                                                                                                                   
                            
     otherwise
         disp('unknown recordID for locomotion');

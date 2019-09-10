@@ -10,7 +10,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 34; %148
+recordID = 154; %148
 n_limb = 6;
 
 % recordID = 34;
@@ -24,9 +24,9 @@ n_limb = 6;
 % 
 % recordID = 145;
 % n_limb = 6;
-
-recordID = 108;
-n_limb = 4;
+% 
+% recordID = 108;
+% n_limb = 4;
 
 
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
@@ -59,7 +59,7 @@ end
 % GRF = GRF_filtered;
 
 %%
-threshold_unloading = 0.2; %Fukuhuara, figure 6, stance if more than 20% of maximal value
+threshold_unloading = 0.3; %Fukuhuara, figure 6, stance if more than 20% of maximal value
 [value_unloading,max_value_GRF_limb] = determine_value_unloading(GRF,threshold_unloading);
 
 %% plotting GRFs
