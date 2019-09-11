@@ -46,9 +46,9 @@ if isfield(parms,'twitch_limb') &&  parms.twitch_limb== 1
         weights = compute_weight_matrix_twitch_limb(m_s_dot_pos, sensor_values, pos_start_learning, pos_end_learning, parms, flagReinit, weights_init);
 else
     if flagDetailed==1
-        weights = compute_weight_detailled_evolution(m_dot_values, sensor_values, pos_start_learning, pos_end_learning, parms, flagReinit, weights_init);
+        weights = compute_weight_detailled_evolution(m_s_dot_pos, sensor_values, pos_start_learning, pos_end_learning, parms, flagReinit, weights_init);
     else
-        weights = compute_weight_matrix(m_dot_values, sensor_values, pos_start_learning, pos_end_learning, parms, flagReinit, weights_init);
+        weights = compute_weight_matrix(m_s_dot_pos, sensor_values, pos_start_learning, pos_end_learning, parms, flagReinit, weights_init);
     end
 end
 

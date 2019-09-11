@@ -4,7 +4,9 @@ close all; clc;
 
 %% Load data
 addpath('../2_load_data_code');
-recordID = 210;
+addpath('computing_functions');
+
+recordID = 110;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms_sim = parms;
 % parms_sim.eta = 20;

@@ -81,31 +81,67 @@ for i=1:n_limb
 
 end
 
-%% plotting parameters
-i_limb_plot = 2;
-time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
-[~,index_start] = min(abs(time-t_start));
-[~,index_stop] = min(abs(time-t_stop));
-dot_size = 15;
 
 %% motor positions
 pos = pos_phi_data.motor_position';
+pos_filtered = filtfilt(filter_coeffs,1,pos);
+
 pos_dots = zeros(size(pos)-[1 0]);
 for i=1:n_limb
-    pos_dots(:,i) = 10^3*diff(pos(:,i))./diff(pos_phi_data.phi_update_timestamp)';
+    pos_dots(:,i) = 10^3*diff(pos_filtered(:,i))./diff(pos_phi_data.phi_update_timestamp)';
 end
+
+
+%% time extraction
+time = (data.time(:,1)-data.time(1,1))/10^3;
+[~,index_start] = min(abs(time-t_start));
+[~,index_stop] = min(abs(time-t_stop));
+
+N_dot_extracted = N_dot_filtered(index_start:index_stop,:);
+pos_dot_extracted = pos_dots(index_start:index_stop,:);
+phi_dot_extracted = phi_dots(index_start:index_stop,:);
+phi_extracted = phi(index_start:index_stop,:);
 
 %%
-i_limb_corr = 1;
-grid_phi = linspace(0,2*pi,100);
-phidot_grid = zeros(length(grid_phi)-1,n_limb);
-Ndot_grid = zeros(length(grid_phi)-1,n_limb);
-alphadot_grid = zeros(length(grid_phi)-1,n_limb);
-phi_temp = phi[];
-
-for i=1:length(grid_phi)-1
-%     idx = find(grid_phi(i)<phi & phi<grid_phi(i+1));
-    phidot_grid(i,:) = mean(phi_dots(grid_phi(i)<phi & phi<grid_phi(i+1)),1);
-    Ndot_grid(i,:) = mean(N_dot_filtered(grid_phi(i)<phi & phi<grid_phi(i+1)),1);
-    alphadot_grid(i,:) = mean(pos_dots(grid_phi(i)<phi & phi<grid_phi(i+1)),1);
+i_limb_ref_phi = 1;
+figure;
+subplot(1,3,1);
+hold on;
+for i=1:n_limb
+scatter(phi_extracted(:,i_limb_ref_phi),N_dot_extracted(:,i));
 end
+subplot(1,3,2);
+hold on;
+for i=1:n_limb
+scatter(phi_extracted(:,i_limb_ref_phi),phi_dot_extracted(:,i));
+end
+subplot(1,3,3);
+hold on;
+for i=1:n_limb
+scatter(phi_extracted(:,i_limb_ref_phi),pos_dot_extracted(:,i));
+end
+
+
+%%
+i_limb_ref = 1;
+grid_phi = linspace(0,2*pi,20);
+% phidot_grid = zeros(length(grid_phi)-1,n_limb);
+% Ndot_grid = zeros(length(grid_phi)-1,n_limb);
+% alphadot_grid = zeros(length(grid_phi)-1,n_limb);
+phi_grid = (grid_phi(1,1:end-1) + grid_phi(1,2:end))/2;
+
+corr_phi_dot_n_dot = zeros(n_limb,length(grid_phi)-1);
+for i=1:length(grid_phi)-1
+    %     idx = find(grid_phi(i)<phi & phi<grid_phi(i+1));
+    idx_limb = grid_phi(i)<phi_extracted(:,i_limb_ref) & phi_extracted(:,i_limb_ref)<grid_phi(i+1);
+    phi_dot_corr = phi_dot_extracted(idx_limb,i_limb_ref);
+    N_dot_corr = N_dot_extracted(idx_limb,:);
+    corr_phi_dot_n_dot(:,i) = cov(phi_dot_corr,N_dot_corr);
+end
+
+figure;
+hold on;
+for i=1:n_limb
+    plot(phi_grid,corr_phi_dot_n_dot(i,:));
+end
+
