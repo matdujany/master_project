@@ -6,7 +6,7 @@ set_parms;
 parms_locomotion.recordingDuration = 120;
 parms_locomotion.frequency = 0.5; 
 
-parms_locomotion.amplitude_class1_deg = 2;
+parms_locomotion.amplitude_class1_deg = 20;
 parms_locomotion.amplitude_class2_deg = 20;
 parms_locomotion.alpha = 0.2;
 parms_locomotion.sigma_s = 0.11;
