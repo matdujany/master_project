@@ -6,12 +6,12 @@ set_parms;
 parms_locomotion.recordingDuration = 120;
 parms_locomotion.frequency = 0.5; 
 
-parms_locomotion.amplitude_class1_deg = 20;
+parms_locomotion.amplitude_class1_deg = 10;
 parms_locomotion.amplitude_class2_deg = 20;
 parms_locomotion.alpha = 0.2;
 parms_locomotion.sigma_s = 0.11;
 
-parms_locomotion.sigma_advanced = 0.12;
+parms_locomotion.sigma_advanced = 0.5;
 parms_locomotion.id_map_used = 110;
 % parms_locomotion.sigma_advanced = 0.12240;
 % parms_locomotion.id_map_used = 105;
@@ -22,7 +22,7 @@ parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
 
 parms_locomotion.use_filter = 0;
 parms_locomotion.filter_size = 4;
-parms_locomotion.message = "cos";
+parms_locomotion.message = "-N+N_ref = 6*sin(phi)";
 
 parms_locomotion.categoryName = strcat("tegotae_advanced_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
 % parms_locomotion.categoryName = strcat("bipod_hardcoded_",parms_locomotion.direction);
@@ -50,7 +50,7 @@ spmd(2)
     end
     s=serial(strcat('COM',num2str(COMportID)),'BaudRate',BaudRate);
     s.InputBufferSize = bufferSize;
-    s.Timeout = parms_locomotion.recordingDuration+20; %in seconds
+    s.Timeout = parms_locomotion.recordingDuration+30; %in seconds
     flushinput(s);
     fprintf("Gathering data...\n");
     fopen(s);

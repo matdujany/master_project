@@ -310,11 +310,42 @@ switch recordId
         record_name = 'tegotae_advanced_110_X_2019-9-10-15_44_26';                                                                                                            
     case 155
         record_name = 'tegotae_advanced_110_X_2019-9-12-9_51_50';                                                                                                            
-                                                                                                                                    
-                                                                                                                                                      
-                                                                                                                         
-                                                                                                                   
-                           
+    case 156
+        record_name = 'tegotae_advanced_110_X_2019-9-12-10_28_13';
+    case 157
+        record_name = 'tegotae_advanced_110_X_2019-9-12-11_22_5';
+    case 158
+        record_name = 'tegotae_advanced_110_X_2019-9-12-13_15_6';
+    case 159
+        record_name = 'tegotae_advanced_110_X_2019-9-12-13_30_6';      
+    case 160
+        record_name = 'tegotae_advanced_110_X_2019-9-12-13_38_21'; 
+    case 161
+        record_name = 'tegotae_advanced_110_X_2019-9-12-13_48_21'; 
+    case 162
+        record_name = 'tegotae_advanced_110_X_2019-9-12-13_56_15'; 
+    case 163
+        record_name = 'tegotae_advanced_110_X_2019-9-12-14_1_57'; 
+    case 164
+        record_name = 'tegotae_advanced_110_X_2019-9-12-14_9_40'; 
+    case 165
+        record_name = 'tegotae_advanced_110_X_2019-9-12-14_17_11'; 
+    case 166
+        record_name = 'tegotae_advanced_110_X_2019-9-12-14_29_26'; 
+    case 167
+        record_name = 'tegotae_advanced_110_X_2019-9-12-14_42_10'; 
+    case 168
+        record_name = 'tegotae_advanced_110_X_2019-9-12-14_53_29';
+    case 169
+        record_name = 'tegotae_advanced_110_X_2019-9-12-15_2_52';
+    case 170
+        record_name = 'tegotae_advanced_110_X_2019-9-12-15_11_5';
+    case 171
+        record_name = 'tegotae_advanced_110_X_2019-9-12-15_23_25';
+    case 172
+        record_name = 'tegotae_advanced_110_X_2019-9-12-15_38_9';
+    case 173
+        record_name = 'tegotae_advanced_110_X_2019-9-12-15_51_25';
     otherwise
         disp('unknown recordID for locomotion');
 end

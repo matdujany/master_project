@@ -51,8 +51,10 @@ for i=1:n_limb
     y_min_delta_phase_range = -10;
     y_max_delta_phase_range = 10;
     
-    yticks(pi*[y_min_delta_phase_range:y_max_delta_phase_range]);
-    pi_label_lists = make_pi_label_lists(y_min_delta_phase_range,y_max_delta_phase_range);
+%     yticks(pi*[y_min_delta_phase_range:y_max_delta_phase_range]);
+%     pi_label_lists = make_pi_label_lists(y_min_delta_phase_range,y_max_delta_phase_range);
+    yticks(2*pi/3*[y_min_delta_phase_range:y_max_delta_phase_range]);
+    pi_label_lists = make_2pi3_label_lists(y_min_delta_phase_range,y_max_delta_phase_range);
     yticklabels(pi_label_lists);
     
     ylim(pi*2*[-1 1] + 0.5*[-1 1]);

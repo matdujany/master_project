@@ -911,16 +911,17 @@ float advanced_tegotae_rule(uint8_t i_limb){
     
     float grf_ref_func = 0;
     if (phi[j]>pi)
-      //grf_ref_func = GRF_ref[j] * sin(phi[j]-pi);
-      grf_ref_func = 12  * abs(sin(phi[j]));
-      //grf_ref_func = 9.5 
-    //GRF_advanced_term += inverse_map[i_limb][j] * (-grf_under_limb+grf_ref_func);
+      grf_ref_func = 6 * sin(phi[j]-pi);
+      //grf_ref_func = 12  * abs(sin(phi[j]));
+    
+    GRF_advanced_term += inverse_map[i_limb][j] * (-grf_under_limb+grf_ref_func);
     
 
     //GRF_advanced_term += inverse_map[i_limb][j]*(grf_under_limb - GRF_ref[j]);
-    GRF_advanced_term += inverse_map[i_limb][j]*grf_under_limb;
+    //GRF_advanced_term += inverse_map[i_limb][j]*grf_under_limb;
+    //GRF_advanced_term += inverse_map[i_limb][j]*(-grf_under_limb);
 
-    GRF_advanced_term_binary += inverse_map[i_limb][j]*grf_under_limb_binary;
+    //GRF_advanced_term_binary += inverse_map[i_limb][j]*grf_under_limb_binary;
 
   }
 

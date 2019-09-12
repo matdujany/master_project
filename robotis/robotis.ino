@@ -71,7 +71,7 @@ void setup() {
 
   //twitch_record_wrapper();
   
-  //SerialUSB.println("advanced with cos phi, empty diagonal");
+  SerialUSB.println("-N+N_ref(phi), N_ref = 6 * sin(phi[j]-pi); ");
   record_tegotae(120*1000);
   //record_tegotae_changes();
 
