@@ -3,16 +3,16 @@ clear; clc; close all;
 %% Parameters
 
 set_parms;
-parms_locomotion.recordingDuration = 180;
+parms_locomotion.recordingDuration = 120;
 parms_locomotion.frequency = 0.5; 
 
-parms_locomotion.amplitude_class1_deg = 15;
-parms_locomotion.amplitude_class2_deg = 25;
+parms_locomotion.amplitude_class1_deg = 0;
+parms_locomotion.amplitude_class2_deg = 20;
 parms_locomotion.alpha = 0.2;
 parms_locomotion.sigma_s = 0.11;
 
-parms_locomotion.sigma_advanced = 0.0865;
-parms_locomotion.id_map_used = 220;
+parms_locomotion.sigma_advanced = 0.5;
+parms_locomotion.id_map_used = 110;
 parms_locomotion.turning = false;
 parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
 % parms_locomotion.phi_init = {5.12, 1.53, 5.84, 2.20};
@@ -34,12 +34,12 @@ poolobj= parpool('local',2);
 spmd(2)
     if labindex == 1
         %daisychain (Serial2), blue cable, blue FTDI
-        COMportID = 10;
+        COMportID = 3;
         bufferSize = 5000000; %check : size this buffer
         BaudRate = 500*10^3;
     else
         %lpdata (Serial3), yellow cable, red FTDI
-        COMportID = 9;
+        COMportID = 4;
         bufferSize = 5000000; %check : size this buffer
         BaudRate = 2*10^6;
     end

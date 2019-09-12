@@ -39,7 +39,7 @@ int flagVerbose        = 0;       // Default mode: print no information
 
 // CPG/Tegotae Locomotion related:
 float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
-float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
+float amplitude_class1 = 0; //class 1 are motors producing the movement in the direction asked
 float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
 float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
 float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
