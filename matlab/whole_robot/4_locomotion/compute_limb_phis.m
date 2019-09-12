@@ -1,7 +1,7 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 153;
+recordID = 34;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 n_limb = 6;
@@ -16,13 +16,13 @@ end
 
 
 %% if amputation
-GRF_amputated = GRF;
-t_removed = [40];
-lc_amputated = [4] + 1;
-for i=1:length(t_removed)
-    index_start = find(pos_phi_data.phi_update_timestamp > t_removed(i)*10^3);
-    GRF_amputated(index_start:end,lc_amputated(i)) = 0;
-end
+% GRF_amputated = GRF;
+% t_removed = [40];
+% lc_amputated = [4] + 1;
+% for i=1:length(t_removed)
+%     index_start = find(pos_phi_data.phi_update_timestamp > t_removed(i)*10^3);
+%     GRF_amputated(index_start:end,lc_amputated(i)) = 0;
+% end
 
 %%
 parms_locomotion.frequency = 0.5

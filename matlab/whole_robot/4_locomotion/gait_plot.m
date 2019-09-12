@@ -10,7 +10,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 154; %148
+recordID = 155; %148
 n_limb = 6;
 
 % recordID = 34;
@@ -25,8 +25,8 @@ n_limb = 6;
 % recordID = 145;
 % n_limb = 6;
 % 
-recordID = 108;
-n_limb = 4;
+% recordID = 108;
+% n_limb = 4;
 
 
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
