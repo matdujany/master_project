@@ -1,11 +1,16 @@
 clear; close all; clc;
 
 n_points = 100;
-noise_level = 0.1;
+noise_level = 0.05;
 t=linspace(0,10,n_points)';
-x = 3+t+0.1*t.^2;
-y1 = -2 - 0.5*t -0.1*t.^2 + noise_level*randn(n_points,1);
-y2 =  1 + 0.1*t + 0.2*t.^2 + noise_level*randn(n_points,1);
+% x = 3+t+0.1*t.^2;
+% y1 = -2 - 0.5*t -0.1*t.^2 + noise_level*randn(n_points,1);
+% y2 =  1 + 0.1*t + 0.2*t.^2 + noise_level*randn(n_points,1);
+
+x = 3+t+0*t.^2 + noise_level*randn(n_points,1);
+y1 = -2 - 0.5*t -0*t.^2 + noise_level*randn(n_points,1);
+y2 =  6 - 0.5*t + 0*t.^2 + noise_level*randn(n_points,1);
+
 
 size_mv_average = 5;
 filter_coeffs = 1/size_mv_average*ones(size_mv_average,1);

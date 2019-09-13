@@ -10,11 +10,11 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 173; %148
-n_limb = 6;
-
-% recordID = 34;
+% recordID = 173; %148
 % n_limb = 6;
+
+recordID = 34;
+n_limb = 6;
 
 % recordID = 50;
 % n_limb = 8;

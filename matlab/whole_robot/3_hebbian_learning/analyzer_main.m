@@ -130,7 +130,7 @@ scaling_amp_class1_yaw = abs(weights_yaw_class1)/max(abs(weights_yaw_class1));
 
 %% scaling sigma
 frequency = 0.5;
-total_load = get_total_load(recordID,parms);
+total_load = get_total_load(recordID,parms.n_m);
 
 GRF_term = mean(diag(z_effect_lc_to_limb))*total_load;
 sigma_advanced = -0.5 * 2*pi*frequency/GRF_term;

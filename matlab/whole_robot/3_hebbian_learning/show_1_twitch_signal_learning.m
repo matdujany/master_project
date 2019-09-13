@@ -6,6 +6,7 @@ addpath('../2_load_data_code');
 addpath('../plotting_functions');
 addpath('hinton_plot_functions');
 addpath('computing_functions');
+addpath('plot_functions');
 
 %% Load data
 recordID = 143;
@@ -105,65 +106,6 @@ f.Position = [  488.0000   41.8000  340.2000  740.8000];
 sgtitle(['Iteration ' num2str(n_iter)]);
 end
 
-%%
-function subplot_time_signals(data,lpdata,index_start,index_end,index_motor_plot,index_loadcell_plot,index_channel_plot,i_dir,parms,n_frames_theo,neutral_pos)
-txt_channel_lc ={' X',' Y',' Z'};
-theoretical_traj = compute_theoretical_traj_wrapper(i_dir,parms);
-hold on;
-plot(pos2deg(lpdata.motor_position(index_motor_plot,index_start:index_end),neutral_pos),'b-');
-plot(pos2deg(lpdata.motor_positionfiltered(index_motor_plot,index_start:index_end),neutral_pos),'b--');
-% plot(theoretical_traj(n_frames_theo.part0 + 1:n_frames_theo.part0 + n_frames_theo.part1),'k-');
-xlabel('Sample index');
-ylabel(['Motor ' num2str(index_motor_plot) ' Position [deg]']);
-%     for i=1:parms.n_m
-%      plot(lpdata.motor_position(i,index_start:index_end));
-%     end
-yyaxis right;
-%plot(data.float_value_dot_time{1,index_loadcell_plot}(index_start:index_end,channel),'--');
-% plot(data.float_value_time{1,index_loadcell_plot}(index_start:index_end,3),'k-');
-plot(data.float_value_time{1,index_loadcell_plot}(index_start:index_end,index_channel_plot),'r-');
-plot(data.s_lc_filtered(index_start:index_end,index_channel_plot+3*(index_loadcell_plot-1)),'r--');
-ylabel(['LC ' num2str(index_loadcell_plot) txt_channel_lc{index_channel_plot} ' [N]']);
-hold off;
-ax=gca();
-ax.YAxis(1).Color = 'b';
-ax.YAxis(2).Color = 'r';
-xlim([0 n_frames_theo.part1+1]);
-title('Time Signals in Learning Window');
-end
-
-%% dot time signals
-function subplot_dot_time_signals(data,lpdata,index_start,index_end,index_motor_plot,index_loadcell_plot,index_channel_plot,sign_learning,n_frames_theo)
-conversion_factor = 3.413;
-txt_channel_lc ={' X',' Y',' Z'};
-hold on;
-plot(sign_learning*lpdata.m_s_dot_pos(index_motor_plot,index_start:index_end)/conversion_factor,'b-');
-plot(sign_learning*lpdata.m_s_dot_posfiltered(index_motor_plot,index_start:index_end)/conversion_factor,'b--');
-plot([0 n_frames_theo.part1+1],[0.02 0.02],'Color',[0,0,1,0.2]);
-xlabel('Sample index');
-ylabel(['Motor ' num2str(index_motor_plot) ' speed [deg/ms]']);
-ylim([-0.05 0.05]);
-yyaxis right;
-plot(data.float_value_dot_time{1,index_loadcell_plot}(index_start:index_end,index_channel_plot),'r-');
-plot(data.s_dot_lc_filtered(index_start:index_end,index_channel_plot+3*(index_loadcell_plot-1)),'r--');
-plot([0 n_frames_theo.part1+1],[0 0],'Color',[1,0,0,0.2]);
-ylabel(['LC ' num2str(index_loadcell_plot) txt_channel_lc{index_channel_plot} 'differentiated [N/s]']);
-%ylim([-100 100]);
-xlim([0 n_frames_theo.part1+1]);
-ax=gca();
-ax.YAxis(1).Color = 'b';
-ax.YAxis(2).Color = 'r';
-ax.YAxis(2).Limits=max(abs(ax.YAxis(2).Limits))*[-1 1];
-hold off;
-title('Differentiated Signals in Learning Window');
-end
 
 
-function pos_deg = pos2deg(position,neutral_pos)
-conversion_factor = 3.413;
-if nargin == 1
-    neutral_pos = 512;
-end
-pos_deg = (position-neutral_pos)/conversion_factor;
-end
 
