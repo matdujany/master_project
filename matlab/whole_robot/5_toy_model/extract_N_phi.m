@@ -5,16 +5,16 @@ addpath('../2_load_data_code');
 
 %% use gait plot to pick t start and t stop
 %%%%% quad
-recordID = 108; 
-n_limb = 4;
-t_start = 15;
-t_stop = 25;
+% recordID = 108; 
+% n_limb = 4;
+% t_start = 15;
+% t_stop = 25;
 
 %%%% hexa
-% recordID = 34; %139: n dot %132 hardcoded bipod
-% n_limb = 6;
-% t_start = 56;
-% t_stop = 70;
+recordID = 34; %139: n dot %132 hardcoded bipod
+n_limb = 6;
+t_start = 56;
+t_stop = 70;
 
 %%%% octo
 % recordID = 50;

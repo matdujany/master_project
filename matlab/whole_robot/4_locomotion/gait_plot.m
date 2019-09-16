@@ -13,8 +13,8 @@ lineWidth = 1.5;
 % recordID = 173; %148
 % n_limb = 6;
 
-recordID = 34;
-n_limb = 6;
+recordID = 108;
+n_limb = 4;
 
 % recordID = 50;
 % n_limb = 8;

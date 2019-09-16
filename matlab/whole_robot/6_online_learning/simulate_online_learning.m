@@ -1,14 +1,22 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 addpath(genpath('../3_hebbian_learning'));
+addpath(genpath('../4_locomotion'));
 
 fontSize = 14;
 fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID_locomotion = 34; %148
-n_limb = 6;
+% recordID_locomotion = 34; %148
+% n_limb = 6;
+% t_start = 60;
+% t_stop = 110;
+
+recordID_locomotion = 108; %148
+n_limb = 4;
+t_start = 10;
+t_stop = 80;
 
 switch n_limb
     case 4
@@ -23,6 +31,7 @@ end
 
 weights_robotis = read_weights_robotis(recordID_weights,parms);
 limb = get_good_limb(parms,recordID_weights);
+[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID_weights);
 
 n_samples_phi = size(pos_phi_data.limb_phi,2);
 n_samples_GRF = size(data.time,1);
@@ -73,17 +82,19 @@ weights_lcz_init = weights_init_fused(3*[1:parms.n_lc],:);
 
 
 %%
-t_start = 60;
-t_stop = 110;
+% t_start = 60;
+% t_stop = 110;
+
+
 [~, index_start] = min(abs(time_lc(:,1)-t_start));
 [~, index_stop] = min(abs(time_lc(:,1)-t_stop));
 
 weights_online = zeros(index_stop-index_start+1,parms.n_lc,parms.n_m);
-learning_rate = 10;
+learning_rate_online = 1;
 for i=1:parms.n_m
     weights_online(:,:,i) = compute_weight_detailled_evolution_helper(....
         pos_dot_corrected_learning(index_start:index_stop,i), GRF_dot(index_start:index_stop,:), ...
-        learning_rate, weights_lcz_init(:,i)');
+        learning_rate_online, weights_lcz_init(:,i)');
 end
     
 hip_motors = limb(:,1);
@@ -95,8 +106,34 @@ for i_limb=1:n_limb
     hold on;
     for i=1:parms.n_lc
         plot(weights_online(:,i,hip_motors(i_limb)));
+        legend_list{i} = ['LC ' num2str(i)];
     end
+    legend(legend_list);
     title(['Hip motor, Limb ' num2str(i_limb)]);
 end
-    
-    
+
+%%
+weights_online_final = squeeze(mean(weights_online(end-50:end,:,:),1));
+
+%%
+% figure;
+weights_init_for_map = weights_lcz_init(:,hip_motors)/max(max(abs(weights_lcz_init(:,hip_motors))));
+weights_final_for_map = weights_online_final(:,hip_motors)/max(max(abs(weights_online_final(:,hip_motors))));
+
+for i=1:n_limb
+    if changeDir(i,2) == 1
+        weights_init_for_map(:,i) = -weights_init_for_map(:,i);
+        weights_final_for_map(:,i) = -weights_final_for_map(:,i);
+    end
+end
+inv_map_init = weights_init_for_map';
+inv_map_online = weights_final_for_map';
+
+h_invmap_online = plot_lc_to_limb_inv_map(inv_map_online,parms);
+
+
+h_invmap_init = plot_lc_to_limb_inv_map(inv_map_init,parms);
+
+
+%%
+save('inv_maps_online/test2','inv_map_online','recordID_locomotion','learning_rate_online','t_start','t_stop');

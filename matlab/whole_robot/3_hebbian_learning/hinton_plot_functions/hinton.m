@@ -24,6 +24,10 @@ if nargin ==2
     addText = 1;
 end
 
+if nargin == 1
+    addText = 0;
+end
+
 fontSize = 20;
 
 % Use no more than 640x480 pixels

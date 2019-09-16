@@ -4,18 +4,24 @@ clear; close all; clc;
 addpath('../2_load_data_code');
 addpath(genpath('../4_locomotion'));
 addpath(genpath('../3_hebbian_learning'));
+addpath(genpath('../6_online_learning'));
 
 %%
-n_limb = 4;
-recordID = 105;
+n_limb = 6;
+recordID = 110;
 
 omega = 2*pi*0.5;
 total_load = get_total_load(recordID,n_limb*2);
 [inverse_map,sigma] = load_inverse_map("X",recordID);
-N_ref = 1.5*ones(n_limb,1);
-N_ref(1:2) = 6;
+inverse_map = load_inv_maps_online('test1');
+% N_ref = 1.5*ones(n_limb,1);
+% N_ref([1 3],1) = 6;
+sigma = 0.2;
+N_ref = zeros(n_limb,1);
 
-profilparms.recordID = 108;
+
+profilparms.use_profilparms = 1;
+profilparms.recordID = 34;
 profilparms.i_limb = 3;
 
 % inverse_map = [-1 0 0 0 0 1; 0 -1 0 0 1 0; 0 0 -1 1 0 0; 0 0 1 -1 0 0; 0 1 0 0 -1 0; 1 0 0 0 0 -1];
@@ -63,10 +69,11 @@ figure;
 subplot(1,2,1);
 title('Load on the right');
 plot(sum(GRF(:,1:n_limb/2),2));
+ylim([0 15]);
 subplot(1,2,2);
 title('Load on the left');
 plot(sum(GRF(:,n_limb/2+1:end),2));
-
+ylim([0 15]);
 
 %%
 i_limb_plot = 2;

@@ -2,12 +2,13 @@ function GRF = estimate_GRF_from_phi(phi,total_load,n_limb,profilparms)
 %GRF is (n_limb,1) column vector
 %phi is (n_limb,1) column vector
 
-
-% GRF = estimate_GRF_from_phi_method1(phi,total_load);
-% GRF = GRF.*(1-sin(phi))/2; 
-
-% GRF = estimate_GRF_from_profile(phi,total_load,n_limb);
-GRF = estimate_GRF_from_profile(phi,profilparms.recordID,profilparms.i_limb);
+if profilparms.use_profilparms == 1
+    GRF = estimate_GRF_from_profile(phi,profilparms.recordID,profilparms.i_limb);
+    % GRF = estimate_GRF_from_profile(phi,total_load,n_limb);
+else
+    GRF = estimate_GRF_from_phi_method1(phi,total_load);
+    GRF = GRF.*(1-sin(phi))/2;
+end
 
 GRF(:,sum(GRF,1)>0) = total_load * GRF(:,sum(GRF,1)>0) ./sum(GRF(:,sum(GRF,1)>0),1);
 % if sum(GRF)>0
