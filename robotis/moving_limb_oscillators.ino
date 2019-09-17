@@ -1162,6 +1162,7 @@ void print_locomotion_parameters(){
   }
 
   print_GRF_ref();
+  print_phi_init_tegotae();
 }
 
 
@@ -1191,6 +1192,15 @@ void print_GRF_ref(){
   for (uint8_t i=0; i<n_limb; i++){
     SerialUSB.print(GRF_ref[i],3);
     SerialUSB.print(" ");
+  }
+  SerialUSB.println();
+}
+
+void print_phi_init_tegotae(){
+ SerialUSB.print("Phi init for tegotae: ");
+  for (int i=0; i<n_limb; i++){
+    SerialUSB.print(phi_init[i],2);
+    SerialUSB.print(", ");
   }
   SerialUSB.println();
 }

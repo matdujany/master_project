@@ -18,7 +18,7 @@ parms_locomotion.id_map_used = "110";
 
 parms_locomotion.turning = false;
 parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
-% parms_locomotion.phi_init = {5.12, 1.53, 5.84, 2.20};
+parms_locomotion.phi_init = {0.00, -2.00, -3.60, -0.86, 1.45, -2.80};
 
 parms_locomotion.use_filter = 0;
 parms_locomotion.filter_size = 4;

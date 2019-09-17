@@ -10,7 +10,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 175; %148
+recordID = 176; %148
 n_limb = 6;
 
 % recordID = 108;
@@ -178,3 +178,6 @@ if false
     print(f_GRF, '-dpdf', '-bestfit', ['figures_report_locomotion\GRF_' num2str(recordID) '.pdf']);
 end
 
+%%
+final_delta_phases = mean(delta_phases(:,:,end-50:end),3);
+phi_init_test = final_delta_phases(:,1);
