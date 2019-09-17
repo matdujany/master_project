@@ -39,7 +39,7 @@ int flagVerbose        = 0;       // Default mode: print no information
 
 // CPG/Tegotae Locomotion related:
 float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
-float amplitude_class1 = 10; //class 1 are motors producing the movement in the direction asked
+float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
 float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
 float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
 float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
@@ -60,8 +60,8 @@ bool locomotion_bluetoooth_2_joysticks = false;
 //propulsion
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 bool tegotae_propulsion = false;    //adds the body propulsion term in the tegotae rule.
-bool tegotae_propulsion_advanced = false;
-float sigma_p_advanced = -0.5;
+bool tegotae_propulsion_advanced = true;
+float sigma_p_advanced = 0.0;
 
 float inverse_map_propulsion[6][6] ={
   //for hexapod

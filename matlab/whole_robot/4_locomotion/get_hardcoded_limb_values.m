@@ -1,6 +1,6 @@
 function [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID)
 %GET_HARDCODED_LIMB_VALUES Summary of this function goes here
-%   Detailed explanation goes here
+%   for locomotion
 
 switch n_limb
     case 4

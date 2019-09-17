@@ -914,11 +914,11 @@ float advanced_tegotae_rule(uint8_t i_limb){
       grf_ref_func = 6 * sin(phi[j]-pi);
       //grf_ref_func = 12  * abs(sin(phi[j]));
     
-    GRF_advanced_term += inverse_map[i_limb][j] * (-grf_under_limb+grf_ref_func);
+    //GRF_advanced_term += inverse_map[i_limb][j] * (-grf_under_limb+grf_ref_func);
     
 
     //GRF_advanced_term += inverse_map[i_limb][j]*(grf_under_limb - GRF_ref[j]);
-    //GRF_advanced_term += inverse_map[i_limb][j]*grf_under_limb;
+    GRF_advanced_term += inverse_map[i_limb][j]*grf_under_limb;
     //GRF_advanced_term += inverse_map[i_limb][j]*(-grf_under_limb);
 
     //GRF_advanced_term_binary += inverse_map[i_limb][j]*grf_under_limb_binary;
@@ -959,10 +959,13 @@ float advanced_tegotae_rule(uint8_t i_limb){
   if (tegotae_propulsion_advanced)
   {
     float propulsion_advanced_term = advanced_tegotae_propulsion(i_limb);
-    phi_dot += sigma_p_advanced * propulsion_advanced_term * cos(phi[i_limb]);
+    phi_dot += sigma_p_advanced * propulsion_advanced_term;
+
+    /*
     SerialUSB.print("Limb ");SerialUSB.print(i_limb);SerialUSB.print(" : ");
     SerialUSB.print(GRF_advanced_term);SerialUSB.print(", ");
     SerialUSB.print(propulsion_advanced_term);SerialUSB.println();
+     */
   }
 
 
@@ -972,7 +975,7 @@ float advanced_tegotae_rule(uint8_t i_limb){
 float advanced_tegotae_propulsion(uint8_t i_limb){
   float propulsion_advanced_term = 0;
   for (int j=0; j<n_limb; j++){
-    propulsion_advanced_term += inverse_map_propulsion[i_limb][j]*N_p[j];
+    propulsion_advanced_term += inverse_map_propulsion[i_limb][j]*(-N_p[j]);
   }
   return  propulsion_advanced_term;
 }

@@ -8,15 +8,15 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-% recordID_locomotion = 34; %148
-% n_limb = 6;
-% t_start = 60;
-% t_stop = 110;
+recordID_locomotion = 34; %148
+n_limb = 6;
+t_start = 60;
+t_stop = 110;
 
-recordID_locomotion = 108; %148
-n_limb = 4;
-t_start = 10;
-t_stop = 80;
+% recordID_locomotion = 108; %148
+% n_limb = 4;
+% t_start = 10;
+% t_stop = 80;
 
 switch n_limb
     case 4
@@ -49,6 +49,13 @@ time_lc = data.time(:,1:parms.n_lc)/10^3;
 pos = pos_phi_data.motor_position';
 time_pos = pos_phi_data.motor_timestamps'/10^3;
 
+n_pos_check = sum(sum(abs(pos-512)>150));
+disp([num2str(n_pos_check) ' samples out of reasonable limits for motor position (+-150)']);
+for i=1:size(pos,2)
+    index_nan = find(abs(pos(:,i)-512)>150);
+    pos(index_nan,i) = mean(pos([index_nan-1 index_nan+1],i));
+end
+
 %filtered version:
 size_mv_average = 6;
 filter_coeffs = 1/size_mv_average*ones(size_mv_average,1);
@@ -65,11 +72,29 @@ end
 GRF_dot = diff(GRF_filtered)./diff(time_lc);
 pos_dot = diff(pos_filtered)./diff(time_pos)/10^3;
 
-threshold_load = 1; %in N
+[~, index_start] = min(abs(time_lc(:,1)-t_start));
+[~, index_stop] = min(abs(time_lc(:,1)-t_stop));
+
+%%
+total_load = sum(GRF,2);
+margin_index_total = 30;
+total_load_min = zeros(size(total_load));
+for i=1+margin_index_total:length(total_load_min)-margin_index_total
+    total_load_min(i,1) = min(total_load(i-margin_index_total:i+margin_index_total));
+end
+
+figure;
+hold on;
+plot(total_load_min(index_start:index_stop));
+plot(total_load(index_start:index_stop));
+
+%%
+threshold_load = 0.8; %in N
 pos_dot_corrected_learning = zeros(size(pos_dot));
 for i=1:n_limb
     for j=1:2
-        pos_dot_corrected_learning(:,limb(i,j))= pos_dot(:,limb(i,j)).*(GRF_filtered(2:end,i)>threshold_load);
+        pos_dot_corrected_learning(:,limb_ids(i,j))= pos_dot(:,limb_ids(i,j))...
+            .*(GRF_filtered(2:end,i)>threshold_load).*(total_load_min(2:end)>10);
     end
 end
 
@@ -82,12 +107,6 @@ weights_lcz_init = weights_init_fused(3*[1:parms.n_lc],:);
 
 
 %%
-% t_start = 60;
-% t_stop = 110;
-
-
-[~, index_start] = min(abs(time_lc(:,1)-t_start));
-[~, index_stop] = min(abs(time_lc(:,1)-t_stop));
 
 weights_online = zeros(index_stop-index_start+1,parms.n_lc,parms.n_m);
 learning_rate_online = 1;
@@ -134,6 +153,17 @@ h_invmap_online = plot_lc_to_limb_inv_map(inv_map_online,parms);
 
 h_invmap_init = plot_lc_to_limb_inv_map(inv_map_init,parms);
 
+%%
+if parms.n_m == 8
+    disp ('Inverse map online:'); fprintf('{%.3f, %.3f, %.3f, %.3f} ,\n',inv_map_online);
+end
+if parms.n_m == 12
+    disp ('Inverse map online:'); fprintf('{%.3f, %.3f, %.3f, %.3f, %.3f, %.3f} ,\n',inv_map_online);
+end
+if parms.n_m == 16
+    disp ('Inverse map online:'); fprintf('{%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f} ,\n',inv_map_online);
+end
+
 
 %%
-save('inv_maps_online/test2','inv_map_online','recordID_locomotion','learning_rate_online','t_start','t_stop');
+% save('inv_maps_online/test2','inv_map_online','recordID_locomotion','learning_rate_online','t_start','t_stop');

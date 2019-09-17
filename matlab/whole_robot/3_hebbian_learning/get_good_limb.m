@@ -1,5 +1,5 @@
 function limb = get_good_limb(parms,recordID)
-%GOOD_limb HARDCODED
+%GOOD_limb HARDCODED for learning
 switch parms.n_m
     case 6
             limb = [5     6;     3      4;     1     2];
