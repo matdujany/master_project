@@ -294,10 +294,10 @@ void setup() {
   }
   else if (I_LOADCELL == 12){
     cal_gain[0]   = 13761;
-    cal_gain[1]   = 13823;
+    cal_gain[1]   = 14775;
     cal_gain[2]   = 12550;
     cal_offset[0] = -1.3; 
-    cal_offset[1] = -2.11; 
+    cal_offset[1] = -1.17; 
     cal_offset[2] = 0.61;
   }
 

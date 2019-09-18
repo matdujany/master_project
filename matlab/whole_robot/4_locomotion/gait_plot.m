@@ -10,7 +10,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 131; %148
+recordID = 188; %148
 n_limb = 6;
 
 % recordID = 108;
@@ -76,25 +76,25 @@ time = (data.time(:,:)-data.time(1,:))/10^3;
 [f_gait,ax_gait] = plot_gait_diagram(GRF,time,threshold_unloading,recordID);
 
 %% phases
-[f_phase,ax_phase] = plot_phases(pos_phi_data,recordID);
+[f_phase,ax_phase] = plot_phases(pos_phi_data,recordID,GRF);
 
 %% total load;
-f_total_load = figure;
-time = (data.time(:,1)-data.time(1,1))/10^3;
-plot(time,sum(GRF_filtered,2));
-f_total_load.Position = [57.4         94.2         1184        302.4];
-ax_total_load =gca();
-ax_total_load.FontSize = fontSizeTicks;
-
-set(zoom(f_total_load),'Motion','horizontal');
-
-figure;
-subplot(1,2,1);
-title('Load on the right');
-plot(sum(GRF(:,1:n_limb/2),2));
-subplot(1,2,2);
-title('Load on the left');
-plot(sum(GRF(:,n_limb/2+1:end),2));
+% f_total_load = figure;
+% time = (data.time(:,1)-data.time(1,1))/10^3;
+% plot(time,sum(GRF,2));
+% f_total_load.Position = [57.4         94.2         1184        302.4];
+% ax_total_load =gca();
+% ax_total_load.FontSize = fontSizeTicks;
+% 
+% set(zoom(f_total_load),'Motion','horizontal');
+% 
+% figure;
+% subplot(1,2,1);
+% title('Load on the right');
+% plot(sum(GRF(:,1:n_limb/2),2));
+% subplot(1,2,2);
+% title('Load on the left');
+% plot(sum(GRF(:,n_limb/2+1:end),2));
 
 %% delta phases
 phi = pos_phi_data.limb_phi;
@@ -103,7 +103,7 @@ time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
 [f_delta_phases,ax_delta_phases] = plot_delta_phases(time,delta_phases,recordID);
 
 %%
-linkaxes([ax_grf;ax_grp;ax_gait;ax_phase;ax_total_load; ax_delta_phases],'x');
+linkaxes([ax_grf;ax_grp;ax_gait;ax_phase; ax_delta_phases],'x');
 xlim([0 120]);
 
 %% plotting positions
@@ -193,12 +193,17 @@ index_limb_phase = 1;
 phi = pos_phi_data.limb_phi;
 [pk_values,idx_peaks]=findpeaks(phi(index_limb_phase,:));
 set(0, 'CurrentFigure', f_phase)
+set(gcf, 'CurrentAxes', ax_phase(1));
+
 hold on;
 time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
 scatter(time(idx_peaks),pk_values,'ko','HandleVisibility','off');
+for i=1:length(idx_peaks)
+        text(time(idx_peaks(i)),2*pi+0.5,num2str(i),'FontSize',12,'HorizontalAlignment','center');
+end
 
-first_peak_integral = 23;
-last_peak_integral = 30;
+first_peak_integral = 40; %36; %27;
+last_peak_integral = 60; %43; %34;
 scatter(time(idx_peaks(first_peak_integral)),pk_values(first_peak_integral),'ro','HandleVisibility','off');
 scatter(time(idx_peaks(last_peak_integral)),pk_values(last_peak_integral),'ro','HandleVisibility','off');
 
@@ -214,6 +219,9 @@ if ~isempty(index_check)
     plot(time(idx_peaks(last_peak_integral))*[1 1],[0 20],'k--');
     return;
 end
+
+xlim([time(idx_peaks(first_peak_integral)) time(idx_peaks(last_peak_integral))]);
+
 
 %%
 % GRF_ref = 6*ones(1,n_limb);

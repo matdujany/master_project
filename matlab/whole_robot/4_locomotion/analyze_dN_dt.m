@@ -1,20 +1,21 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
+addpath('../3_hebbian_learning');
 
 
 
 %% use gait plot to pick t start and t stop
 %%%%% quad
-% recordID = 108; 
-% n_limb = 4;
-% t_start = 15;
-% t_stop = 25;
+recordID = 108; 
+n_limb = 4;
+t_start = 15;
+t_stop = 25;
 
 %%%% hexa
-recordID = 34; %139: n dot %132 hardcoded bipod
-n_limb = 6;
-t_start = 56;
-t_stop = 70;
+% recordID = 34; %139: n dot %132 hardcoded bipod
+% n_limb = 6;
+% t_start = 56;
+% t_stop = 70;
 
 %%%% octo
 % recordID = 50;
@@ -108,12 +109,15 @@ phi_extracted = phi(index_start:index_stop,:);
 i_limb_ref_phi = 1;
 figure;
 subplot(1,3,1);
+legend_list = cell(n_limb,1);
 hold on;
 for i=1:n_limb
 scatter(phi_extracted(:,i_limb_ref_phi),N_extracted(:,i));
+legend_list{i} = ['Limb ' num2str(i)];
 end
 ylabel('N');
 xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
+legend(legend_list);
 subplot(1,3,2);
 hold on;
 for i=1:n_limb
@@ -121,6 +125,7 @@ scatter(phi_extracted(:,i_limb_ref_phi),N_dot_extracted(:,i));
 end
 xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
 ylabel('dN/dt');
+legend(legend_list);
 
 subplot(1,3,3);
 hold on;
@@ -129,110 +134,99 @@ scatter(phi_extracted(:,i_limb_ref_phi),phi_dot_extracted(:,i));
 end
 ylabel('phi dot');
 xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
+legend(legend_list);
 
-
-
-%% 
+%%
 grid_phi = linspace(0,2*pi,50);
-phidot_grid = zeros(length(grid_phi)-1,n_limb);
 Ndot_grid = zeros(length(grid_phi)-1,n_limb);
-N_grid = zeros(length(grid_phi)-1,n_limb);
+phidot_grid = zeros(length(grid_phi)-1,n_limb);
+phi_grid = zeros(length(grid_phi)-1,n_limb);
 
 % alphadot_grid = zeros(length(grid_phi)-1,n_limb);
-phi_grid = (grid_phi(1,1:end-1) + grid_phi(1,2:end))/2;
+grid_phi_x = (grid_phi(1,1:end-1) + grid_phi(1,2:end))/2;
 
-dN_dphi = zeros(n_limb,length(grid_phi)-1);
 for i=1:length(grid_phi)-1
     %     idx = find(grid_phi(i)<phi & phi<grid_phi(i+1));
     idx_tmp = grid_phi(i)<phi_extracted(:,i_limb_ref_phi) & phi_extracted(:,i_limb_ref_phi)<grid_phi(i+1);
     Ndot_grid(i,:) = mean(N_dot_extracted(idx_tmp,:),1);
-    N_grid(i,:) = mean(N_extracted(idx_tmp,:),1);
     phidot_grid(i,:) = mean(phi_dot_extracted(idx_tmp,:),1);
+    phi_grid(i,:) = mean(phi_extracted(idx_tmp,:),1);
 end
-
-figure;
-hold on;
-for i=1:n_limb
-plot(phi_grid,N_grid(:,i));
-end
-ylabel('N');
-xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
-title('N averaged over grid');
 
 %%
-phi_query = linspace(0,2*pi,100)';
-N_guessed_from_grid = zeros(length(phi_query),n_limb);
+figure;
 for i=1:n_limb
-    profile_spline(i) = spline(phi_grid,N_grid(:,i));
-    N_guessed_from_grid(:,i) = ppval(profile_spline(i),phi_query);
+    subplot(2,n_limb/2,i);
+    plot(grid_phi_x,Ndot_grid(:,i));
+    ylabel('N dot');
+    xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
+    title(['Limb ' num2str(i)]); 
 end
-
 
 figure;
-hold on;
 for i=1:n_limb
-plot(phi_query,N_guessed_from_grid(:,i));
+    subplot(2,n_limb/2,i);
+    plot(grid_phi_x,phidot_grid(:,i));
+    ylabel('Phi dot');
+    xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
+    title(['Limb ' num2str(i)]); 
 end
-ylabel('N');
-xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
-title('Spline approximation');
 
+figure;
+for i=1:n_limb
+    subplot(2,n_limb/2,i);
+    plot(grid_phi_x,phi_grid(:,i));
+    ylabel('Phi');
+    xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
+    title(['Limb ' num2str(i)]); 
+end
 
 %%
-phi_grid_diff = (phi_query(1:end-1) + phi_query(2:end))/2;
-dN_dphi = diff(N_guessed_from_grid)./diff(phi_query);
-
-figure;
-hold on;
-for i=1:n_limb
-plot(phi_grid_diff,dN_dphi(:,i));
-end
-xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
-ylabel(['dN/d\phi_' num2str(i_limb_ref_phi)]);
-title('Without smoothing');
-
-%% padding to make it really periodic
-margin_pad = 1; %in radians
-[~,idx1] = min(abs(phi_grid_diff-margin_pad));
-phi_grid_diff_padded = [phi_grid_diff; 2*pi + phi_grid_diff(1:idx1)];
-dN_dphi_padded = [dN_dphi; dN_dphi(1:idx1,:)];
-[~,idx2] = min(abs(phi_grid_diff_padded-(2*pi-margin_pad)));
-phi_grid_diff_padded = [ - 2*pi + phi_grid_diff_padded(idx2:end); phi_grid_diff_padded];
-dN_dphi_padded = [dN_dphi_padded(idx2:end,:); dN_dphi_padded];
-[phi_grid_diff_padded, index] = unique(phi_grid_diff_padded); 
-dN_dphi_padded = dN_dphi_padded(index,:);
-
-
-dN_dphi_smoothed = zeros(size(dN_dphi_padded));
-for i=1:n_limb
-dN_dphi_smoothed(:,i) = smooth(dN_dphi_padded(:,i),30,'rloess');
-end
-
-
-figure;
-hold on;
-for i=1:n_limb
-plot(phi_grid_diff_padded,dN_dphi_smoothed(:,i));
-end
-xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
-ylabel(['dN/d\phi_' num2str(i_limb_ref_phi)]);
-xlim([0 2*pi]);
-title('After smoothing');
+N_dot_est = zeros(size(Ndot_grid));
 
 switch n_limb
     case 4
-        [inverse_map,~] = load_inverse_map("X",105);
+        recordID_weights = 105;
+        [~, ~, parms] = load_data_processed(recordID_weights);
     case 6
-        [inverse_map,~] = load_inverse_map("X",110);
+        recordID_weights = 110;
+        [~, ~, parms] = load_data_processed(recordID_weights);
     otherwise
         disp('add maps for this number of limb');
 end
 
-figure;
-hold on;
-for i=1:n_limb
-plot(phi_grid_diff_padded,inverse_map(i_limb_ref_phi,i)*cos(phi_grid_diff_padded));
+weights_robotis = read_weights_robotis(recordID_weights,parms);
+weights_lcz = weights_robotis{parms.n_twitches}(3*[1:parms.n_lc],:);
+weights_lcz = fuse_weights_sym_direction(weights_lcz,parms);
+
+[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values("X",n_limb,recordID);
+
+hip_motors = limb_ids(:,2);
+
+weights_sign_corrected = weights_lcz(:,hip_motors);
+for i=1:length(hip_motors)
+    if changeDir(i,2) == 1
+        weights_sign_corrected(:,i) = - weights_sign_corrected(:,i);
+    end
 end
-xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
-ylabel(['inv-map(' num2str(i_limb_ref_phi) ',j)*cos(\phi_ ' num2str(i_limb_ref_phi) ')']);
-xlim([0 2*pi]);
+
+%%
+
+for i_lc=1:n_limb
+    for j_motor=1:n_limb
+        N_dot_est(:,i_lc) = N_dot_est(:,i_lc) + weights_sign_corrected(i_lc,j_motor)*cos(phi_grid(:,j_motor)).*phidot_grid(:,j_motor);
+    end
+end
+
+%%
+figure;
+for i=1:n_limb
+    subplot(2,n_limb/2,i);
+    hold on;
+    plot(grid_phi_x,Ndot_grid(:,i));
+    plot(grid_phi_x,N_dot_est(:,i));
+    ylabel('N dot');
+    xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
+    title(['Limb ' num2str(i)]); 
+    legend('Real','Estimated');
+end

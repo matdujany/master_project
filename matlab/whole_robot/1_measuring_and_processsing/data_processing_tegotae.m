@@ -5,7 +5,7 @@ clear; clc; close all;
 addpath('functions');
 addpath('../2_load_data_code');
 %% loading.
-recordID = 178;
+recordID = 188;
 n_limb = 6;
 phi_only = false;
 

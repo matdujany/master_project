@@ -930,7 +930,9 @@ float advanced_tegotae_rule(uint8_t i_limb){
   if (cos(phi[i_limb])<0)
     binary_cos_sign = -1;
 
-  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
+  float phi_dot = 2 * pi * frequency;
+
+  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
 
   //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * cos(phi[i_limb]); //todo
 

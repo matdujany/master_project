@@ -1,4 +1,4 @@
-function [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID)
+function [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(direction,n_limb,recordID)
 %GET_HARDCODED_LIMB_VALUES Summary of this function goes here
 %   for locomotion
 
@@ -7,7 +7,7 @@ switch n_limb
         if ismember(recordID,[70:104 115:120])
             limb_ids = 1 + [0 2; 5 4; 3 1; 7 6];
             changeDir_C2 = [ 1; 0; 0; 1];
-            switch parms_locomotion.direction
+            switch direction
                 case 'X'
                     changeDir_C1 = [0; 1; 1; 0];
                 case 'Y'
@@ -21,7 +21,7 @@ switch n_limb
             real_servo_ids = [4:7    15:18];
         end
         if ismember(recordID,[26:30 105:113  140:144])
-            switch parms_locomotion.direction
+            switch direction
                 case 'X'
                     limb_ids = 1 + [5 4; 3 2; 1 0; 7 6];
                     changeDir = [0 0; 0 0; 1 1; 1 1];
@@ -34,7 +34,7 @@ switch n_limb
             real_servo_ids = [4:7    15:18];
         end
     case 6
-        switch parms_locomotion.direction
+        switch direction
             case 'X'
                 limb_ids = 1+[9 8; 0 6; 4 3; 2 1; 7 5; 11 10];
                 changeDir = [0 0; 0 1; 0 0; 1 1; 1 0; 1 1];
@@ -46,7 +46,7 @@ switch n_limb
         
     case 8
         if recordID < 50
-            switch parms_locomotion.direction
+            switch direction
                 case 'X'
                     limb_ids = 1+[0 8; 9 7; 4 3; 2 1; 13 12; 15 14; 11 10; 6 5];
                     changeDir = [0 1; 1 0; 1 1; 1 1; 1 0; 0 1; 0 0; 0 0];
@@ -55,7 +55,7 @@ switch n_limb
             end
             real_servo_ids = [1:10  13:18];
         else
-            switch parms_locomotion.direction
+            switch direction
                 case 'X'
                     limb_ids = 1+[13 12; 0 8; 6 5; 10 11; 2 1; 4 3; 9 7; 15 14];
                     changeDir = [0 0; 0 1; 0 0; 0 0; 1 1; 1 1; 1 0; 1 1];
