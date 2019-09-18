@@ -11,20 +11,26 @@ parms_locomotion.amplitude_class2_deg = 20;
 parms_locomotion.alpha = 0.2;
 parms_locomotion.sigma_s = 0.11;
 
-parms_locomotion.sigma_advanced = 0.5;
+parms_locomotion.sigma_advanced = 1;
 parms_locomotion.id_map_used = "110";
 % parms_locomotion.sigma_advanced = 0.12240;
 % parms_locomotion.id_map_used = 105;
 
+parms_locomotion.advanced_propulsion = true;
+parms_locomotion.sigma_advanced_propulsion = true;
+parms_locomotion.propulsion_formula = "sigma_p_advanced * propulsion_advanced_term * sin(phi[i_limb]),  propulsion_advanced_term += inverse_map_propulsion[i_limb][j]*(N_p[j]);";
+
+
 parms_locomotion.turning = false;
 parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
-parms_locomotion.phi_init = {0.00, -2.00, -3.60, -0.86, 1.45, -2.80};
+% parms_locomotion.phi_init = {0.00, -2.00, -3.60, -0.86, 1.45, -2.80};
+parms_locomotion.phi_init = {0, 0, 0, 0, 0, 0};
 
 parms_locomotion.use_filter = 0;
 parms_locomotion.filter_size = 4;
 parms_locomotion.message = "";
 
-parms_locomotion.categoryName = strcat("tegotae_advanced_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
+parms_locomotion.categoryName = strcat("tegotae_advanced_prop_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
 % parms_locomotion.categoryName = strcat("bipod_hardcoded_",parms_locomotion.direction);
 
 % parms_locomotion.categoryName = strcat("hardcoded_DS_quad_",parms_locomotion.direction);

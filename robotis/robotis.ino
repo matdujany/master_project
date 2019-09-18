@@ -71,7 +71,7 @@ void setup() {
 
   //twitch_record_wrapper();
   
-  SerialUSB.println("-N+N_ref(phi), N_ref = 6 * sin(phi[j]-pi); ");
+  SerialUSB.println("sigma_p_advanced * propulsion_advanced_term * sin(phi[i_limb]);  propulsion_advanced_term += inverse_map_propulsion[i_limb][j]*(N_p[j]);");
   record_tegotae(120*1000);
   //record_tegotae_changes();
 

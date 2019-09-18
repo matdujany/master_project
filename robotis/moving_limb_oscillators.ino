@@ -959,7 +959,7 @@ float advanced_tegotae_rule(uint8_t i_limb){
   if (tegotae_propulsion_advanced)
   {
     float propulsion_advanced_term = advanced_tegotae_propulsion(i_limb);
-    phi_dot += sigma_p_advanced * propulsion_advanced_term;
+    phi_dot += sigma_p_advanced * propulsion_advanced_term * sin(phi[i_limb]);
 
     /*
     SerialUSB.print("Limb ");SerialUSB.print(i_limb);SerialUSB.print(" : ");
@@ -975,7 +975,7 @@ float advanced_tegotae_rule(uint8_t i_limb){
 float advanced_tegotae_propulsion(uint8_t i_limb){
   float propulsion_advanced_term = 0;
   for (int j=0; j<n_limb; j++){
-    propulsion_advanced_term += inverse_map_propulsion[i_limb][j]*(-N_p[j]);
+    propulsion_advanced_term += inverse_map_propulsion[i_limb][j]*(N_p[j]);
   }
   return  propulsion_advanced_term;
 }
@@ -1160,6 +1160,9 @@ void print_locomotion_parameters(){
     SerialUSB.println(tegotae_propulsion);
     SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p :"); SerialUSB.println(sigma_p);
   }
+  if (tegotae_propulsion_advanced){
+     SerialUSB.print("Using advanced propulsion term in Tegoate rule, sigma_p_advanced: "); SerialUSB.println(sigma_p_advanced);   
+  }
 
   print_GRF_ref();
   print_phi_init_tegotae();
@@ -1182,9 +1185,12 @@ void print_Tegotae_parameters_bluetooth(){
     SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
   }
   if (tegotae_propulsion){
-    SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p :"); SerialUSB.println(sigma_p);
+    SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p: "); SerialUSB.println(sigma_p);
   }  
-  SerialUSB.print("Frequency (in Hertz) : ");SerialUSB.println(frequency);
+  if (tegotae_propulsion_advanced){
+     SerialUSB.print("Using advanced propulsion term in Tegoate rule, sigma_p_advanced: "); SerialUSB.println(sigma_p_advanced);   
+  }
+  SerialUSB.print("Frequency (in Hertz) : "); SerialUSB.println(frequency);
 }
 
 void print_GRF_ref(){

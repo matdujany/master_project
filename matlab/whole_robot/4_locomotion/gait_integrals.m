@@ -100,24 +100,12 @@ if ~isempty(index_check)
 end
 
 %%
-
-integrals = sum(GRF(indexes_integral,:).*diff(data.time([indexes_integral(1)-1 indexes_integral],1:n_limb)),1) ./ ...
-    (data.time(indexes_integral(end),1:n_limb) - data.time(indexes_integral(1)-1,1:n_limb));
-
-% integrals_squared = sum(GRF(indexes_integral,:).^2,1)/length(indexes_integral);
-
-integrals_squared = sum(GRF(indexes_integral,:).^2.*diff(data.time([indexes_integral(1)-1 indexes_integral],1:n_limb)),1) ./ ...
-    (data.time(indexes_integral(end),1:n_limb) - data.time(indexes_integral(1)-1,1:n_limb));
-
-
-% GRF_ref = [6,    1.5,   6,    1.5];
 GRF_ref = 6*ones(1,n_limb);
+[integrals,integrals_squared,integrals_GRF_ref,integrals_GRF_ref_squared] = compute_gait_integrals(indexes_integral,GRF,GRF_ref,time_GRF);
 
-% integrals_GRF_ref = sum(abs(GRF(indexes_integral,:)-GRF_ref),1)/length(indexes_integral);
-integrals_GRF_ref = sum(abs(GRF(indexes_integral,:)-GRF_ref).*diff(data.time([indexes_integral(1)-1 indexes_integral],1:n_limb)),1) ./ ...
-    (data.time(indexes_integral(end),1:n_limb) - data.time(indexes_integral(1)-1,1:n_limb));
-integrals_GRF_ref_squared = sum((GRF(indexes_integral,:)-GRF_ref).^2.*diff(data.time([indexes_integral(1)-1 indexes_integral],1:n_limb)),1) ./ ...
-    (data.time(indexes_integral(end),1:n_limb) - data.time(indexes_integral(1)-1,1:n_limb));
+[integrals_GRP,integrals_squared_GRP,~,~] = compute_gait_integrals(indexes_integral,GRP,zeros(1,n_limb),time_GRF);
+
+
 
 integrals
 integrals_squared

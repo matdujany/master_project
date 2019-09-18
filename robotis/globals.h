@@ -61,7 +61,7 @@ bool locomotion_bluetoooth_2_joysticks = false;
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 bool tegotae_propulsion = false;    //adds the body propulsion term in the tegotae rule.
 bool tegotae_propulsion_advanced = true;
-float sigma_p_advanced = 0.0;
+float sigma_p_advanced = 1;
 
 float inverse_map_propulsion[6][6] ={
   //for hexapod
@@ -90,9 +90,9 @@ uint8_t n_changes_recording = 2;
 //float GRF_ref[4] = {6,    1.5,   6,    1.5}; 
 //float GRF_ref[4] = {6,    1.5,   1.5,    6};
 
-//float phi_init[6] = {0, 0, 0, 0, 0, 0};
+float phi_init[6] = {0, 0, 0, 0, 0, 0};
 //float phi_init[6] = {0, 2.09, 4.19, 0, 2.09, 4.19}; //bipod
-float phi_init[6] = {0, -2, -3.6, -0.86, 1.45, -2.8};
+//float phi_init[6] = {0, -2, -3.6, -0.86, 1.45, -2.8};
 
 float GRF_ref[6] = {0, 0, 0, 0, 0, 0}; 
 //float GRF_ref[6] = {3.1514,    2.9963,    3.4211,    2.8164,    3.3008,    3.2554}; 

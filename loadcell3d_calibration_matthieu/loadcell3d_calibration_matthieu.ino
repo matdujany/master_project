@@ -30,7 +30,7 @@ using namespace Ad7124;
 
 // Set which channel to calibrate:
 
-#define I_LOADCELL 5
+#define I_LOADCELL 12
 #define I_AXIS     1
 #define BAUD_RATE  500000
 
@@ -292,6 +292,14 @@ void setup() {
     cal_offset[1] = 1.49; 
     cal_offset[2] = -1.91;
   }
+  else if (I_LOADCELL == 12){
+    cal_gain[0]   = 13761;
+    cal_gain[1]   = 13823;
+    cal_gain[2]   = 12550;
+    cal_offset[0] = -1.3; 
+    cal_offset[1] = -2.11; 
+    cal_offset[2] = 0.61;
+  }
 
   Serial1.flush();
 
@@ -365,6 +373,12 @@ cal_offset[0] = -force_arr[0];
 cal_offset[1] = -force_arr[1];
 cal_offset[2] = -force_arr[2];
 */
+Serial.print("Volt_x");
+Serial.print("\t\t");
+Serial.print("Volt_y");
+Serial.print("\t\t");
+Serial.print("Volt_z");
+Serial.print("\t\t");
 Serial.print("F_x");
 Serial.print("\t\t");
 Serial.print("F_y");
