@@ -4,6 +4,8 @@ function [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(di
 
 switch n_limb
     case 4
+        
+        %starfish quadruped
         if ismember(recordID,[70:104 115:120])
             limb_ids = 1 + [0 2; 5 4; 3 1; 7 6];
             changeDir_C2 = [ 1; 0; 0; 1];
@@ -20,6 +22,8 @@ switch n_limb
             changeDir = [changeDir_C1 changeDir_C2];
             real_servo_ids = [4:7    15:18];
         end
+        
+        %quadruped
         if ismember(recordID,[26:30 105:113  140:144])
             switch direction
                 case 'X'
@@ -33,7 +37,9 @@ switch n_limb
             end
             real_servo_ids = [4:7    15:18];
         end
+        
     case 6
+        %hexapod
         switch direction
             case 'X'
                 limb_ids = 1+[9 8; 0 6; 4 3; 2 1; 7 5; 11 10];
@@ -41,10 +47,9 @@ switch n_limb
             otherwise
                 disp('unrecognized locomotion direction');
         end
-        
         real_servo_ids = [1 4:10  15:18];
-        
     case 8
+        %octopod        
         if recordID < 50
             switch direction
                 case 'X'

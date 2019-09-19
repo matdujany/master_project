@@ -22,6 +22,8 @@
 // Include header files
 #include "constants.h"
 #include "hardcoded_parameters.h"
+#include "hardcoded_parms_corr.h"
+
 #include <DynamixelSDK.h>
 
 /* ===================================================================================================================================== */
@@ -46,8 +48,10 @@ float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; s
 //0.11 for quadruped, 0.08 for hexapode, 0.06 for octopod, 0.13 for weird quadruped
 
 
+bool tegotae_simple  = false;     //to use local tegotae rule
+bool tegotae_advanced   = false;     //to use advanced tegotae rule
+bool complete_formula   = true;     //to use advanced tegotae rule
 
-bool tegotae_advanced   = true;     //to use advanced tegotae rule
 //bool direction_X        = true;    //to go in X
 //bool direction_Y        = false;   //to go in Y 
 float weight_straight = 1;
@@ -59,18 +63,18 @@ bool locomotion_bluetoooth_2_joysticks = false;
 
 //propulsion
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
-bool tegotae_propulsion = false;    //adds the body propulsion term in the tegotae rule.
+bool tegotae_propulsion = false; //adds the body propulsion term in the tegotae rule.
 bool tegotae_propulsion_advanced = true;
-float sigma_p_advanced = -1;
+float sigma_p_advanced = 1;
 
 float inverse_map_propulsion[6][6] ={
   //for hexapod
-{-0.814, 0.293, 0.171, 0.174, 0.249, 0.075} ,
-{0.275, -0.936, 0.309, 0.167, 0.184, 0.189} ,
-{0.179, 0.315, -0.868, 0.088, 0.222, 0.157} ,
-{0.227, 0.227, 0.100, -0.856, 0.366, 0.160} ,
-{0.247, 0.195, 0.223, 0.286, -1.000, 0.270} ,
-{0.095, 0.229, 0.187, 0.160, 0.306, -0.790} ,
+{ 0.814, -0.293, -0.171, -0.174, -0.249, -0.075} ,
+{-0.275,  0.936, -0.309, -0.167, -0.184, -0.189} ,
+{-0.179, -0.315,  0.868, -0.088, -0.222, -0.157} ,
+{-0.227, -0.227, -0.100,  0.856, -0.366, -0.160} ,
+{-0.247, -0.195, -0.223, -0.286,  1.000, -0.270} ,
+{-0.095, -0.229, -0.187, -0.160, -0.306,  0.790} ,
 };
 
 //recordings and experiments
@@ -236,8 +240,8 @@ uint16_t neutral_pos[MAX_NR_SERVOS];
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
 // s
-float val_old_lc[MAX_NR_ARDUINO * 3];          // old values of loadcell data, needed for calculating s_dot
-int timestamp_lc_old[MAX_NR_ARDUINO] = {0};    // old values of timestamps, used to compute s_dots
+float val_old_lc[MAX_NR_ARDUINO * 3];          // old values of loadcell data (in N), needed for calculating s_dot
+int timestamp_lc_old[MAX_NR_ARDUINO] = {0};    // old values of timestamps (in ms), used to compute s_dots, 
 
 // S_dot
 float s_dot_last[MAX_NR_ARDUINO * 3 + IMU_USEFUL_CHANNELS];   // Most recent values of s_dot
@@ -248,12 +252,12 @@ float integrated_speed[3]; //for learning speed weights.
 
 
 //motor
-uint16_t last_motor_pos[MAX_NR_SERVOS];  // Most recent values of motor positions
+uint16_t last_motor_pos[MAX_NR_SERVOS];  // Most recent values of motor positions 
 int16_t last_motor_load[MAX_NR_SERVOS];  // Most recent values of motor loads
-unsigned long last_motor_timestamp[MAX_NR_SERVOS];
+unsigned long last_motor_timestamp[MAX_NR_SERVOS]; //Timestamp in ms
 
 uint16_t old_motor_pos[MAX_NR_SERVOS];    //older values of motor positions
-unsigned long old_motor_timestamp[MAX_NR_SERVOS]; //older values of motor timestamps, needed for derivations
+unsigned long old_motor_timestamp[MAX_NR_SERVOS]; //older values of motor timestamps (in ms), needed for derivations
 
 //motor dot
 float m_dot_pos[MAX_NR_SERVOS];           // Most recent values of m_dot

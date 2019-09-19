@@ -30,7 +30,15 @@
         "string_view": "cpp",
         "system_error": "cpp",
         "tuple": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "atomic": "cpp",
+        "cstdarg": "cpp",
+        "cstddef": "cpp",
+        "deque": "cpp",
+        "algorithm": "cpp",
+        "memory": "cpp",
+        "memory_resource": "cpp",
+        "string": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false
 }

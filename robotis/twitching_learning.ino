@@ -298,7 +298,7 @@ void twitch_frame_found_main(uint8_t i_part, uint8_t i_servo, uint8_t i_dir, int
     //float m_learning = dir_sign*m_dot_pos[i_servo]; // sign is flipped for M-
     float m_learning = m_dot_pos[i_servo]; // no sign flip
     int i_action = 2*i_servo + i_dir;
-    twitch_learning_prog( i_action, m_learning);
+    twitch_learning_prog(i_action, m_learning);
   }
 
   //sending measures to Matlab

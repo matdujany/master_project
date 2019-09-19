@@ -575,100 +575,6 @@ void initialize_inverse_map_advanced_tegotae(){
   #endif 
 }
 
-/*
-void initialize_hardcoded_limbs(){
-  SerialUSB.println("Entering Initialize hardcoded limbs");
-
-  if (MAP_USED < 89) {
-    n_limb = 4;
-    if (direction_X){
-      fill_limbs_array(limbs_X);
-      fill_changeDirs_array(changeDirs_X);
-    }
-    if (direction_Y){
-      fill_limbs_array(limbs_Y);
-      fill_changeDirs_array(changeDirs_Y);   
-    }
-    if (direction_Yaw){
-      fill_limbs_array(limbs_Yaw);
-      fill_changeDirs_array(changeDirs_Yaw);    
-    }
-  }
-  if(MAP_USED == 89){
-    n_limb = 6;
-    if (direction_X){
-      fill_limbs_array(limbs_X_6legs);
-      fill_changeDirs_array(changeDirs_X_6legs);
-    }
-  }
-  if(MAP_USED == 94){
-    n_limb = 8;
-    if (direction_X){
-      fill_limbs_array(limbs_X_8legs);
-      fill_changeDirs_array(changeDirs_X_8legs);
-    }
-  }
-  
-  init_offset_class1();
-
-  SerialUSB.println("Initialize hardcoded limbs success !");
-}
-
-void initialize_inverse_map_advanced_tegotae(){
-  if (MAP_USED==86)
-  {
-    if (direction_X){
-      //sigma_advanced = sigma_advanced_X_86;
-      fill_inverse_map_array(inverse_map_X_86);
-    }
-    if (direction_Y){
-      //sigma_advanced = sigma_advanced_Y_86;
-      fill_inverse_map_array(inverse_map_Y_86);
-    }
-  }
-  if (MAP_USED==87)
-  {
-    if (direction_X){
-      //sigma_advanced = sigma_advanced_X_87;
-      fill_inverse_map_array(inverse_map_X_87);
-    }
-    if (direction_Y){
-      //sigma_advanced = sigma_advanced_Y_87;
-      fill_inverse_map_array(inverse_map_Y_87);
-    }
-  }
-  if (MAP_USED==88)
-  {
-    if (direction_X){
-      //sigma_advanced = sigma_advanced_X_88;
-      fill_inverse_map_array(inverse_map_X_88);
-    }
-    if (direction_Y){
-      //sigma_advanced = sigma_advanced_Y_88;
-      fill_inverse_map_array(inverse_map_Y_88);
-    }
-    if (direction_Yaw){
-      //sigma_advanced = sigma_advanced_Yaw_88;
-      fill_inverse_map_array(inverse_map_Yaw_88);
-    }
-  }
-  if (MAP_USED==89)
-  {
-    if (direction_X){
-      //sigma_advanced = sigma_advanced_X_89;
-      fill_inverse_map_array(inverse_map_X_89);
-    }
-  }
-  if (MAP_USED==94)
-  {
-    if (direction_X){
-      sigma_advanced = sigma_advanced_X_94;
-      fill_inverse_map_array(inverse_map_X_94);
-    }
-  }      
-}
-*/
-
 
 ///Oscillators
 
@@ -806,15 +712,20 @@ void update_phi_tegotae()
 
   for (int i=0; i<n_limb; i++){
 
+    //getting phi_dot
     if (tegotae_advanced){
       if (USE_DERIVATIVE_TEGOTAE)
         phi_dot[i] = advanced_tegotae_rule_derivative(i);
       else
         phi_dot[i] = advanced_tegotae_rule(i);
     }
-    else
+    if (tegotae_simple)
     {
       phi_dot[i] = simple_tegotae_rule(phi[i],N_s[i],N_p[i],i);
+    }
+
+    if (complete_formula){
+      phi_dot[i] = complete_rule(i);
     }
 
     //increase in phase only if the locomotion weights are non 0
@@ -930,9 +841,9 @@ float advanced_tegotae_rule(uint8_t i_limb){
   if (cos(phi[i_limb])<0)
     binary_cos_sign = -1;
 
-  float phi_dot = 2 * pi * frequency;
+  //float phi_dot = 2 * pi * frequency;
 
-  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
+  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
 
   //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * cos(phi[i_limb]); //todo
 
@@ -961,7 +872,7 @@ float advanced_tegotae_rule(uint8_t i_limb){
   if (tegotae_propulsion_advanced)
   {
     float propulsion_advanced_term = advanced_tegotae_propulsion(i_limb);
-    phi_dot += sigma_p_advanced * propulsion_advanced_term * sin(phi[i_limb]);
+    phi_dot += - sigma_p_advanced * propulsion_advanced_term * sin(phi[i_limb]);
 
     /*
     SerialUSB.print("Limb ");SerialUSB.print(i_limb);SerialUSB.print(" : ");
@@ -980,6 +891,29 @@ float advanced_tegotae_propulsion(uint8_t i_limb){
     propulsion_advanced_term += inverse_map_propulsion[i_limb][j]*(N_p[j]);
   }
   return  propulsion_advanced_term;
+}
+
+float complete_rule(uint8_t i_limb){
+  SerialUSB.println("Using complete rule");
+  float sigma_hip = 0.5/58; //0.5/58 --> bipod or travelling waves
+  float sigma_knee = 0;
+  float sigma_p_hip = 0;
+  float sigma_p_knee = 1.0/120; // 1.0/120 --> tripod
+
+  float phi_dot = 2*pi*frequency;
+  phi_dot += sigma_hip * vector_sum(u_hip[i_limb],N_s,n_limb)*cos(phi[i_limb]);
+  phi_dot += sigma_knee * vector_sum(u_knee[i_limb],N_s,n_limb)*sin(phi[i_limb]);
+  phi_dot += - sigma_p_hip * vector_sum(v_hip[i_limb],N_p,n_limb)*cos(phi[i_limb]);
+  phi_dot += - sigma_p_knee * vector_sum(v_knee[i_limb],N_p,n_limb)*sin(phi[i_limb]);
+  return phi_dot;
+}
+
+float vector_sum(std::vector<float> matrix_row, float N[], uint8_t size){
+  float sum = 0;
+  for (uint8_t i = 0; i < size; i++){
+    sum += matrix_row[i]*N[i];
+  }
+  return sum;
 }
 
 /// Trot
@@ -1153,6 +1087,9 @@ void print_locomotion_parameters(){
     print_inverse_map();
     print_limbs();
     print_changeDirs();
+    if (tegotae_propulsion_advanced){
+     SerialUSB.print("Using advanced propulsion term in Tegoate rule, sigma_p_advanced: "); SerialUSB.println(sigma_p_advanced);   
+    }
   }
   else
   {
@@ -1161,9 +1098,6 @@ void print_locomotion_parameters(){
   if (tegotae_propulsion){
     SerialUSB.println(tegotae_propulsion);
     SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p :"); SerialUSB.println(sigma_p);
-  }
-  if (tegotae_propulsion_advanced){
-     SerialUSB.print("Using advanced propulsion term in Tegoate rule, sigma_p_advanced: "); SerialUSB.println(sigma_p_advanced);   
   }
 
   print_GRF_ref();
@@ -1187,7 +1121,7 @@ void print_Tegotae_parameters_bluetooth(){
     SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
   }
   if (tegotae_propulsion){
-    SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p: "); SerialUSB.println(sigma_p);
+    SerialUSB.print("Using local propulsion term in Tegoate rule, sigma_p: "); SerialUSB.println(sigma_p);
   }  
   if (tegotae_propulsion_advanced){
      SerialUSB.print("Using advanced propulsion term in Tegoate rule, sigma_p_advanced: "); SerialUSB.println(sigma_p_advanced);   
