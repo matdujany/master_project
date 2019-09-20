@@ -89,9 +89,9 @@ for i=2:length(timestamps)
         earlier_phase = simulated_limb_phi(i_limb,i-1);
         if strfind(parms_locomotion.categoryName,"tegotae_advanced")>0
             if nargin == 5
-                [inverse_map,~] = load_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
-            else
                 [inverse_map,sigma] = load_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
+            else
+                [inverse_map,~] = load_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
             end
             phi_dot = advanced_tegotae_rule(i_limb,earlier_phase,GRF(i-1,:),inverse_map,frequency,sigma);
         else
