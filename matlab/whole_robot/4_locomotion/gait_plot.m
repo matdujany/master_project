@@ -10,7 +10,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 198; %148
+recordID = 203; %148
 n_limb = 6;
 
 % recordID = 108;
@@ -76,7 +76,7 @@ time = (data.time(:,:)-data.time(1,:))/10^3;
 [f_gait,ax_gait] = plot_gait_diagram(GRF,time,threshold_unloading,recordID);
 
 %% phases
-[f_phase,ax_phase] = plot_phases(pos_phi_data,recordID,GRF);
+[f_phase,ax_phase] = plot_phases(pos_phi_data,recordID,GRF,time);
 
 %% total load;
 % f_total_load = figure;

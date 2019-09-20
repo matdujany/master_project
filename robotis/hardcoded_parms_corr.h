@@ -2,10 +2,10 @@
 
 //parameters for complete formula
 
-float sigma_hip = 0.5; //0.25/58; //0.5/58; //0.5/58 --> bipod or travelling waves
+float sigma_hip = 0.1; //0.15-> bipod or travelling waves //0.5 oversteering
 float sigma_knee = 0;
-float sigma_p_hip = 0; //0.5/120;
-float sigma_p_knee = 0; //1.0/120; // 1.0/120 --> tripod
+float sigma_p_hip = 0;
+float sigma_p_knee = 1.2;
 
 std::vector<std::vector<float>> u_hip={
 {-0.490, 0.100, 0.227, -0.308, 0.074, 0.287} ,

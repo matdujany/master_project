@@ -48,8 +48,8 @@ float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; s
 //0.11 for quadruped, 0.08 for hexapode, 0.06 for octopod, 0.13 for weird quadruped
 
 bool tegotae_simple  = false;     //to use local tegotae rule
-bool tegotae_advanced   = true;     //to use advanced tegotae rule
-bool complete_formula   = false;     //to use advanced tegotae rule
+bool tegotae_advanced   = false;     //to use advanced tegotae rule
+bool complete_formula   = true;     //to use advanced tegotae rule
 
 //bool direction_X        = true;    //to go in X
 //bool direction_Y        = false;   //to go in Y 
@@ -78,14 +78,6 @@ std::vector<std::vector<float>> inverse_map_propulsion ={
 
 //recordings and experiments
 
-//for record_tegotae_changes()
-float frequency_recording[3] = {0.15, 0.5, 1};
-float sigma_advanced_recording[3] = {0.0367,0.0367,0.0367}; // at time_changes[i]
-int time_changes[3] = {90, 180, 270}; //the last value is the end of the recoding
-uint8_t n_changes_recording = 2;
-//frequency_recording, sigma_advanced_recording and time_changes should have the same size 
-//n_changes_recording should be equal to their size - 1 
-
 //float phi_init[4] = {3.14, 3.14, 3.14, 3.14};
 //float phi_init[4] = {0, 4.71, 1.57, 3.14};
 
@@ -111,16 +103,6 @@ float GRF_ref[6] = {0, 0, 0, 0, 0, 0};
 //float phi_init[4] = {5.12, 1.53, 5.84, 2.20};
 //float phi_init[4] = {1.24, 1.58, 3.87, 2.97};
 
-//for amputations through Serial3 or programmed
-uint8_t n_lc_amputated = 0;
-std::vector<uint8_t>  idx_lc_amputated;
-
-//for record_tegotae_leg_amputated_programmed()
-int idx_lc_amputated_programmed[3] = {0, 2, 3}; //at time_changes_amputation[j] loadcell idx_lc_amputated_programmed[j] is removed
-int time_changes_amputation[4] = {0, 0, 0, 120}; //the last value is the end of the recording
-uint8_t n_amputations_programmed = 3;
-//idx_lc_amputated_programmed should be of size n_amputations_programmed
-//time_changes_amputation should be of size n_amputations_programmed+1
 
 //for limb oscillators
 unsigned long t_last_phi_update      = 0;

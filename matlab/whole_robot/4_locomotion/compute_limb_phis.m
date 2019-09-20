@@ -1,7 +1,7 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 194;
+recordID = 181;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 n_limb = 6;

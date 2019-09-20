@@ -1,4 +1,4 @@
-function [f_phase,ax_phase] = plot_phases(pos_phi_data,recordID,GRF)
+function [f_phase,ax_phase] = plot_phases(pos_phi_data,recordID,GRF,time_GRF)
 %UNTITLED9 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -16,10 +16,9 @@ if n_limb == 8
 end
 
 bool_subplot = false;
-if nargin == 3
+if nargin >= 3
     bool_subplot = true;
 end
-
 f_phase=figure;
 f_phase.Color = 'w';
 
@@ -59,10 +58,15 @@ for i=1:2
 end
 ylim(2*pi*[0 1] + [0 0.5]);
 
+
+if nargin == 3
+    time_GRF = time;
+end
+
 if bool_subplot
     lgd.Location = 'east';
     subplot(2,1,2);
-    plot(time,sum(GRF,2));
+    plot(time_GRF,sum(GRF,2));
     ylabel('Total Load [N]');
     xlabel('Time [s]');
     ax_phase = [ax_phase; gca()];
