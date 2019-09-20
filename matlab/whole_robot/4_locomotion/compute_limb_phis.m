@@ -1,11 +1,11 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 34;
+recordID = 194;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 n_limb = 6;
-[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
+[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion.direction,n_limb,recordID);
 n_limb = size(limbs,1);
 n_samples = size(pos_phi_data.limb_phi,2);
 

@@ -97,7 +97,6 @@ void record_tegotae(unsigned long recording_duration){
   init_tegotae();
   init_recording_locomotion();
   init_phi_tegotae();
-  sigma_advanced = 0.15;
   
   //change_dir_mode_to_XY();
 
@@ -683,19 +682,16 @@ void update_filter_tegotae(){
 
 void update_phi_tegotae()
 {
-  unsigned long t_current = millis() - t_offset_oscillators;
-
   if (USE_FILTER_TEGOTAE)
     update_filter_tegotae();
 
   for (int i=0; i<n_limb; i++){
-    //we store the old values before writing the new ones
+    //we use the old values before writing the new ones to compute the drivatives
     if (USE_DERIVATIVE_TEGOTAE){
       float delta_N_s;
       delta_N_s = ser_rx_buf.last_loadcell_data_float[2 + i * 3] - N_s[i];
-      float delta_time = (t_current - t_last_phi_update);
+      float delta_time = (millis() - timestamp_lc_tegotae);
       N_s_derivative[i] = 1000.0/delta_time * delta_N_s;
-
       /*
       SerialUSB.print("Limb "); SerialUSB.print(i);
       SerialUSB.print(" , GRF "); SerialUSB.print(ser_rx_buf.last_loadcell_data_float[2 + i * 3]);
@@ -703,29 +699,32 @@ void update_phi_tegotae()
       SerialUSB.print(" , delta time (ms) "); SerialUSB.print(delta_time);
       SerialUSB.print(" , derivative "); SerialUSB.println(N_s_derivative[i]);
       */
-
     }
     N_s[i] = ser_rx_buf.last_loadcell_data_float[2 + i * 3]; //support is 3rd channel of loadcells
     N_p[i] = ser_rx_buf.last_loadcell_data_float[1 + i * 3]; //propulsion is Y channel of loadcells, (could be determined with the loadcell connection weights) 
+    timestamp_lc_tegotae = millis();
   }
 
+  unsigned long t_current = millis() - t_offset_oscillators;
 
-  for (int i=0; i<n_limb; i++){
+  for (int i=0; i<n_limb; i++)
+  {
+    phi_dot[i] = 2*pi*frequency;
 
-    //getting phi_dot
+    //getting phi_dot cprrections
     if (tegotae_advanced){
       if (USE_DERIVATIVE_TEGOTAE)
-        phi_dot[i] = advanced_tegotae_rule_derivative(i);
+        phi_dot[i] += advanced_tegotae_rule_derivative(i);
       else
-        phi_dot[i] = advanced_tegotae_rule(i);
+        phi_dot[i] += advanced_tegotae_rule(i);
     }
     if (tegotae_simple)
     {
-      phi_dot[i] = simple_tegotae_rule(phi[i],N_s[i],N_p[i],i);
+      phi_dot[i] += simple_tegotae_rule(phi[i],N_s[i],N_p[i],i);
     }
 
     if (complete_formula){
-      phi_dot[i] = complete_rule(i);
+      phi_dot[i] += complete_rule(i);
     }
 
     //increase in phase only if the locomotion weights are non 0
@@ -749,164 +748,70 @@ void update_phi_tegotae()
 
 
 float simple_tegotae_rule(float phase, float ground_reaction_force, float propulsion_force, uint8_t i_limb){
-  
-  int8_t binary_cos_sign = 1;
-  
-  if (cos(phase)<0)
-    binary_cos_sign = -1;
-
-  int8_t ground_reaction_force_binary = 0;
-
-  if (ground_reaction_force>1.5)
-      ground_reaction_force_binary = 1;
-
-  
-  
-  //float phi_dot = 2 * pi * frequency - sigma_s * ground_reaction_force * cos(phase);
-  //float phi_dot = 2 * pi * frequency - sigma_s * ground_reaction_force * binary_cos_sign;
-
-  //float phi_dot = 2 * pi * frequency - sigma_s * (ground_reaction_force - GRF_ref[i_limb]) * binary_cos_sign;
-  float phi_dot = 2 * pi * frequency;
-
-  //float phi_dot = 2 * pi * frequency - sigma_s * 4 * ground_reaction_force_binary * binary_cos_sign;
-
-  if (tegotae_propulsion)
+  float simple_tegotae_term = - sigma_s * ground_reaction_force * cos(phase);
+  if (tegotae_propulsion_local)
   {
-    phi_dot += - sigma_p * propulsion_force * cos(phase);
+    simple_tegotae_term += - sigma_p * propulsion_force * cos(phase);
   }
-
-
-
-  return phi_dot;
+  return simple_tegotae_term;
 }
 
 
 float advanced_tegotae_rule_derivative(uint8_t i_limb){
-  float GRF_advanced_term = 0;
-  for (int j=0; j<n_limb; j++){
-    GRF_advanced_term += inverse_map[i_limb][j]*N_s_derivative[j];
-    //GRF_advanced_term += inverse_map[i_limb][j]*N_s[j];
-  }
-
-  //GRF_advanced_term = 0;
-  float phi_dot = 2 * pi * frequency + 0.1 * sigma_advanced * GRF_advanced_term;
-
-  //float phi_dot = 2 * pi * frequency + 0.1 * sigma_advanced * GRF_advanced_term * N_s_derivative[i_limb];
-
-  return phi_dot;
+  float advanced_tegotae_derivative_term = 0.1 * sigma_advanced * vector_sum(inverse_map[i_limb],N_s_derivative,n_limb);
+  return advanced_tegotae_derivative_term;
 }
 
 float advanced_tegotae_rule(uint8_t i_limb){
-  float GRF_advanced_term = 0;
-  float GRF_advanced_term_binary = 0;
-
-
-  for (int j=0; j<n_limb; j++){
-
-    float grf_under_limb = N_s[j];
-    uint8_t grf_under_limb_binary = 0;
-
-    if (USE_FILTER_TEGOTAE){
-      for (int k=0; k<FILTER_SIZE_TEGOTAE; k++)
-      {
-        grf_under_limb += buffer_filter_tegotae.N_s[k][j];
-      }
-      grf_under_limb = grf_under_limb/(FILTER_SIZE_TEGOTAE+1);
+  float advanced_tegotae_term;
+  if (USE_FILTER_TEGOTAE){
+    for (int j=0; j<n_limb; j++)
+    {
+    N_s_filtered[j] = 0;
+    for (int k=0; k<FILTER_SIZE_TEGOTAE; k++)
+    {
+      N_s_filtered[j] += buffer_filter_tegotae.N_s[k][j];
     }
+    N_s_filtered[j] = N_s_filtered[j]/(FILTER_SIZE_TEGOTAE+1);
     //SerialUSB.print("Limb ");SerialUSB.print(j);
-    //SerialUSB.print(" grf filtered :"); SerialUSB.println(grf_under_limb,4);
-
-    if (grf_under_limb>1.5)
-      grf_under_limb_binary = 1;
-
-    
-    float grf_ref_func = 0;
-    if (phi[j]>pi)
-      grf_ref_func = 6 * sin(phi[j]-pi);
-      //grf_ref_func = 12  * abs(sin(phi[j]));
-    
-    //GRF_advanced_term += inverse_map[i_limb][j] * (-grf_under_limb+grf_ref_func);
-    
-
-    //GRF_advanced_term += inverse_map[i_limb][j]*(grf_under_limb - GRF_ref[j]);
-    GRF_advanced_term += inverse_map[i_limb][j]*grf_under_limb;
-    //GRF_advanced_term += inverse_map[i_limb][j]*(-grf_under_limb);
-
-    //GRF_advanced_term_binary += inverse_map[i_limb][j]*grf_under_limb_binary;
-
+    //SerialUSB.print(" grf filtered :"); SerialUSB.println(N_s_filtered[j],4);
+    }
+    advanced_tegotae_term = sigma_advanced * vector_sum(inverse_map[i_limb],N_s_filtered,n_limb) * cos(phi[i_limb]);
   }
-
-  int8_t binary_cos_sign = 1;
-  
-  if (cos(phi[i_limb])<0)
-    binary_cos_sign = -1;
-
-  //float phi_dot = 2 * pi * frequency;
-  sigma_advanced = 0.5;
-  
-  float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
-
-  //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * cos(phi[i_limb]); //todo
-
-  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term;
-
-  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * binary_cos_sign;
-  //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * binary_cos_sign;
-
-  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * N_p[i_limb]*0.3;
-  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * (-N_p[i_limb]);
-  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * sign(N_p[i_limb]);
-  //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * sign(N_p[i_limb]);
-
-
-  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * sign(-N_s_derivative[i_limb]);
-  //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * sign(N_s_derivative[i_limb]);
-
-  //float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * binary_cos_sign;
-
-
-  if (tegotae_propulsion)
+  else
   {
-    phi_dot += - sigma_p * N_p[i_limb] * cos(phi[i_limb]);
+    advanced_tegotae_term = sigma_advanced * vector_sum(inverse_map[i_limb],N_s,n_limb) * cos(phi[i_limb]);
   }
-
+  if (tegotae_propulsion_local)
+  {
+    advanced_tegotae_term += - sigma_p * N_p[i_limb] * cos(phi[i_limb]);
+  }
   if (tegotae_propulsion_advanced)
   {
-    float propulsion_advanced_term = advanced_tegotae_propulsion(i_limb);
-    phi_dot += - sigma_p_advanced * propulsion_advanced_term * sin(phi[i_limb]);
-
+    advanced_tegotae_term += - sigma_p_advanced * vector_sum(inverse_map_propulsion[i_limb],N_p,n_limb) * sin(phi[i_limb]);
     /*
     SerialUSB.print("Limb ");SerialUSB.print(i_limb);SerialUSB.print(" : ");
     SerialUSB.print(GRF_advanced_term);SerialUSB.print(", ");
     SerialUSB.print(propulsion_advanced_term);SerialUSB.println();
      */
   }
-
-
-  return phi_dot;
-}
-
-float advanced_tegotae_propulsion(uint8_t i_limb){
-  float propulsion_advanced_term = 0;
-  for (int j=0; j<n_limb; j++){
-    propulsion_advanced_term += inverse_map_propulsion[i_limb][j]*(N_p[j]);
-  }
-  return  propulsion_advanced_term;
+  return advanced_tegotae_term;
 }
 
 float complete_rule(uint8_t i_limb){
-  float phi_dot = 2*pi*frequency;
-  phi_dot += sigma_hip * vector_sum(u_hip[i_limb],N_s,n_limb)*cos(phi[i_limb]);
-  phi_dot += sigma_knee * vector_sum(u_knee[i_limb],N_s,n_limb)*sin(phi[i_limb]);
-  phi_dot += - sigma_p_hip * vector_sum(v_hip[i_limb],N_p,n_limb)*cos(phi[i_limb]);
-  phi_dot += - sigma_p_knee * vector_sum(v_knee[i_limb],N_p,n_limb)*sin(phi[i_limb]);
-  return phi_dot;
+  float complete_rule_term = 0;
+  complete_rule_term += sigma_hip * vector_sum(u_hip[i_limb],N_s,n_limb)*cos(phi[i_limb]);
+  complete_rule_term += sigma_knee * vector_sum(u_knee[i_limb],N_s,n_limb)*sin(phi[i_limb]);
+  complete_rule_term += - sigma_p_hip * vector_sum(v_hip[i_limb],N_p,n_limb)*cos(phi[i_limb]);
+  complete_rule_term += - sigma_p_knee * vector_sum(v_knee[i_limb],N_p,n_limb)*sin(phi[i_limb]);
+  return complete_rule_term;
 }
 
 float vector_sum(std::vector<float> matrix_row, float N[], uint8_t size){
   float sum = 0;
   for (uint8_t i = 0; i < size; i++){
     sum += matrix_row[i]*N[i];
+    //SerialUSB.println(sum,3);
   }
   return sum;
 }
@@ -1091,8 +996,7 @@ void print_locomotion_parameters(){
   {
     SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
   }
-  if (tegotae_propulsion){
-    SerialUSB.println(tegotae_propulsion);
+  if (tegotae_propulsion_local){
     SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p :"); SerialUSB.println(sigma_p);
   }
   if  (complete_formula){
@@ -1128,7 +1032,7 @@ void print_Tegotae_parameters_bluetooth(){
   {
     SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
   }
-  if (tegotae_propulsion){
+  if (tegotae_propulsion_local){
     SerialUSB.print("Using local propulsion term in Tegoate rule, sigma_p: "); SerialUSB.println(sigma_p);
   }  
   if (tegotae_propulsion_advanced){

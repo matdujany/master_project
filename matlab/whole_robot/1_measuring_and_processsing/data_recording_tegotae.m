@@ -11,7 +11,7 @@ parms_locomotion.amplitude_class2_deg = 20;
 parms_locomotion.alpha = 0.2;
 parms_locomotion.sigma_s = 0.11;
 
-parms_locomotion.sigma_advanced = 0.5;
+parms_locomotion.sigma_advanced = 0.15;
 parms_locomotion.id_map_used = 110;
 
 parms_locomotion.message = "advanced";

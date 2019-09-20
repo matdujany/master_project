@@ -71,9 +71,9 @@ void setup() {
 
   //twitch_record_wrapper();
   
-  SerialUSB.println("propulsion only, sigma_p_advanced * propulsion_advanced_term * sin(phi[i_limb]);  propulsion_advanced_term += inverse_map_propulsion[i_limb][j]*(N_p[j]);");
   //SerialUSB.println("tripod hardcoded");
   record_tegotae(120*1000);
+
   //record_tegotae_changes();
 
   //record_tegotae_leg_amputated_Serial3(600*1000);

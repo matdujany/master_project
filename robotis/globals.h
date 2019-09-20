@@ -62,11 +62,11 @@ bool locomotion_bluetoooth_2_joysticks = false;
 
 //propulsion
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
-bool tegotae_propulsion = false; //adds the body propulsion term in the tegotae rule.
+bool tegotae_propulsion_local = false; //adds the body propulsion term in the tegotae rule.
 bool tegotae_propulsion_advanced = false;
 float sigma_p_advanced = 1;
 
-float inverse_map_propulsion[6][6] ={
+std::vector<std::vector<float>> inverse_map_propulsion ={
   //for hexapod
 { 0.814, -0.293, -0.171, -0.174, -0.249, -0.075} ,
 {-0.275,  0.936, -0.309, -0.167, -0.184, -0.189} ,
@@ -128,7 +128,9 @@ unsigned long t_offset_oscillators   = 0;
 float phi[MAX_N_LIMB]             = {0};
 float phi_dot[MAX_N_LIMB]         = {0};
 float N_s[MAX_NR_ARDUINO] = {0}; //body support term for Tegotae
+float N_s_filtered[MAX_NR_ARDUINO] = {0}; //body support term filtered for Tegotae
 float N_s_derivative[MAX_NR_ARDUINO] = {0}; //body support term for derivative Tegotae
+unsigned long timestamp_lc_tegotae = millis();
 
 float N_p[MAX_NR_ARDUINO] = {0}; //body propulsion term for Tegotae.
 uint16_t goal_positions_tegotae[MAX_NR_SERVOS];
