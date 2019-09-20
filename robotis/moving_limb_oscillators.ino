@@ -97,7 +97,6 @@ void record_tegotae(unsigned long recording_duration){
   init_tegotae();
   init_recording_locomotion();
   init_phi_tegotae();
-  sigma_advanced = 0.15;
   
   //change_dir_mode_to_XY();
 
