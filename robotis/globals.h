@@ -47,10 +47,9 @@ float alpha           = 0.2;  //reduction of amplitude during stance for class 2
 float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
 //0.11 for quadruped, 0.08 for hexapode, 0.06 for octopod, 0.13 for weird quadruped
 
-
 bool tegotae_simple  = false;     //to use local tegotae rule
-bool tegotae_advanced   = false;     //to use advanced tegotae rule
-bool complete_formula   = true;     //to use advanced tegotae rule
+bool tegotae_advanced   = true;     //to use advanced tegotae rule
+bool complete_formula   = false;     //to use advanced tegotae rule
 
 //bool direction_X        = true;    //to go in X
 //bool direction_Y        = false;   //to go in Y 
@@ -64,7 +63,7 @@ bool locomotion_bluetoooth_2_joysticks = false;
 //propulsion
 float sigma_p         = 0.11; // Value to tune, Sigma body propulsion with simple tegotae rule; see Fukuhara 2018 article
 bool tegotae_propulsion = false; //adds the body propulsion term in the tegotae rule.
-bool tegotae_propulsion_advanced = true;
+bool tegotae_propulsion_advanced = false;
 float sigma_p_advanced = 1;
 
 float inverse_map_propulsion[6][6] ={

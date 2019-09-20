@@ -11,7 +11,7 @@ addpath('computing_functions');
 
 
 %% Load data
-recordID = 105;
+recordID = 110;
 [data, lpdata, parms] =  load_data_processed(recordID);
 
 weights_robotis = read_weights_robotis(recordID,parms);
@@ -62,8 +62,11 @@ for i=1:parms.n_lc
     end
 end
 
-h=plot_inv_map_Nz_hip_only(u_hip);
-h=plot_inv_map_Nz_knee_only(u_knee);
+u_hip = renorm(u_hip);
+u_knee = renorm(u_knee);
+
+plot_map(u_hip,'N','hip');
+plot_map(u_knee,'N','knee');
 
 
 %%
@@ -87,8 +90,12 @@ end
 % weights_inv_map_friction = weights_lcy_knee_sign_corr';
 % h=plot_inv_map_Ny_knee_only(weights_inv_map_friction);
 
-h=plot_inv_map_Ny_hip_only(v_hip);
-h=plot_inv_map_Ny_knee_only(v_knee);
+v_hip = renorm(v_hip);
+v_knee = renorm(v_knee);
+
+plot_map(v_hip,'F','hip');
+plot_map(v_knee,'F','knee');
+
 
 % h=plot_inv_map_Ny_hip_only(100*u_hip/58.9);
 %%
@@ -112,4 +119,8 @@ end
 fprintf('};\n');
 fprintf('\n');
 
+end
+
+function map_renormed = renorm(map)
+map_renormed = map/max(max(abs(map)));
 end

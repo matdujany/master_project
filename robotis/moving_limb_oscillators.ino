@@ -842,7 +842,8 @@ float advanced_tegotae_rule(uint8_t i_limb){
     binary_cos_sign = -1;
 
   //float phi_dot = 2 * pi * frequency;
-
+  sigma_advanced = 0.5;
+  
   float phi_dot = 2 * pi * frequency + sigma_advanced * GRF_advanced_term * cos(phi[i_limb]);
 
   //float phi_dot = 2 * pi * frequency + 0.5 * GRF_advanced_term_binary * cos(phi[i_limb]); //todo
@@ -894,12 +895,6 @@ float advanced_tegotae_propulsion(uint8_t i_limb){
 }
 
 float complete_rule(uint8_t i_limb){
-  SerialUSB.println("Using complete rule");
-  float sigma_hip = 0.5/58; //0.5/58 --> bipod or travelling waves
-  float sigma_knee = 0;
-  float sigma_p_hip = 0;
-  float sigma_p_knee = 1.0/120; // 1.0/120 --> tripod
-
   float phi_dot = 2*pi*frequency;
   phi_dot += sigma_hip * vector_sum(u_hip[i_limb],N_s,n_limb)*cos(phi[i_limb]);
   phi_dot += sigma_knee * vector_sum(u_knee[i_limb],N_s,n_limb)*sin(phi[i_limb]);
@@ -1075,6 +1070,7 @@ void print_locomotion_parameters(){
   //SerialUSB.print("Locomotion in direction : "); 
   //(direction_X) ? SerialUSB.println("X") : 0;
   //(direction_Y) ? SerialUSB.println("Y") : 0;
+  delay(1000);
   if (tegotae_advanced){
     if (USE_FILTER_TEGOTAE){
       SerialUSB.print("Using filter of size ");
@@ -1091,13 +1087,25 @@ void print_locomotion_parameters(){
      SerialUSB.print("Using advanced propulsion term in Tegoate rule, sigma_p_advanced: "); SerialUSB.println(sigma_p_advanced);   
     }
   }
-  else
+  if (tegotae_simple)
   {
     SerialUSB.print("Sigma for simple tegotae  : ");SerialUSB.println(sigma_s);
   }
   if (tegotae_propulsion){
     SerialUSB.println(tegotae_propulsion);
     SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p :"); SerialUSB.println(sigma_p);
+  }
+  if  (complete_formula){
+    SerialUSB.println("Using complete_formula");
+    SerialUSB.print("sigma hip: "); SerialUSB.println(sigma_hip,4);
+    SerialUSB.print("sigma knee: "); SerialUSB.println(sigma_knee,4);
+    SerialUSB.print("sigma p hip: "); SerialUSB.println(sigma_p_hip,4);
+    SerialUSB.print("sigma p knee: "); SerialUSB.println(sigma_p_knee,4);
+    print_map_complete_formula(u_hip,"u_hip");
+    print_map_complete_formula(u_knee, "u_knee");
+    print_map_complete_formula(v_hip, "v_hip");
+    print_map_complete_formula(v_knee, "v_knee");
+
   }
 
   print_GRF_ref();
@@ -1143,6 +1151,17 @@ void print_phi_init_tegotae(){
   for (int i=0; i<n_limb; i++){
     SerialUSB.print(phi_init[i],2);
     SerialUSB.print(", ");
+  }
+  SerialUSB.println();
+}
+
+void print_map_complete_formula(std::vector<std::vector<float>> map,String map_name){
+  SerialUSB.print(map_name); SerialUSB.println(": ");
+  for(uint8_t i=0; i<size_map_complete_rule; i++){
+    for(uint8_t j=0; j<size_map_complete_rule; j++){
+      SerialUSB.print(map[i][j]); SerialUSB.print(", ");
+    }
+    SerialUSB.println();
   }
   SerialUSB.println();
 }

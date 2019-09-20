@@ -81,7 +81,7 @@ void setup() {
   //tegotae_bluetooth();
   
   //record_tegotae_change_dir(240*1000);
-  //pose_stance_512();
+  //pose_stance_512();0
 
   //tegotae();
 }   
