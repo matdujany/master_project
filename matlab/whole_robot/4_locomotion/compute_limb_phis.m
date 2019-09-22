@@ -9,9 +9,11 @@ n_limb = 6;
 n_limb = size(limbs,1);
 n_samples = size(pos_phi_data.limb_phi,2);
 
-% GRF = zeros(n_samples,n_limb);
+GRF = zeros(n_samples,n_limb);
+GRP = zeros(n_samples,n_limb);
 for i=1:n_limb
     GRF(:,i) = data.float_value_time{1,i}(:,3);
+    GRP(:,i) = data.float_value_time{1,i}(:,2);
 end
 
 
@@ -28,6 +30,11 @@ end
 parms_locomotion.frequency = 0.5
 parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
 simulated_limb_phi = compute_phi_wrapper(pos_phi_data,GRF,parms_locomotion);
+
+simulated_limb_phi = compute_phi_complete_rule(pos_phi_data,GRF,parms_locomotion);
+
+phi_init
+simulated_limb_phi = compute_phi_complete_rule(GRF,GRP,phi_update_timestamps,phi_init,parms_locomotion)
 
 %% Phases
 i_limb_stance_patch=3;
