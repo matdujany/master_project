@@ -412,6 +412,8 @@ switch recordId
         record_name = 'tegotae_complete_110_X_2019-9-23-11_1_8';
     case 206
         record_name = 'tegotae_complete_110_X_2019-9-23-14_43_36';
+    case 207
+        record_name = 'bipod_hardcoded_X_2019-9-23-15_4_49';
     otherwise
         disp('unknown recordID for locomotion');
 end

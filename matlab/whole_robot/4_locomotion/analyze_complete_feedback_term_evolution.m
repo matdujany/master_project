@@ -67,7 +67,8 @@ i_limb_plot = 1;
 figure;
 hold on;
 plot(data.time(2:end,i_limb_plot)/10^3,phi_dots(:,i_limb_plot));
+plot(data.time(:,i_limb_plot)/10^3,feedback_terms(:,i_limb_plot,1));
 plot(data.time(:,i_limb_plot)/10^3,feedback_terms(:,i_limb_plot,4));
-legend('Phi dot','Propulsion term');
+legend('Phi dot','Z load term','Propulsion term');
 xlabel('Time [s]'),
 ylim(5*[-1 1]);

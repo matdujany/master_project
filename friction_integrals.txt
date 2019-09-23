@@ -1,3 +1,9 @@
+Hardcoded bipod:
+
+record 207, hardcoded bipod, 47 to 55--> sum 4.45
+integrals_GRP_ref =
+ 1.0510    0.5440    0.3661    0.6078    0.9854    0.9006
+
 Hardcoded tripod :
 
 record 184, hardcoded tripod, 27 to 34 --> sum 4.89

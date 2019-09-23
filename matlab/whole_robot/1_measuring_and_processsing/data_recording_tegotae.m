@@ -14,13 +14,13 @@ parms_locomotion.alpha = 0.2;
 parms_locomotion.sigma_advanced = 0;
 parms_locomotion.id_map_used = 110;
 
-parms_locomotion.message = "complete";
+parms_locomotion.message = "hardcoded_bipod";
 parms_locomotion.complete_rule = 1;
 % 
-parms_locomotion.sigma_hip = 0.15;
+parms_locomotion.sigma_hip = 0;
 parms_locomotion.sigma_knee = 0;
 parms_locomotion.sigma_p_hip = 0;
-parms_locomotion.sigma_p_knee = 1.0;
+parms_locomotion.sigma_p_knee = 0;
 
 parms_locomotion.turning = false;
 parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
@@ -38,7 +38,7 @@ parms_locomotion.categoryName = strcat("tegotae_complete_",num2str(parms_locomot
 
 % parms_locomotion.categoryName = strcat("tegotae_advanced_prop_only_",parms_locomotion.direction);
 
-% parms_locomotion.categoryName = strcat("tripod_hardcoded_",parms_locomotion.direction);
+parms_locomotion.categoryName = strcat("bipod_hardcoded_",parms_locomotion.direction);
 
 % parms_locomotion.categoryName = strcat("hardcoded_DS_quad_",parms_locomotion.direction);
 % parms_locomotion.categoryName = strcat("quad_hardcoded_inphase");
