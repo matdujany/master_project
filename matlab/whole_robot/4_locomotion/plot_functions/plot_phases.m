@@ -68,6 +68,7 @@ if bool_subplot
     subplot(2,1,2);
     plot(time_GRF,sum(GRF,2));
     ylabel('Total Load [N]');
+    ylim([-1 25]);
     xlabel('Time [s]');
     ax_phase = [ax_phase; gca()];
     linkaxes(ax_phase,'x');

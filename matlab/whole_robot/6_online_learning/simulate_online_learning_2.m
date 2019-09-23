@@ -1,3 +1,7 @@
+%here we start from a map of weights learnt from simulated online. We
+%record data during a locomotion experiment with a map built with weights
+%from simulated online and we use this data to simulate online learning
+
 clear; close all; clc;
 addpath('../2_load_data_code');
 addpath(genpath('../3_hebbian_learning'));
@@ -23,7 +27,7 @@ inv_map_init = load_inv_maps_online('test1');
 
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID_locomotion);
 
-[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID_locomotion);
+[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion.direction,n_limb,recordID_locomotion);
 
 n_samples_phi = size(pos_phi_data.limb_phi,2);
 n_samples_GRF = size(data.time,1);

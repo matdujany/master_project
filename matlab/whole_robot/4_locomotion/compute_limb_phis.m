@@ -1,3 +1,5 @@
+%to compute the limb phis using the advanced rule
+
 clear; close all; clc;
 addpath('../2_load_data_code');
 

@@ -5,7 +5,7 @@ addpath('../2_load_data_code');
 
 %% use gait plot to pick t start and t stop
 %%%%% quad
-% recordID = 108; 
+% recordID = 108;
 % n_limb = 4;
 % t_start = 15;
 % t_stop = 25;
@@ -39,7 +39,7 @@ if abs(n_samples_phi-n_samples_GRF)>1
         phi = pos_phi_data.limb_phi(:,2:end);
     end
 end
-    
+
 phi = phi';
 
 % GRF = zeros(n_samples,n_limb);
@@ -53,7 +53,7 @@ size_mv_average = 10;
 filter_coeffs = 1/size_mv_average*ones(size_mv_average,1);
 GRF_filtered = zeros(size(GRF));
 for i=1:n_limb
-%     GRF_filtered(:,i) = filter(filter_coeffs,1,GRF(:,i)); %causal
+    %     GRF_filtered(:,i) = filter(filter_coeffs,1,GRF(:,i)); %causal
     GRF_filtered(:,i) = filtfilt(filter_coeffs,1,GRF(:,i)); %non-causal
 end
 
@@ -77,8 +77,8 @@ diff_phi = diff(phi);
 diff_phi(diff_phi<-6) = diff_phi(diff_phi<-6)+2*pi;
 for i=1:n_limb
     phi_dots(:,i) = 10^3*diff_phi(:,i)./diff(pos_phi_data.phi_update_timestamp)' - 2*pi*parms_locomotion.frequency;
-%     phase_updates(:,i) = diff_phi(:,i)./0.021 - 2*pi*parms_locomotion.frequency;
-
+    %     phase_updates(:,i) = diff_phi(:,i)./0.021 - 2*pi*parms_locomotion.frequency;
+    
 end
 
 
@@ -110,14 +110,14 @@ figure;
 subplot(1,3,1);
 hold on;
 for i=1:n_limb
-scatter(phi_extracted(:,i_limb_ref_phi),N_extracted(:,i));
+    scatter(phi_extracted(:,i_limb_ref_phi),N_extracted(:,i));
 end
 ylabel('N');
 xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
 subplot(1,3,2);
 hold on;
 for i=1:n_limb
-scatter(phi_extracted(:,i_limb_ref_phi),N_dot_extracted(:,i));
+    scatter(phi_extracted(:,i_limb_ref_phi),N_dot_extracted(:,i));
 end
 xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
 ylabel('dN/dt');
@@ -125,14 +125,14 @@ ylabel('dN/dt');
 subplot(1,3,3);
 hold on;
 for i=1:n_limb
-scatter(phi_extracted(:,i_limb_ref_phi),phi_dot_extracted(:,i));
+    scatter(phi_extracted(:,i_limb_ref_phi),phi_dot_extracted(:,i));
 end
 ylabel('phi dot');
 xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
 
 
 
-%% 
+%%
 grid_phi = linspace(0,2*pi,50);
 phidot_grid = zeros(length(grid_phi)-1,n_limb);
 Ndot_grid = zeros(length(grid_phi)-1,n_limb);
@@ -153,7 +153,7 @@ end
 figure;
 hold on;
 for i=1:n_limb
-plot(phi_grid,N_grid(:,i));
+    plot(phi_grid,N_grid(:,i));
 end
 ylabel('N');
 xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
@@ -171,7 +171,7 @@ end
 figure;
 hold on;
 for i=1:n_limb
-plot(phi_query,N_guessed_from_grid(:,i));
+    plot(phi_query,N_guessed_from_grid(:,i));
 end
 ylabel('N');
 xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
@@ -185,7 +185,7 @@ dN_dphi = diff(N_guessed_from_grid)./diff(phi_query);
 figure;
 hold on;
 for i=1:n_limb
-plot(phi_grid_diff,dN_dphi(:,i));
+    plot(phi_grid_diff,dN_dphi(:,i));
 end
 xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
 ylabel(['dN/d\phi_' num2str(i_limb_ref_phi)]);
@@ -199,20 +199,20 @@ dN_dphi_padded = [dN_dphi; dN_dphi(1:idx1,:)];
 [~,idx2] = min(abs(phi_grid_diff_padded-(2*pi-margin_pad)));
 phi_grid_diff_padded = [ - 2*pi + phi_grid_diff_padded(idx2:end); phi_grid_diff_padded];
 dN_dphi_padded = [dN_dphi_padded(idx2:end,:); dN_dphi_padded];
-[phi_grid_diff_padded, index] = unique(phi_grid_diff_padded); 
+[phi_grid_diff_padded, index] = unique(phi_grid_diff_padded);
 dN_dphi_padded = dN_dphi_padded(index,:);
 
 
 dN_dphi_smoothed = zeros(size(dN_dphi_padded));
 for i=1:n_limb
-dN_dphi_smoothed(:,i) = smooth(dN_dphi_padded(:,i),30,'rloess');
+    dN_dphi_smoothed(:,i) = smooth(dN_dphi_padded(:,i),30,'rloess');
 end
 
 
 figure;
 hold on;
 for i=1:n_limb
-plot(phi_grid_diff_padded,dN_dphi_smoothed(:,i));
+    plot(phi_grid_diff_padded,dN_dphi_smoothed(:,i));
 end
 xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
 ylabel(['dN/d\phi_' num2str(i_limb_ref_phi)]);
@@ -231,7 +231,7 @@ end
 figure;
 hold on;
 for i=1:n_limb
-plot(phi_grid_diff_padded,inverse_map(i_limb_ref_phi,i)*cos(phi_grid_diff_padded));
+    plot(phi_grid_diff_padded,inverse_map(i_limb_ref_phi,i)*cos(phi_grid_diff_padded));
 end
 xlabel(['\phi_ ' num2str(i_limb_ref_phi)]);
 ylabel(['inv-map(' num2str(i_limb_ref_phi) ',j)*cos(\phi_ ' num2str(i_limb_ref_phi) ')']);

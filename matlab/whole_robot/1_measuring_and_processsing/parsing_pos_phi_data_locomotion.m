@@ -12,11 +12,19 @@ if length(idx2)~=length(idx1)
 else
     check = idx2-idx1 - ones(length(idx1),1);
     if sum(check) ~= 0
-        disp('Pb with indexes of end codes');
+        disp('Pb with positions of end codes');
     end
 end
 
 %%
+
+
+%%
+%1 phi per limb, then timestamp for phi update then positions and timestamp
+%for position (1 per motor)
+n_prints = parms.n_limb + 1 + 2*parms.n_m ;
+
+%method 1
 current_index = 1;
 all_values = zeros(length(idx1),1);
 for i=1:length(idx1)
@@ -26,10 +34,7 @@ for i=1:length(idx1)
     current_index = idx2(i)+1;
 end
 
-
-%%
-%1 phi per limb, then timestamp for phi update then positions and timestamp
-%for position (1 per motor)
+total_prints = (length(all_values));
 n_prints = parms.n_limb + 1 + 2*parms.n_m ;
 
 nb_samples = (length(all_values))/n_prints;

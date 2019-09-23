@@ -1,3 +1,7 @@
+%here we start from a map of weights learnt from twitching and we simulate
+%an online learning, using the data captured during a locomotion
+%experiment, with the map learnt with twitching to synchronize the limbs.
+
 clear; close all; clc;
 addpath('../2_load_data_code');
 addpath(genpath('../3_hebbian_learning'));
@@ -31,7 +35,7 @@ end
 
 weights_robotis = read_weights_robotis(recordID_weights,parms);
 limb = get_good_limb(parms,recordID_weights);
-[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID_weights);
+[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion.direction,n_limb,recordID_weights);
 
 n_samples_phi = size(pos_phi_data.limb_phi,2);
 n_samples_GRF = size(data.time,1);

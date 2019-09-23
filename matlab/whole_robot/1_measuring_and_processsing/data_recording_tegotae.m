@@ -9,7 +9,7 @@ parms_locomotion.frequency = 0.5;
 parms_locomotion.amplitude_class1_deg = 20;
 parms_locomotion.amplitude_class2_deg = 20;
 parms_locomotion.alpha = 0.2;
-parms_locomotion.sigma_s = 0.11;
+% parms_locomotion.sigma_s = 0.11;
 
 parms_locomotion.sigma_advanced = 0;
 parms_locomotion.id_map_used = 110;
@@ -17,10 +17,10 @@ parms_locomotion.id_map_used = 110;
 parms_locomotion.message = "complete";
 parms_locomotion.complete_rule = 1;
 % 
-parms_locomotion.sigma_hip = 0.1;
+parms_locomotion.sigma_hip = 0.15;
 parms_locomotion.sigma_knee = 0;
 parms_locomotion.sigma_p_hip = 0;
-parms_locomotion.sigma_p_knee = 1.2;
+parms_locomotion.sigma_p_knee = 1.0;
 
 parms_locomotion.turning = false;
 parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"

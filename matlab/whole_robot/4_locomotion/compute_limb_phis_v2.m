@@ -1,7 +1,9 @@
+%to compute the limb phis using the complete rule.
+
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 187;
+recordID = 206;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 n_limb = 6;
@@ -20,7 +22,7 @@ phi_actual = pos_phi_data.limb_phi';
 
 %%
 phi_init = phi_actual(1,:);
-parms_locomotion.sigma_hip = 0;
+parms_locomotion.sigma_hip = 0.15; %0.15;
 parms_locomotion.sigma_knee = 0;
 parms_locomotion.sigma_p_hip = 0;
 parms_locomotion.sigma_p_knee = 1.0;
@@ -45,3 +47,5 @@ for i_limb = 1:n_limb
     legend('Computed by Robotis','Simulated');
 end
 linkaxes(ax_phase_comp_sim,'x');
+%%
+xlim([0 30]);

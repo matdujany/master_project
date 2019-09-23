@@ -1,0 +1,37 @@
+Hardcoded tripod :
+
+record 184, hardcoded tripod, 27 to 34 --> sum 4.89
+integrals_GRP_ref =
+    0.7764    0.6979    0.9728    0.7441    0.8025    0.9001
+
+Z load effects only :
+
+record 199, bipod, 48 to 53 --> sum 4.39
+integrals_GRP_ref
+    1.0121    0.6420    0.4859    0.4422    0.9520    0.8593
+
+
+Both effects
+
+record 183, tripod,  27 to 34, sigma hip 0.15, sigma p knee 1.0 --> sum 4.29
+integrals_GRP_ref =
+    0.6647    0.6471    0.7262    0.7649    0.7532    0.7338
+
+record 181, tripod, 36 to 43, sigma hip 0.15, sigma p knee 1.0 --> sum 4.35
+integrals_GRP_ref =
+    0.6264    0.6568    0.7722    0.8022    0.7522    0.7354
+
+record 206, tripod, 30 to 38, sigma hip 0.15, sigma p knee 1.0 --> sum 4.56
+integrals_GRP_ref =
+    0.6857    0.7178    0.8413    0.7902    0.7773    0.7541
+
+
+Friction only :
+
+record 187, tripod, 31 to 37, sigma p knee 1.0 --> sum 4.47
+integrals_GRP_ref =
+    0.7253    0.7014    0.7450    0.7092    0.7650    0.8256
+
+record 205, tripod, 36 to 44, sigma p knee 1.0 --> 4.64
+integrals_GRP_ref =
+    0.7369    0.7403    0.7880    0.7461    0.7645    0.8685
