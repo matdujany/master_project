@@ -19,6 +19,5 @@ integrals_GRF_ref = sum(abs(GRF(indexes_integral,:)-GRF_ref).*diff(time([indexes
 integrals_GRF_ref_squared = sum((GRF(indexes_integral,:)-GRF_ref).^2.*diff(time([indexes_integral(1)-1 indexes_integral],1:n_limb)),1) ./ ...
     (time(indexes_integral(end),1:n_limb) - time(indexes_integral(1)-1,1:n_limb));
 
-
 end
 

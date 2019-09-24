@@ -3,7 +3,7 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 206;
+recordID = 222;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 n_limb = 6;
@@ -22,7 +22,7 @@ phi_actual = pos_phi_data.limb_phi';
 
 %%
 phi_init = phi_actual(1,:);
-parms_locomotion.sigma_hip = 0.15; %0.15;
+parms_locomotion.sigma_hip = 0; %0.15;
 parms_locomotion.sigma_knee = 0;
 parms_locomotion.sigma_p_hip = 0;
 parms_locomotion.sigma_p_knee = 1.0;

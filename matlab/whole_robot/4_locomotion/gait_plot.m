@@ -2,7 +2,6 @@
 
 clear; close all; clc;
 addpath('../2_load_data_code');
-addpath('../../export_fig');
 addpath('plot_functions');
 
 fontSize = 14;
@@ -10,7 +9,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 207; %148
+recordID = 226; %148
 n_limb = 6;
 
 % recordID = 108;
@@ -42,7 +41,8 @@ if abs(n_samples_phi-n_samples_GRF)>1
     disp('Warning ! Number of samples dont agree');
 end
 
-% GRF = zeros(n_samples,n_limb);
+GRF = zeros(n_samples_GRF,n_limb);
+GRP = zeros(n_samples_GRF,n_limb);
 for i=1:n_limb
     GRF(:,i) = data.float_value_time{1,i}(:,3);
     GRP(:,i) = data.float_value_time{1,i}(:,2);
@@ -67,16 +67,16 @@ threshold_unloading = 0.3; %Fukuhuara, figure 6, stance if more than 20% of maxi
 [value_unloading,max_value_GRF_limb] = determine_value_unloading(GRF,threshold_unloading);
 
 %% plotting GRFs
-time = (data.time(:,:)-data.time(1,:))/10^3;
-[f_GRF,ax_grf] = plot_GRF(GRF,time,threshold_unloading,recordID);
+time_GRF = (data.time(:,:)-data.time(1,:))/10^3;
+[f_GRF,ax_grf] = plot_GRF(GRF,time_GRF,threshold_unloading,recordID);
 
-[f_GRP,ax_grp] = plot_GRP(GRP,time,GRF,threshold_unloading,recordID);
+[f_GRP,ax_grp] = plot_GRP(GRP,time_GRF,GRF,threshold_unloading,recordID);
 
 %% gait diagramm
-[f_gait,ax_gait] = plot_gait_diagram(GRF,time,threshold_unloading,recordID);
+[f_gait,ax_gait] = plot_gait_diagram(GRF,time_GRF,threshold_unloading,recordID);
 
 %% phases
-[f_phase,ax_phase] = plot_phases(pos_phi_data,recordID,GRF,time(:,1));
+[f_phase,ax_phase] = plot_phases(pos_phi_data,recordID,GRF,time_GRF(:,1));
 
 %% total load;
 % f_total_load = figure;
@@ -103,7 +103,25 @@ time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
 [f_delta_phases,ax_delta_phases] = plot_delta_phases(time,delta_phases,recordID);
 
 %%
-linkaxes([ax_grf;ax_grp;ax_gait;ax_phase; ax_delta_phases],'x');
+ax_sum = zeros(2,1);
+figure;
+subplot(1,2,1);
+plot(time_GRF(:,1), sum(GRF_filtered.^2,2));
+ax_sum(1,1)=gca();
+xlabel('Time [s]');
+ylabel('Sum GRF^2 [N^2]');
+ylim([0 250]);
+subplot(1,2,2);
+plot(time_GRF(:,1), sum(GRP_filtered.^2,2));
+ax_sum(2,1)=gca();
+xlabel('Time [s]');
+ylabel('Sum GRP^2 [N^2]');
+ylim([0 50]);
+
+%%
+linkaxes([ax_grf;ax_grp;ax_gait;ax_phase; ax_delta_phases; ax_sum],'x');
+% linkaxes([ax_grf;ax_grp;ax_gait;ax_phase; ax_delta_phases],'x');
+
 xlim([0 120]);
 
 %% plotting positions
@@ -202,8 +220,8 @@ for i=1:length(idx_peaks)
         text(time(idx_peaks(i)),2*pi+0.5,num2str(i),'FontSize',12,'HorizontalAlignment','center');
 end
 
-first_peak_integral = 47; %36; %27;
-last_peak_integral = 55; %43; %34;
+first_peak_integral = 48; %36; %27;
+last_peak_integral = 53; %43; %34;
 scatter(time(idx_peaks(first_peak_integral)),pk_values(first_peak_integral),'ro','HandleVisibility','off');
 scatter(time(idx_peaks(last_peak_integral)),pk_values(last_peak_integral),'ro','HandleVisibility','off');
 
@@ -214,7 +232,7 @@ if ~isempty(index_check)
     disp('Warning ! the indexes selected contain samples where the robot is in the air');
     figure;
     hold on;
-    plot(time,sum(GRF,2));
+    plot(time_GRF(:,1),sum(GRF,2));
     plot(time(idx_peaks(first_peak_integral))*[1 1],[0 20],'k--');
     plot(time(idx_peaks(last_peak_integral))*[1 1],[0 20],'k--');
     return;

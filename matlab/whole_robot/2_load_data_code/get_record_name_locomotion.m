@@ -414,6 +414,44 @@ switch recordId
         record_name = 'tegotae_complete_110_X_2019-9-23-14_43_36';
     case 207
         record_name = 'bipod_hardcoded_X_2019-9-23-15_4_49';
+    case 208
+        record_name = 'tegotae_complete_110_X_2019-9-24-11_30_25';
+    case 209
+        record_name = 'tegotae_complete_110_X_2019-9-24-13_31_5';
+    case 210
+        record_name = 'tegotae_complete_110_X_2019-9-24-13_41_11';
+    case 211
+        record_name = 'tegotae_complete_110_X_2019-9-24-13_50_60';
+    case 212
+        record_name = 'tegotae_complete_110_X_2019-9-24-13_56_30';
+    case 213
+        record_name = 'tegotae_complete_110_X_2019-9-24-14_12_57';
+    case 214
+        record_name = 'tegotae_complete_110_X_2019-9-24-14_20_29';
+    case 215
+        record_name = 'tegotae_complete_110_X_2019-9-24-14_27_6';
+    case 216
+        record_name = 'tegotae_complete_110_X_2019-9-24-14_39_18';
+    case 217
+        record_name = 'tegotae_complete_110_X_2019-9-24-14_46_38';
+    case 218
+        record_name = 'tegotae_complete_110_X_2019-9-24-14_56_47';
+    case 219
+        record_name = 'tegotae_complete_110_X_2019-9-24-15_9_51';
+    case 220
+        record_name = 'tegotae_complete_110_X_2019-9-24-15_17_12';
+    case 221
+        record_name = 'tegotae_complete_110_X_2019-9-24-15_33_27';
+    case 222
+        record_name = 'tegotae_complete_110_X_2019-9-24-15_38_22';
+    case 223
+        record_name = 'tegotae_complete_110_X_2019-9-24-16_9_53';
+    case 224
+        record_name = 'tegotae_complete_110_X_2019-9-24-16_15_56';
+    case 225
+        record_name = 'tegotae_complete_110_X_2019-9-24-16_42_1';
+    case 226
+        record_name = 'in_phase_hardcoded_X_2019-9-24-16_56_29';
     otherwise
         disp('unknown recordID for locomotion');
 end
