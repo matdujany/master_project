@@ -656,6 +656,7 @@ float complete_rule(uint8_t i_limb){
   return complete_rule_term;
 }
 
+
 float vector_sum(std::vector<float> matrix_row, float N[], uint8_t size){
   float sum = 0;
   for (uint8_t i = 0; i < size; i++){

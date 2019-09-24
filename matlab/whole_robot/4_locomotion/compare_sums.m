@@ -36,8 +36,8 @@ GRF_filtered = zeros(size(GRF));
 GRP_filtered = zeros(size(GRP));
 
 for i=1:n_limb
-    GRF_filtered(:,i) = filter(filter_coeffs,1,GRF(:,i));
-    GRP_filtered(:,i) = filter(filter_coeffs,1,GRP(:,i));
+    GRF_filtered(:,i) = filtfilt(filter_coeffs,1,GRF(:,i));
+    GRP_filtered(:,i) = filtfilt(filter_coeffs,1,GRP(:,i));
 
 end
 
