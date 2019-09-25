@@ -5,7 +5,7 @@ clear; clc; close all;
 addpath('functions');
 addpath('../2_load_data_code');
 %% loading.
-recordID = 226;
+recordID = 231;
 n_limb = 6;
 phi_only = false;
 
@@ -54,7 +54,6 @@ for i = 1:size(data.frame,1)
     end
     %for the IMU we take the 7th value because 6 channels before 
     data.timestamp_hex{i,parms.nr_arduino+1} = data.parsed_frame{i}{parms.nr_arduino+1}{7};
-
 end
 
 data.time = parse_timestamps(data, parms);

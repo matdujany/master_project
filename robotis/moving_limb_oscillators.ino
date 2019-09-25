@@ -559,6 +559,18 @@ void update_phi_tegotae()
     timestamp_lc_tegotae = millis();
   }
 
+  if (complete_formula_Nref){
+    for (int i=0; i<n_limb; i++){
+      N_s_ref_corrected[i] = N_s[i] - N_ref_func(i,phi[i]);
+      /*
+      SerialUSB.print("Limb "); SerialUSB.print(i+1); 
+      SerialUSB.print(", Phase : "); SerialUSB.print(phi[i]); 
+      SerialUSB.print(", Nref : "); SerialUSB.print(N_ref_func(i,phi[i]));
+      SerialUSB.print(", Nref der : "); SerialUSB.println(N_ref_der(i,phi[i]));
+       */
+    }
+  }
+
   unsigned long t_current = millis() - t_offset_oscillators;
 
   for (int i=0; i<n_limb; i++)
@@ -580,6 +592,14 @@ void update_phi_tegotae()
     if (complete_formula){
       phi_dot[i] += complete_rule(i);
     }
+
+    if (complete_formula_Nref){
+      phi_dot[i] += complete_rule_Nref(i);
+    }
+
+    //a trick so that the delta phases are not modified when i lift the robot to recenter it
+    if (total_GRF(N_s,n_limb) < 5)
+      phi_dot[i] = 2*pi*frequency;
 
     //increase in phase only if the locomotion weights are non 0
     if (locomotion_bluetoooth_2_joysticks)
@@ -656,6 +676,68 @@ float complete_rule(uint8_t i_limb){
   return complete_rule_term;
 }
 
+float complete_rule_Nref(uint8_t i_limb){
+  float complete_rule_term = 0;
+  complete_rule_term += sigma_hip * (vector_sum(u_hip[i_limb],N_s_ref_corrected,n_limb)*cos(phi[i_limb]) -N_ref_der(i_limb,phi[i_limb])*N_s_ref_corrected[i_limb]);
+  return complete_rule_term;
+}
+
+/*
+float N_ref_func(float phase){
+  float N_ref = 0; 
+  if (phase>pi){
+    N_ref = -N_ref_0*sin(phase);
+  }
+  return N_ref;
+}
+
+float N_ref_der(float phase){
+  float N_ref_derivative = 0; 
+  if (phase>pi){
+    N_ref_derivative = -N_ref_0*cos(phase);
+  }
+  return N_ref_derivative;
+}
+ */
+
+/*
+float N_ref_func(float phase){
+  float limits[6] = {0.67, 2.65, 3.4, 3.6, 5.1, 6.3}; 
+  float a0[6] = {3.3954, -0.3744, -10.8128, 4.9937, -6.8528, 26.1507};
+  float a1[6] = {-6.1943, 0.2176, 4.0852, -0.5303, 2.7348, -3.6236};
+
+  for (uint8_t i=0; i<6; i++){
+    if (phase<limits[i])
+      return a0[i]+a1[i]*phase;
+  }
+  return 0;
+}
+
+float N_ref_der(float phase){
+  float limits[6] = {0.67, 2.65, 3.4, 3.6, 5.1, 6.3}; 
+  float a1[6] = {-6.1943, 0.2176, 4.0852, -0.5303, 2.7348, -3.6236};
+  for (uint8_t i=0; i<6; i++){
+    if (phase<limits[i])
+      return a1[i];
+  }
+  return 0;
+}
+
+*/
+
+float N_ref_func(uint8_t i_limb, float phase){
+  uint8_t i=0;
+  while(phase>=limits_Nref[i_limb][i])
+    i++;
+  return b_Nref[i_limb][i-1]+a_Nref[i_limb][i-1]*phase; 
+}
+
+float N_ref_der(uint8_t i_limb, float phase){
+  uint8_t i=0;
+  while(phase>=limits_Nref[i_limb][i])
+    i++;
+  return a_Nref[i_limb][i-1]; 
+}
 
 float vector_sum(std::vector<float> matrix_row, float N[], uint8_t size){
   float sum = 0;
@@ -664,6 +746,14 @@ float vector_sum(std::vector<float> matrix_row, float N[], uint8_t size){
     //SerialUSB.println(sum,3);
   }
   return sum;
+}
+
+float total_GRF(float N[], uint8_t size){
+  float sum = 0;
+  for (uint8_t i = 0; i < size; i++){
+    sum += N[i];
+  }
+  return sum;  
 }
 
 /// Trot
@@ -849,7 +939,7 @@ void print_locomotion_parameters(){
   if (tegotae_propulsion_local){
     SerialUSB.print("Using propulsion term in Tegoate rule, sigma_p :"); SerialUSB.println(sigma_p);
   }
-  if  (complete_formula){
+  if  (complete_formula||complete_formula_Nref){
     SerialUSB.println("Using complete_formula");
     print_map_complete_formula(u_hip,"u_hip");
     print_map_complete_formula(u_knee, "u_knee");
@@ -859,7 +949,10 @@ void print_locomotion_parameters(){
     SerialUSB.print("sigma knee: "); SerialUSB.println(sigma_knee,4);
     SerialUSB.print("sigma p hip: "); SerialUSB.println(sigma_p_hip,4);
     SerialUSB.print("sigma p knee: "); SerialUSB.println(sigma_p_knee,4);
-
+  }
+  if (complete_formula_Nref){
+    SerialUSB.println("Using complete_formula with Nref = max(-N_ref_0*sin(phi);0)");
+    SerialUSB.print("N_ref_0 = ");SerialUSB.println(N_ref_0);
   }
 
   print_GRF_ref();

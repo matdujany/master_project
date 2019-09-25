@@ -3,7 +3,7 @@ addpath('../2_load_data_code');
 
 
 %%
-recordID = 206;
+recordID = 231;
 
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
@@ -53,12 +53,24 @@ else
     sigma_p_hip = 0;
     sigma_p_knee = 1.5;
 end
+
 [u_hip,u_knee,v_hip,v_knee] = load_matrix_complete_rule();
 feedback_terms = zeros(n_samples_GRF,n_limb,4);
-feedback_terms(:,:,1) = sigma_hip*(u_hip*GRF')'.*cos(phi);
-feedback_terms(:,:,2) = sigma_knee*(u_knee*GRF')'.*sin(phi);
-feedback_terms(:,:,3) = - sigma_p_hip*(v_knee*GRP')'.*cos(phi);
-feedback_terms(:,:,4) = - sigma_p_knee*(v_knee*GRP')'.*sin(phi);
+
+if isfield(parms_locomotion,'Nref0')
+    disp('using complete rule with Nref0');
+%     N_corrected = GRF - parms_locomotion.Nref0*(1-sin(phi));
+     N_corrected = GRF - func_N_ref(phi);
+    feedback_terms(:,:,1) = sigma_hip*(u_hip*N_corrected')'.*cos(phi)...
+          - sigma_hip * func_N_ref_der(phi) .* N_corrected;
+%         + sigma_hip * parms_locomotion.Nref0 * cos(phi) .* N_corrected ;
+else
+    disp('using complete rule without Nref0');
+    feedback_terms(:,:,1) = sigma_hip*(u_hip*GRF')'.*cos(phi);
+    feedback_terms(:,:,2) = sigma_knee*(u_knee*GRF')'.*sin(phi);
+    feedback_terms(:,:,3) = - sigma_p_hip*(v_knee*GRP')'.*cos(phi);
+    feedback_terms(:,:,4) = - sigma_p_knee*(v_knee*GRP')'.*sin(phi);
+end
 
 feedback = sum(feedback_terms,3);
 

@@ -11,10 +11,16 @@ t_start = 15;
 t_stop = 25;
 
 %%%% hexa
-% recordID = 34; %139: n dot %132 hardcoded bipod
-% n_limb = 6;
-% t_start = 56;
-% t_stop = 70;
+recordID = 227; %139: n dot %132 hardcoded bipod
+n_limb = 6;
+t_start = 92;
+t_stop = 112;
+
+recordID = 230; %139: n dot %132 hardcoded bipod
+n_limb = 6;
+t_start = 80;
+t_stop = 100;
+
 
 %%%% octo
 % recordID = 50;
@@ -88,62 +94,50 @@ time = (data.time(:,i_limb_plot)-data.time(1,i_limb_plot))/10^3;
 [~,index_stop] = min(abs(time-t_stop));
 dot_size = 15;
 
-
-%% computing Tegotae feedback terms values
-
-if compute_tegotae_advanced
-    
-[limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion,n_limb,recordID);
-[inverse_map,sigma_advanced] = load_inverse_map(parms_locomotion.direction,parms_locomotion.id_map_used);
-
-[simple_Tegotae, advanced_Tegotae, advanced_Tegotae_term_split] = compute_GRF_advanced_split(GRF,phi,inverse_map,sigma_advanced);
-max(max(abs(advanced_Tegotae-sum(advanced_Tegotae_term_split,3))))
-
-
-%% contributions limb to advanced Tegotae
-figure;
-title(['Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
-hold on;
-for i=1:n_limb
-    scatter(phi(index_start:index_stop,i_limb_plot),advanced_Tegotae_term_split(index_start:index_stop,i_limb_plot,i),dot_size,'filled');
-    legend_list{i} = ['Contribution limb ' num2str(i)];
-end
-scatter(phi(index_start:index_stop,i_limb_plot),phi_dots(index_start:index_stop,i_limb_plot),dot_size,'k','filled');
-legend_list{n_limb+1} = 'Phi dot - \omega';
-legend(legend_list);
-xticks(pi/2*[0:4]);
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-xlabel('\phi_{ref}');
-
-ylim(1.1*[-1 1]);
-grid on;
-
-end
-
 %% subplots 
 i_limb_plot = 2;
 
 figure;
-subplot(2,3,1);
 % GRFs
 plot_grf_phase(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop);
 
-subplot(2,3,2);
-% Ncosphi
-plot_Ncosphi(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop);
+for i=1:n_limb
+    profile_spline(i) = get_spline_profile(GRF(index_start:index_stop,i),phi(index_start:index_stop,i)); 
+end
 
-subplot(2,3,3);
-% Ndots
-plot_Ndots(i_limb_plot,phi,N_dot_filtered,index_start,index_stop,dot_size,t_start,t_stop);
+figure;
+phi_query = linspace(0,2*pi,100)';
+hold on
+for i=1:n_limb
+    plot(phi_query,ppval(profile_spline(i),phi_query));
+end
+plot(phi_query,func_N_ref(phi_query),'k--');
 
-subplot(2,3,4);
-% N N_horz
-plot_N_Nhorz(i_limb_plot,phi,GRF,GRP,index_start,index_stop,dot_size,t_start,t_stop);
+function profile_spline = get_spline_profile(GRF_source,phi_source)
+%GRF is n_points x 1
 
-subplot(2,3,5);
-% N N_dot_ref
-plot_N_signcosphi(i_limb_plot,phi,GRF,index_start,index_stop,dot_size,t_start,t_stop);
+%% padding to make signal periodic
+margin_pad = 0.5; %in radians
+[~,idx1] = min(abs(phi_source-margin_pad));
+phi_source = [phi_source; 2*pi + phi_source(1:idx1)];
+GRF_source = [GRF_source; GRF_source(1:idx1)];
+[~,idx2] = min(abs(phi_source-(2*pi-margin_pad)));
+phi_source = [ - 2*pi + phi_source(idx2:end); phi_source];
+GRF_source = [GRF_source(idx2:end); GRF_source];
+[phi_source, index] = unique(phi_source); 
+GRF_source = GRF_source(index);
 
-subplot(2,3,6);
-% N N_dot_ref
-plot_N_Ndotref(i_limb_plot,phi,GRF,N_dot_filtered,index_start,index_stop,dot_size,t_start,t_stop)
+
+%% we reduce the number of points by subsampling, using an average
+grid_x = linspace(0-margin_pad,2*pi+margin_pad,100);
+phi_grid = zeros(length(grid_x)-1,1);
+GRF_grid = zeros(length(grid_x)-1,1);
+for i=1:length(grid_x)-1
+    idx = find(grid_x(i)<phi_source & phi_source<grid_x(i+1));
+    phi_grid(i,1) = (grid_x(i) + grid_x(i+1))/2;
+    GRF_grid(i,1) = mean(GRF_source(idx));
+end
+
+profile_spline = spline(phi_grid,GRF_grid);
+
+end

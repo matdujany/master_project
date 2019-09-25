@@ -49,7 +49,8 @@ float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; s
 
 bool tegotae_simple  = false;     //to use local tegotae rule
 bool tegotae_advanced   = false;     //to use advanced tegotae rule
-bool complete_formula   = true;     //to use advanced tegotae rule
+bool complete_formula   = false;     //to use advanced tegotae rule
+bool complete_formula_Nref   = true;     //to use advanced tegotae rule
 
 //bool direction_X        = true;    //to go in X
 //bool direction_Y        = false;   //to go in Y 
@@ -111,6 +112,7 @@ float phi[MAX_N_LIMB]             = {0};
 float phi_dot[MAX_N_LIMB]         = {0};
 float N_s[MAX_NR_ARDUINO] = {0}; //body support term for Tegotae
 float N_s_filtered[MAX_NR_ARDUINO] = {0}; //body support term filtered for Tegotae
+float N_s_ref_corrected[MAX_NR_ARDUINO] = {0}; //body support term for Tegotae - N_ref (complete_formula_Nref)
 float N_s_derivative[MAX_NR_ARDUINO] = {0}; //body support term for derivative Tegotae
 unsigned long timestamp_lc_tegotae = millis();
 
