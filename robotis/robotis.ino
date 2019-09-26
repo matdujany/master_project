@@ -71,7 +71,7 @@ void setup() {
 
   //twitch_record_wrapper();
   
-  //SerialUSB.println("in phase hardcoded");
+  SerialUSB.println("hardcoded tripod on foam");
   record_tegotae(120*1000);
 
   //record_tegotae_changes();

@@ -462,6 +462,14 @@ switch recordId
         record_name = 'tegotae_complete_Nref0_110_X_2019-9-25-14_35_39';
     case 231
         record_name = 'tegotae_complete_Nref0_110_X_2019-9-25-19_15_43';
+    case 232
+        record_name = 'tegotae_complete_foam_110_X_2019-9-26-17_7_49';
+    case 233
+        record_name = 'bipod_hardcoded_foam_X_2019-9-26-17_21_1';
+    case 234
+        record_name = 'tripod_hardcoded_foam_X_2019-9-26-17_26_20';
+                
+        
     otherwise
         disp('unknown recordID for locomotion');
 end
