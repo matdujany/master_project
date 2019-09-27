@@ -22,9 +22,9 @@ end
 f_gait=figure;
 f_gait.Color = 'w';
 for i=1:n_limb
-    i_limb_plot = limb_list_gait_diagram(i);
+    i_limb_plot = limb_list_gait_diagram(i)
     [idx_start_stance,idx_stop_stance] = determine_start_stop_stance(GRF(:,i_limb_plot),threshold_unloading);
-    time = time_limbs(:,i);
+    time = time_limbs(:,i_limb_plot);
     for k=1:length(idx_start_stance)
         y_patch = 1 + n_limb - i + 0.25*[-1 -1 1 1];
         x_patch = [idx_start_stance(k) idx_stop_stance(k) idx_stop_stance(k) idx_start_stance(k)];

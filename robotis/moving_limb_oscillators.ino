@@ -821,7 +821,7 @@ void init_recording_locomotion(){
 
 void send_phi_and_pos_Serial3(){
   send_phi_Serial3();
-  simple_send_pos_Serial3();
+  //simple_send_pos_Serial3();
 }
 
 void send_phi_Serial3(){

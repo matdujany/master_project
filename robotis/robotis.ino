@@ -71,7 +71,7 @@ void setup() {
 
   //twitch_record_wrapper();
   
-  SerialUSB.println("hardcoded tripod on foam");
+  SerialUSB.println("bipod hardcoded, amputations");
   record_tegotae(120*1000);
 
   //record_tegotae_changes();
@@ -89,6 +89,7 @@ void setup() {
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
+  //show_value_DC(20);
 
   //test_dc();
 
@@ -101,7 +102,7 @@ void loop() {
   print_motor_positions();
   show_value_DC(20);
   serial_read_neutral_pos();
-  */
+   */
 
   //serial_read_test_twitch();
 

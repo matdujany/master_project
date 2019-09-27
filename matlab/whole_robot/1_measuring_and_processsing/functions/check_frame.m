@@ -30,7 +30,7 @@ if(strcmp(data.last_byte,parms.endByte))
             
          datatypeByte = data.raw( (i_tmp + 4) - parms.frame_size , :);
          if(strcmp(datatypeByte,parms.frametype_data))
-%             fprintf("Third expression is true\n")
+%              fprintf("Third expression is true\n")
             bool_frame  = compare_checksum(data, parms);
                         
             
