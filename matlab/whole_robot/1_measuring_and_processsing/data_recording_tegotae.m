@@ -12,17 +12,15 @@ parms_locomotion.alpha = 0.2;
 % parms_locomotion.sigma_s = 0.11;
 
 parms_locomotion.sigma_advanced = 0;
-parms_locomotion.id_map_used = 110;
+parms_locomotion.id_map_used = 146;
 
-parms_locomotion.message = "starting amputated, hardcoded bipod";
+parms_locomotion.message = "hex_cs";
 parms_locomotion.complete_rule = 1;
 % 
-parms_locomotion.sigma_hip = 0;
+parms_locomotion.sigma_hip = 1.1;
 parms_locomotion.sigma_knee = 0;
 parms_locomotion.sigma_p_hip = 0;
 parms_locomotion.sigma_p_knee = 0;
-
-parms_locomotion.Nref0 = 8.5;
 
 % parms_locomotion.phi_only = 1;
 
@@ -38,12 +36,12 @@ parms_locomotion.use_filter = 0;
 parms_locomotion.filter_size = 4;
 parms_locomotion.message = "";
 
-% parms_locomotion.categoryName = strcat("tegotae_complete_amps_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
+parms_locomotion.categoryName = strcat("tegotae_complete_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
 % parms_locomotion.categoryName = strcat("tegotae_advanced_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
 
 % parms_locomotion.categoryName = strcat("tegotae_advanced_prop_only_",parms_locomotion.direction);
 
-parms_locomotion.categoryName = strcat("hardcoded_bipod_amps_",parms_locomotion.direction);
+% parms_locomotion.categoryName = strcat("hardcoded_bipod_amps_",parms_locomotion.direction);
 
 % parms_locomotion.categoryName = strcat("hardcoded_DS_quad_",parms_locomotion.direction);
 % parms_locomotion.categoryName = strcat("quad_hardcoded_inphase");

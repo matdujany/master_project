@@ -86,8 +86,8 @@ std::vector<std::vector<float>> inverse_map_propulsion ={
 //float GRF_ref[4] = {6,    1.5,   6,    1.5}; 
 //float GRF_ref[4] = {6,    1.5,   1.5,    6};
 
-//float phi_init[6] = {0, 0, 0, 0, 0, 0};
-float phi_init[6] = {0, 2.09, 4.19, 0, 2.09, 4.19}; //bipod
+float phi_init[6] = {0, 0, 0, 0, 0, 0};
+//float phi_init[6] = {0, 2.09, 4.19, 0, 2.09, 4.19}; //bipod
 //float phi_init[6] = {0, -2, -3.6, -0.86, 1.45, -2.8}; //travelling waves
 //float phi_init[6] = {0, 3.14, 0, 3.14, 0, 3.14}; //tripod
 //float phi_init[6] = {0, -4.58, -2.81, 0.52, -1.33, -3.15}; //foam travelling waves

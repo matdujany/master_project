@@ -40,14 +40,15 @@ switch n_limb
         
     case 6
         %hexapod
-        switch direction
-            case 'X'
-                limb_ids = 1+[9 8; 0 6; 4 3; 2 1; 7 5; 11 10];
-                changeDir = [0 0; 0 1; 0 0; 1 1; 1 0; 1 1];
-            otherwise
-                disp('unrecognized locomotion direction');
-        end
+        limb_ids = 1+[9 8; 0 6; 4 3; 2 1; 7 5; 11 10];
+        changeDir = [0 0; 0 1; 0 0; 1 1; 1 0; 1 1];
         real_servo_ids = [1 4:10  15:18];
+        
+        if recordID == 210
+            %starfish hexapod
+                limb_ids = 1+[1 2; 8 9; 0 4; 10 11; 3 5; 7 6];
+                changeDir = [1 1; 1 1; 1 1; 0 1; 0 1; 0 0];            
+        end     
     case 8
         %octopod        
         if recordID < 50

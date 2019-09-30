@@ -469,7 +469,7 @@ switch recordId
     case 234
         record_name = 'tripod_hardcoded_foam_X_2019-9-26-17_26_20';
     case 235
-        record_name = 'hardcoded_bipod_amputations_X_2019-9-27-13_54_33';
+        record_name = 'hardcoded_bipod_amputations_X_2019-9-27-14_25_5';
     case 236
         record_name = 'tegotae_complete_amps_110_X_2019-9-27-14_34_26';
     case 237
@@ -478,7 +478,9 @@ switch recordId
         record_name = 'tegotae_complete_amps_110_X_2019-9-27-17_13_45';
     case 239
         record_name = 'hardcoded_bipod_amps_X_2019-9-27-17_43_18';
-  
+    case 240
+        record_name = 'tegotae_complete_146_X_2019-9-30-19_12_23';
+    
     otherwise
         disp('unknown recordID for locomotion');
 end

@@ -73,9 +73,9 @@
 //This is to make sure that the learning is not compromised by a communication error in the daisychain.
 //the max value that the loadcells can measure is 50N.
 
-#define LIMIT_VAL_ACC_LEARNING           26
+#define LIMIT_VAL_ACC_LEARNING           50
 //the accelerometer values are integrated, one huge value is enough to ruin the learning
-//in the accelerometer scaling, 256 = 1g (9.81 m/s^2) so 26 = 1.0 m/(s^2).
+//in the accelerometer scaling, 256 = 1g (9.81 m/s^2) so 50 = 2.0 m/(s^2).
 //i have determined this value just by looking at the accelerometer signals.
 
 //FILTERS

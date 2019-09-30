@@ -65,13 +65,13 @@ void setup() {
   //just to be sure that all motors have their default parameters;
   restaure_default_parameters_all_motors_syncWrite();
   
-  //pose_stance_512();
-  //delay(5000);
-  //update_neutral_pos();
+  pose_stance_512();
+  delay(5000);
+  update_neutral_pos();
 
   //twitch_record_wrapper();
   
-  SerialUSB.println("bipod hardcoded, amputations");
+  //SerialUSB.println("bipod hardcoded, amputations");
   record_tegotae(120*1000);
 
   //record_tegotae_changes();

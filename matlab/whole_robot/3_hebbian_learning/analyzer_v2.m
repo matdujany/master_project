@@ -11,10 +11,12 @@ addpath('computing_functions');
 
 
 %% Load data
-recordID = 110;
+recordID = 146;
 [data, lpdata, parms] =  load_data_processed(recordID);
 
 weights_robotis = read_weights_robotis(recordID,parms);
+hinton_LC(weights_robotis{parms.n_twitches},parms,1);
+
 weights_speed = compute_weights_speed(data,lpdata,parms);
 
 weights_lcz = weights_robotis{parms.n_twitches}(3*[1:parms.n_lc],:);
@@ -31,9 +33,9 @@ switch recordID
     case 105
         %quadruped
         [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values("X",n_limb,113);
-    case 110
-        %hexapod
-        [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values("X",n_limb);       
+    case {110,145,146,210}
+        %{hexapod, hexapod compliant spine x 2, hexapod new leg design)
+        [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values("X",n_limb,recordID);    
 end
 
 %%

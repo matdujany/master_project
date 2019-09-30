@@ -1,13 +1,26 @@
 #include <vector> //takes a lot of space,
 
+#ifdef DO_LOCOMOTION
 //parameters for complete formula
 
-float sigma_hip = 0.0; //0.15-> bipod or travelling waves //0.5 oversteering
+float sigma_hip = 1.1; //0.15-> bipod or travelling waves //0.5 oversteering
 float sigma_knee = 0.0;
 float sigma_p_hip = 0.0;
 float sigma_p_knee = 0.0; //1.0 to 1.5 --> tripod
 float N_ref_0 = 8.5;
 
+//compliant spine
+std::vector<std::vector<float>> u_hip={
+{-0.455, 0.309, 0.130, 0.035, -0.599, 0.344} ,
+{0.130, -0.111, -0.067, -0.334, 0.626, -0.545} ,
+{0.207, 0.140, -0.214, 0.565, -0.813, 0.080} ,
+{0.033, -0.436, 0.379, -0.234, 0.048, 0.149} ,
+{-0.632, 1.000, -0.470, 0.140, -0.520, 0.295} ,
+{0.481, -0.459, -0.038, 0.046, 0.401, -0.469} ,
+};
+
+//rigid spine
+/*
 std::vector<std::vector<float>> u_hip={
 {-0.490, 0.100, 0.227, -0.308, 0.074, 0.287} ,
 {0.428, -1.000, 0.550, -0.051, -0.002, 0.088} ,
@@ -16,6 +29,7 @@ std::vector<std::vector<float>> u_hip={
 {0.036, 0.007, -0.097, 0.456, -0.786, 0.329} ,
 {0.214, 0.039, -0.294, 0.156, 0.209, -0.377} ,
 };
+ */
 
 std::vector<std::vector<float>> u_knee={
 {-0.811, 0.975, -0.099, -0.509, 0.132, 0.407} ,
@@ -73,3 +87,5 @@ std::vector<std::vector<float>> b_Nref = {
 {5.1843,-0.30793,-8.1498,-12.7232,50.2409,-3.6033},
 {3.6331,-0.23498,-17.7843,5.4769,-6.5369,-17.0636,24.8647,41.1276}
 };
+
+#endif

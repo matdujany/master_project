@@ -9,7 +9,7 @@ addpath('computing_functions');
 addpath('plot_functions');
 
 %% Load data
-recordID = 143;
+recordID = 145;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 all_neutral_pos = read_neutral_pos(recordID,parms.n_m);
@@ -27,8 +27,8 @@ lpdata = compute_filtered_signal_lpdata(lpdata,parms);
 % good_closest_LC = get_good_closest_LC(parms,recordID);
 %%
 n_iter = 5;
-index_motor_plot = 4;
-index_loadcell_plot = 3;
+index_motor_plot = 9;
+index_loadcell_plot = 1;
 index_channel_plot = 3;
 neutral_pos = all_neutral_pos(index_motor_plot);
 
