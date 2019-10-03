@@ -908,6 +908,11 @@ void print_changeDirs(){
 }
 
 void print_locomotion_parameters(){
+  #ifndef DO_LOCOMOTION
+  SerialUSB.println("DO LOCOMOTION FLAG not activated, the limbs and maps cannot be initialized");
+  SerialUSB.println("entering infinite loop.");
+  while(true)
+  #endif
   SerialUSB.print("Frequency (in Hertz) : ");SerialUSB.println(frequency);
   SerialUSB.print("Amplitude class 1 (motors producing the movement) (in degrees) : ");SerialUSB.println(amplitude_class1);  
   SerialUSB.print("Amplitude class 2 (motors doing swing/stance cycle) (in degrees) : ");SerialUSB.println(amplitude_class2);  
@@ -954,7 +959,6 @@ void print_locomotion_parameters(){
     SerialUSB.println("Using complete_formula with Nref = max(-N_ref_0*sin(phi);0)");
     SerialUSB.print("N_ref_0 = ");SerialUSB.println(N_ref_0);
   }
-
   print_GRF_ref();
   print_phi_init_tegotae();
 }

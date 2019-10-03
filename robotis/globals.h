@@ -49,8 +49,8 @@ float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; s
 
 bool tegotae_simple  = false;     //to use local tegotae rule
 bool tegotae_advanced   = false;     //to use advanced tegotae rule
-bool complete_formula   = false;     //to use advanced tegotae rule
-bool complete_formula_Nref   = true;     //to use advanced tegotae rule
+bool complete_formula   = true;     //to use advanced tegotae rule
+bool complete_formula_Nref   = false;     //to use advanced tegotae rule
 
 //bool direction_X        = true;    //to go in X
 //bool direction_Y        = false;   //to go in Y 
@@ -90,6 +90,7 @@ float phi_init[6] = {0, 0, 0, 0, 0, 0};
 //float phi_init[6] = {0, 2.09, 4.19, 0, 2.09, 4.19}; //bipod
 //float phi_init[6] = {0, -2, -3.6, -0.86, 1.45, -2.8}; //travelling waves
 //float phi_init[6] = {0, 3.14, 0, 3.14, 0, 3.14}; //tripod
+//float phi_init[6] = {0, -4.58, -2.81, 0.52, -1.33, -3.15}; //foam travelling waves
 
 float GRF_ref[6] = {0, 0, 0, 0, 0, 0}; 
 //float GRF_ref[6] = {3.1514,    2.9963,    3.4211,    2.8164,    3.3008,    3.2554}; 

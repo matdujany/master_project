@@ -1,5 +1,6 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
+addpath('plot_functions');
 
 
 
@@ -105,6 +106,20 @@ for i=1:n_limb
     profile_spline(i) = get_spline_profile(GRF(index_start:index_stop,i),phi(index_start:index_stop,i)); 
 end
 
+
+%% total sums
+figure;
+sum_GRF = sum(GRF.^2,2);
+title(['Reference for phase : Limb ' num2str(i_limb_plot) ' between ' num2str(t_start) 's and ' num2str(t_stop) 's']);
+scatter(phi(index_start:index_stop,i_limb_plot),sum_GRF(index_start:index_stop),dot_size,'filled');
+xlabel('\phi_{ref}');
+xticks(pi/2*[0:4]);
+xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
+ylabel('Sum GRF^2 [N]');
+grid on;
+
+
+%% splines
 figure;
 phi_query = linspace(0,2*pi,100)';
 hold on

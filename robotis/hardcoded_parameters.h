@@ -80,12 +80,12 @@ std::vector<std::vector<uint8_t>> limbs_X_hex_2{
 };
 
 std::vector<std::vector<bool>> changeDirs_X_hex_2{
-{true,true},
-{true,true},
-{true,true},
-{false,true},
-{false,true},
-{false,false},
+    {true,true},
+    {true,true},
+    {true,true},
+    {false,true},
+    {false,true},
+    {false,false},
 };
 
 std::vector<bool>  changeDirs_Yaw_hex_2{false,false,false,false,false,false};
