@@ -14,13 +14,23 @@ omega = 2*pi*0.5;
 total_load = get_total_load(recordID,n_limb*2);
 [inverse_map,sigma] = load_inverse_map("X",recordID);
 inverse_map = load_inv_maps_online('test1');
+inverse_map = [
+[-0.477, 0.323, 0.145, 0.007, -0.541, 0.306] ,
+[0.130, -0.167, -0.016, -0.331, 0.593, -0.525] ,
+[0.132, 0.235, -0.272, 0.457, -0.666, 0.042] ,
+[0.058, -0.490, 0.400, -0.221, 0.075, 0.136] ,
+[-0.620, 1.000, -0.498, 0.125, -0.499, 0.291] ,
+[0.455, -0.432, -0.056, 0.034, 0.365, -0.465] ,
+];
+sigma = 1.0;
+
 % N_ref = 1.5*ones(n_limb,1);
 % N_ref([1 3],1) = 6;
 sigma = 0.2;
 N_ref = zeros(n_limb,1);
 
 
-profilparms.use_profilparms = 1;
+profilparms.use_profilparms = 0;
 profilparms.recordID = 34;
 profilparms.i_limb = 3;
 

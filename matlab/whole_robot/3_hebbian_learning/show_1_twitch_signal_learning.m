@@ -9,7 +9,7 @@ addpath('computing_functions');
 addpath('plot_functions');
 
 %% Load data
-recordID = 145;
+recordID = 149;
 [data, lpdata, parms] =  load_data_processed(recordID);
 parms=add_parms(parms);
 all_neutral_pos = read_neutral_pos(recordID,parms.n_m);
@@ -27,8 +27,8 @@ lpdata = compute_filtered_signal_lpdata(lpdata,parms);
 % good_closest_LC = get_good_closest_LC(parms,recordID);
 %%
 n_iter = 5;
-index_motor_plot = 9;
-index_loadcell_plot = 1;
+index_motor_plot = 2;
+index_loadcell_plot = 5;
 index_channel_plot = 3;
 neutral_pos = all_neutral_pos(index_motor_plot);
 
@@ -91,7 +91,7 @@ f.Color = 'w';
 % ylabel('Weight value');
 
 subplot(3,1,1);
-subplot_time_signals(data,lpdata,index_start,index_end,index_motor_plot,index_loadcell_plot,index_channel_plot,i_dir,parms,n_frames_theo,neutral_pos);
+subplot_time_signals(data,lpdata,index_start,index_end,index_motor_plot,index_loadcell_plot,index_channel_plot,parms,n_frames_theo,neutral_pos);
 subplot(3,1,2);
 subplot_dot_time_signals(data,lpdata,index_start,index_end,index_motor_plot,index_loadcell_plot,index_channel_plot,sign_learning,n_frames_theo);
 subplot(3,1,3);

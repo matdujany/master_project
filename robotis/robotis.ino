@@ -71,8 +71,8 @@ void setup() {
 
   //twitch_record_wrapper();
   
-  //SerialUSB.println("bipod hardcoded, amputations");
-  record_tegotae(120*1000);
+  SerialUSB.println("bipod hardcoded, compliant spine");
+  record_tegotae(60*1000);
 
   //record_tegotae_changes();
 

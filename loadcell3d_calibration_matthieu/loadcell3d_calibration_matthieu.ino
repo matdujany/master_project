@@ -30,7 +30,7 @@ using namespace Ad7124;
 
 // Set which channel to calibrate:
 
-#define I_LOADCELL 12
+#define I_LOADCELL 3
 #define I_AXIS     1
 #define BAUD_RATE  500000
 
@@ -251,6 +251,14 @@ void setup() {
     cal_offset[0] = -0.34; 
     cal_offset[1] = -0.06; 
     cal_offset[2] = 0.20;
+  }
+  else if (I_LOADCELL == 3){
+    cal_gain[0]   = 13530;
+    cal_gain[1]   = 13660;
+    cal_gain[2]   = 13316;
+    cal_offset[0] = -3.53; 
+    cal_offset[1] = -3.38; 
+    cal_offset[2] = 0.47; //there might be a problem with this offset
   }
   else if (I_LOADCELL == 4){
     cal_gain[0]   = 13230;

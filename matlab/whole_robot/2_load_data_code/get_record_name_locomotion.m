@@ -480,7 +480,23 @@ switch recordId
         record_name = 'hardcoded_bipod_amps_X_2019-9-27-17_43_18';
     case 240
         record_name = 'tegotae_complete_146_X_2019-9-30-19_12_23';
-    
+    case 241
+        record_name = 'tegotae_complete_147_X_2019-10-3-12_35_28';
+    case 242
+        record_name = 'tegotae_complete_147_X_2019-10-3-15_5_13';
+    case 243
+        record_name = 'tegotae_complete_149_X_2019-10-3-15_16_2';
+    case 244
+        record_name = 'tegotae_complete_149_X_2019-10-3-15_20_54';
+    case 245
+        record_name = 'tegotae_complete_149_X_2019-10-3-15_35_20';
+    case 246
+        record_name = 'tegotae_complete_149_X_2019-10-3-15_45_32';
+    case 247
+        record_name = 'hardcoded_tripod_hex_cs_X_2019-10-3-16_48_58';
+    case 248
+        record_name = 'hardcoded_bipod_hex_cs_X_2019-10-3-16_54_29';
+                                                            
     otherwise
         disp('unknown recordID for locomotion');
 end

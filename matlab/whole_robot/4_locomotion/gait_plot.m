@@ -9,7 +9,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 240; %148
+recordID = 246; %148
 n_limb = 6;
 
 % recordID = 108;
@@ -63,7 +63,7 @@ end
 % GRF = GRF_filtered;
 
 %%
-threshold_unloading = 0.3; %Fukuhuara, figure 6, stance if more than 20% of maximal value
+threshold_unloading = 0.4; %Fukuhuara, figure 6, stance if more than 20% of maximal value
 [value_unloading,max_value_GRF_limb] = determine_value_unloading(GRF,threshold_unloading);
 
 %% plotting GRFs
@@ -220,8 +220,8 @@ for i=1:length(idx_peaks)
         text(time(idx_peaks(i)),2*pi+0.5,num2str(i),'FontSize',12,'HorizontalAlignment','center');
 end
 
-first_peak_integral = 52; %36; %27;
-last_peak_integral = 56; %43; %34;
+first_peak_integral = 13; %36; %27;
+last_peak_integral = 21; %43; %34;
 scatter(time(idx_peaks(first_peak_integral)),pk_values(first_peak_integral),'ro','HandleVisibility','off');
 scatter(time(idx_peaks(last_peak_integral)),pk_values(last_peak_integral),'ro','HandleVisibility','off');
 
@@ -245,5 +245,7 @@ xlim([time(idx_peaks(first_peak_integral)) time(idx_peaks(last_peak_integral))])
 GRF_ref = zeros(1,n_limb);
 [integrals,integrals_squared,integrals_GRF_ref,integrals_GRF_ref_squared] = compute_gait_integrals(indexes_integral,GRF,GRF_ref,data.time);
 % [integrals_GRP,integrals_squared_GRP,integrals_GRP_ref,~] = compute_gait_integrals(indexes_integral,GRP,zeros(1,n_limb),data.time);
+integrals_GRF_squared_stance = compute_gait_integrals_GRF(indexes_integral,GRF,phi,data.time);
 
 metric_sumNsquared = sum(integrals_squared)
+metric_sumNsquared_stance = sum(integrals_GRF_squared_stance)

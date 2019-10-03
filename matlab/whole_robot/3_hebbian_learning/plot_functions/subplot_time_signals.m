@@ -1,4 +1,4 @@
-function subplot_time_signals(data,lpdata,index_start,index_end,index_motor_plot,index_loadcell_plot,index_channel_plot,i_dir,parms,n_frames_theo,neutral_pos)
+function subplot_time_signals(data,lpdata,index_start,index_end,index_motor_plot,index_loadcell_plot,index_channel_plot,parms,n_frames_theo,neutral_pos)
 txt_channel_lc ={' X',' Y',' Z'};
 % theoretical_traj = compute_theoretical_traj_wrapper(i_dir,parms);
 hold on;

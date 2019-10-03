@@ -597,6 +597,12 @@ void update_phi_tegotae()
       phi_dot[i] += complete_rule_Nref(i);
     }
 
+    if (effect_only_in_stance){
+      if ((phi[i] > margin_rad_stance) && (phi[i] < pi - margin_rad_stance)) 
+      //if (N_s[i]<1.5)
+        phi_dot[i] = 2*pi*frequency;
+    }
+
     //a trick so that the delta phases are not modified when i lift the robot to recenter it
     if (total_GRF(N_s,n_limb) < 5)
       phi_dot[i] = 2*pi*frequency;
@@ -958,6 +964,10 @@ void print_locomotion_parameters(){
   if (complete_formula_Nref){
     SerialUSB.println("Using complete_formula with Nref = max(-N_ref_0*sin(phi);0)");
     SerialUSB.print("N_ref_0 = ");SerialUSB.println(N_ref_0);
+  }
+  if (effect_only_in_stance){
+    SerialUSB.print("Control only in stance, margin in rads for stance: ");
+    SerialUSB.println(margin_rad_stance);
   }
   print_GRF_ref();
   print_phi_init_tegotae();
