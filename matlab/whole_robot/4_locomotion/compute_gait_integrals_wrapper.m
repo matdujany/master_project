@@ -1,4 +1,4 @@
-function [integrals_GRF_ref_squared, integrals_squared_GRP] = compute_gait_integrals_wrapper(recordID,first_peak_integral,last_peak_integral,GRF_ref)
+function [integrals_GRF_ref_squared, integrals_GRF_squared_stance, integrals_squared_GRP] = compute_gait_integrals_wrapper(recordID,first_peak_integral,last_peak_integral,GRF_ref)
 
 addpath('../2_load_data_code');
 
@@ -42,6 +42,7 @@ end
 
 %%
 [~,~,~,integrals_GRF_ref_squared] = compute_gait_integrals(indexes_integral,GRF,GRF_ref,data.time);
+integrals_GRF_squared_stance = compute_gait_integrals_GRF(indexes_integral,GRF,phi,data.time);
 
 [~,integrals_squared_GRP,~,~] = compute_gait_integrals(indexes_integral,GRP,zeros(1,n_limb),data.time);
 end

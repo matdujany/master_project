@@ -2,7 +2,7 @@
 
 //parameters for complete formula
 
-float sigma_hip = 0.0; //0.15-> bipod or travelling waves //0.5 oversteering
+float sigma_hip = 1.0; //0.15-> bipod or travelling waves //0.5 oversteering
 float sigma_knee = 0.0;
 float sigma_p_hip = 0.0;
 float sigma_p_knee = 0.0; //1.0 to 1.5 --> tripod

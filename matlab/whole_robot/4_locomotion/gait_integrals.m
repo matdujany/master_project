@@ -73,9 +73,10 @@ for i=1:length(list_groups_computing)
         recordID = eval(strcat(grp_name,'.recordID_list(',num2str(k),');'));
         first_peak_integral = eval(strcat(grp_name,'.first_peak_integral(',num2str(k),');'));
         last_peak_integral = eval(strcat(grp_name,'.last_peak_integral(',num2str(k),');'));
-        [integrals_GRF_ref_squared, integrals_squared_GRP] = compute_gait_integrals_wrapper(recordID,...
+        [integrals_GRF_ref_squared, integrals_GRF_squared_stance, integrals_squared_GRP] = compute_gait_integrals_wrapper(recordID,...
             first_peak_integral,last_peak_integral);
         eval(strcat('grp_ ',list_groups_computing{i},'.integrals_GRF_ref_squared(',num2str(k),')=',num2str(sum(integrals_GRF_ref_squared))));
+        eval(strcat('grp_ ',list_groups_computing{i},'.integrals_GRF_ref_squared_stance(',num2str(k),')=',num2str(sum(integrals_GRF_squared_stance))));
         eval(strcat('grp_ ',list_groups_computing{i},'.integrals_squared_GRP(',num2str(k),')=',num2str(sum(integrals_squared_GRP))));
     end
 end
@@ -91,7 +92,7 @@ for i=1:length(grp_names_selected)
     grp_name = strcat('grp_ ',grp_names_selected{i});
     n_recordings = length(eval(strcat(grp_name,'.recordID_list')));
     for k=1:n_recordings
-        metric = eval(strcat(grp_name,'.integrals_GRF_ref_squared(',num2str(k),');'));
+        metric = eval(strcat(grp_name,'.integrals_GRF_ref_squared_stance(',num2str(k),');'));
         scatter(idx_xticks(i), metric,'bo');
         recordID = eval(strcat(grp_name,'.recordID_list(',num2str(k),');'));
         text(idx_xticks(i),metric,num2str(recordID));
@@ -138,7 +139,7 @@ for i=1:length(grp_names_selected)
     grp_name = strcat('grp_ ',grp_names_selected{i});
     n_recordings = length(eval(strcat(grp_name,'.recordID_list')));
     for k=1:n_recordings
-        metric = eval(strcat(grp_name,'.integrals_GRF_ref_squared(',num2str(k),');'));
+        metric = eval(strcat(grp_name,'.integrals_GRF_ref_squared_stance(',num2str(k),');'));
         scatter(idx_xticks(i), metric,'bo');
         recordID = eval(strcat(grp_name,'.recordID_list(',num2str(k),');'));
         text(idx_xticks(i),metric,num2str(recordID));

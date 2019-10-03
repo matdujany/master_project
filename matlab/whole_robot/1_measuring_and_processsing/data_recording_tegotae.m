@@ -3,7 +3,7 @@ clear; clc; close all;
 %% Parameters
 
 set_parms;
-parms_locomotion.recordingDuration = 60;
+parms_locomotion.recordingDuration = 120;
 parms_locomotion.frequency = 0.5; 
 
 parms_locomotion.amplitude_class1_deg = 20;
@@ -14,10 +14,10 @@ parms_locomotion.alpha = 0.2;
 parms_locomotion.sigma_advanced = 0;
 parms_locomotion.id_map_used = 149;
 
-parms_locomotion.message = "hex_cs_bipod_hardcoded";
+parms_locomotion.message = "hex_cs";
 parms_locomotion.complete_rule = 1;
 % 
-parms_locomotion.sigma_hip = 0.0;
+parms_locomotion.sigma_hip = 1.0;
 parms_locomotion.sigma_knee = 0;
 parms_locomotion.sigma_p_hip = 0;
 parms_locomotion.sigma_p_knee = 0;
@@ -37,12 +37,12 @@ parms_locomotion.use_filter = 0;
 parms_locomotion.filter_size = 4;
 parms_locomotion.message = "";
 
-% parms_locomotion.categoryName = strcat("tegotae_complete_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
+parms_locomotion.categoryName = strcat("tegotae_complete_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
 % parms_locomotion.categoryName = strcat("tegotae_advanced_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
 
 % parms_locomotion.categoryName = strcat("tegotae_advanced_prop_only_",parms_locomotion.direction);
 
-parms_locomotion.categoryName = strcat("hardcoded_tripod_hex_cs_",parms_locomotion.direction);
+% parms_locomotion.categoryName = strcat("hardcoded_tripod_hex_cs_",parms_locomotion.direction);
 
 % parms_locomotion.categoryName = strcat("hardcoded_DS_quad_",parms_locomotion.direction);
 % parms_locomotion.categoryName = strcat("quad_hardcoded_inphase");

@@ -496,7 +496,9 @@ switch recordId
         record_name = 'hardcoded_tripod_hex_cs_X_2019-10-3-16_48_58';
     case 248
         record_name = 'hardcoded_bipod_hex_cs_X_2019-10-3-16_54_29';
-                                                            
+    case 249
+        record_name = 'tegotae_complete_149_X_2019-10-3-17_44_22';
+                                                                      
     otherwise
         disp('unknown recordID for locomotion');
 end
