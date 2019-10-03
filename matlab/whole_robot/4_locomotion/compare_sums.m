@@ -3,11 +3,11 @@ clear; close all; clc;
 addpath('../2_load_data_code');
 
 %%
-recordID1 = 218; %bipod, maximizing N^2 from all in phase initial conditions
+recordID1 = 205;  %218; %bipod, maximizing N^2 from all in phase initial conditions
 ax_sum1 = plot_sums(recordID1);
 sgtitle(['record ' num2str(recordID1)]);
 
-recordID2 = 211; %211; %from bipod initial conditions, minimizing N^2 --> they all go in phase
+recordID2 = 213; %211; %from bipod initial conditions, minimizing N^2 --> they all go in phase
 x_sum2 = plot_sums(recordID2);
 sgtitle(['record ' num2str(recordID2)]);
 

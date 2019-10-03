@@ -56,6 +56,7 @@ end
 
 [u_hip,u_knee,v_hip,v_knee] = load_matrix_complete_rule();
 feedback_terms = zeros(n_samples_GRF,n_limb,4);
+feedback_terms_no_Nref = zeros(n_samples_GRF,n_limb,4);
 
 if isfield(parms_locomotion,'Nref0')
     disp('using complete rule with Nref0');
@@ -72,6 +73,8 @@ else
     feedback_terms(:,:,4) = - sigma_p_knee*(v_knee*GRP')'.*sin(phi);
 end
 
+feedback_terms_no_Nref(:,:,1)  = sigma_hip*(u_hip*GRF')'.*cos(phi);
+
 feedback = sum(feedback_terms,3);
 
 %%
@@ -79,8 +82,8 @@ i_limb_plot = 1;
 figure;
 hold on;
 plot(data.time(2:end,i_limb_plot)/10^3,phi_dots(:,i_limb_plot));
-plot(data.time(:,i_limb_plot)/10^3,feedback_terms(:,i_limb_plot,1));
-plot(data.time(:,i_limb_plot)/10^3,feedback_terms(:,i_limb_plot,4));
-legend('Phi dot','Z load term','Propulsion term');
+plot(data.time(:,i_limb_plot)/10^3,feedback_terms_no_Nref(:,i_limb_plot,1));
+legend('With Nref','Without Nref');
 xlabel('Time [s]'),
-ylim(5*[-1 1]);
+ylabel('$$ \dot{\phi} - 2\pi f $$ in [rad/s]','FontSize',18,'Interpreter','latex');
+ylim(5*[-1 1]); 

@@ -72,7 +72,7 @@ end
 
 formulaString = '';
 if strcmp(forceString,'N')
-    formulaString = ['$$ \dot{\phi_i} = \omega + \sigma\sum_{all\ j} u_{i,j}^{' motorTypeString '} F_j ' sincosString '(\phi_i),   (\sigma>0) $$'];
+    formulaString = ['$$ \dot{\phi_i} = \omega + \sigma\sum_{all\ j} u_{i,j}^{' motorTypeString '} N_j ' sincosString '(\phi_i),   (\sigma>0) $$'];
 end
 if strcmp(forceString,'F')
     formulaString = ['$$ \dot{\phi_i} = \omega - \sigma_p\sum_{all\ j} v_{i,j}^{' motorTypeString '} F_j ' sincosString '(\phi_i),   (\sigma_p>0) $$'];
