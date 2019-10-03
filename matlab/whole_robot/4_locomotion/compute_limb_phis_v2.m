@@ -3,16 +3,17 @@
 clear; close all; clc;
 addpath('../2_load_data_code');
 
-recordID = 222;
+recordID = 213;
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
 
 n_limb = 6;
 [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion.direction,n_limb,recordID);
 n_limb = size(limbs,1);
 n_samples = size(pos_phi_data.limb_phi,2);
+n_samples_GRF = size(data.time,1);
 
-GRF = zeros(n_samples,n_limb);
-GRP = zeros(n_samples,n_limb);
+GRF = zeros(n_samples_GRF,n_limb);
+GRP = zeros(n_samples_GRF,n_limb);
 for i=1:n_limb
     GRF(:,i) = data.float_value_time{1,i}(:,3);
     GRP(:,i) = data.float_value_time{1,i}(:,2);
@@ -20,12 +21,16 @@ end
 
 phi_actual = pos_phi_data.limb_phi';
 
+if (n_samples ~= n_samples_GRF)
+    disp('warning ! not same number of samples for GRF and phi');
+end
+
 %%
 phi_init = phi_actual(1,:);
 parms_locomotion.sigma_hip = 0; %0.15;
-parms_locomotion.sigma_knee = 0;
+parms_locomotion.sigma_knee = -0.05;
 parms_locomotion.sigma_p_hip = 0;
-parms_locomotion.sigma_p_knee = 1.0;
+parms_locomotion.sigma_p_knee = 0;
 simulated_limb_phi = compute_phi_complete_rule(GRF,GRP,pos_phi_data.phi_update_timestamp,phi_init,parms_locomotion);
 
 %% Plots

@@ -128,7 +128,7 @@ f.Position = [ 1          41        1680         400];
 fix_xticklabels();
 
 %% plot _ Z relevant
-grp_names_selected ={'a','b','c','d','i'};
+grp_names_selected ={'a','b','c','d','i','h','j','g'};
 
 idx_xticks = grp2idx(grp_names_selected);
 xticks_labels = cell(length(grp_names_selected),1);
@@ -154,7 +154,7 @@ fix_xticklabels();
 
 
 %% plot _ friction relevant
-grp_names_selected ={'a','b','c','e','l'};
+grp_names_selected ={'a','b','c','e','l','d','i'};
 
 idx_xticks = grp2idx(grp_names_selected);
 xticks_labels = cell(length(grp_names_selected),1);
