@@ -9,7 +9,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 249; %148
+recordID = 247; %148
 n_limb = 6;
 
 % recordID = 108;
@@ -220,8 +220,8 @@ for i=1:length(idx_peaks)
         text(time(idx_peaks(i)),2*pi+0.5,num2str(i),'FontSize',12,'HorizontalAlignment','center');
 end
 
-first_peak_integral = 13; %36; %27;
-last_peak_integral = 21; %43; %34;
+first_peak_integral = 18; %36; %27;
+last_peak_integral = 28; %43; %34;
 scatter(time(idx_peaks(first_peak_integral)),pk_values(first_peak_integral),'ro','HandleVisibility','off');
 scatter(time(idx_peaks(last_peak_integral)),pk_values(last_peak_integral),'ro','HandleVisibility','off');
 

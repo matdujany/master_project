@@ -1,5 +1,5 @@
 function integrals_GRF_squared_stance = compute_gait_integrals_GRF(indexes_integral,GRF,phi,time)
-%UNTITLED2 Summary of this function goes here
+%UNTITLED2 Computes integrals in stance only
 %   Detailed explanation goes here
 
 phi=mod(phi,2*pi);
