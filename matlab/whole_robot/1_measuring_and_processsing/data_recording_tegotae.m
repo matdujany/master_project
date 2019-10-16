@@ -23,12 +23,12 @@ parms_locomotion.sigma_p_hip = 0;
 parms_locomotion.sigma_p_knee = 0;
 
 % parms_locomotion.phi_only = 1;
-% parms_locomotion.control_in_stance_only = 1;
+parms_locomotion.control_in_stance_only = 0;
 
 parms_locomotion.turning = false;
 parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
-parms_locomotion.phi_init = {0, 2.09, 4.19, 0, 2.09, 4.19};
-% parms_locomotion.phi_init = {0, 0, 0, 0, 0, 0};
+% parms_locomotion.phi_init = {0, 2.09, 4.19, 0, 2.09, 4.19};
+parms_locomotion.phi_init = {0, 0, 0, 0, 0, 0};
 % parms_locomotion.phi_init = {0, 3.14, 0, 3.14, 0, 3.14};
 % parms_locomotion.phi_init = {0.00, -2.00, -3.60, -0.86, 1.45, -2.80}; 
 % parms_locomotion.phi_init = {0, -4.58, -2.81, 0.52, -1.33, -3.15};

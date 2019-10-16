@@ -624,6 +624,7 @@ void update_phi_tegotae()
     
   }
   t_last_phi_update = t_current;
+  //SerialUSB.println(t_last_phi_update);
 }
 
 

@@ -6,7 +6,7 @@ addpath('../2_load_data_code');
 %% Load data
 recordID = 110;
 [data, lpdata, parms] =  load_data_processed(recordID);
-add_parms;
+% add_parms;
 
 %%
 good_closest_LC = [3;3;4;4;1;1;2;2];%just to pick motor and loadcells which are related.

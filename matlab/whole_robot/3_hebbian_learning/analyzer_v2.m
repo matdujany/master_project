@@ -11,7 +11,7 @@ addpath('computing_functions');
 
 
 %% Load data
-recordID = 149;
+recordID = 149; %149
 [data, lpdata, parms] =  load_data_processed(recordID);
 
 weights_robotis = read_weights_robotis(recordID,parms);
