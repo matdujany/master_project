@@ -9,14 +9,14 @@ grp_a.first_peak_integral = 10;
 grp_a.last_peak_integral = 22;
 
 grp_b.name = 'hardcoded bipod';
-grp_b.recordID_list = 207;
-grp_b.first_peak_integral = 47;
-grp_b.last_peak_integral = 55;
+grp_b.recordID_list = 248;
+grp_b.first_peak_integral = 13;
+grp_b.last_peak_integral = 21;
 
 grp_c.name = 'hardcoded tripod';
-grp_c.recordID_list = 184;
-grp_c.first_peak_integral = 27;
-grp_c.last_peak_integral = 34;
+grp_c.recordID_list = 247;
+grp_c.first_peak_integral = ;
+grp_c.last_peak_integral = ;
 
 grp_d.name = 'Z loads (hips)';
 grp_d.recordID_list = [199   179   180   218];

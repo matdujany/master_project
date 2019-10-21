@@ -69,7 +69,7 @@ else
     disp('using complete rule without Nref0');
     feedback_terms(:,:,1) = sigma_hip*(u_hip*GRF')'.*cos(phi);
     feedback_terms(:,:,2) = sigma_knee*(u_knee*GRF')'.*sin(phi);
-    feedback_terms(:,:,3) = - sigma_p_hip*(v_knee*GRP')'.*cos(phi);
+    feedback_terms(:,:,3) = - sigma_p_hip*(v_hip*GRP')'.*cos(phi);
     feedback_terms(:,:,4) = - sigma_p_knee*(v_knee*GRP')'.*sin(phi);
 end
 
