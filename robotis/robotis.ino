@@ -73,6 +73,7 @@ void setup() {
   
   //SerialUSB.println("bipod hardcoded, compliant spine");
   record_tegotae(120*1000);
+  //record_1_limb_move(40*1000);
 
   //record_tegotae_changes();
 

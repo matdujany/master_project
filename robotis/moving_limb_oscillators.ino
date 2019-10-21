@@ -7,6 +7,48 @@ void init_tegotae(){
   print_locomotion_parameters();
 }
 
+void record_1_limb_move(unsigned long recording_duration_each_leg){
+  init_tegotae();
+  init_recording_locomotion();
+
+  for (uint8_t i=0; i<n_limb; i++){
+
+    pose_stance_512();
+
+    unsigned long t_start_recording = millis();
+    t_last_phi_update = millis();
+    while (millis()-t_start_recording<recording_duration_each_leg)
+    {
+      unsigned long t_start_update_dc  = send_frame_and_update_sensors(1,0);
+      send_phi_and_pos_Serial3();
+
+      //updating phi for 1 limb
+      phi[i] += 2*pi*frequency * (millis() - t_last_phi_update) / 1000;
+      t_last_phi_update = millis();
+      if (phi[i]>2*pi)
+        phi[i] = phi[i] - 2*pi;
+
+      //Moving 1 limb
+      uint8_t servo_id_list_temp[2];
+      uint16_t goal_positions_tegotae_temp[2];
+
+      servo_id_list_temp[0] = id[limbs[i][0]];
+      goal_positions_tegotae_temp[0] = neutral_pos[limbs[i][0]] + phase2pos_Class1(phi[i]+offset_class1[i], changeDirs[i][0], scaling_amp_class1_forward[i]);
+      servo_id_list_temp[1] = id[limbs[i][1]];
+      goal_positions_tegotae_temp[1] = neutral_pos[limbs[i][1]] + phase2pos_Class2(phi[i], changeDirs[i][1]);
+
+      syncWrite_position_n_servos(2, servo_id_list_temp, goal_positions_tegotae_temp);
+
+      //waiting so that the daisychain does not break;
+      while(millis()-t_start_update_dc<DELAY_UPDATE_DC_TEGOTAE);
+    }
+  }
+
+  SerialUSB.println("1 limb move, recording over");
+  SerialUSB.print("Nb end bytes sent: ");SerialUSB.println(nb_end_bytes_sent);
+  SerialUSB.print("Nb frames found: ");SerialUSB.println(nb_frames_found);  
+}
+
 void record_tegotae(unsigned long recording_duration){
   init_tegotae();
   init_recording_locomotion();

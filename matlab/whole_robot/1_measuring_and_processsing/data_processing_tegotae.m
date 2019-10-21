@@ -5,7 +5,7 @@ clear; clc; close all;
 addpath('functions');
 addpath('../2_load_data_code');
 %% loading.
-recordID = 250;
+recordID = 254;
 n_limb = 6;
 phi_only = false;
 
@@ -13,7 +13,6 @@ phi_only = false;
 fprintf("data_processing\n");
 filename = get_record_name_locomotion(recordID);
 [data_rec, phi_position_data, parms_locomotion, parms] = load_data_locomotion(recordID);
-parms_locomotion.categoryName = strcat("hardcoded_bipod_hex_cs_",parms_locomotion.direction);
 
 % parms.n_m = 8;
 % parms.nr_arduino = 4;

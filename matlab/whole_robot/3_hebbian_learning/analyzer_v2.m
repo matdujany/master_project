@@ -98,7 +98,7 @@ v_knee = renorm(v_knee);
 plot_map(v_hip,'F','hip');
 plot_map(v_knee,'F','knee');
 
-
+read_neutral_pos(recordID, parms.n_m) 
 % h=plot_inv_map_Ny_hip_only(100*u_hip/58.9);
 %%
 
