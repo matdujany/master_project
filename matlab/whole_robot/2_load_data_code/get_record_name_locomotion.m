@@ -508,7 +508,21 @@ switch recordId
         record_name = 'one_limb_move_cs__2019-10-21-17_33_7';
     case 254
         record_name = 'tegotae_complete_149_X_2019-10-21-17_53_21';
-    
+    case 255
+        record_name = 'tegotae_complete_149R_X_2019-10-22-11_28_22';
+    case 256
+        record_name = 'tegotae_complete_149R2_X_2019-10-22-12_28_38';
+    case 257
+        record_name = 'one_limb_move_cs_2019-10-22-12_52_37';
+   case 258
+        record_name = 'one_limb_move_cs_2019-10-22-13_1_10';
+   case 259
+        record_name = 'one_limb_move_cs_2019-10-22-13_7_23';
+   case 260
+        record_name = 'one_limb_move_cs_2019-10-22-17_0_11';
+   case 261
+        record_name = 'one_limb_move_cs_2019-10-22-17_12_10';
+                           
     otherwise
         disp('unknown recordID for locomotion');
 end

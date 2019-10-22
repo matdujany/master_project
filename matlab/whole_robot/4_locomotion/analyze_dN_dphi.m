@@ -196,11 +196,10 @@ margin_pad = 1; %in radians
 [~,idx1] = min(abs(phi_grid_diff-margin_pad));
 phi_grid_diff_padded = [phi_grid_diff; 2*pi + phi_grid_diff(1:idx1)];
 dN_dphi_padded = [dN_dphi; dN_dphi(1:idx1,:)];
-[~,idx2] = min(abs(phi_grid_diff_padded-(2*pi-margin_pad)));
-phi_grid_diff_padded = [ - 2*pi + phi_grid_diff_padded(idx2:end); phi_grid_diff_padded];
-dN_dphi_padded = [dN_dphi_padded(idx2:end,:); dN_dphi_padded];
-[phi_grid_diff_padded, index] = unique(phi_grid_diff_padded);
-dN_dphi_padded = dN_dphi_padded(index,:);
+[~,idx2] = min(abs(phi_grid_diff-(2*pi-margin_pad)));
+phi_grid_diff_padded = [ - 2*pi + phi_grid_diff(idx2:end); phi_grid_diff_padded];
+dN_dphi_padded = [dN_dphi(idx2:end,:); dN_dphi_padded];
+
 
 
 dN_dphi_smoothed = zeros(size(dN_dphi_padded));

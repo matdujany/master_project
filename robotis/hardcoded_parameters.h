@@ -313,8 +313,8 @@ std::vector<std::vector<bool>>  changeDirs_X_6{
 
 std::vector<bool>  changeDirs_X_Yaw_6{true,true,true,true,true,true};
 
-uint16_t neutral_pos_110[12] = //{510,   514,   512,   508,   510,   509,   513,   511,   509,   511,   514,   510};
-{511,   509,   511,   513,   510,   516,   508,   512,   514,   510,   508,   510};//149
+uint16_t neutral_pos_110[12] = {510,   514,   512,   508,   510,   509,   513,   511,   509,   511,   514,   510}; //110
+//{511,   509,   511,   513,   510,   516,   508,   512,   514,   510,   508,   510};//149
 
 float sigma_advanced_X_110 = 0.15; // 0.5;// scaled for 50% of 0.5Hz
 

@@ -71,9 +71,9 @@ void setup() {
 
   //twitch_record_wrapper();
   
-  //SerialUSB.println("bipod hardcoded, compliant spine");
-  record_tegotae(120*1000);
-  //record_1_limb_move(40*1000);
+  SerialUSB.println("1 limb move, rigid spine");
+  //record_tegotae(120*1000);
+  record_1_limb_move(80*1000);
 
   //record_tegotae_changes();
 
