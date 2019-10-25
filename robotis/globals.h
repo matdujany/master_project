@@ -22,7 +22,7 @@
 // Include header files
 #include "constants.h"
 #include "hardcoded_parameters.h"
-#include "hardcoded_parms_corr.h"
+#include "hardcoded_parms_complete.h"
 
 #include <DynamixelSDK.h>
 
@@ -40,16 +40,16 @@ int flagVerbose        = 0;       // Default mode: print no information
 
 
 // CPG/Tegotae Locomotion related:
-float frequency       = 0.2; //this is only for tegotae and not hardcoded trot
-float amplitude_class1 = 0; //class 1 are motors producing the movement in the direction asked
+float frequency       = 0.5; //this is only for tegotae and not hardcoded trot
+float amplitude_class1 = 20; //class 1 are motors producing the movement in the direction asked
 float amplitude_class2 = 20; //class 2 are motors doing the loading/unloading (stance/swing) cycle
-float alpha           = 1.0;  //reduction of amplitude during stance for class 2 motors
+float alpha           = 0.2;  //reduction of amplitude during stance for class 2 motors
 float sigma_s         = 0.11;  // Sigma body support with simple tegotae rule; see Fukuhara 2018 article
 //0.11 for quadruped, 0.08 for hexapode, 0.06 for octopod, 0.13 for weird quadruped
 
 bool tegotae_simple  = false;     //to use local tegotae rule
-bool tegotae_advanced   = false;     //to use advanced tegotae rule
-bool complete_formula   = true;     //to use advanced tegotae rule
+bool tegotae_advanced   = true;     //to use advanced tegotae rule
+bool complete_formula   = false;     //to use advanced tegotae rule
 bool complete_formula_Nref   = false;     //to use advanced tegotae rule
 bool effect_only_in_stance = false;
 float margin_rad_stance = 0;
@@ -81,26 +81,32 @@ std::vector<std::vector<float>> inverse_map_propulsion ={
 
 //recordings and experiments
 
-//float phi_init[4] = {3.14, 3.14, 3.14, 3.14};
+//float phi_init[4] = {0, 0, 0, 0};
+//float phi_init[4] = {0, 3.14, 0, 3.14};
 //float phi_init[4] = {0, 4.71, 1.57, 3.14};
 
 //float GRF_ref[4] = {3.6509,    3.6772,    3.3684,    3.4995}; 
 //float GRF_ref[4] = {6,    1.5,   6,    1.5}; 
-//float GRF_ref[4] = {6,    1.5,   1.5,    6};
+//float GRF_ref[4] = {0, 0, 0, 0};
 
-float phi_init[6] = {0, 0, 0, 0, 0, 0};
+//float phi_init[6] = {0, 0, 0, 0, 0, 0};
 //float phi_init[6] = {0, 2.09, 4.19, 0, 2.09, 4.19}; //bipod
 //float phi_init[6] = {0, -2, -3.6, -0.86, 1.45, -2.8}; //travelling waves
 //float phi_init[6] = {0, 3.14, 0, 3.14, 0, 3.14}; //tripod
+//float phi_init[6] = {0, -pi/2, -pi, 0, -3*pi/2, -pi}; //fast metachronal
+
 //float phi_init[6] = {0, -4.58, -2.81, 0.52, -1.33, -3.15}; //foam travelling waves
 
-float GRF_ref[6] = {0, 0, 0, 0, 0, 0}; 
+//float GRF_ref[6] = {0, 0, 0, 0, 0, 0}; 
 //float GRF_ref[6] = {3.1514,    2.9963,    3.4211,    2.8164,    3.3008,    3.2554}; 
 //float GRF_ref[6] = {1.5,   1.5,    1.5,    1.5,    1.5,    1.5}; 
 //float GRF_ref[6] = {0, 0, 0, 0, 0, 0}; 
 
 
-//float phi_init[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+float phi_init[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+float GRF_ref[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+
 //float phi_init[4] = {4.72, 1.60, 3.18, 4.39};
 //float phi_init[4] = {5.60, 6.03, 3.44, 0.87};
 //float phi_init[4] = {0.94, 1.62, 5.28, 1.60};

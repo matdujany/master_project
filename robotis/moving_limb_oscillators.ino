@@ -481,6 +481,7 @@ void init_offset_class1(){
 }
 
 void send_command_limb_oscillators(){
+  //SerialUSB.println("entering send commands oscillators");
   uint8_t  servo_id_list[n_servos];
   int16_t goal_position_yaw;
 
@@ -578,6 +579,7 @@ void update_filter_tegotae(){
 
 void update_phi_tegotae()
 {
+  //SerialUSB.println("updating phi");
   if (USE_FILTER_TEGOTAE)
     update_filter_tegotae();
 

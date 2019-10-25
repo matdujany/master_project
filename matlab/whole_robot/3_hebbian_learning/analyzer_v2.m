@@ -33,7 +33,7 @@ switch recordID
     case 105
         %quadruped
         [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values("X",n_limb,113);
-    case {110,145,146,147,148,149,210}
+    case {110,144,145,146,147,148,149,210}
         %{hexapod, hexapod compliant spine x 2, hexapod new leg design)
         [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values("X",n_limb,recordID);    
 end

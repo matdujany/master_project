@@ -25,7 +25,7 @@
 #ifdef DO_LOCOMOTION
 
 //dont forget to adapt TIME_INTERVAL_TWITCH and DELAY_UPDATE_DC_TEGOTAE
-#define MAP_USED 110
+#define MAP_USED 115
 
 //Octopod with new leg design : 220.
 std::vector<std::vector<uint8_t>> limbs_X_oct_2{
@@ -70,6 +70,7 @@ uint16_t neutral_pos_220[16] = {511, 511, 507, 510, 508, 509, 516, 512, 509, 510
 
 
 //Hexapod with new leg design : 210.
+/*
 std::vector<std::vector<uint8_t>> limbs_X_hex_2{
     {1, 2},
     {8, 9},
@@ -100,6 +101,7 @@ std::vector<std::vector<float>> inverse_map_X_210{
 {-0.201, 0.030, 0.173, -0.456, 0.557, -0.092} ,
 {-0.012, -0.056, 0.069, 0.471, -1.000, 0.508} ,
 {0.224, 0.001, -0.217, -0.081, 0.513, -0.471}
+};
 
     /*
 {-0.490, 0.100, 0.227, -0.308, 0.074, 0.287} ,
@@ -108,14 +110,18 @@ std::vector<std::vector<float>> inverse_map_X_210{
 {-0.449, 0.061, 0.343, -0.719, 0.579, 0.089} ,
 {0.036, 0.007, -0.097, 0.456, -0.786, 0.329} ,
 {0.214, 0.039, -0.294, 0.156, 0.209, -0.377} 
-*/
 
 };
-uint16_t neutral_pos_210[12] = { 511, 510, 507, 512, 510, 508, 516, 512, 510, 507, 512, 510 };
+*/
 
+/*
+uint16_t neutral_pos_210[12] = { 511, 510, 507, 512, 510, 508, 516, 512, 510, 507, 512, 510 };
+*/
 
 
 //Starfish hexapod with new leg design,
+/*
+
 std::vector<std::vector<uint8_t>> limbs_X_s_hex_2{
     {1, 2},
     {8, 9},
@@ -152,7 +158,7 @@ uint16_t neutral_pos_204[12] = { 511, 510, 507, 512, 510, 508, 516, 512, 510, 50
 float scaling_amp_class1_forward_204[6] = {1,1,0,1,1,0};
 float scaling_amp_class1_Y_204[6] = {0,0,1.000,0,0,1};
 float scaling_amp_class1_yaw_204[6] = {1,1,1,1,1,1};
-
+*/
 
 /*
 float scaling_amp_class1_forward_200[6] = {0.826,1.000,0.236,0.482,0.894,0.286};
@@ -249,7 +255,7 @@ std::vector<std::vector<float>> inverse_map_X_R{
 
 //OCTOPOD SECTION
 
-/*
+
 std::vector<std::vector<uint8_t>> limbs_X_8{
     {13,12},
     {0,8},
@@ -277,8 +283,8 @@ std::vector<bool>  changeDirs_X_Yaw_8{true,true,true,true,true,true,true,true};
 
 float sigma_advanced_X_115 = 0.0981;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_115{
-{-0.318, 0.176, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} , //learnt version the (1,2) term could be bad.
-//{-0.318, 0.400, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} ,   //with correction
+//{-0.318, 0.176, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} , //learnt version the (1,2) term could be bad.
+{-0.318, 0.400, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} ,   //with correction
 {0.400, -0.896, 0.474, 0.040, -0.187, 0.148, -0.006, 0.218} ,
 {0.029, 0.345, -0.853, 0.464, 0.129, -0.033, 0.221, -0.113} ,
 {0.025, 0.038, 0.376, -0.452, 0.215, 0.162, -0.076, -0.144} ,
@@ -288,7 +294,7 @@ std::vector<std::vector<float>> inverse_map_X_115{
 {0.200, 0.077, -0.088, -0.124, 0.095, -0.031, 0.335, -0.346} ,
 };
 uint16_t neutral_pos_115[16] = {510,   506,   512,   498,   512,   519,   515,   519,   503,   512,  511,   513,   515,   508,   503,   510};
-*/
+
 
 //Hexapod section
 
@@ -415,7 +421,7 @@ std::vector<bool>  changeDirs_Y_Yaw_4{false,true,true,false};
 
 
 
-float sigma_advanced_X_105 = 0.1224; // scaled for 50% of 0.5Hz
+float sigma_advanced_X_105 = 0.1224; //0.1224; // scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_105{
     //original
 {-0.959, 0.732, -0.652, 0.753} ,

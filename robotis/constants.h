@@ -19,8 +19,8 @@
 #define BUFFER_SIZE                 256     //should be bigger than the frame size
 
 // SERVO'S
-#define MAX_NR_SERVOS               12
-#define MAX_N_LIMB                   6
+#define MAX_NR_SERVOS               16
+#define MAX_N_LIMB                   8
 
 // DAISYCHAIN
 // Sampling Settings
