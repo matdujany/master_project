@@ -7,7 +7,7 @@ addpath(genpath('../4_locomotion'));
 %%
 n_limb = 6;
 
-[inverse_map,~] = get_inverse_map("X",110);
+[inverse_map,~] = load_inverse_map("X",110);
 
 i_limb_ref_phase = 1;
 fun = @(psi)sys_eqn(psi,inverse_map,i_limb_ref_phase);
