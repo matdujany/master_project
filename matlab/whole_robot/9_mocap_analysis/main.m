@@ -1,40 +1,77 @@
 close all; clear; clc;
+addpath('../2_load_data_code');
+addpath(genpath('../4_locomotion'));
 
-filename = 'Take 2019-10-24 04.31.49 PM.csv';
+recordID = 303;
+[data_rigidbody,data_markers_table,data_quality_table]  = load_data_mocap(recordID);
+rigidbody_marker_coordinates = read_rigidbody_marker_coordinates(recordID);
 
-data=readtable(filename,'Delimiter',',','HeaderLines',45,'Comment','rigidbody');
-data=data(:,[2,3,4,6:8,13:16]);
-data.Properties.VariableNames = {'FrameID','time','detectionStatus','x','y','z','yaw',' pitch', 'roll','n_markers'};
+data_markers = table2array(data_markers_table);
+data_quality = table2array(data_quality_table);
 
-data_quality=readtable(filename,'Delimiter',',','HeaderLines',45,'Comment','frame');
-data_quality=data_quality(:,[56:62]);
-data_quality.Properties.VariableNames = {'Marker1','Marker2',' Marker3', 'Marker4','Marker5','Marker6','mean_error'};
+rigid_body_pos = table2array(data_rigidbody(:,4:6));
+rigid_body_pos = correct_weird_points(recordID,rigid_body_pos,data_markers,data_quality,rigidbody_marker_coordinates);
 
-%%
-origin_x = mean(data.x(1:100));
-origin_z = mean(data.z(1:100));
-data.x = data.x - origin_x;
-data.z = data.z - origin_z;
-
-time_Mocap 
+time_Mocap = data_rigidbody.time; %120 fps, mocap resolution
 
 %%
+[frame_start,frame_stop] = get_frame_start_stop(recordID);
+
+txt_axis = {'x','y','z'};
+f=figure;
+for i_axis=1:3
+    subplot(4,1,i_axis);
+    hold on;
+    temp = eval(strcat('data_rigidbody.',txt_axis{i_axis}));
+    plot(temp);
+    plot(rigid_body_pos(:,i_axis))
+    xlabel([txt_axis{i_axis} ' [m]']);
+    plot(frame_start*[1 1],[0 3],'k--');
+    plot(frame_stop*[1 1],[0 3],'k--');
+    legend('software','after correction with method');
+end
+subplot(4,1,4);
+plot(data_rigidbody.n_markers);
+linkaxes(f.Children,'x');
+
+idx_pb = find(data_rigidbody.n_markers(frame_start:frame_stop)<6);
+
+%%
+
 figure;
-subplot(3,1,1);
-plot(data.x);
-xlabel('X [m]');
-subplot(3,1,2);
-plot(data.y);
-xlabel('Y [m] (altitude)');
-subplot(3,1,3);
-plot(data.z);
-xlabel('Z [m]');
-
-%%
-frame_start = 1000;
-frame_stop = 7200;
-figure;
-plot(data.x(1:frame_stop),data.z(1:frame_stop));
+subplot(1,2,1);
+plot(data_rigidbody.x(frame_start:frame_stop),...
+    data_rigidbody.z(frame_start:frame_stop));
 xlabel('X direction [m]');
 ylabel('Y direction [m]');
-xlim([-0.1 0.1]);
+axis equal;
+title('software');
+subplot(1,2,2);
+plot(rigid_body_pos(frame_start:frame_stop,1),...
+    rigid_body_pos(frame_start:frame_stop,3));
+xlabel('X direction [m]');
+ylabel('Y direction [m]');
+axis equal;
+title('software data corrected');
+
+%%
+
+[data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
+n_samples_GRF = size(data.time,1);
+n_limb = size(data.time,2)-1;
+
+phi = pos_phi_data.limb_phi;
+delta_phases = compute_delta_phases(phi);
+time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
+[f_delta_phases,ax_delta_phases] = plot_delta_phases(time,delta_phases,recordID);
+
+GRF = zeros(n_samples_GRF,n_limb);
+GRP = zeros(n_samples_GRF,n_limb);
+for i=1:n_limb
+    GRF(:,i) = data.float_value_time{1,i}(:,3);
+    GRP(:,i) = data.float_value_time{1,i}(:,2);
+end
+
+figure;
+plot(sum(GRF,2));
+
