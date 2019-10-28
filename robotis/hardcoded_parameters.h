@@ -25,7 +25,7 @@
 #ifdef DO_LOCOMOTION
 
 //dont forget to adapt TIME_INTERVAL_TWITCH and DELAY_UPDATE_DC_TEGOTAE
-#define MAP_USED 115
+#define MAP_USED 110
 
 //Octopod with new leg design : 220.
 std::vector<std::vector<uint8_t>> limbs_X_oct_2{
@@ -281,7 +281,7 @@ std::vector<std::vector<bool>>  changeDirs_X_8{
 std::vector<bool>  changeDirs_X_Yaw_8{true,true,true,true,true,true,true,true};
 //these are the good values, the learned ones are wrong for 4 limbs.
 
-float sigma_advanced_X_115 = 0.0981;// scaled for 50% of 0.5Hz
+float sigma_advanced_X_115 = 0; // 0.0981;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_115{
 //{-0.318, 0.176, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} , //learnt version the (1,2) term could be bad.
 {-0.318, 0.400, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} ,   //with correction

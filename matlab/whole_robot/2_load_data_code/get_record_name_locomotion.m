@@ -552,6 +552,18 @@ switch recordId
         record_name = 'mocap__2019-10-25-16_50_24';
     case 314
         record_name = 'mocap__2019-10-25-16_56_31';
+    case 315
+        record_name = 'mocap__2019-10-25-18_19_22';
+    case 316
+        record_name = 'mocap__2019-10-25-18_28_12';
+    case 317
+        record_name = 'mocap__2019-10-25-18_32_4';
+    case 318
+        record_name = 'mocap__2019-10-25-18_39_5';
+    case 319
+        record_name = 'mocap__2019-10-25-18_50_1';
+    case 320
+        record_name = 'mocap__2019-10-25-19_24_37';
     otherwise
         disp('unknown recordID for locomotion');
 end

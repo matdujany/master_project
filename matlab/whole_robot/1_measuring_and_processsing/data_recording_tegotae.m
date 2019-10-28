@@ -11,26 +11,25 @@ parms_locomotion.amplitude_class2_deg = 20;
 parms_locomotion.alpha = 0.2;
 % % parms_locomotion.sigma_s = 0.11;
 
-parms_locomotion.sigma_advanced = 0.1224;
-parms_locomotion.id_map_used = 115;
+% parms_locomotion.sigma_advanced = 0.1224;
+parms_locomotion.id_map_used = 110;
 
 parms_locomotion.message = "motion capture";
-% parms_locomotion.complete_rule = 1;
-% % 
-% parms_locomotion.sigma_hip = 1.0;
-% parms_locomotion.sigma_knee = 0;
-% parms_locomotion.sigma_p_hip = 0;
-% parms_locomotion.sigma_p_knee = 0;
+parms_locomotion.complete_rule = 1;
+% 
+parms_locomotion.sigma_hip = 0.15;
+parms_locomotion.sigma_knee = 0;
+parms_locomotion.sigma_p_hip = 0;
+parms_locomotion.sigma_p_knee = 0;
 
 % parms_locomotion.phi_only = 1;
 parms_locomotion.control_in_stance_only = 0;
 
 parms_locomotion.turning = false;
 parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
-parms_locomotion.phi_init = {0, 0, 0, 0, 0, 0, 0, 0};
 % parms_locomotion.phi_init = {0.00, 4.71, 1.57, 3.14};
 % parms_locomotion.phi_init = {0, 2.09, 4.19, 0, 2.09, 4.19};
-% parms_locomotion.phi_init = {0, 0, 0, 0, 0, 0};
+parms_locomotion.phi_init = {0, 0, 0, 0, 0, 0};
 % parms_locomotion.phi_init = {0, -pi/2, -pi, 0, -3*pi/2, -pi};
 % parms_locomotion.phi_init = {0, 3.14, 0, 3.14, 0, 3.14};
 % parms_locomotion.phi_init = {0.00, -2.00, -3.60, -0.86, 1.45, -2.80}; 

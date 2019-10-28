@@ -72,7 +72,7 @@ void setup() {
   //twitch_record_wrapper();
   
   SerialUSB.println("motion capture");
-  record_tegotae(15*1000);
+  record_tegotae(120*1000);
   
   //record_1_limb_move(80*1000);
 
@@ -91,8 +91,7 @@ void setup() {
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 void loop() {
-  show_value_DC(20);
-
+  //show_value_DC(20);
   //test_dc();
 
   //pose_stance_512();

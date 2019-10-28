@@ -2,7 +2,7 @@
 
 //parameters for complete formula
 
-float sigma_hip = 0.0; //0.15-> bipod or travelling waves //0.5 oversteering
+float sigma_hip = 0.15; //0.15-> bipod or travelling waves //0.5 oversteering
 float sigma_knee = 0.0;
 float sigma_p_hip = 0.0;
 float sigma_p_knee = 0.0; //1.0 to 1.5 --> tripod
@@ -10,6 +10,7 @@ float N_ref_0 = 8.5;
 
 std::vector<std::vector<float>> u_hip={
 
+/*
 //compliant spine, learning with rugs (149)
 {-0.477, 0.323, 0.145, 0.007, -0.541, 0.306} ,
 {0.130, -0.167, -0.016, -0.331, 0.593, -0.525} ,
@@ -20,10 +21,10 @@ std::vector<std::vector<float>> u_hip={
 {-0.620, 1.000, -0.498, 0.125, -0.499, 0.291} ,
 {0.455, -0.432, -0.056, 0.034, 0.365, -0.465} ,
 };
-
+*/
 
 //rigid spine learning with rugs (110)
-/*
+
 {-0.490, 0.100, 0.227, -0.308, 0.074, 0.287} ,
 {0.428, -1.000, 0.550, -0.051, -0.002, 0.088} ,
 {0.134, 0.391, -0.697, 0.280, 0.264, -0.437} ,
@@ -31,9 +32,6 @@ std::vector<std::vector<float>> u_hip={
 {0.036, 0.007, -0.097, 0.456, -0.786, 0.329} ,
 {0.214, 0.039, -0.294, 0.156, 0.209, -0.377} ,
 };
-*/
-
-
 
 //rigid spine learning in the air (144)
 /*
