@@ -12,7 +12,9 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 249; %148
+recordID = 311; %148
+flag_control_in_stance_only = true;
+
 n_limb = 6;
 
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
@@ -56,14 +58,13 @@ phi = phi';
 
 %% control terms
 [u_hip,u_knee,v_hip,v_knee] = load_matrix_complete_rule_cs();
-flag_control_in_stance_only = true;
 
 sigma_hip = parms_locomotion.sigma_hip;
 sigma_knee = parms_locomotion.sigma_knee;
 sigma_p_hip = parms_locomotion.sigma_p_hip;
 sigma_p_knee = parms_locomotion.sigma_p_knee;
 
-[feedback,check_feedback] = compute_controle_control_term(GRF,GRP,phi,pos_phi_data.phi_update_timestamp,parms_locomotion.frequency,...
+[feedback,phi_dots,check_feedback] = compute_controle_control_term(GRF,GRP,phi,pos_phi_data.phi_update_timestamp,parms_locomotion.frequency,...
     sigma_hip,sigma_knee,sigma_p_hip, sigma_p_knee,u_hip,u_knee,v_hip,v_knee,...
     flag_control_in_stance_only);
 
@@ -89,7 +90,17 @@ for i=1:n_limb
     xlabel('Phase limb [rad]');
     ylabel('Sensory feedback [rad/s]');
 end
+sgtitle('Control');
 
+figure;
+for i=1:n_limb
+    subplot(2,n_limb/2,i);
+    scatter(phi(i_start:i_stop,i),phi_dots(i_start:i_stop,i));
+    title(['Limb ' num2str(i)]);
+    xlabel('Phase limb [rad]');
+    ylabel('\dot{phi} -2*\pi*f [rad/s]');
+end
+sgtitle('Actual phi dot');
 
 %%
 if false

@@ -1,4 +1,4 @@
-function [feedback,check_feedback] = compute_controle_control_term(GRF,GRP,phi,phi_update_timestamp,frequency,sigma_hip,sigma_knee,sigma_p_hip, sigma_p_knee,u_hip,u_knee,v_hip,v_knee,flag_control_in_stance_only)
+function [feedback,phi_dots,check_feedback] = compute_controle_control_term(GRF,GRP,phi,phi_update_timestamp,frequency,sigma_hip,sigma_knee,sigma_p_hip, sigma_p_knee,u_hip,u_knee,v_hip,v_knee,flag_control_in_stance_only)
 %COMPUTE_CONTROLE_CONTROL_TERM Summary of this function goes here
 %   Detailed explanation goes here
 

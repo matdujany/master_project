@@ -3,32 +3,34 @@ clear; clc; close all;
 %% Parameters
 
 set_parms;
-parms_locomotion.recordingDuration = 480;
+parms_locomotion.recordingDuration = 120;
 parms_locomotion.frequency = 0.5; 
 
-parms_locomotion.amplitude_class1_deg = 0;
+parms_locomotion.amplitude_class1_deg = 20;
 parms_locomotion.amplitude_class2_deg = 20;
-parms_locomotion.alpha = 1;
+parms_locomotion.alpha = 0.2;
 % % parms_locomotion.sigma_s = 0.11;
 
-% parms_locomotion.sigma_advanced = 0;
-% parms_locomotion.id_map_used = "149R2";
+% parms_locomotion.sigma_advanced = 0.1224;
+parms_locomotion.id_map_used = 110;
 
-parms_locomotion.message = "1 limb move, rigid spine";
-% parms_locomotion.complete_rule = 1;
+parms_locomotion.message = "motion capture";
+parms_locomotion.complete_rule = 1;
 % 
-% parms_locomotion.sigma_hip = 1.0;
-% parms_locomotion.sigma_knee = 0;
-% parms_locomotion.sigma_p_hip = 0;
-% parms_locomotion.sigma_p_knee = 0;
+parms_locomotion.sigma_hip = 0.15;
+parms_locomotion.sigma_knee = 0;
+parms_locomotion.sigma_p_hip = 0;
+parms_locomotion.sigma_p_knee = 0;
 
 % parms_locomotion.phi_only = 1;
-% parms_locomotion.control_in_stance_only = 0;
+parms_locomotion.control_in_stance_only = 0;
 
-% parms_locomotion.turning = false;
-% parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
+parms_locomotion.turning = false;
+parms_locomotion.direction = "X"; %"X" "Y" or "Yaw"
+% parms_locomotion.phi_init = {0.00, 4.71, 1.57, 3.14};
 % parms_locomotion.phi_init = {0, 2.09, 4.19, 0, 2.09, 4.19};
-% parms_locomotion.phi_init = {0, 0, 0, 0, 0, 0};
+parms_locomotion.phi_init = {0, 0, 0, 0, 0, 0};
+% parms_locomotion.phi_init = {0, -pi/2, -pi, 0, -3*pi/2, -pi};
 % parms_locomotion.phi_init = {0, 3.14, 0, 3.14, 0, 3.14};
 % parms_locomotion.phi_init = {0.00, -2.00, -3.60, -0.86, 1.45, -2.80}; 
 % parms_locomotion.phi_init = {0, -4.58, -2.81, 0.52, -1.33, -3.15};
@@ -38,7 +40,7 @@ parms_locomotion.filter_size = 4;
 parms_locomotion.message = "";
 
 % parms_locomotion.categoryName = strcat("tegotae_complete_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
-parms_locomotion.categoryName = strcat("one_limb_move_cs");
+parms_locomotion.categoryName = strcat("mocap_");
 
 % parms_locomotion.categoryName = strcat("tegotae_advanced_",num2str(parms_locomotion.id_map_used),"_",parms_locomotion.direction);
 
@@ -58,12 +60,12 @@ poolobj= parpool('local',2);
 spmd(2)
     if labindex == 1
         %daisychain (Serial2), blue cable, blue FTDI
-        COMportID = 3;
+        COMportID = 12; %3;
         bufferSize = 5000000; %check : size this buffer
         BaudRate = 500*10^3;
     else
         %lpdata (Serial3), yellow cable, red FTDI
-        COMportID = 4;
+        COMportID = 10; %4;
         bufferSize = 5000000; %check : size this buffer
         BaudRate = 2*10^6;
     end

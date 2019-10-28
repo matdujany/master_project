@@ -2,6 +2,9 @@ function pos_phi_data = parsing_phi_data_locomotion(phi_position_data,parms)
 %PARSING_POS_PHI_DATA_LOCOMOTION Summary of this function goes here
 %   Detailed explanation goes here
 %serial.println adds these two bytes after each print.
+
+disp('Parsing pos and phi data communication ...');
+
 endcode1_println = 13;
 endcode2_println = 10;
 
