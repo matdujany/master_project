@@ -6,7 +6,9 @@ switch recordID
     case 302
         weird_point_list = [1938; 5565];
     case 303
-        weird_point_list = [8055; 10798];
+        weird_point_list = [10554; 10798];
+    case 304
+        weird_point_list = [8676; 9556];
 end
 
 for i=1:length(weird_point_list)

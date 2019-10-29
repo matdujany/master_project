@@ -15,9 +15,15 @@ switch recordID
     case 303
         frame_start = 8500;
         frame_stop = 13500;
+    case 304
+        frame_start = 7300;
+        frame_stop = 11900;
     case 305
         frame_start = 900;
         frame_stop = 6400;
+    case 306
+        frame_start = 10500;
+        frame_stop = 14500;
     case 307
         frame_start = 800;
         frame_stop = 6750;
