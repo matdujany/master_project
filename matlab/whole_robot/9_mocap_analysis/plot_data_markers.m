@@ -2,7 +2,7 @@ close all; clear; clc;
 addpath('../2_load_data_code');
 addpath(genpath('../4_locomotion'));
 
-recordID = 304;
+recordID = 302;
 [data_rigidbody,data_markers_table,data_quality_table]  = load_data_mocap(recordID);
 rigidbody_coordinates = read_rigidbody_marker_coordinates(recordID);
 

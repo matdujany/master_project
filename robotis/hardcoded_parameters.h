@@ -25,7 +25,7 @@
 #ifdef DO_LOCOMOTION
 
 //dont forget to adapt TIME_INTERVAL_TWITCH and DELAY_UPDATE_DC_TEGOTAE
-#define MAP_USED 110
+#define MAP_USED 127
 
 //Octopod with new leg design : 220.
 std::vector<std::vector<uint8_t>> limbs_X_oct_2{
@@ -209,7 +209,7 @@ float scaling_amp_class1_yaw_134[6] = {0.833,0.070,0.712,0.110,0.847,1.000};
 
 
 //Starfish quadruped SECTION
-/*
+
 std::vector<std::vector<uint8_t>> limbs_X_s_quad{
     {0,2},
     {5,4},
@@ -240,7 +240,7 @@ uint16_t neutral_pos_127[8] = {512, 511, 509, 508, 511, 510, 497, 512};
 float scaling_amp_class1_forward_127[4] = {0.862, 0.091, 1, 0.054};
 float scaling_amp_class1_Y_127[4] = {0.148, 1, 0.015, 0.946};
 float scaling_amp_class1_yaw_127[4] = {1, 0.842, 0.892, 0.666};
-*/
+
 
 //matrix R used for experiments
 /*
@@ -281,7 +281,7 @@ std::vector<std::vector<bool>>  changeDirs_X_8{
 std::vector<bool>  changeDirs_X_Yaw_8{true,true,true,true,true,true,true,true};
 //these are the good values, the learned ones are wrong for 4 limbs.
 
-float sigma_advanced_X_115 = 0; // 0.0981;// scaled for 50% of 0.5Hz
+float sigma_advanced_X_115 = 0.0981;// scaled for 50% of 0.5Hz
 std::vector<std::vector<float>> inverse_map_X_115{
 //{-0.318, 0.176, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} , //learnt version the (1,2) term could be bad.
 {-0.318, 0.400, 0.010, 0.056, -0.113, -0.035, 0.106, 0.179} ,   //with correction

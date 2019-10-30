@@ -54,7 +54,7 @@ void record_tegotae(unsigned long recording_duration){
   init_recording_locomotion();
   init_phi_tegotae();
   
-  //change_dir_mode_to_XY();
+  change_dir_mode_to_XY();
 
   unsigned long t_start_recording = millis();
   while (millis()-t_start_recording<recording_duration)
@@ -866,13 +866,15 @@ void init_recording_locomotion(){
   while (!SerialUSB.available());  
   while (SerialUSB.available()) 
    SerialUSB.read();
+
+  delay(10000);
   SerialUSB.println("recording started !");
   SerialUSB.flush();
 }
 
 void send_phi_and_pos_Serial3(){
   send_phi_Serial3();
-  simple_send_pos_Serial3();
+  //simple_send_pos_Serial3();
 }
 
 void send_phi_Serial3(){
@@ -968,9 +970,6 @@ void print_locomotion_parameters(){
   SerialUSB.print("Amplitude class 1 (motors producing the movement) (in degrees) : ");SerialUSB.println(amplitude_class1);  
   SerialUSB.print("Amplitude class 2 (motors doing swing/stance cycle) (in degrees) : ");SerialUSB.println(amplitude_class2);  
   SerialUSB.print("Alpha factor for hip movement amplitude reduction in stance  : ");SerialUSB.println(alpha);    
-  //SerialUSB.print("Locomotion in direction : "); 
-  //(direction_X) ? SerialUSB.println("X") : 0;
-  //(direction_Y) ? SerialUSB.println("Y") : 0;
   delay(1000);
   if (tegotae_advanced){
     if (USE_FILTER_TEGOTAE){
