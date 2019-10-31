@@ -54,6 +54,9 @@ switch recordID
     case 317
         frame_start = 500;
         frame_stop = 6000;
+    case 318
+        frame_start = 1000;
+        frame_stop = 6000;
     case 319
         frame_start = 500;
         frame_stop = 6000;

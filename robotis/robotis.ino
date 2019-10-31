@@ -69,10 +69,10 @@ void setup() {
   delay(5000);
   update_neutral_pos();
 
-  //twitch_record_wrapper();
+  twitch_record_wrapper();
   
   //SerialUSB.println("motion capture");
-  record_tegotae(240*1000);
+  //record_tegotae(240*1000);
   
   //record_1_limb_move(80*1000);
 

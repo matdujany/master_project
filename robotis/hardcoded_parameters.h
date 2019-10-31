@@ -20,7 +20,7 @@
 // if needed, add a case in initialize_scaling_amp_class1()
 
 
-#define DO_LOCOMOTION
+//#define DO_LOCOMOTION
 
 #ifdef DO_LOCOMOTION
 
