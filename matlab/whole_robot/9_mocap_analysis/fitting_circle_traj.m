@@ -4,7 +4,7 @@ addpath(genpath('../4_locomotion'));
 addpath('CircleFitByPratt');
 addpath('InterX');
 
-recordID = 310;
+for recordID = 301:305
 
 rigid_body_pos = get_rigid_body_pos(recordID);
 [frame_start,frame_stop] = get_frame_start_stop(recordID);
@@ -14,6 +14,7 @@ rigid_body_pos_avg = movmean(rigid_body_pos(frame_start:frame_stop,1:2),size_mv_
 
 %%
 figure;
+subplot(2,1,1);
 hold on;
 plot(rigid_body_pos(frame_start:frame_stop,1),rigid_body_pos(frame_start:frame_stop,2));
 plot(rigid_body_pos_avg(:,1),rigid_body_pos_avg(:,2));
@@ -21,7 +22,7 @@ legend('raw','mv avg');
 
 %%
 % [speed_circle,circle_fit] = fit_circle_wrapper(rigid_body_pos(frame_start:frame_stop,1:2),true);
+subplot(2,1,2);
 [speed_circle,circle_fit] = fit_circle_wrapper(rigid_body_pos_avg,true);
 
-
-
+end

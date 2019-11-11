@@ -1,6 +1,7 @@
 function [speed_circle,circle_fit] = fit_circle_wrapper(traj_data,flagPlot)
 %FIT_CIRCLE_WRAPPER Summary of this function goes here
 %   source_data : Nx2 (2D data)
+%   circle_fit = [a b R] is the fitting circle, center (a,b) and radius R
 circle_fit = CircleFitByPratt(traj_data);
 
 theta = [0:0.001:2*pi]';
@@ -17,6 +18,7 @@ if flagPlot
     scatter(P(1,:),P(2,:));
     xlabel('X direction [m]');
     ylabel('Y direction [m]');
+%     axis equal;
     xlim([min(traj_data(:,1)) max(traj_data(:,1))]);
     ylim([min(traj_data(:,2)) max(traj_data(:,2))]);
 end

@@ -5,7 +5,7 @@ addpath('curvature');
 addpath('CircleFitByPratt');
 addpath('InterX');
 
-recordID = 310;
+recordID = 319 ;
 rigid_body_pos = get_rigid_body_pos(recordID);
 [frame_start,frame_stop] = get_frame_start_stop(recordID);
 %%
@@ -68,8 +68,12 @@ plot([0 20],mean(speed_curve_cycles)*[1 1],'k--');
 xlabel('Cycle index');
 ylabel('Speed [m/s]');
 
+disp(['Speed forward (cm/s): ' num2str(100*speed_forward,3)]);
+
+
 %%
 [speed_circle,circle_fit] = fit_circle_wrapper(rigid_body_pos_avg,true);
-
+disp(['Speed circle (cm/s): ' num2str(100*speed_circle,3)]);
+disp(['Radius of curvature (m): ' num2str(circle_fit(3),3)]);
 
 

@@ -1,6 +1,6 @@
 function [frame_start,frame_stop] = get_frame_start_stop(recordID)
 %GET_FRAME_START_STOP Summary of this function goes here
-%   Detailed explanation goes here
+%   Returns the interval of frames to use for the speed analysis
 
 frame_start = 1;
 frame_stop = 10000;
@@ -13,10 +13,10 @@ switch recordID
         frame_start = 1000;
         frame_stop = 7000;
     case 303
-        frame_start = 8500;
+        frame_start = 10000;
         frame_stop = 13500;
     case 304
-        frame_start = 7300;
+        frame_start = 9000;
         frame_stop = 11900;
     case 305
         frame_start = 900;
@@ -36,6 +36,9 @@ switch recordID
     case 310
         frame_start = 9500;
         frame_stop = 14000;
+    case 311
+        frame_start = 2000;
+        frame_stop = 8000;
     case 312
         frame_start = 1000;
         frame_stop = 7000;
