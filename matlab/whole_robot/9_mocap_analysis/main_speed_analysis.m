@@ -5,7 +5,7 @@ addpath('curvature');
 addpath('CircleFitByPratt');
 addpath('InterX');
 
-recordID = 319 ;
+recordID = 311;
 rigid_body_pos = get_rigid_body_pos(recordID);
 [frame_start,frame_stop] = get_frame_start_stop(recordID);
 %%

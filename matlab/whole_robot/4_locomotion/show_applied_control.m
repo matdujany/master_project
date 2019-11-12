@@ -12,8 +12,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 310; %148
-flag_control_in_stance_only = true;
+recordID = 311; %148
 
 n_limb = 6;
 
@@ -56,25 +55,12 @@ time = pos_phi_data.phi_update_timestamp(1,:)/10^3;
 xlim([0 60]);
 phi = phi';
 
-%% control terms
-[u_hip,u_knee,v_hip,v_knee] = load_matrix_complete_rule_cs();
-
-sigma_hip = parms_locomotion.sigma_hip;
-sigma_knee = parms_locomotion.sigma_knee;
-sigma_p_hip = parms_locomotion.sigma_p_hip;
-sigma_p_knee = parms_locomotion.sigma_p_knee;
-
-[feedback,phi_dots,check_feedback] = compute_controle_control_term(GRF,GRP,phi,pos_phi_data.phi_update_timestamp,parms_locomotion.frequency,...
-    sigma_hip,sigma_knee,sigma_p_hip, sigma_p_knee,u_hip,u_knee,v_hip,v_knee,...
-    flag_control_in_stance_only);
-
-%%
-figure;
-hold on;
+phi_dots = zeros(size(phi)-[1 0]);
+diff_phi = diff(phi);
+diff_phi(diff_phi<-6) = diff_phi(diff_phi<-6)+2*pi;
 for i=1:n_limb
-    plot(check_feedback(:,i));
+    phi_dots(:,i) = 10^3*diff_phi(:,i)./diff(pos_phi_data.phi_update_timestamp)' - 2*pi*parms_locomotion.frequency;
 end
-title('Check that the computed feedback is actually the phase update');
 
 %% phase plots
 t_start = 50; %50;
@@ -85,26 +71,9 @@ t_stop = 80; %80;
 figure;
 for i=1:n_limb
     subplot(2,n_limb/2,i);
-    scatter(phi(i_start:i_stop,i),feedback(i_start:i_stop,i));
-    title(['Limb ' num2str(i)]);
-    xlabel('Phase limb [rad]');
-    ylabel('Sensory feedback [rad/s]');
-end
-sgtitle('Control');
-
-figure;
-for i=1:n_limb
-    subplot(2,n_limb/2,i);
     scatter(phi(i_start:i_stop,i),phi_dots(i_start:i_stop,i));
     title(['Limb ' num2str(i)]);
     xlabel('Phase limb [rad]');
     ylabel('$$ \dot{\phi} -2\pi f $$ [rad/s]','FontSize',16,'Interpreter','latex');
 end
 sgtitle('Actual phi dot');
-
-%%
-if false
-phi_249 = phi(i_start:i_stop,:);
-feedback_249 = feedback(i_start:i_stop,:);
-save('control_249','phi_249','feedback_249');
-end

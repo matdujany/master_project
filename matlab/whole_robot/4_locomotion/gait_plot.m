@@ -9,8 +9,7 @@ fontSizeTicks = 12;
 lineWidth = 1.5;
 
 %%
-recordID = 303; %148
-n_limb = 6;
+recordID = 318; %148
 
 % recordID = 108;
 % n_limb = 4;
@@ -29,10 +28,9 @@ n_limb = 6;
 
 
 [data, pos_phi_data, parms_locomotion, parms] = load_data_locomotion_processed(recordID);
-% parms_locomotion = add_parms_change_recordings(parms_locomotion,recordID);
+n_limb = size(data.time,2)-1;
 
 [limbs,limb_ids,changeDir,offset_class1] = get_hardcoded_limb_values(parms_locomotion.direction,n_limb,recordID);
-n_limb = size(limbs,1);
 
 n_samples_phi = size(pos_phi_data.limb_phi,2);
 n_samples_GRF = size(data.time,1);
